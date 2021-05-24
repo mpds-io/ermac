@@ -1,0 +1,62 @@
+/* ASM International skin */
+
+.sky{background:repeating-linear-gradient(60deg, #fff, #fff 44%, rgba(255,255,255,0) 44%, rgba(255,255,255,0) 78%), linear-gradient(to bottom, #e9e9e9 0%, #fff 7%);background-attachment:fixed;}
+#logo_l{margin-left:60px;width:250px;height:60px;margin-top:40px;background:url(/editions/asm/asm_mpds.png) 10% 50% no-repeat;background-size:85%;}
+#logo{width:1px;border-right:1px dashed #555;}
+#logo_r{margin-left:30px;}
+
+.wmbutton{border:1px solid #00adef;background:#00adef;}
+#hierarchy_trigger, #inquiry_gui_trigger, #inquiry_api_trigger{background:#002f6c;border:1px solid #002f6c;}
+#advsearch_init_trigger{background:#555;border:1px solid #555;}
+div.inquirybox > label{color:#002f6c;}
+
+#intro_stats > div > div.g > span{color:#900;}
+#intro_stats > div > div > div.stat_icon{border:3px solid #aaa;filter:grayscale(100%);}
+#intro_stats > div > div > div.ab_initio{color:#aaa;}
+#intro_a > div > span{color:#00adef;}
+#intro_b > div > span{color:#002f6c;}
+
+div.advs.advs_formulae > div{color:#002f6c;}
+div.advs.advs_formulae > input{border:1px solid #002f6c;}
+div.advs.advs_elements > div{color:#002f6c;}
+div.advs.advs_elements > input{border:1px solid #002f6c;}
+div.advs.advs_aeatoms > div{color:#002f6c;}
+div.advs.advs_aeatoms > input{border:1px solid #002f6c;}
+div.advs.advs_lattices > div{color:#00adef;}
+div.advs.advs_lattices > input{border:1px solid #00adef;}
+div.advs.advs_sgs > div{color:#00adef;}
+div.advs.advs_sgs > input{border:1px solid #00adef;}
+div.advs.advs_protos > div{color:#00adef;}
+div.advs.advs_protos > input{border:1px solid #00adef;}
+div.advs.advs_aetypes > div{color:#00adef;}
+div.advs.advs_aetypes > input{border:1px solid #00adef;}
+div.advs.advs_authors > div{color:#00adef;}
+div.advs.advs_authors > input{border:1px solid #00adef;}
+
+a.resolve_ref{color:#00adef;border-bottom:1px solid #00adef;}
+#ctxpanel_plots li.ss_z{background:#00adef;}
+#history > ul > li > a{color:#555;border-bottom:1px solid #555;}
+div.examples > ul > li > a{color:#555;border-bottom:1px solid #555;}
+
+.new_rfn_facet.fct_elements{background:#fff;}
+.new_rfn_facet.fct_lattices{background:#fff;}
+.fct_lattices, .fct_sgs, .fct_protos{background:#00adef;}
+.fct_elements, .fct_formulae, .fct_aeatoms, .fct_aetypes{background:#002f6c;color:#fff;}
+
+#sim_col > ul > li:hover, #sim_col > ul > li.selected{background:#00adef;}
+#own_phase a span, #sim_legend a span{color:#00adef;border-bottom:1px solid #00adef;font-size:1.05em;line-height:1.4em}
+#userbox span.symicon{color:#00adef;padding:0 4px;}
+#hy_scalars span{color:#002f6c;border-bottom:1px dotted #002f6c;}
+
+#selling_gui{background:url(/editions/asm/asm_mpds.png) 0 18px no-repeat;background-size:33%;}
+div.product_types ul li span.plus{color:#0f6;}
+#ml_data a{text-decoration:none;color:#00adef;border-bottom:1px solid #00adef;}
+
+#tooltip{background:#f6f6f6;}
+#tooltip > div:after{border-bottom-color:#f6f6f6;}
+#fdwidget_yes{color:#002f6c;border:1px solid #002f6c;}
+#fdwidget_no{color:#E36868;border:1px solid #E36868;}
+
+#preloader > div.rect1{background:#00adef;}
+#preloader > div.rect4{background:#002f6c;}
+#preloader > div.rect5{background:#00adef;}

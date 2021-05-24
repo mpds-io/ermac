@@ -1,0 +1,5 @@
+User-agent: *
+Disallow:
+Sitemap: https://mpds.io/sitemap/sitemap1.txt
+Sitemap: https://mpds.io/sitemap/sitemap2.txt
+Sitemap: https://mpds.io/sitemap/sitemap3.txt
