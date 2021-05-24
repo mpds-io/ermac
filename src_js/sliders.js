@@ -1,6 +1,8 @@
 
 "use strict";
 
+var wmgui = window.wmgui || {};
+
 function create_floating_slider(prop_name, prop_id, units, p_min, p_max, p_step, p_start, p_end){ // FIXME compatibilize with *wmgui.numerics*
 
     if ($('#slider_' + prop_id).length){

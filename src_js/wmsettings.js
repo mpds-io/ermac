@@ -3,11 +3,12 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.5
+ * Version: 0.6.7
  */
 "use strict";
 
-var wmgui = {};
+var wmgui = window.wmgui || {};
+
 wmgui.view_mode = 1;
 wmgui.search_type = 0; // 0 = entries, 1 = phases, or 2 = articles
 wmgui.thumbed_display = false;
@@ -48,7 +49,8 @@ wmgui.fetch_page_size = 850;
 wmgui.notify_counter = null;
 wmgui.cliff_counter = null;
 wmgui.sid = null;
-wmgui.prod = (window.location.host.indexOf('localhost')==-1);
+wmgui.prod = true; // (window.location.host.indexOf('localhost')==-1);
+
 wmgui.cliffhangers = [
     "binary compounds with negative thermal expansion",
     "band gap of hexagonal ZnO",
@@ -72,20 +74,6 @@ wmgui.cliffhangers = [
     "magnetic properties of binary compounds",
     "radioactive binary compounds",
     "binary frank-kasper type"
-];
-wmgui.collateral_links = [ // [link_href, link_rel_attr, link_value, _blank]
-    ['#', 'my', 'search my publications'],
-    ['#', 'adv', 'start advanced search'],
-    ['#polyhedra', false, 'search polyhedra'],
-    ['#hierarchy', false, 'search physical properties'],
-    ['/labs/mpds-ml-labs/design.html', false, 'design new material'],
-    ['/labs/mpds-ml-labs/props.html', false, 'predict properties for crystal'],
-    ['#', 'idea', 'get inspiration'],
-    ['#', 'sod', 'show structure of the day'],
-    ['/asm_oauth.html', false, 'connect ASM profile', true],
-    ['/github_oauth.html', false, 'connect GitHub profile', true],
-    ['/orcid_oauth.html', false, 'connect ORCID profile', true],
-    ['/linkedin_oauth.html', false, 'connect LinkedIn profile', true]
 ];
 wmgui.welcomes = [
     "The <b>distinct phases</b> is the central concept at the MPDS. Thanks to that, the crystal structures are linked to the phase diagrams and physical properties. Any distinct phase is uniquely determined by the chemical formula, space group, and Pearson symbol <i>e.g.</i> <a href='/#phase/CuAl2/140/tI12'>CuAl2 140 tI12</a>.",
@@ -135,6 +123,7 @@ wmgui.mob_motto = [
 
 wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
+wmgui.static_host =       'https://mpds.io';
 
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';
 wmgui.logout_endpoint =   wmgui.api_host + '/users/logout';
@@ -157,11 +146,11 @@ wmgui.pdist_endpoint =    wmgui.api_host + '/visavis/pdistribs';
 
 wmgui.dd_addr_tpl =       wmgui.api_host + '/download';
 
-wmgui.v_player_addr =     '/player/player.html#' + wmgui.api_host + '/download/s?fmt=cif&q=';
+wmgui.v_player_addr =     wmgui.static_host + '/player/player.html#' + wmgui.api_host + '/download/s?fmt=cif&q=';
 wmgui.v_pd_addr =         '/pd_stub.html#' + wmgui.api_host + '/download/c?fmt=png&q=';
 wmgui.v_pd_addr_anon =    '/visavis/?280420#' + wmgui.api_host + '/download/c?fmt=json&q=';
 wmgui.v_sd_addr =         '/visavis/?280420#' + wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_ab_vis_addr =     '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.client_data_addr =  '/wmdata.json?040521';
 
 wmgui.elemental_names = {
@@ -176,6 +165,21 @@ wmgui.elemental_names = {
     "tmelt": "melting temperature",
     "eneg": "electronegativity"
 };
+
+wmgui.collateral_links = [ // [link_href, link_rel_attr, link_value, _blank]
+    ['#', 'my', 'search my publications'],
+    ['#', 'adv', 'start advanced search'],
+    ['#polyhedra', false, 'search polyhedra'],
+    ['#hierarchy', false, 'search physical properties'],
+    [wmgui.static_host + '/labs/mpds-ml-labs/design.html', false, 'design new material', true],
+    [wmgui.static_host + '/labs/mpds-ml-labs/props.html', false, 'predict properties for crystal', true],
+    ['#', 'idea', 'get inspiration'],
+    ['#', 'sod', 'show structure of the day'],
+    ['/asm_oauth.html', false, 'connect ASM profile', true],
+    ['/github_oauth.html', false, 'connect GitHub profile', true],
+    ['/orcid_oauth.html', false, 'connect ORCID profile', true],
+    ['/linkedin_oauth.html', false, 'connect LinkedIn profile', true]
+];
 
 wmgui.aets = {
 'single atom 1-vertex': [0, 83],

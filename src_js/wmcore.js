@@ -3,15 +3,11 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.6
+ * Version: 0.6.7
  */
 "use strict";
 
-// Utilities:
-
-function isNumeric(n){
-    return !isNaN(parseFloat(n)) && isFinite(n);
-}
+// Extending base types with the utilities:
 
 String.prototype.matchAll = function(regexp){
     var matches = [];
@@ -51,11 +47,11 @@ Array.prototype.extend = function(other_array){
     other_array.forEach(function(v){ this.push(v) }, this);
 }
 
-// Core:
+// Main functionality:
 
 var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
     /*
-     * Definitions:
+     * Definitions
      */
     var stop_words = ["a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could", "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during", "each", "few", "for", "from", "further", "had", "hadn't", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "he's", "her", "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't", "it", "it's", "its", "itself", "let's", "me", "more", "most", "mustn't", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "u", "under", "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's", "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"]; /* exact */
 
@@ -75,7 +71,7 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
     var lat_i2p = {1:'cubic', 2:'hexagonal', 3:'trigonal', 4:'tetragonal', 5:'orthorhombic', 6:'monoclinic', 7:'triclinic'}
 
     var most_frequent_els = ['O', 'Si', 'Al', 'Fe', 'Ca', 'Na', 'Mg', 'K', 'Ti',    'H', 'Cl', 'S', 'Br', 'C'];
-    var probable_els = periodic_elements_cased.slice(0, 55);
+    var probable_els = periodic_elements_cased.slice(0, 55); // just less probable than *most_frequent_els*
     probable_els.splice(53, 1); // Xe
     probable_els.splice(42, 1); // Tc
     probable_els.splice(35, 1); // Kr
@@ -95,13 +91,17 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
 
     var most_frequent_anonymous = ['AB','AB2','ABC3','ABC','ABC2','ABCD3','AB3','AB2C4','AB2C2','ABC4','ABC2D6','ABCD4','A2B3','ABC2D4','ABCD','ABCD2','AB2C3','AB2C6','AB2C5','AB2C3D7','A3B4','A3B5','ABC2D2','A2B2C7','AB3C5','ABC2D5','ABC2D7','AB5','AB3C6','AB3C4','ABC5','ABC2D8','AB3C3','AB4','AB6','AB2C2D7','AB4C12','A2B17','AB3C4D12','ABCD5','ABCD6','A2B3C4','ABC3D7','A2B3C5','AB2C10','A2B2C5','AB2C2D6','AB2C3D8','AB2C8','ABC2D3','A2B5','AB2C3D6','AB4C8','ABC6','AB2C2D8','AB6C6','AB3C7','A4B5'];
 
-    // FIXME? S-numerics:
+    // FIXME? this concerns MPDS S-numerics:
     if (props_fgrs) props_fgrs.extend(['c--a', 'a--b', 'b--c', 'volume', 'density', 'alat', 'blat', 'clat']);
     if (props_ref) props_ref.extend(  ['c--a', 'a--b', 'b--c', 'volume', 'density', 'alat', 'blat', 'clat']);
 
     /*
-     * Utilities:
+     * Methods
      */
+    function is_numeric(n){
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
     function get_random_term(sequence){
         return sequence[ Math.floor(Math.random() * sequence.length) ];
     }
@@ -212,7 +212,11 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
         return unescape(input).replace(/^\(|\)$/g, ""); //.replaceAll("\\[", "").replaceAll("\\]", "");
     }
 
+    /*
+     * User input smart processing
+     */
     function is_like_chem_formula(chk){ // brute-force similarity check
+        //console.log('Checking formula');
         var len = chk.length,
             checks;
 
@@ -232,22 +236,25 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
             checks = [[chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1)], [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 2)], [chk.substr(0, 2), chk.substr(2, 2), chk.substr(4, 1)], [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 2) ], [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 1) ], [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 1)], [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 2)]];
 
         } else { // 6-9
-            checks = [
-                [chk.substr(0, 2), chk.substr(2, 2), chk.substr(4, 2)],
-                [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 1), chk.substr(4, 2)],
-                [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 1), chk.substr(4, 1), chk.substr(5, 1)],
-                [chk.substr(0, 2), chk.substr(2, 2), chk.substr(4, 1), chk.substr(5, 1)],
-                [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 2), chk.substr(5, 1)],
-                [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 1), chk.substr(4, 2)],
-                [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 1), chk.substr(4, 1), chk.substr(5, 1)],
-                [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 2), chk.substr(5, 1)],
-                [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 2), chk.substr(4, 1), chk.substr(5, 1)],
-                [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 2), chk.substr(4, 2)],
-                [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1), chk.substr(3, 2), chk.substr(5, 1)],
-                //[chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1), chk.substr(3, 1), chk.substr(4, 1)], // too improbable to have 5 one-symbol elements
-                [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1), chk.substr(3, 1), chk.substr(4, 2)]
+            checks = [ // NB too improbable to have 5 one-symbol elements in row
+                [chk.substr(0, 2), chk.substr(2, 2), chk.substr(4, 2)],                                     // El-El-El
+                [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 1), chk.substr(4, 2)],                   // El-E-E-El
+                [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 1), chk.substr(4, 1), chk.substr(5, 1)], // El-E-E-E-E
+                [chk.substr(0, 2), chk.substr(2, 2), chk.substr(4, 1), chk.substr(5, 1)],                   // El-El-E-E
+                [chk.substr(0, 2), chk.substr(2, 2), chk.substr(4, 1), chk.substr(5, 2)],                   // El-El-E-El
+                [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 2), chk.substr(5, 1)],                   // El-E-El-E
+                [chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 2), chk.substr(5, 2)],                   // El-E-El-El
+                [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 1), chk.substr(4, 2)],                   // E-El-E-El
+                [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 1), chk.substr(4, 1), chk.substr(5, 1)], // E-El-E-E-E
+                [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 2), chk.substr(5, 1)],                   // E-El-El-E
+                [chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 2), chk.substr(5, 2)],                   // E-El-El-El
+                [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 2), chk.substr(4, 1), chk.substr(5, 1)], // E-E-El-E-E
+                [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 2), chk.substr(4, 2)],                   // E-E-El-El
+                [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1), chk.substr(3, 2), chk.substr(5, 1)], // E-E-E-El-E
+                [chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1), chk.substr(3, 1), chk.substr(4, 2)]  // E-E-E-E-El
             ];
         }
+        //console.log(checks);
 
         for (var i = 0; i < checks.length; i++){
             var signals = 0;
@@ -404,7 +411,7 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
     }*/
 
     /*
-     * Main algorithm:
+     * User input smart processing: main algorithm
      */
     function parse_string(inputs, do_test, expected_fcts){
 
@@ -429,7 +436,7 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
                 simple = false;
             input = input.trim();
 
-            if (input.indexOf('<') > -1 || input.indexOf('>') > -1 || input.indexOf('=') > -1 || isNumeric(input)){ // numeric searches
+            if (input.indexOf('<') > -1 || input.indexOf('>') > -1 || input.indexOf('=') > -1 || is_numeric(input)){ // numeric searches
                 if (input.indexOf('<') === 0 || input.indexOf('>') === 0 || input.indexOf('=') === 0){ // separated op sign
                     if (result.props){
                         if (!result.numeric) result.numeric = [];
@@ -441,7 +448,7 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
 
                     } else ignored.push(input);
 
-                } else if (isNumeric(input)){
+                } else if (is_numeric(input)){
                     if (result.props){
                         if (!result.numeric) result.numeric = [];
                         result.numeric.push([result.props, '=', parseFloat(input)]);
@@ -558,7 +565,7 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
         var sub = false,
             html_formula = '';
         for (var i = 0, len = string.length; i < len; i++){
-            if (isNumeric(string[i]) || string[i] == '.'){
+            if (is_numeric(string[i]) || string[i] == '.'){
                 if (!sub){
                     html_formula += '<sub>';
                     sub = true;
@@ -587,7 +594,7 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
         if (string.length == start) return [center, 'X'];
 
         var remainder = string.slice(start);
-        if (isNumeric(remainder.slice(0, 1)) && start == 2) return parse_ligand(string, 1);
+        if (is_numeric(remainder.slice(0, 1)) && start == 2) return parse_ligand(string, 1);
         return [center, remainder.charAt(0).toUpperCase() + remainder.slice(1)];
     }
 
@@ -615,6 +622,9 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
         return [parsed[0].charAt(0).toUpperCase() + parsed[0].slice(1), formula_to_tags(parsed[1])];
     }
 
+    /*
+     * Display processing results somewhere
+     */
     function get_interpretation(search, facet_names, num_database){
         if (!search) search = {};
 
@@ -660,11 +670,10 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
                     var repr = member[0],
                         units = '';
                     if (num_database[repr]){
-                        if (num_database[repr][1]) units = '&nbsp;' + num_database[repr][1]; // units
-                        if (num_database[repr][5]) repr = num_database[repr][5]; // origname
-
                         var decimals = num_database[repr][4] ? Math.abs(Math.log10(num_database[repr][4])) : Math.max(num_database[repr][2].count_decimals(), num_database[repr][3].count_decimals());
                         member[2] = Number(member[2]).toFixed(decimals);
+                        if (num_database[repr][1]) units = '&nbsp;' + num_database[repr][1]; // units
+                        if (num_database[repr][5]) repr = num_database[repr][5]; // origname
                     }
                     out += repr + ' ' + member[1] + ' ' + member[2] + units + '<br />';
                 });
@@ -709,7 +718,7 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
      * API:
      */
     return {
-        // funcs
+        // funcs:
         parse_string: (classes_fgrs && props_fgrs && props_ref) ? parse_string : function(){},
         parse_aeatoms: parse_aeatoms,
         termify_formulae: termify_formulae,
@@ -718,7 +727,7 @@ var WMCORE = function(classes_fgrs, props_fgrs, props_ref){
         get_interpretation: get_interpretation,
         get_random_term: get_random_term,
 
-        // consts
+        // consts:
         periodic_names: periodic_element_names,
         periodic_elements: periodic_elements_cased,
         lat_fgrs: lat_fgrs,

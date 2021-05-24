@@ -3,9 +3,11 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.5
+ * Version: 0.6.7
  */
 "use strict";
+
+var wmgui = window.wmgui || {};
 
 function url_redraw_react(){
     var anchors = window.location.hash.substr(1).split('/');
@@ -239,35 +241,6 @@ function url__interlinkage(arg){
     $('#search_field-selectized').val('');
     wmgui.multiselects['main'].clear();
     show_interpretation();
-}
-
-function url__products(arg){
-    $('#overlay').show();
-    window.scrollTo(0, 0);
-    $('#productbox').show();
-}
-
-function url__formal(arg){
-    var header = '',
-        addr = '';
-    if (arg == 'terms')
-        header = 'Website Terms and Conditions', addr = '/terms.json';
-    else if (arg == 'api')
-        header = 'MPDS API Terms and Conditions', addr = '/api.json';
-    else
-        header = 'Privacy Policy', addr = '/privacy.json';
-
-    show_preloader();
-    $.getJSON(addr, function(answer){
-        var html = '<h2>' + header + '</h2>';
-        $.each(answer, function(i, value){
-            html += '<strong>&sect;' + (i+1) + '. ' + value.header + '</strong><p>' + value.content + '</p>';
-        });
-        $('#formalbox_content').html(html);
-        $('#formalbox, #overlay').show();
-        window.scrollTo(0, 0);
-        hide_preloader();
-    });
 }
 
 function url__polyhedra(arg){

@@ -3,9 +3,11 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.5
+ * Version: 0.6.7
  */
 "use strict";
+
+var wmgui = window.wmgui || {};
 
 wmgui.notify = function(msg){
     var delay = 0;
@@ -457,6 +459,7 @@ function switch_view_mode(mode){
     if (mode == 1){
         stop_visavis();
         document.title = 'MPDS materials platform';
+        $('body').addClass('noscroll');
         $('#search_box').removeClass('fluid').css('background', 'none').css("width", "590px");
 
         $('div.side_cols').hide();
@@ -465,6 +468,7 @@ function switch_view_mode(mode){
 
         $('#search_holder').removeClass('prolonged').focus();
         $('#search_area').removeClass('prolonged');
+        $('#ermac_logo').removeClass('cornered');
 
     } else if (mode == 2){
         $('#landing_box, #intro_stats, #subnav, #legend').hide();
@@ -476,6 +480,7 @@ function switch_view_mode(mode){
 
         $('#right_col').show();
         $('#search_holder, #search_area').addClass('prolonged');
+        $('#ermac_logo').addClass('cornered');
     }
 }
 
@@ -607,11 +612,11 @@ function build_thumbs(json){
             if (dtype == 'P')
                 content = '<div>' + row[2] + '</div>';
             else if (dtype == 'S')
-                content = '<img alt="' + row[0] + '" src="/rd_thumbs/' + row[0].split('-')[0] + '.png" />'; // NB handle with NGINX
+                content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + '/rd_thumbs/' + row[0].split('-')[0] + '.png" />';
             else {
                 row[2] = row[2].split(';')[0];
                 row[2] = row[2].split(' ')[row[2].split(' ').length - 1]; // FIXME!
-                content = '<img alt="' + row[0] + '" src="/pd_thumbs/' + row[0].split('-')[0] + '.png" /><p>' + row[2] + '</p>'; // NB handle with NGINX
+                content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + '/pd_thumbs/' + row[0].split('-')[0] + '.png" /><p>' + row[2] + '</p>';
             }
             result_html += '<div class="gallery_item' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" id="e__' + row[0] + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><div class="gallery_img">' + content + '</div><div class="gallery_label">' + row[1] + biblio_html + '</div></div>';
         });
@@ -676,7 +681,7 @@ function request_refinement(query_obj, is_heavy){
             if (nested_skip) return true;
 
             if (found_obj.facet != was_facet){
-                if (was_facet && is_heavy) refine_html += '<li class="fct_' + was_facet + ' extd_refine"><a class="extd_refine" rel="' + was_facet + '" href="#">Show more</a></li>';
+                if (was_facet && is_heavy) refine_html += '<li class="fct_' + was_facet + ' extd_refine"><a class="extd_refine" rel="' + was_facet + '" href="#">Show more&nbsp;</a></li>';
                 refine_html += '<li class="new_rfn_facet fct_' + found_obj.facet + '">' + wmgui.facet_names[found_obj.facet] + '</li>';
                 was_facet = found_obj.facet;
             }
@@ -694,7 +699,7 @@ function request_refinement(query_obj, is_heavy){
             num_terms++;
         });
 
-        if (is_heavy) refine_html += '<li class="fct_' + was_facet + ' extd_refine"><a class="extd_refine" rel="' + was_facet + '" href="#">Show more</a></li>';
+        if (is_heavy) refine_html += '<li class="fct_' + was_facet + ' extd_refine"><a class="extd_refine" rel="' + was_facet + '" href="#">Show more&nbsp;</a></li>';
 
         if (num_terms == 0) display_examples('#examples', true, true);
         else {
@@ -745,7 +750,7 @@ function open_context(el, launch_ext){
 
         if (entype == 'Z' || entype == 'B') return;
 
-        $('#entryno').html('<a href="' + window.location.protocol + '//' + window.location.host + '#entry/' + orig_id + '">' + orig_id + '</a>');
+        $('#entryno').html('<a href="#entry/' + orig_id + '">' + orig_id + '</a>');
 
         $('#ctx_col').show();
         $('#visualize, div.spinoff_pane, li.d_icon').hide();
@@ -866,7 +871,7 @@ function open_sim_col(entry, entype, rank){
                 $('#sim_legend').addClass('apparent').text('No cross-links found');
 
             else if (entype == 'C' && rank == 3)
-                $('#sim_legend').addClass('apparent').html('<br /><a href="#entry/' + entry.split('-')[0] + '"><img alt="C-entry" src="/pd_thumbs/' + entry.split('-')[0] + '.png" /><br /><span>Full phase diagram</span></a>');
+                $('#sim_legend').addClass('apparent').html('<br /><a href="#entry/' + entry.split('-')[0] + '"><img alt="C-entry" src="' + wmgui.static_host + '/pd_thumbs/' + entry.split('-')[0] + '.png" /><br /><span>Full phase diagram</span></a>');
 
             else if (entype == 'C' && rank == 5)
                 $('#sim_legend').addClass('apparent').text('No links to other phases found');
@@ -879,7 +884,7 @@ function open_sim_col(entry, entype, rank){
         }
 
         if (data.out.own.length && !wmgui.search.phid)
-            $('#own_phase').html('<a href="/#phase_id/' + data.out.own[0][1] + '"><img alt="Phase" src="/rd_thumbs/' + data.out.own[0][0] + '.png" /><br /><span>Linked ' + (entype == 'S' ? 'distinct phase' : 'crystalline structure') + '</span></a>').show();
+            $('#own_phase').html('<a href="/#phase_id/' + data.out.own[0][1] + '"><img alt="Phase" src="' + wmgui.static_host + '/rd_thumbs/' + data.out.own[0][0] + '.png" /><br /><span>Linked ' + (entype == 'S' ? 'distinct phase' : 'crystalline structure') + '</span></a>').show();
 
     }).fail(function(xhr, textStatus, errorThrown){
         if (textStatus != 'abort'){
@@ -1006,36 +1011,6 @@ function get_visavis_url(request){
         return wmgui.gui_host + '/visavis/#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
 
     return wmgui.gui_host + '/visavis/#' + wmgui.vis_endpoint + '/' + wmgui.visavis_curtype + '?q=' + escape(JSON.stringify(request));
-}
-
-function draw_intro_stats(data){
-    var stats_html = '<ul id="intro_options"><li rev="intro_a" class="working">peer-reviewed</li><li rev="intro_b">machine learning</li><li rev="intro_c">ab initio modeling</li></ul>';
-
-    // peer-reviewed
-    stats_html += '<div id="intro_a" class="introtab">';
-    stats_html += '<div class="d"><div class="stat_icon"></div><span>' + commify_number(data.b) + '</span><div class=stat_txt>scientific publications</div></div>';
-    stats_html += '<div class="intro_rel a" rel="#search/phase%20diagrams"><div class="stat_icon"></div><span>' + commify_number(data.c0) + '</span><div class=stat_txt>phase diagrams</div></div>';
-    stats_html += '<div class="intro_rel b" rel="#search/crystal%20structure"><div class="stat_icon"></div><span>' + commify_number(data.s) + '</span><div class=stat_txt>crystalline structures</div></div>';
-    stats_html += '<div class="intro_rel c" rel="#hierarchy"><div class="stat_icon"></div><span>' + commify_number(data.p) + '</span><div class=stat_txt>property values</div></div>';
-
-    // machine-learning
-    stats_html += '</div><div id="intro_b" class="introtab" style="display:none;">';
-    stats_html += '<div class="intro_rel" rel="#search/machine%20learning%20thermodynamics"><div class="stat_icon mlsym">&mu;</div><span>' + commify_number(data.mla) + '</span><div class=stat_txt>thermodynamic properties</div></div>';
-    stats_html += '<div class="intro_rel" rel="#search/machine%20learning%20mechanical%20properties"><div class="stat_icon mlsym">B</div><span>' + commify_number(data.mlb) + '</span><div class=stat_txt>mechanical properties</div></div>';
-    stats_html += '<div class="intro_rel" rel="#search/machine%20learning%20electronic%20properties"><div class="stat_icon mlsym">&Omega;</div><span>' + commify_number(data.mlc) + '</span><div class=stat_txt>electronic properties</div></div>';
-    stats_html += '<div class="intro_rel" rel="#search/machine%20learning%20phase%20transitions"><div class="stat_icon mlsym">T</div><span>' + commify_number(data.mld) + '</span><div class=stat_txt>phase transitions</div></div>';
-    stats_html += '<div class="e">See the <a target="_blank" href="/materials-design">materials design</a> app and the <a target="_blank" href="/ml">properties prediction</a> app online.</div>';
-
-    // ab initio
-    stats_html += '</div><div id="intro_c" class="introtab" style="display:none;">'
-    stats_html += '<div class="intro_rel g" rel="#inquiry/classes=ab+initio+calculations&props=electron+properties"><div class="stat_icon ab_initio">&Psi;</div><span>37670</span><div class=stat_txt>electron<br />properties</div></div>';
-    stats_html += '<div class="intro_rel g" rel="#inquiry/classes=ab+initio+calculations&props=vibrational+spectra"><div class="stat_icon ab_initio">&xi;</div><span>7534</span><div class=stat_txt>phonon<br />spectra</div></div>';
-    stats_html += '<div class="intro_rel g" rel="#inquiry/classes=ab+initio+calculations&props=mechanical+properties"><div class="stat_icon ab_initio">B</div><span>30136</span><div class=stat_txt>elastic<br />properties</div></div>';
-    stats_html += '<div class="intro_rel g" rel="#inquiry/classes=ab+initio+calculations&props=thermodynamics"><div class="stat_icon ab_initio">&mu;</div><span>7534</span><div class=stat_txt>thermodynamic properties</div></div>';
-    stats_html += '<div class="e">See the <a target="_blank" href="/labs/dtypes-cmp/cmp.html">comparison</a> of the peer-reviewed, machine-learning, and <i>ab initio</i> data.</div>';
-
-    stats_html += '</div>';
-    $('#intro_stats').append(stats_html).show();
 }
 
 function describe_perms(perms){
@@ -1286,373 +1261,6 @@ function render_all_polyhedra(){
     $('#all_polyhedra_content').html(aetypes_html);
 }
 
-function satisfy_requirements(){
-
-    $('#notifybox, #preloader').hide();
-    //document.title = document.body.clientWidth + ' px';
-
-    local_user_login();
-
-    // building history box
-    var history_html = '';
-    $.each(JSON.parse(window.localStorage.getItem('wm_search_log_v4') || '[]'), function(n, past){
-        wmgui.tooltip_var++;
-        if (n > 7) return false;
-        var title = [];
-        for (var prop in past){ title.push(past[prop]) }
-        title = title.join(" ");
-        var inquiry = false;
-        $.each(wmgui.inquiries, function(m, i){ if (past[i]){   inquiry = true; return false;   } });
-
-        if (inquiry) history_html += '<li><a href="#inquiry/' + $.param(past) + '">' + title + '</a></li>';
-        else         history_html += '<li><a href="#search/' + escape(title) + '">' + title + '</a></li>';
-    });
-    $('#history ul').append(history_html);
-
-    $.each(JSON.parse(window.localStorage.getItem('bid_history') || '[]'), function(n, i){
-        wmgui.bid_history.push(parseInt(i));
-    });
-
-    // set client-side data features
-    $.getJSON(wmgui.client_data_addr, function(answer){
-
-        WMCORE = WMCORE(answer.classes, answer.props, answer.props_ref);
-
-        draw_intro_stats(answer.stats);
-
-        var i = 0, len = answer.props_ref.length;
-        for (i; i < len; i++){
-            if (!answer.props_ref[i]) answer.props_ref[i] = answer.props[i];
-        }
-
-        answer.classes.extend(answer.classes_ite);
-
-        // local search algo
-        // #1
-        $.each(['props', 'lattices', 'sgs', 'protos', 'codens', 'geos', 'orgs'], function(idx, fct){
-            wmgui.create_autocomplete({
-                custom_type: fct,
-                selector: 'advs_fct_' + fct, minChars: 1, cache: 1,
-                source: function(term, fct_type, suggest){
-                    // other names are used, define them first here
-                    var fct_src = fct_type,
-                        fct_chk = fct_type,
-                        anypos = false;
-
-                    if (fct_type !== 'lattices'){
-                        anypos = true;
-                        if (fct_type == 'props') fct_src = 'props_ref';
-                        else if (fct_type == 'codens'){
-                            fct_src = 'jfull';
-                            fct_chk = 'jfull';
-                        }
-                    }
-
-                    var suggestions = [],
-                        cnt = 0,
-                        checks = [],
-                        i = 0,
-                        len = answer[fct_chk].length;
-
-                    term = term.toLowerCase();
-                    for (i; i < len; i++){
-                        if (answer[fct_chk][i].toLowerCase().startswith(term)){
-                            suggestions.push(answer[fct_src][i]);
-                            if (anypos) checks.push(answer[fct_src][i]);
-                            cnt++;
-                            if (cnt > 12) break;
-                        }
-                    }
-                    if (anypos && suggestions.length < 6){
-                        for (i = 0; i < len; i++){
-                            if (answer[fct_chk][i].toLowerCase().indexOf(term) != -1 && checks.indexOf(answer[fct_src][i]) == -1){
-                                suggestions.push(answer[fct_src][i]);
-                                cnt++;
-                                if (cnt > 12) break;
-                            }
-                        }
-                    }
-                    suggest(suggestions);
-                },
-                renderItem: function (item, search){
-                    return '<div class="autocomplete-suggestion" data-val="' + item + '">' + item + '</div>';
-                }
-            });
-        });
-
-        // local search algo
-        // #2
-        $.each(wmgui.multi_facets, function(idx, fct){
-            wmgui.multiselects[fct] = $('#advs_fct_' + fct).selectize({
-                plugins: ['remove_button', 'preserve_on_blur'],
-                valueField: 'id',
-                labelField: 'label',
-                searchField: 'label',
-                create: false,
-                highlight: false,
-                maxItems: 5,
-                closeAfterSelect: true,
-                diacritics: false,
-                options: [],
-                onChange: function(value){
-                    if (fct == 'aetypes'){
-                        var term = (wmgui.multiselects['aetypes'].read()['aetypes'] || "").split(', ').pop();
-                        show_aetmap(term);
-                        if ($('#aet_limit').is(':checked')) $('#aet_limit').trigger('click');
-                    }
-                },
-                onItemRemove: function(value){
-                    var input = this;
-                    setTimeout(function(){
-                        input.close();
-                    }, 750);
-                },
-                load: function(term, callback){
-                    this.clearOptions();
-                    if (!term.length) return callback();
-
-                    var suggestions = [],
-                        cnt = 0,
-                        checks = [],
-                        i = 0,
-                        len = answer[fct].length;
-
-                    term = term.toLowerCase();
-                    for (i; i < len; i++){
-                        if (answer[fct][i].toLowerCase().startswith(term)){
-                            suggestions.push({'facet': fct, 'label': answer[fct][i], 'id': fct + i});
-                            checks.push(answer[fct][i]);
-                            cnt++;
-                            if (cnt > 12) break;
-                        }
-                    }
-                    if (suggestions.length < 6){
-                        for (i = 0; i < len; i++){
-                            if (answer[fct][i].toLowerCase().indexOf(term) != -1 && checks.indexOf(answer[fct][i]) == -1){
-                                suggestions.push({'facet': fct, 'label': answer[fct][i], 'id': fct + i});
-                                cnt++;
-                                if (cnt > 12) break;
-                            }
-                        }
-                    }
-                    callback(suggestions);
-                },
-                score: function(){ return function(){ return 1 } }, // no client scoring
-                render: {
-                    option: function(item, escape){
-                        return '<div class="fct_' + item.facet + '">' + item.label + '</div>';
-                    },
-                    item: function(item, escape){
-                        return '<div class="fct_' + item.facet + '" data-facet="' + item.facet + '" data-term="' + item.label + '">' + item.label + '</div>';
-                    }
-                }
-            })[0].selectize;
-
-            wmgui.multiselects[fct].read = function(){
-                return wmgui._selectize_read(fct);
-            }
-            wmgui.multiselects[fct].write = function(search_obj){
-                wmgui._selectize_write(wmgui.multiselects[fct], fct, search_obj);
-            }
-            wmgui.multiselects[fct].display = function(facet, term){
-                wmgui._selectize_display(wmgui.multiselects[fct], facet, term);
-            }
-        });
-
-        wmgui.journal_converter.j2c = function(x){
-            var fi = answer.jfull.indexOf(x);
-            if (fi == -1){
-                wmgui.notify("Unknown journal: " + x);
-                return x;
-            }
-            return answer.codens[fi];
-        }
-        wmgui.journal_converter.c2j = function(x){
-            var fi = answer.codens.indexOf(x);
-            if (fi == -1){
-                wmgui.notify("Unknown CODEN: " + x);
-                return x;
-            }
-            return answer.jfull[fi];
-        }
-
-        var html_scalars = '',
-            html_complex = '',
-            html_textual = '',
-            counter = 0;
-
-        $.each(answer.hy_scalars, function(term, content){
-            term = parseInt(term);
-            //console.log(term);
-            term = answer.props_ref[term] ? answer.props_ref[term] : answer.props[term];
-            //console.log(term);
-            counter += 1;
-            html_scalars += '<li><a class="dynprop" data-val="' + term + '" href="#inquiry/props=' + term.replace(/ /g, '+') + '">' + term + '</a> (<span class="hy' + counter + '">expand</span>)<ul style="display:none;">';
-            $.each(content, function(sub_term, sub_content){
-                sub_term = parseInt(sub_term);
-                //console.log(sub_term);
-                sub_term = answer.props_ref[sub_term] ? answer.props_ref[sub_term] : answer.props[sub_term];
-                //console.log('----' + sub_term);
-                html_scalars += '<li><a class="dynprop" data-val="' + sub_term + '" href="#inquiry/props=' + sub_term.replace(/ /g, '+') + '">' + sub_term + '</a><ul style="display:none;">';
-                $.each(sub_content, function(n, item){
-                    item = parseInt(item);
-                    var prop = answer.props_ref[item] ? answer.props_ref[item] : answer.props[item],
-                        specs = answer.numerics[item]; // NB object vs. array
-                    //console.log('---------' + item + ' ' + prop);
-                    html_scalars += '<li><a class="dynprop" data-val="' + prop + '" href="#inquiry/props=' + prop.replace(/ /g, '+') + '">' + prop + '</a>';
-                    if (specs){
-                        html_scalars += '<strong class="numeric" title="Numeric search" rel="' + prop + '">' + (specs[0] || '') + ' &nbsp;[' + specs[1] + ' &mdash; ' + specs[2] + ']&nbsp;&#x1F50D;</strong>';
-                        wmgui.numerics[prop] = [item, specs[0], specs[1], specs[2], specs[3]]; // prop_name: [client_prop_id, units, min, max, ?step, ?origname]
-                    }
-                    html_scalars += '</li>';
-                });
-                html_scalars += '</ul></li>';
-            });
-            html_scalars += '</ul></li>';
-        });
-        $('#hy_scalars > ul').append(html_scalars);
-
-        $.each(wmgui.hy_complex, function(n, item){
-            html_complex += '<li><a class="dynprop" data-val="' + item + '" href="#search/' + item + '">' + item + '</a></li>';
-        });
-        $('#hy_complex > ul').append(html_complex);
-
-        $.each(answer.hy_textual, function(term, content){
-            term = parseInt(term);
-            term = answer.props_ref[term] ? answer.props_ref[term] : answer.props[term];
-            counter += 1;
-            html_textual += '<li><a class="dynprop" data-val="' + term + '" href="#inquiry/props=' + term.replace(/ /g, '+') + '">' + term + '</a> (<span class="hy' + counter + '">expand</span>)<ul style="display:none;">';
-            $.each(content, function(sub_term, sub_content){
-                sub_term = parseInt(sub_term);
-                sub_term = answer.props_ref[sub_term] ? answer.props_ref[sub_term] : answer.props[sub_term];
-                html_textual += '<li><a class="dynprop" data-val="' + sub_term + '" href="#inquiry/props=' + sub_term.replace(/ /g, '+') + '">' + sub_term + '</a><ul style="display:none;">';
-                $.each(sub_content, function(n, item){
-                    item = parseInt(item);
-                    item = answer.props_ref[item] ? answer.props_ref[item] : answer.props[item];
-                    html_textual += '<li><a class="dynprop" data-val="' + item + '" href="#inquiry/props=' + item.replace(/ /g, '+') + '">' + item + '</a></li>';
-                });
-                html_textual += '</ul></li>';
-            });
-            html_textual += '</ul></li>';
-        });
-        $('#hy_textual > ul').append(html_textual);
-
-        wmgui.create_autocomplete({
-            selector: 'hy_suggest', minChars: 1, cache: 1,
-            source: function(term, fct_type, suggest){
-                var fct_src = 'props_ref',
-                    term = term.toLowerCase(),
-                    suggestions = [],
-                    cnt = 0,
-                    checks = [],
-                    i = 0,
-                    len = answer[fct_type].length;
-                for (i; i < len; i++){
-                    if (answer[fct_type][i].startswith(term)){
-                        suggestions.push(answer[fct_src][i]);
-                        checks.push(answer[fct_src][i]);
-                        cnt++;
-                        if (cnt > 18) break;
-                    }
-                }
-                if (suggestions.length < 6){
-                    for (i = 0; i < len; i++){
-                        if (answer[fct_type][i].indexOf(term) != -1 && checks.indexOf(answer[fct_src][i]) == -1){
-                            suggestions.push(answer[fct_src][i]);
-                            cnt++;
-                            if (cnt > 18) break;
-                        }
-                    }
-                }
-                suggest(suggestions);
-            },
-            renderItem: function (item, search){
-                return '<div class="autocomplete-suggestion" style="' + (wmgui.numerics[item] ? 'color:#c00' : '') + '" data-val="' + item + '">' + item + '</div>';
-            },
-            onSelect: function (e, term, item){
-                var numerics = wmgui.numerics[term];
-
-                if ($('#numericbox').is(':visible') && numerics)
-                    create_floating_slider(term, numerics[0], numerics[1], numerics[2], numerics[3], numerics[4]);
-                else
-                    window.location.hash = wmgui.aug_search_cmd("props", term);
-
-                $('#hy_suggest').val('');
-            }
-        });
-
-        rotate_interesting();
-        setInterval(rotate_interesting, 2000);
-
-        $('#motto > span').html(wmgui.desktop_motto[ Math.floor(Math.random() * wmgui.desktop_motto.length) ]);
-        setTimeout(rotate_motto, 2500);
-
-        window.location.hash ? url_redraw_react() : window.location.replace('#start');
-    });
-
-    // set server-side data features
-    wmgui.multiselects['main'] = $('#search_field').selectize({
-        plugins: ['remove_button', 'preserve_on_blur'],
-        valueField: 'id',
-        labelField: 'label',
-        searchField: 'label',
-        create: false,
-        highlight: false,
-        maxItems: 10,
-        closeAfterSelect: true,
-        diacritics: false,
-        options: [],
-        onInitialize: function(){
-            $('#search_field-selectized').focus();
-        },
-        onItemRemove: function(value){
-            var check = wmgui.multiselects['main'].read(),
-                input = this;
-            if (!check.numeric) destroy_numericbox();
-            setTimeout(function(){
-                input.close();
-            }, 750);
-        },
-        load: function(query, callback){
-            this.clearOptions();
-            if (!query.length) return callback();
-            $.ajax({
-                url: wmgui.auto_endpoint + '?q=' + encodeURIComponent(query),
-                type: 'GET',
-                error: callback,
-                success: function(res){
-                    if (!res.length){
-                        return;
-                    }
-                    callback(res);
-                }
-            });
-        },
-        score: function(){ return function(){ return 1 } }, // no client scoring
-        render: {
-            option: function(item, escape){
-                return '<div class="fct_' + item.facet + '">' + item.label + '</div>';
-            },
-            item: function(item, escape){
-                return '<div class="fct_' + item.facet + '" data-facet="' + item.facet + '" data-term="' + item.label + '">' + item.label + '</div>';
-            }
-        }
-    })[0].selectize;
-
-    wmgui.multiselects['main'].read = function(){
-        return wmgui._selectize_read('main');
-    }
-    wmgui.multiselects['main'].write = function(search_obj){
-        wmgui._selectize_write(wmgui.multiselects['main'], 'main', search_obj);
-    }
-    wmgui.multiselects['main'].display = function(facet, term){
-        wmgui._selectize_display(wmgui.multiselects['main'], facet, term);
-    }
-
-    //create_floating_slider('density', 42, 'Mg/m<sup>3</sup>', 10, 900, 10);
-    // EOF satisfy_requirements
-}
-
 function rotate_motto(){
     $('#motto > span').animate({ opacity: 'hide' }, 3500, function(){
         $('#motto > span').html(wmgui.desktop_motto[ Math.floor(Math.random() * wmgui.desktop_motto.length) ]).animate({ opacity: 'show' }, 2500, function(){
@@ -1682,11 +1290,3 @@ function assign_edition(){
     // for any unknown domain
     if (!wmgui.edition) run_edition(0);
 }
-
-// now, fire in the holl!
-
-assign_edition();
-
-satisfy_requirements();
-
-register_events();

@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.2
+ * Version: 0.6.7
  */
 "use strict";
 
@@ -51,10 +51,6 @@ Number.prototype.count_decimals = function(){
     return this.toString().split(".")[1].length || 0;
 }
 
-function commify_number(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
 function show_preloader(){ $('#preloader').show(); }
 
 function hide_preloader(){ $('#preloader').hide(); }
@@ -93,19 +89,8 @@ if (!ie_passing_check){
     throw new Error("Unsupported user agent");
 }
 
-/* function shuffle(a){
-    var j, x, i;
-    for (i = a.length - 1; i > 0; i--){
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
-    }
-    return a;
-} */
-
 function loadCSS(href, before, media, attributes){
-    // Arguments explained:
+    // Arguments:
     // `href` [REQUIRED] is the URL for your CSS file.
     // `before` [OPTIONAL] is the element the script should use as a reference for injecting our stylesheet <link> before
     // By default, loadCSS attempts to inject the link after the last stylesheet or script in the DOM. However, you might desire a more specific location in your document.
@@ -179,13 +164,3 @@ function loadCSS(href, before, media, attributes){
     onloadcssdefined( loadCB );
     return ss;
 }
-
-/* function get_offset(el){
-    var _x = 0, _y = 0;
-    while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
-        _x += el.offsetLeft - el.scrollLeft;
-        _y += el.offsetTop - el.scrollTop;
-        el = el.offsetParent;
-    }
-    return { top: _y, left: _x };
-} */

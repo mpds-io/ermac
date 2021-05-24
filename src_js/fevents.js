@@ -3,9 +3,11 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.5
+ * Version: 0.6.7
  */
 "use strict";
+
+var wmgui = window.wmgui || {};
 
 function register_events(){
 
@@ -567,7 +569,7 @@ function register_events(){
         var that = $(this),
             desttab = that.attr('rev');
         if (desttab == 'hy_vis'){
-            window.open('/labs/ontology');
+            window.open(wmgui.static_host + '/labs/ontology');
             return;
         }
         that.addClass('working').siblings().removeClass('working');
@@ -716,7 +718,7 @@ function register_events(){
             });
 
         } else if (desttab == 'usr_tab_ctrl'){
-            window.location.href = (wmgui.edition === 0 ? '/ctrl' : '/labs/custom-datasets') + '?' + Math.floor(Math.random() * 1000);
+            window.location.href = wmgui.static_host + (wmgui.edition === 0 ? '/ctrl' : '/labs/custom-datasets') + '?' + Math.floor(Math.random() * 1000);
 
         } else if (desttab == 'usr_tab_account'){
             $('#hintsbox_msg').html(WMCORE.get_random_term(wmgui.welcomes));
