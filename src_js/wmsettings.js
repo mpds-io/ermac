@@ -148,12 +148,12 @@ wmgui.pdist_endpoint =    wmgui.api_host + '/visavis/pdistribs';
 wmgui.dd_addr_tpl =       wmgui.api_host + '/download';
 
 wmgui.v_player_addr =     wmgui.static_host + '/player/player.html#' + wmgui.api_host + '/download/s?fmt=cif&q=';
-wmgui.v_pd_addr =         '/pd_stub.html#' + wmgui.api_host + '/download/c?fmt=png&q=';
-wmgui.v_pd_addr_anon =    '/visavis/?280420#' + wmgui.api_host + '/download/c?fmt=json&q=';
-wmgui.v_sd_addr =         '/visavis/?280420#' + wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' + wmgui.api_host + '/download/c?fmt=png&q=';
+wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/c?fmt=json&q=';
+wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.client_data_addr =  '/wmdata.json?040521';
-wmgui.aetmap_addr =       'https://mpds.io/aets.jpg';
+wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?040521';
+wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
 // NB all URLs should follow above
 
 wmgui.elemental_names = {

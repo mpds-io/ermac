@@ -884,7 +884,7 @@ function open_sim_col(entry, entype, rank){
         }
 
         if (data.out.own.length && !wmgui.search.phid)
-            $('#own_phase').html('<a href="/#phase_id/' + data.out.own[0][1] + '"><img alt="Phase" src="' + wmgui.static_host + '/rd_thumbs/' + data.out.own[0][0] + '.png" /><br /><span>Linked ' + (entype == 'S' ? 'distinct phase' : 'crystalline structure') + '</span></a>').show();
+            $('#own_phase').html('<a href="#phase_id/' + data.out.own[0][1] + '"><img alt="Phase" src="' + wmgui.static_host + '/rd_thumbs/' + data.out.own[0][0] + '.png" /><br /><span>Linked ' + (entype == 'S' ? 'distinct phase' : 'crystalline structure') + '</span></a>').show();
 
     }).fail(function(xhr, textStatus, errorThrown){
         if (textStatus != 'abort'){

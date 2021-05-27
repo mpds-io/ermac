@@ -565,7 +565,7 @@ function register_html(){
     <div id="close_numericbox" class="cross" style="margin:12px 8px 8px 0;"></div>
     <ul></ul>
     <div id="numericbox_triggers" style="margin-top:10px;">
-        <a href="/#hierarchy" title="Add new property range" style="display:inline-block;width:20px;height:20px;font-size:35px;line-height:20px;color:#ccc;text-decoration:none;margin-left:150px;border:2px solid #ccc;border-radius:15px;">+</a>
+        <a href="#hierarchy" title="Add new property range" style="display:inline-block;width:20px;height:20px;font-size:35px;line-height:20px;color:#ccc;text-decoration:none;margin-left:150px;border:2px solid #ccc;border-radius:15px;">+</a>
         <div id="numericbox_do_trigger" class="wmbutton" title="Search" style="margin-left:325px;">&#x23ce;</div>
         <div id="numericbox_drop_trigger" class="wmbutton" title="Clear all fields">&#x232b;</div>
     </div>

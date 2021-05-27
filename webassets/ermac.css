@@ -280,6 +280,7 @@ li.extd_refine, li.collapse_refine{padding-right:6px;}
 #sim_legend{text-align:center;margin:25px auto 8px;width:90%;font-size:1.15em;line-height:1.4em;color:#333;}
 #sim_trigger{display:block;width:100px;margin:30px auto 0;}
 #pd_legend{display:none;margin-top:50px;border-top:1px solid #888;}
+#pd_legend > ul{margin:0;padding:0;}
 #pd_legend > ul > li{list-style:none;line-height:2.2em;}
 #own_phase{margin-top:4vmin;text-align:center;}
 #own_phase a, #sim_legend a{text-decoration:none;}

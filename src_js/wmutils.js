@@ -80,7 +80,7 @@ function detect_IE(){
 var ie_passing_check = (function(){
     var version = detect_IE();
     if (!version) return true;
-    if (version < 11) return false;
+    if (version < 12) return false;
     return true;
 }());
 
