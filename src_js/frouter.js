@@ -23,7 +23,7 @@ function url_redraw_react(){
 
 function url__start(arg){
     switch_view_mode(1);
-    if (wmgui.tooltip_var < 2) setTimeout(function(){ show_tooltip(wmgui.tooltips['search']) }, 4000);
+    if (wmgui.tooltip_var < 2) setTimeout(function(){ show_tooltip(wmgui.tooltips['advsearch']) }, 5000);
 }
 
 function url__search(arg, no_retrieve){

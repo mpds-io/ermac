@@ -1124,7 +1124,7 @@ function register_events(){
 
     $('#tips_trigger').click(function(){
         wmgui.tooltip_var = 0;
-        show_tooltip(wmgui.tooltips['search']);
+        show_tooltip(wmgui.tooltips['advsearch']);
         return false;
     });
 

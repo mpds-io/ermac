@@ -292,7 +292,6 @@ wmgui.editions = {
 };
 
 wmgui.tooltips = {
-    'search': {el: 'search_holder', oleft: -310, otop: 60, view_mode: 1, text: 'Search here by <i>formula</i>, <i>elements</i>, <i>physical property</i>, <i>classes</i>, <i>lattice</i>, and <i>polyhedra</i>.<br /><span rel="advsearch">OK, next</span>'},
     'advsearch': {el: 'advsearch_init_trigger', oleft: 90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="hierarchy">OK, next</span>'},
     'hierarchy': {el: 'hierarchy_trigger', oleft: 90, otop: 60, view_mode: 1, text: 'Use the <i>&mu;</i> button to select physical properties from the curated hierarchy.<br /><span rel="userbox">OK, next</span>'},
     'userbox': {el: 'userbox', oleft: 100, otop: 65, view_mode: 1, text: 'Access your account here and enjoy the full data access.<br /><span rel="close_tooltip">OK</span>'},
