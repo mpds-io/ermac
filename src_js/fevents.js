@@ -1162,13 +1162,13 @@ function register_events(){
     });
 
     // mobile version switching
-    $('#mobilebox span').click(function(){
+    /*$('#mobilebox span').click(function(){
         window.location.href = '/m/' + window.location.hash;
     });
     $('#mobilebox a').click(function(){
         $('#mobilebox').remove();
         return false;
-    });
+    });*/
 
     // Keys press
     $(document).keydown(function(e){
@@ -1199,9 +1199,9 @@ function register_events(){
         if (runnable_name && window[runnable_name]) window[runnable_name]();
     });
 
-    $(window).resize(function(){
+    /*$(window).resize(function(){
         //document.title = document.body.clientWidth + ' px';
         if (document.body.clientWidth < 1000) $('#mobilebox').show();
         else                                  $('#mobilebox').hide();
-    });
+    });*/
 }

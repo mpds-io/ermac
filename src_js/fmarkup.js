@@ -11,8 +11,6 @@ function register_html(){
 
 <div id="overlay" class="sky"></div>
 
-<div id="mobilebox"><span>Switch to mobile version</span> (or <a href="#">stay here</a>?)</div>
-
 <div id="aetmap"><a style="float:left;" href="#polyhedra" class="link_adjuster"></a><div style="float:right;margin-top:25px;"><input type="checkbox" id="aet_limit" /><label for="aet_limit">&nbsp;No other types</label></div></div>
 
 <!-- TOP-LEFT CORNER MENU -->

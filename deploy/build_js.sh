@@ -28,3 +28,4 @@ java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js 
 echo "NB check absense of errors in the compiler output"
 
 optimize-js $JSTARGET > $JSFINAL # npm install -g optimize-js
+rm $JSTARGET

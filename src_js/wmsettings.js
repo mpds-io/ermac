@@ -121,6 +121,7 @@ wmgui.mob_motto = [
     'peer-reviewed materials publications dated from 1891 until now'
 ];
 
+// NB all URLs should follow below
 wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
 wmgui.static_host =       'https://mpds.io';
@@ -152,6 +153,8 @@ wmgui.v_pd_addr_anon =    '/visavis/?280420#' + wmgui.api_host + '/download/c?fm
 wmgui.v_sd_addr =         '/visavis/?280420#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.client_data_addr =  '/wmdata.json?040521';
+wmgui.aetmap_addr =       'https://mpds.io/aets.jpg';
+// NB all URLs should follow above
 
 wmgui.elemental_names = {
     "num": "atomic number",

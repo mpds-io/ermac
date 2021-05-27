@@ -1100,7 +1100,7 @@ function show_advsbox(){
     }
     if (!show_advsbox.cached_aetmap){
         show_advsbox.cached_aetmap = new Image();
-        show_advsbox.cached_aetmap.src = '/aets.jpg';
+        show_advsbox.cached_aetmap.src = wmgui.aetmap_addr;
     }
 }
 
@@ -1238,7 +1238,7 @@ function update_dc(){
 function show_aetmap(term){
     var coords = wmgui.aets[term];
     if (coords)
-        $('#aetmap').css('height', coords[1] + 'px').css('background', 'url(/aets.jpg) 0 -' + coords[0] + 'px no-repeat').show();
+        $('#aetmap').css('height', coords[1] + 'px').css('background', 'url(' + wmgui.aetmap_addr + ') 0 -' + coords[0] + 'px no-repeat').show();
     else
         $('#aetmap').hide();
 }
@@ -1256,7 +1256,7 @@ function render_all_polyhedra(){
     });
     $.each(defined_aetypes, function(key, value){
         var coords = wmgui.aets[value];
-        aetypes_html += '<div class="gallery_item" rel="' + value + '"><div style="width:125px;height:' + coords[1] + 'px;margin:10px auto;background:url(/aets.jpg) 0 -' + coords[0] + 'px no-repeat;"></div><span>' + value + '</span></div>';
+        aetypes_html += '<div class="gallery_item" rel="' + value + '"><div style="width:125px;height:' + coords[1] + 'px;margin:10px auto;background:url(' + wmgui.aetmap_addr + ') 0 -' + coords[0] + 'px no-repeat;"></div><span>' + value + '</span></div>';
     });
     $('#all_polyhedra_content').html(aetypes_html);
 }
