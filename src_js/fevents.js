@@ -465,10 +465,12 @@ function register_events(){
         $('#select_cmp_trigger').val('X');
     });
 
+    // not handled by ermac?
     $('#close_formal_dialogue').click(function(){
         window.location.hash = '#start';
     });
 
+    // not handled by ermac?
     $('#close_product_dialogue, #close_ph_dialogue, div.close_hy_dialogue').click(function(){
         if (document.referrer.indexOf(window.location.host) == -1) window.location.hash = '#start'; // FIXME: empty referrer
         else {
@@ -490,36 +492,6 @@ function register_events(){
         $('#ctx_col, #sim_col').hide();
         wmgui.passive_sim_col = true;
         close_vibox();
-    });
-
-    $('#inquiry_gui_trigger, #inquiry_api_trigger').click(function(){
-        $('#inquirybox').show();
-    });
-    $('#funnel_trigger').click(function(){
-        var that = $(this);
-        if (that.data('busy')) return;
-        that.data('busy', true).text('Sending...');
-
-        $.ajax({type: 'POST', url: wmgui.funnel_endpoint, data: {
-                firstname: $('#funnel_firstname').val(),
-                lastname: $('#funnel_lastname').val(),
-                org: $('#funnel_org').val(),
-                email: $('#funnel_email').val(),
-                phone: $('#funnel_phone').val(),
-                users: $('#funnel_users').val(),
-                ed: wmgui.edition
-        }, beforeSend: wmgui.show_preloader}).always(function(){
-            $('#funnel_trigger').data('busy', false).text('Submit');
-            wmgui.hide_preloader();
-
-        }).done(function(data){
-            if (data.error) return wmgui.notify(data.error);
-            $('#funnel_gui_lead, #funnel_api_lead, #inquirybox').slideUp().parent().children('div.funnel_msg').hide();
-            wmgui.notify('Thanks, we have received your request');
-
-        }).fail(function(xhr, textStatus, errorThrown){
-            wmgui.notify("Sorry, an error occured. Please, contact <a href='mailto:support@tilde.pro'>support@tilde.pro</a>");
-        });
     });
 
     $('#hy_box').on('click', 'span', function(){
@@ -735,20 +707,6 @@ function register_events(){
         $('#' + desttab).show();
     });
 
-    $('#producttab_options > li').click(function(){
-        var that = $(this),
-            desttab = that.attr('rev'),
-            from_product = (desttab.indexOf('api') == -1) ? 'api' : 'gui',
-            to_product = (from_product == 'gui') ? 'api' : 'gui';
-
-        if ($("#funnel_" + from_product + "_email").val()) $("#funnel_" + to_product + "_email").val($("#funnel_" + from_product + "_email").val());
-        if ($("#funnel_" + from_product + "_name").val()) $("#funnel_" + to_product + "_name").val($("#funnel_" + from_product + "_name").val());
-
-        that.addClass('working').siblings().removeClass('working');
-        $('div.product_types').hide();
-        $('#' + desttab).show();
-    });
-
     $('a.link_adjuster').click(function(){
         // hash-hack FIXME?
         if (window.location.hash == '#polyhedra'){ window.location.hash = '#polyhedra/'; return false; }
@@ -868,23 +826,6 @@ function register_events(){
     $('#search_holder').keydown(function(e){
         var key = window.event ? e.keyCode : e.which;
         if (key == 13) $('#search_trigger').trigger('click');
-    });
-
-    $('#intro_stats').on('click', 'li', function(){
-        var desttab = $(this).attr('rev');
-        $(this).addClass('working').siblings().removeClass('working');
-        $('div.introtab').hide();
-        $('#' + desttab).show();
-    });
-    $('#intro_stats').on('click', 'div.intro_rel', function(){
-        window.location.hash = $(this).attr('rel');
-    });
-    $('#intro_stats').on('click', 'div.d', function(){
-        $('#advstab_options li').removeClass('working');
-        $('#advstab_options li[rev=advstab_bib]').addClass('working');
-        $('div.advstab').hide();
-        $('#advstab_bib').show();
-        show_advsbox();
     });
 
     // switch sliders: first row abf

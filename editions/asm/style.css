@@ -13,8 +13,8 @@ div.inquirybox > label{color:#002f6c;}
 #intro_stats > div > div.g > span{color:#900;}
 #intro_stats > div > div > div.stat_icon{border:3px solid #aaa;filter:grayscale(100%);}
 #intro_stats > div > div > div.ab_initio{color:#aaa;}
-#intro_a > div > span{color:#00adef;}
-#intro_b > div > span{color:#002f6c;}
+#intro_pr > div > span{color:#00adef;}
+#intro_mlsym > div > span{color:#002f6c;}
 
 div.advs.advs_formulae > div{color:#002f6c;}
 div.advs.advs_formulae > input{border:1px solid #002f6c;}
