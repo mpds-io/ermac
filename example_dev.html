@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="/webassets/ermac.css" />
+<script type="text/javascript" src="jquery.min.js"></script>
+</head>
+<body class="noscroll">
+
+<script type="text/javascript">
+// a very simple env loader
+var to_load = [
+    '/src_js/jquery.tablesorter.js',
+    '/src_js/wNumb.js',
+    '/src_js/nouislider.js',
+    '/src_js/selectize.js',
+    '/src_js/selectize_preserve_on_blur.js',
+    '/src_js/wmcore.js',
+    '/src_js/wmutils.js',
+    '/src_js/wmsettings.js',
+    '/src_js/sliders.js',
+    '/src_js/autocomplete.js',
+    '/src_js/frouter.js',
+    '/src_js/fevents.js',
+    '/src_js/fmarkup.js',
+    '/src_js/fgui.js',
+    '/src_js/fstartup.js',
+    '/src_js/frun.js'
+];
+
+var head = document.getElementsByTagName('head')[0];
+for (var i = 0; i < to_load.length; i++){
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = to_load[i];
+    script.async = false;
+    head.appendChild(script);
+}
+</script>
+</body>
+</html>
