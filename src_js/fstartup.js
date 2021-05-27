@@ -299,9 +299,6 @@ function satisfy_requirements(){
         rotate_interesting();
         setInterval(rotate_interesting, 2000);
 
-        $('#motto > span').html(wmgui.desktop_motto[ Math.floor(Math.random() * wmgui.desktop_motto.length) ]);
-        setTimeout(rotate_motto, 2500);
-
         window.location.hash ? url_redraw_react() : window.location.replace('#start');
     });
 

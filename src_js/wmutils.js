@@ -7,13 +7,15 @@
  */
 "use strict";
 
-function z(str){
+var wmgui = window.wmgui || {};
+
+wmgui.clean = function(str){
     var html = $(str.bold());
     html.find('script').remove();
     return html.html();
 }
 
-function cancel_event(evt){
+wmgui.cancel_event = function(evt){
     evt = evt || window.event;
     if (evt.cancelBubble) evt.cancelBubble = true;
     else {
@@ -22,7 +24,7 @@ function cancel_event(evt){
     }
 }
 
-function debounce(func, wait, immediate){
+wmgui.debounce = function(func, wait, immediate){
     var timeout;
     return function(){
         var context = this,
@@ -38,7 +40,7 @@ function debounce(func, wait, immediate){
     }
 }
 
-function is_inview(element){
+wmgui.is_inview = function(element){
     var pageTop = $(window).scrollTop(),
         pageBottom = pageTop + $(window).height(),
         elementTop = $(element).offset().top,
@@ -46,41 +48,42 @@ function is_inview(element){
     return ((elementTop <= pageBottom) && (elementBottom >= pageTop));
 }
 
+wmgui.show_preloader = function(){ $('#preloader').show(); }
+
+wmgui.hide_preloader = function(){ $('#preloader').hide(); }
+
 Number.prototype.count_decimals = function(){
     if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
     return this.toString().split(".")[1].length || 0;
 }
 
-function show_preloader(){ $('#preloader').show(); }
-
-function hide_preloader(){ $('#preloader').hide(); }
-
-function detect_IE(){
-    var ua = window.navigator.userAgent;
-
-    var msie = ua.indexOf('MSIE ');
-    if (msie > 0){
-        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-    }
-
-    var trident = ua.indexOf('Trident/');
-    if (trident > 0){
-        var rv = ua.indexOf('rv:');
-        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-    }
-
-    var edge = ua.indexOf('Edge/');
-    if (edge > 0){
-        return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-    }
-
-    return false;
-}
-
 var ie_passing_check = (function(){
-    var version = detect_IE();
+    var version = (function(){
+        var ua = window.navigator.userAgent;
+
+        var msie = ua.indexOf('MSIE ');
+        if (msie > 0){
+            return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+        }
+
+        var trident = ua.indexOf('Trident/');
+        if (trident > 0){
+            var rv = ua.indexOf('rv:');
+            return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+        }
+
+        var edge = ua.indexOf('Edge/');
+        if (edge > 0){
+            return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+        }
+
+        return false;
+    })();
+
     if (!version) return true;
+
     if (version < 12) return false;
+
     return true;
 }());
 
@@ -89,7 +92,7 @@ if (!ie_passing_check){
     throw new Error("Unsupported user agent");
 }
 
-function loadCSS(href, before, media, attributes){
+wmgui.loadCSS = function(href, before, media, attributes){
     // Arguments:
     // `href` [REQUIRED] is the URL for your CSS file.
     // `before` [OPTIONAL] is the element the script should use as a reference for injecting our stylesheet <link> before

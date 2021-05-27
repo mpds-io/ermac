@@ -17,7 +17,7 @@ wmgui.notify = function(msg){
         delay = 1500;
     }
     setTimeout(function(){
-        $('#notifybox').html(z(msg)).show();
+        $('#notifybox').html(wmgui.clean(msg)).show();
         wmgui.notify_counter = setTimeout(function(){ $('#notifybox').hide() }, 5000);
     }, delay);
 }
@@ -172,7 +172,7 @@ wmgui._selectize_display = function($this, facet, term){
 function show_interpretation(search){
     // FIXME only allow fixed props
     $('#interpret').html(
-        z(WMCORE.get_interpretation(search, wmgui.facet_names, wmgui.numerics))
+        wmgui.clean(WMCORE.get_interpretation(search, wmgui.facet_names, wmgui.numerics))
     );
 }
 
@@ -195,7 +195,7 @@ function request_search(search, caption, without_history){
     try { wmgui.active_ajax.abort() } catch(e){}
     try { wmgui.quick_ajax.abort() } catch(e){}
 
-    wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.srch_endpoint, data: {q: JSON.stringify(search), sid: wmgui.sid}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+    wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.srch_endpoint, data: {q: JSON.stringify(search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
         if (data.error)
             return wmgui.notify(data.error);
 
@@ -350,7 +350,7 @@ function rebuild_history_box(search, caption){
         if (inquiry) item = '<a href="#inquiry/' + $.param(orepr) + '">' + caption + '</a>';
         else         item = '<a href="#search/' + escape(caption) + '">' + caption + '</a>';
 
-        $('#history ul').prepend('<li>' + z(item) + '</li>');
+        $('#history ul').prepend('<li>' + wmgui.clean(item) + '</li>');
         search_log.unshift(orepr);
         window.localStorage.setItem('wm_search_log_v4', JSON.stringify(search_log));
         if ($('#history ul li').length > 8) $('#history ul li:last').remove();
@@ -373,7 +373,7 @@ function rebuild_visavis(){
     $('a.pltcol_links').each(function(){
         var that = $(this),
             plot_type = that.attr('rev');
-        that.attr('href', window.location.protocol + '//' + window.location.host + window.location.pathname + '#plot/' + plot_type + '/' + query);
+        that.attr('href', wmgui.gui_host + window.location.pathname + '#plot/' + plot_type + '/' + query);
     });
 
     $('#visavis_col > ul > li').removeClass('embodied');
@@ -446,7 +446,7 @@ function arrange_menu_collateral(){
     };
     $('#tagcloudbox').append(links_html);
 
-    $('#hintsbox_msg').append(WMCORE.get_random_term(wmgui.welcomes));
+    $('#hintsbox_msg').append(WMCORE.get_random_term(wmgui.welcome_msgs));
 }
 
 function switch_view_mode(mode){
@@ -703,7 +703,7 @@ function request_refinement(query_obj, is_heavy){
 
         if (num_terms == 0) display_examples('#examples', true, true);
         else {
-            $('#refine_col > ul').show().append(z(refine_html));
+            $('#refine_col > ul').show().append(wmgui.clean(refine_html));
             if (num_terms <= 10) display_examples('#examples', false, false);
         }
 
@@ -1008,9 +1008,9 @@ function stop_visavis(){
 
 function get_visavis_url(request){
     if (wmgui.visavis_curtype == 'pie')
-        return wmgui.gui_host + '/visavis/#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
+        return wmgui.static_host + '/visavis/#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
 
-    return wmgui.gui_host + '/visavis/#' + wmgui.vis_endpoint + '/' + wmgui.visavis_curtype + '?q=' + escape(JSON.stringify(request));
+    return wmgui.static_host + '/visavis/#' + wmgui.vis_endpoint + '/' + wmgui.visavis_curtype + '?q=' + escape(JSON.stringify(request));
 }
 
 function describe_perms(perms){
@@ -1123,7 +1123,7 @@ function show_hints(disabled){
         $('a.plthint_links').each(function(){
             var that = $(this),
                 plot_type = that.attr('rev');
-            that.attr('href', window.location.protocol + '//' + window.location.host + window.location.pathname + '#plot/' + plot_type + '/' + window.location.hash.substr(1));
+            that.attr('href', wmgui.gui_host + window.location.pathname + '#plot/' + plot_type + '/' + window.location.hash.substr(1));
         });
         $('#plthint').show();
     }
@@ -1261,27 +1261,18 @@ function render_all_polyhedra(){
     $('#all_polyhedra_content').html(aetypes_html);
 }
 
-function rotate_motto(){
-    $('#motto > span').animate({ opacity: 'hide' }, 3500, function(){
-        $('#motto > span').html(wmgui.desktop_motto[ Math.floor(Math.random() * wmgui.desktop_motto.length) ]).animate({ opacity: 'show' }, 2500, function(){
-            setTimeout(rotate_motto, 2500);
-        });
-    });
-}
-
 function assign_edition(){
     function run_edition(edition_key){
         edition_key = parseInt(edition_key);
         if (!wmgui.editions[edition_key])
             edition_key = 0;
         wmgui.edition = edition_key;
-        loadCSS(wmgui.editions[edition_key].css);
+        wmgui.loadCSS(wmgui.editions[edition_key].css);
         if (wmgui.editions[edition_key].actions) wmgui.editions[edition_key].actions();
     }
 
-    var prop = wmgui.prod ? 'prod_url' : 'dev_url';
     $.each(wmgui.editions, function(key, value){
-        if (value[prop] == window.location.protocol + '//' + window.location.host){
+        if (wmgui.gui_host == value['prod_url'] || wmgui.gui_host == value['dev_url']){
             run_edition(key);
             return false;
         }

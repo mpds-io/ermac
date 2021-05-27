@@ -139,7 +139,7 @@ function url__phase(arg){
         pearson = phase_data[2];
 
     if (formula && spg && pearson){
-        wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.phph_endpoint, data: {phase: [formula, spg, pearson].join('/')}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+        wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.phph_endpoint, data: {phase: [formula, spg, pearson].join('/')}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
             if (data.error) return wmgui.notify(data.error);
             window.location.replace('#phase_id/' + data.phid);
 
@@ -255,7 +255,7 @@ function url__junction(arg){
     if (!wmgui.sid)
         return window.location.replace('#products');
 
-    wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.perms_endpoint, data: {sid: wmgui.sid}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+    wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.perms_endpoint, data: {sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
         if (data.error)
             return wmgui.notify(data.error);
         if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api'))

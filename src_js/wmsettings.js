@@ -49,7 +49,7 @@ wmgui.fetch_page_size = 850;
 wmgui.notify_counter = null;
 wmgui.cliff_counter = null;
 wmgui.sid = null;
-wmgui.prod = true; // (window.location.host.indexOf('localhost')==-1);
+wmgui.prod = true; // (window.location.host.indexOf('localhost') == -1);
 
 wmgui.cliffhangers = [
     "binary compounds with negative thermal expansion",
@@ -75,7 +75,7 @@ wmgui.cliffhangers = [
     "radioactive binary compounds",
     "binary frank-kasper type"
 ];
-wmgui.welcomes = [
+wmgui.welcome_msgs = [
     "The <b>distinct phases</b> is the central concept at the MPDS. Thanks to that, the crystal structures are linked to the phase diagrams and physical properties. Any distinct phase is uniquely determined by the chemical formula, space group, and Pearson symbol <i>e.g.</i> <a href='/#phase/CuAl2/140/tI12'>CuAl2 140 tI12</a>.",
     "Our data are used in such products as Springer Materials&trade;, ICDD PDF-4&trade;, ASM Alloy Phase Diagrams&trade;, Pearson's Crystal Data, MedeA Materials Design&trade;, and AtomWork Advanced.",
     "Each peer-reviewed crystal structure, phase diagram, or physical property at the MPDS originates from a particular publication.",
@@ -105,21 +105,6 @@ wmgui.numerics = {
     'blat':   [5007, '&#8491;', 1.5, 20, 0.1, '<i>b<sub>lat</sub></i>'],
     'clat':   [5008, '&#8491;', 1.5, 20, 0.1, '<i>c<sub>lat</sub></i>']
 }; // client data *numerics*: prop_name: [client_prop_id, units, min, max, ?step, ?origname]
-
-wmgui.desktop_motto = [
-    'based on the <a href="http://paulingfile.com" target="_blank" rel="noopener noreferrer">PAULING FILE</a> experimental inorganic database',
-    'critically evaluated standardized data from the world\'s literature',
-    'the world\'s biggest high-quality online database of materials',
-    'the largest and most comprehensive inorganic materials dataset',
-    'peer-reviewed materials publications dated from 1891 until now'
-];
-wmgui.mob_motto = [
-    'about 400K scientific publications and more than 20M data points',
-    'machine-readable materials data from the world\'s peer-reviewed literature',
-    'the world\'s biggest high-quality online database of materials',
-    'the largest and most comprehensive inorganic materials dataset',
-    'peer-reviewed materials publications dated from 1891 until now'
-];
 
 // NB all URLs should follow below
 wmgui.gui_host = window.location.protocol + '//' + window.location.host;
@@ -155,6 +140,10 @@ wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?040521';
 wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
 // NB all URLs should follow above
+
+// used only for editions loading
+wmgui.ermac_root = document.currentScript.src.replace(wmgui.gui_host + '/', '').replace('src_js/', '').split('/');
+wmgui.ermac_root = wmgui.gui_host + '/' + wmgui.ermac_root.slice(0, wmgui.ermac_root.length - 1).join('/');
 
 wmgui.elemental_names = {
     "num": "atomic number",
@@ -285,19 +274,19 @@ wmgui.aets = {
 wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us why, anonymously"></textarea><select id="fdwidget_msgtype"><option value="No reason" selected>Please select reason...</option><option value="Data missing">Data missing</option><option value="Error in data">Error in data</option><option value="Other">Other</option></select><div id="fdwidget_trigger" class="wmbutton">Send</div>';
 wmgui.sbucks = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
 wmgui.mockyear = new Date().getFullYear();
-wmgui.edition = null; // NB 0 or 1
+wmgui.edition = null; // NB 0 or 1, determined by a currently used domain
 wmgui.editions = {
-    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': '/editions/wm/style.css?300121', 'actions': function(){
+    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.ermac_root + '/editions/wm/style.css?270521', 'actions': function(){
         $('#logo_l').text('MPDS');
     }},
-    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': '/editions/asm/style.css?300121', 'actions': function(){
+    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.ermac_root + '/editions/asm/style.css?270521', 'actions': function(){
         $('#subnav > ul > li.subnav_lpf').hide();
         $('#subnav > ul > li.subnav_asm').css('display', 'inline-block');
         // custom favicon
         var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
         link.type = 'image/x-icon';
         link.rel = 'shortcut icon';
-        link.href = '/editions/asm/asm.ico';
+        link.href = wmgui.ermac_root + '/editions/asm/asm.ico';
         document.getElementsByTagName('head')[0].appendChild(link);
     }}
 };

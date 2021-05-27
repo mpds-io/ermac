@@ -188,14 +188,14 @@ function register_events(){
     });
 
     $('#databrowser').on('click', 'span.launch_v', function(e){
-        cancel_event(e);
+        wmgui.cancel_event(e);
         var parent_row = $(this).parent().parent();
         parent_row.removeClass('busy_entry');
         open_context(parent_row, true);
     });
 
     $('#databrowser').on('click', 'a.launch_ph', function(e){
-        cancel_event(e);
+        wmgui.cancel_event(e);
         var phid_link = $(this).attr('href');
         if (window.location.hash == phid_link){
             // hash-hack FIXME?
@@ -228,7 +228,7 @@ function register_events(){
                 limit_kwd = wmgui.poly_limits[selected_aetypes.length];
 
             if (!limit_kwd){
-                cancel_event(e);
+                wmgui.cancel_event(e);
                 wmgui.notify('Sorry, only up to 3 supported');
                 return false;
             }
@@ -305,7 +305,7 @@ function register_events(){
 
             html += '<li class="extd_rfns fct_' + facet + ' collapse_refine"><a class="collapse_refine" rel="' + facet + '" href="#">Show less</a></li>';
             $('#refine_col > ul > li:not(.fct_' + facet + ')').addClass('hidden_rfns').slideUp();
-            $('a.extd_refine[rel=' + facet + ']').parent().hide().after(z(html));
+            $('a.extd_refine[rel=' + facet + ']').parent().hide().after(wmgui.clean(html));
 
         }).fail(function(xhr, textStatus, errorThrown){
             if (textStatus != 'abort') wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
@@ -334,7 +334,7 @@ function register_events(){
     $('#fdwidget').on('click', 'div.wmbutton', function(){
         if ($(this).data('busy')) return;
         $(this).data('busy', true);
-        $.ajax({type: 'POST', url: wmgui.fd_endpoint, data: {fdwidget_msg: $('#fdwidget_msg').val(), fdwidget_msgtype: $('#fdwidget_msgtype').val(), fdwidget_url: window.location.href}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+        $.ajax({type: 'POST', url: wmgui.fd_endpoint, data: {fdwidget_msg: $('#fdwidget_msg').val(), fdwidget_msgtype: $('#fdwidget_msgtype').val(), fdwidget_url: window.location.href}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
             $('#fdwidget_trigger').data('busy', false);
             if (data.error) return wmgui.notify(data.error);
             $('#fdwidget').html('We appreciate your feedback!');
@@ -508,9 +508,9 @@ function register_events(){
                 phone: $('#funnel_phone').val(),
                 users: $('#funnel_users').val(),
                 ed: wmgui.edition
-        }, beforeSend: show_preloader}).always(function(){
+        }, beforeSend: wmgui.show_preloader}).always(function(){
             $('#funnel_trigger').data('busy', false).text('Submit');
-            hide_preloader();
+            wmgui.hide_preloader();
 
         }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
@@ -592,7 +592,7 @@ function register_events(){
         window.location.hash = wmgui.aug_search_cmd(facet, term);
     });
 
-    $(window).scroll(debounce(function(){
+    $(window).scroll(wmgui.debounce(function(){
         if (wmgui.view_mode == 2 && wmgui.unfinished_page){
             if ($('#footer').offset().top - $(window).scrollTop() - $(window).height() < 50){ // footer pos - scrolling - window height
                 if (!wmgui.unfinished_page) return;
@@ -601,7 +601,7 @@ function register_events(){
                 $.extend(cur_search, wmgui.search);
 
                 // NB no abort of the other requests!
-                wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.srch_endpoint, data: {q: JSON.stringify(cur_search), sid: wmgui.sid}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+                wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.srch_endpoint, data: {q: JSON.stringify(cur_search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
                     if (data.error) return wmgui.notify(data.error);
                     $('div.context_msg').hide();
                     show_hints();
@@ -619,7 +619,7 @@ function register_events(){
             }
         }
         var iframe = $('#iframe');
-        if (iframe.length && !is_inview(iframe)) close_vibox();
+        if (iframe.length && !wmgui.is_inview(iframe)) close_vibox();
     }, 300));
 
     $('#userbox').click(function(){
@@ -695,7 +695,7 @@ function register_events(){
 
         if (desttab == 'usr_tab_api_key'){
             $('#hintsbox_msg').html(wmgui.api_msg);
-            wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.api_key_endpoint, data: {sid: wmgui.sid}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+            wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.api_key_endpoint, data: {sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
                 if (data.error) return wmgui.notify(data.error);
                 $('#usr_api_key').html(data.msg);
                 if (data.revokable)      $('#revoke_usr_api_key_holder').show();
@@ -707,8 +707,8 @@ function register_events(){
             });
 
         } else if (desttab == 'usr_tab_perms'){
-            $('#hintsbox_msg').html(WMCORE.get_random_term(wmgui.welcomes));
-            wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.perms_endpoint, data: {sid: wmgui.sid}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+            $('#hintsbox_msg').html(WMCORE.get_random_term(wmgui.welcome_msgs));
+            wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.perms_endpoint, data: {sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
                 if (data.error) return wmgui.notify(data.error);
                 if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api')) return wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
                 $('#perms_view').html(describe_perms(data));
@@ -721,7 +721,7 @@ function register_events(){
             window.location.href = wmgui.static_host + (wmgui.edition === 0 ? '/ctrl' : '/labs/custom-datasets') + '?' + Math.floor(Math.random() * 1000);
 
         } else if (desttab == 'usr_tab_account'){
-            $('#hintsbox_msg').html(WMCORE.get_random_term(wmgui.welcomes));
+            $('#hintsbox_msg').html(WMCORE.get_random_term(wmgui.welcome_msgs));
         }
     });
 
@@ -759,7 +759,7 @@ function register_events(){
     $('#create_usr_api_key').click(function(){
         $(this).parent().hide();
         try { wmgui.active_ajax.abort() } catch(e){}
-        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.api_key_endpoint, data: {sid: wmgui.sid, create: true}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.api_key_endpoint, data: {sid: wmgui.sid, create: true}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
             if (data.error) return wmgui.notify(data.error);
             $('#usr_api_key').html(data.msg);
             $('#revoke_usr_api_key_holder').show();
@@ -771,7 +771,7 @@ function register_events(){
     $('#revoke_usr_api_key').click(function(){
         $(this).parent().hide();
         try { wmgui.active_ajax.abort() } catch(e){}
-        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.api_key_endpoint, data: {sid: wmgui.sid, revoke: true}, beforeSend: show_preloader}).always(hide_preloader).done(function(data){
+        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.api_key_endpoint, data: {sid: wmgui.sid, revoke: true}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
             if (data.error) return wmgui.notify(data.error);
             $('#usr_api_key').html('Successfully revoked');
             $('#create_usr_api_key_holder').show();
@@ -788,10 +788,10 @@ function register_events(){
 
         try { wmgui.active_ajax.abort() } catch(e){}
 
-        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.login_endpoint, data: {login: $('#login_email').val().trim(), pass: $('#login_password').val()}, beforeSend: show_preloader}).always(function(){
+        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.login_endpoint, data: {login: $('#login_email').val().trim(), pass: $('#login_password').val()}, beforeSend: wmgui.show_preloader}).always(function(){
             $('#login_trigger').data('busy', false);
             $('#login_trigger').text('Login');
-            hide_preloader();
+            wmgui.hide_preloader();
 
         }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
@@ -811,10 +811,10 @@ function register_events(){
 
         try { wmgui.active_ajax.abort() } catch(e){}
 
-        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.restore_endpoint, data: {login: $('#restore_by_email').val().trim(), ed: wmgui.edition}, beforeSend: show_preloader}).always(function(){
+        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.restore_endpoint, data: {login: $('#restore_by_email').val().trim(), ed: wmgui.edition}, beforeSend: wmgui.show_preloader}).always(function(){
             $('#restore_trigger').data('busy', false);
             $('#restore_trigger').text('Send link');
-            hide_preloader();
+            wmgui.hide_preloader();
 
         }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
@@ -842,10 +842,10 @@ function register_events(){
 
         try { wmgui.active_ajax.abort() } catch(e){}
 
-        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.password_endpoint, data: {new_password: p2, sid: wmgui.sid}, beforeSend: show_preloader}).always(function(){
+        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.password_endpoint, data: {new_password: p2, sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(function(){
             $('#password_trigger').data('busy', false);
             $('#password_trigger').text('Change');
-            hide_preloader();
+            wmgui.hide_preloader();
 
         }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
