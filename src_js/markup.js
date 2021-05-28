@@ -523,7 +523,7 @@ function register_html(){
 </div>
 
 <!-- PLOTS EMBED -->
-<div id="visavis"><iframe id="visavis_iframe" frameborder=0 scrolling="no" width="100%" height="100%" src="https://visavis.mpds.io/"></iframe></div>
+<div id="visavis"><iframe id="visavis_iframe" frameborder=0 scrolling="no" width="100%" height="100%" src="https://mpds.io/visavis/"></iframe></div>
 
 <!-- DISCOVERY SETTINGS MODAL -->
 <div id="discovery_custom_box" class="modal user_dialogue">

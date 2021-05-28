@@ -18,12 +18,12 @@ java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js 
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/wmsettings.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/sliders.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/autocomplete.js >> $JSTARGET
-java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/frouter.js >> $JSTARGET
-java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/fevents.js >> $JSTARGET
-java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT_NEXT    --js $ROOT/src_js/fmarkup.js >> $JSTARGET
-java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/fgui.js >> $JSTARGET
-java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/fstartup.js >> $JSTARGET
-java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/frun.js >> $JSTARGET
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/router.js >> $JSTARGET
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/events.js >> $JSTARGET
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT_NEXT    --js $ROOT/src_js/markup.js >> $JSTARGET
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/main_logic.js >> $JSTARGET
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/startup.js >> $JSTARGET
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/execute.js >> $JSTARGET
 
 echo "NB check absense of errors in the compiler output"
 
