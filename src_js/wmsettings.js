@@ -278,10 +278,12 @@ wmgui.edition = null; // NB 0 or 1, determined by a currently used domain
 wmgui.editions = {
     0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.ermac_root + '/editions/wm/style.css?270521', 'actions': function(){
         $('#logo_l').text('MPDS');
+        $('.only_asm').hide();
+        $('.only_mpds').css('display', 'inline-block');
     }},
     1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.ermac_root + '/editions/asm/style.css?270521', 'actions': function(){
-        $('#subnav > ul > li.subnav_lpf').hide();
-        $('#subnav > ul > li.subnav_asm').css('display', 'inline-block');
+        $('.only_mpds').hide();
+        $('.only_asm').css('display', 'inline-block');
         // custom favicon
         var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
         link.type = 'image/x-icon';

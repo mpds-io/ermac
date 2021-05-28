@@ -471,7 +471,7 @@ function register_events(){
     });
 
     // not handled by ermac?
-    $('#close_product_dialogue, #close_ph_dialogue, div.close_hy_dialogue').click(function(){
+    $('#close_ph_dialogue, div.close_hy_dialogue, div.close_product_dialogue').click(function(){
         if (document.referrer.indexOf(window.location.host) == -1) window.location.hash = '#start'; // FIXME: empty referrer
         else {
             var prev = window.location.href;
