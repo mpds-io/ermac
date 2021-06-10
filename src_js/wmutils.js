@@ -53,8 +53,10 @@ wmgui.show_preloader = function(){ $('#preloader').show(); }
 wmgui.hide_preloader = function(){ $('#preloader').hide(); }
 
 Number.prototype.count_decimals = function(){
-    if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
-    return this.toString().split(".")[1].length || 0;
+    if (isFinite(this) && Math.floor(this) === this) return 0; // is integer
+    const repr = this.toString();
+    if (repr.indexOf(".") == -1) return 0;
+    return repr.split(".")[1].length || 0;
 }
 
 var ie_passing_check = (function(){
