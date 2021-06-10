@@ -6,8 +6,9 @@
 #logo_r{margin-left:15px;}
 
 .wmbutton{border:1px solid #3e3f95;background:#3e3f95;}
-#hierarchy_trigger, #inquiry_gui_trigger, #inquiry_api_trigger{background:#f90;border:1px solid #f90;}
+#hierarchy_trigger{background:#f90;border:1px solid #f90;}
 div.inquirybox > label{color:#3e3f95;}
+#productbox div.product_title{color:#3e3f95;}
 
 #intro_stats > div > div > span{color:#ffb302;}
 #intro_stats > div > div.a > span{color:#acc2b3;}

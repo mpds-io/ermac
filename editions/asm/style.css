@@ -6,9 +6,11 @@
 #logo_r{margin-left:30px;}
 
 .wmbutton{border:1px solid #00adef;background:#00adef;}
-#hierarchy_trigger, #inquiry_gui_trigger, #inquiry_api_trigger{background:#002f6c;border:1px solid #002f6c;}
+#hierarchy_trigger{background:#002f6c;border:1px solid #002f6c;}
 #advsearch_init_trigger{background:#555;border:1px solid #555;}
 div.inquirybox > label{color:#002f6c;}
+#productbox div.product_title{color:#002f6c;}
+#productbox div.product > ul > li span.plus{font-size:1.25em;color:#00adef;}
 
 #intro_stats > div > div.g > span{color:#900;}
 #intro_stats > div > div > div.stat_icon{border:3px solid #aaa;filter:grayscale(100%);}
