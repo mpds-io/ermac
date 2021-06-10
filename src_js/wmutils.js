@@ -54,7 +54,7 @@ wmgui.hide_preloader = function(){ $('#preloader').hide(); }
 
 Number.prototype.count_decimals = function(){
     if (isFinite(this) && Math.floor(this) === this) return 0; // is integer
-    const repr = this.toString();
+    var repr = this.toString();
     if (repr.indexOf(".") == -1) return 0;
     return repr.split(".")[1].length || 0;
 }
