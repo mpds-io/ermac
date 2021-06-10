@@ -373,7 +373,7 @@ label{font-size:0.95em;font-weight:bold;line-height:30px;cursor:pointer;}
 #discovery_custom_box div.rearrange{user-select:none;display:inline-block;text-align:center;width:46%;color:#fff;background:#bfbfbf;line-height:28px;border:1px solid #bfbfbf;border-radius:4px;cursor:pointer;margin:4px;}
 #discovery_custom_box div.rearrange:hover{background:#FE9A2E;border-color:#FE9A2E;}
 #ml_data, #ab_data, #ab_promise{display:none;text-align:center;margin:0 0 15px 3px;color:#555;font-weight:normal;font-size:1.15em;line-height:2em;padding:6px 3px;}
-#ml_data span, #ab_data span, #ab_promise span{display:block;font-size:0.8em;line-height:1.5em;margin-top:2em;}
+#ml_data span, #ab_data span, #ab_promise span{display:block;font-size:0.8em;line-height:1.75em;margin-top:2em;}
 #ml_data{background:#f8f7ff;}
 #ab_data, #ab_promise{background:#f7fbff;}
 
@@ -662,9 +662,6 @@ div.advs.advs_aetypes div.selectize-input{border:1px solid #3e3f95;}
 @media all and (max-height:690px){
 div.advs_legend{display:none;}
 #advsbox div.advs{padding:2px 0;}
-}
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-#pltchoice_discovery, #plt_discovery, #pltchoice_graph, #plt_graph{display:none !important;}
 }
 
 /* EXO2 FONT */

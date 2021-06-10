@@ -48,7 +48,7 @@ div.examples > ul > li > a{color:#555;border-bottom:1px solid #555;}
 #userbox span.symicon{color:#00adef;padding:0 4px;}
 #hy_scalars span{color:#002f6c;border-bottom:1px dotted #002f6c;}
 
-#ml_data a{text-decoration:none;color:#00adef;border-bottom:1px solid #00adef;}
+#ml_data a, #ab_data a, #ab_promise a{text-decoration:none;color:#00adef;border-bottom:1px solid #00adef;}
 
 #tooltip{background:#f6f6f6;}
 #tooltip > div:after{border-bottom-color:#f6f6f6;}

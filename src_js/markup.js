@@ -112,13 +112,13 @@ function register_html(){
     <div class="col_title">Get entry <span id="entryno"></span> <div class="cross _close_ctx" style="margin:12px 2px 0 0;"></div></div>
 
     <div id="ml_data" class="spinoff_pane">
-        <p>In-house MPDS machine-learning predictions</p><span>These data are open and freely available under the CC BY 4.0 license.</span><span>Please cite as:<br />Blokhin, Villars. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="/materials-design">materials design</a> app and the <a target="_blank" href="/ml">properties prediction</a> app online.</span>
+        <p>In-house machine-learning predictions</p><span>These data are open and freely available under the CC BY 4.0 license. Cite as: Blokhin, Villars. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="/materials-design">materials design</a> app and the <a target="_blank" href="/ml">properties prediction</a> app online.<br /><br /></span>
     </div>
     <div id="ab_data" class="spinoff_pane">
-        <p>In-house MPDS <i>ab initio</i> calculations</p><span>These data are open and freely available under the CC BY 4.0 license.</span><span>Please cite as:<br />Sobolev, Civalleri, Maschio, Erba, Dovesi, Villars, Blokhin. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.</span>
+        <p>In-house <i>ab initio</i> calculations</p><span>These data are open and freely available under the CC BY 4.0 license. Cite as: Sobolev, Civalleri, Maschio, Erba, Dovesi, Villars, Blokhin. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="https://mpds.io/labs/dtypes-cmp">data types comparison</a>.<br /><br /></span>
     </div>
     <div id="ab_promise" class="spinoff_pane">
-        <p>In-house <i>ab initio</i> calculations</p><span>This calculation is in progress.</span><span>Upon completion it will be freely available under the CC BY 4.0 license. Please, support our work purchasing <a href="#products" style="text-decoration:none;color:#000;border-bottom:1px solid #000;">our products</a>.<br /><br /></span>
+        <p>In-house <i>ab initio</i> calculations</p><span>This calculation is in progress. Upon completion it will be freely available under the CC BY 4.0 license. Support our work purchasing <a href="#products" style="text-decoration:none;color:#000;border-bottom:1px solid #000;">our products</a>.<br /><br /></span>
     </div>
 
     <ul>
@@ -571,6 +571,6 @@ function register_html(){
     </div>
 </div>
 
-<div id="footer">Editors: <span>Pierre Villars, Karin Cenzual, and Riccarda Caputo</span>. Developed by <a href="https://tilde.pro" target="_blank">Tilde MI</a>.</div>
+<div id="footer">Editor-in-Chief: Pierre Villars. Section editors: Karin Cenzual, Ihor Savysyuk, Riccarda Caputo. Developed by <a href="https://tilde.pro" target="_blank">Tilde MI</a>.</div>
 `);
 }
