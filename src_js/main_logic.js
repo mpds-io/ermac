@@ -404,7 +404,11 @@ function rebuild_visavis(){
         $('#visgraph_props').addClass('embodied');
     }
 
-    document.getElementById('visavis_iframe').contentWindow.fixel_manage(wmgui.visavis_curtype == 'cube' && wmgui.search.elements);
+    try {
+        document.getElementById('visavis_iframe').contentWindow.fixel_manage(wmgui.visavis_curtype == 'cube' && wmgui.search.elements);
+    } catch (e){
+        console.error('No iframe access');
+    }
 }
 
 function rotate_interesting(){
@@ -974,7 +978,12 @@ function start_visavis(plot_type){
 
     var cur_obj = {total_count: 1};
     $.extend(cur_obj, wmgui.search);
-    document.getElementById('visavis_iframe').contentWindow.location.replace(get_visavis_url(cur_obj));
+
+    try {
+        document.getElementById('visavis_iframe').contentWindow.location.replace(get_visavis_url(cur_obj));
+    } catch (e){
+        console.error('No iframe access');
+    }
 }
 
 function manage_visavis(callback_fn, param_a, param_b){
@@ -994,7 +1003,12 @@ function manage_visavis(callback_fn, param_a, param_b){
 
     var cur_obj = {total_count: 1};
     $.extend(cur_obj, wmgui.search);
-    document.getElementById('visavis_iframe').contentWindow.location.replace(get_visavis_url(cur_obj));
+
+    try {
+        document.getElementById('visavis_iframe').contentWindow.location.replace(get_visavis_url(cur_obj));
+    } catch (e){
+        console.error('No iframe access');
+    }
 
     if (callback_fn) callback_fn(param_a, param_b);
     return true;
@@ -1157,7 +1171,11 @@ function user_login(sid, name, acclogin, admin){
     window.localStorage.setItem('wm', JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin}));
     admin ? $('li.admin').show() : $('li.admin').hide();
 
-    document.getElementById('visavis_iframe').contentWindow.location.reload();
+    try {
+        document.getElementById('visavis_iframe').contentWindow.location.reload();
+    } catch (e){
+        console.error('No iframe access');
+    }
     communicate_windows('local_user_login');
 
     wmgui.notify('You are logged in');
@@ -1186,7 +1204,12 @@ function user_logout(silent){
     $('div.logged_out').show();
 
     window.localStorage.removeItem('wm');
-    document.getElementById('visavis_iframe').contentWindow.location.reload();
+
+    try {
+        document.getElementById('visavis_iframe').contentWindow.location.reload();
+    } catch (e){
+        console.error('No iframe access');
+    }
     communicate_windows('user_logout');
 
     if (!silent) wmgui.notify('You are logged out');

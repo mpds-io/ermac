@@ -602,6 +602,7 @@ function register_events(){
         if (that.data('saved_hash')){
             window.location.replace(that.data('saved_hash'));
             that.data('saved_hash', false);
+
         } else {
             if (window.location.hash.indexOf('modal') !== -1){
                 window.location.replace('#start');
