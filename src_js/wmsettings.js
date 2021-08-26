@@ -141,10 +141,6 @@ wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?040521';
 wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
 // NB all URLs should follow above
 
-// used only for editions loading
-wmgui.ermac_root = document.currentScript.src.replace(wmgui.gui_host + '/', '').replace('src_js/', '').split('/');
-wmgui.ermac_root = wmgui.gui_host + '/' + wmgui.ermac_root.slice(0, wmgui.ermac_root.length - 1).join('/');
-
 wmgui.elemental_names = {
     "num": "atomic number",
     "nump": "periodic number",
@@ -276,19 +272,19 @@ wmgui.sbucks = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546
 wmgui.mockyear = new Date().getFullYear();
 wmgui.edition = null; // NB 0 or 1, determined by a currently used domain
 wmgui.editions = {
-    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.ermac_root + '/editions/wm/style.css?270521', 'actions': function(){
+    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.static_host + '/editions/wm/style.css?260821', 'actions': function(){
         $('#logo_l').text('MPDS');
         $('.only_asm').hide();
         $('.only_mpds').css('display', 'inline-block');
     }},
-    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.ermac_root + '/editions/asm/style.css?270521', 'actions': function(){
+    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?260821', 'actions': function(){
         $('.only_mpds').hide();
         $('.only_asm').css('display', 'inline-block');
         // custom favicon
         var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
         link.type = 'image/x-icon';
         link.rel = 'shortcut icon';
-        link.href = wmgui.ermac_root + '/editions/asm/asm.ico';
+        link.href = wmgui.static_host + '/editions/asm/asm.ico';
         document.getElementsByTagName('head')[0].appendChild(link);
     }}
 };
