@@ -1,22 +1,20 @@
 Ermac
 ==========
 
-Ermac is an embeddable GUI of the [MPDS platform](https://mpds.io). It allows browsing the MPDS scientific data from any webpage.
+Ermac is an embeddable GUI of the [MPDS platform](https://mpds.io). It allows browsing the MPDS scientific data from any website.
 
-Currently it uses an old-style JQuery-based JavaScript ES5 predominantly (see `src_js` folder) and does not use Node. The only exception is `optimize-js` (experimental) installed with `npm install -g optimize-js` and used for creating the production bundle.
+Currently it predominantly uses an old-style JQuery-based ES5 JavaScript (see `src_js` folder). The Node is NOT used except the `optimize-js` module (experimental) installed with `npm install -g optimize-js` and used while creating the production bundle.
 
-Several external dependencies are supplied along with the codebase just in `src_js` folder.
+Several external dependencies are supplied along with the codebase simply in `src_js` folder.
 
 
 ## Usage
 
-An arbitrary web-server is required, e.g. `php -S localhost:5555` or Node.
-
-See `example_dev.html` and `example_prod.html`.
+An arbitrary web-server is required, e.g. `php -S localhost:5555`. All the content is static. In the **development mode**, the code is served from the `src_js` folder. In the **production mode**, the code bundle `ermac.min.js`  is served. See `example_dev.html` and `example_prod.html`.
 
 Compilation into the production bundle `ermac.min.js` is done via the Google Closure Compiler supplied in `third_party/jscomp` folder, see `deploy/build_js.sh` script.
 
 
 ## License
 
-[MIT](https://en.wikipedia.org/wiki/MIT_License)
+MIT &copy; Evgeny Blokhin, Tilde Materials Informatics
