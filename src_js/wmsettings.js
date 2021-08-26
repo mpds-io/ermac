@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.7
+ * Version: 0.6.8
  */
 "use strict";
 
@@ -49,7 +49,7 @@ wmgui.fetch_page_size = 850;
 wmgui.notify_counter = null;
 wmgui.cliff_counter = null;
 wmgui.sid = null;
-wmgui.prod = true; // (window.location.host.indexOf('localhost') == -1);
+wmgui.prod = (window.location.host.indexOf('localhost') == -1);
 
 wmgui.cliffhangers = [
     "binary compounds with negative thermal expansion",

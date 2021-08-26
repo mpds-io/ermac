@@ -59,6 +59,10 @@ Number.prototype.count_decimals = function(){
     return repr.split(".")[1].length || 0;
 }
 
+String.prototype.startswith = function(prefix){
+    return this.indexOf(prefix) === 0;
+}
+
 var ie_passing_check = (function(){
     var version = (function(){
         var ua = window.navigator.userAgent;

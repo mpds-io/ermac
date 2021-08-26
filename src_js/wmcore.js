@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.7
+ * Version: 0.6.8
  */
 "use strict";
 
@@ -23,10 +23,6 @@ String.prototype.matchAll = function(regexp){
 
 String.prototype.replaceAll = function(search, replacement){
     return this.replace(new RegExp(search, 'g'), replacement);
-}
-
-String.prototype.startswith = function(prefix){
-    return this.indexOf(prefix) === 0;
 }
 
 String.prototype.endswith = function(searchString, position){
