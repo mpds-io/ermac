@@ -106,11 +106,12 @@ wmgui.numerics = {
     'clat':   [5008, '&#8491;', 1.5, 20, 0.1, '<i>c<sub>lat</sub></i>']
 }; // client data *numerics*: prop_name: [client_prop_id, units, min, max, ?step, ?origname]
 
-// NB all URLs should follow below
+// NB all URLs follow below
 wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
 wmgui.static_host =       'https://mpds.io';
 
+// below are the MPDS API endpoints
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';
 wmgui.logout_endpoint =   wmgui.api_host + '/users/logout';
 wmgui.restore_endpoint =  wmgui.api_host + '/users/lost_password';
@@ -132,14 +133,17 @@ wmgui.pdist_endpoint =    wmgui.api_host + '/visavis/pdistribs';
 
 wmgui.dd_addr_tpl =       wmgui.api_host + '/download';
 
+// below are resources used in the *iframe*
 wmgui.v_player_addr =     wmgui.static_host + '/player/player.html#' + wmgui.api_host + '/download/s?fmt=cif&q=';
 wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' + wmgui.api_host + '/download/c?fmt=png&q=';
 wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/c?fmt=json&q=';
 wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
+
+// below are remote files commonly used
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?040521';
 wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
-// NB all URLs should follow above
+// NB all URLs are above
 
 wmgui.elemental_names = {
     "num": "atomic number",

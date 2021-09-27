@@ -97,19 +97,19 @@ function register_html(){
 
 <!-- LEFT MAIN COLUMN -->
 <div id="refine_col" class="side_cols">
-    <div class="col_title">Narrow down search</div>
+    <div class="col_title">Filters</div>
     <div id="rfn_preloader"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>
     <ul></ul>
 
     <div id="examples" class="examples">
-        <div class="col_title">Try these examples</div>
+        <div class="col_title">Examples</div>
         <ul></ul>
     </div>
 </div>
 
 <!-- LEFT CONTEXT COLUMN -->
 <div id="ctx_col" class="side_cols">
-    <div class="col_title">Get entry <span id="entryno"></span> <div class="cross _close_ctx" style="margin:12px 2px 0 0;"></div></div>
+    <div class="col_title">Entry <span id="entryno"></span> <div class="cross _close_ctx" style="margin:12px 2px 0 0;"></div></div>
 
     <div id="ml_data" class="spinoff_pane">
         <p>In-house machine-learning predictions</p><span>These data are open and freely available under the CC BY 4.0 license. Cite as: Blokhin, Villars. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="/materials-design">materials design</a> app and the <a target="_blank" href="/ml">properties prediction</a> app online.<br /><br /></span>
@@ -136,7 +136,7 @@ function register_html(){
 
 <!-- LEFT PLOTTING COLUMN -->
 <div id="visavis_col" class="side_cols">
-    <div class="col_title">Select plot type</div>
+    <div class="col_title">Plot type</div>
     <ul>
         <li id="pltchoice_pie"><a class="pltcol_links" href="/" rel="nofollow" rev="pie">overview</a></li>
         <li id="pltchoice_graph"><a class="pltcol_links" href="/" rel="nofollow" rev="graph">semantic graph</a></li>
@@ -148,13 +148,13 @@ function register_html(){
     </ul>
 
     <div id="cmppanel_plots" class="ctxpanel">
-        <div class="col_title">Compare to</div>
+        <div class="col_title">Comparison</div>
         <select id="select_cmp_trigger"></select>
     </div>
 
     <div id="ctxpanel_plots">
         <div id="ctxpanel_matrix" class="ctxpanel">
-            <div class="col_title">Sort points <div id="ss_gear_matrix" class="gear"></div></div>
+            <div class="col_title">Sorting <div id="ss_gear_matrix" class="gear"></div></div>
             <ul>
                 <li id="vismatrix_count">by occurence</li>
                 <li id="vismatrix_num">by atomic number</li>
@@ -171,7 +171,7 @@ function register_html(){
         </div>
 
         <div id="ctxpanel_cube" class="ctxpanel">
-            <div class="col_title">Sort points <div id="ss_gear_cube" class="gear"></div></div>
+            <div class="col_title">Sorting <div id="ss_gear_cube" class="gear"></div></div>
             <ul>
                 <li id="viscube_num">by atomic number</li>
                 <li id="viscube_nump">by periodic number</li>
@@ -187,7 +187,7 @@ function register_html(){
         </div>
 
         <div id="ctxpanel_graph" class="ctxpanel">
-            <div class="col_title">Display terms</div>
+            <div class="col_title">Node type</div>
             <ul>
                 <li id="visgraph_props">physical properties</li>
                 <li id="visgraph_aetypes">polyhedral types</li>
@@ -198,7 +198,7 @@ function register_html(){
         </div>
 
         <div id="ctxpanel_discovery" class="ctxpanel">
-            <div class="col_title">Change active axes</div>
+            <div class="col_title">Active axes</div>
             <ul>
                 <li class="discovery_custom" id="dc_num">atomic number</li>
                 <li class="discovery_custom" id="dc_nump" style="display:block;">periodic number</li>
@@ -217,7 +217,7 @@ function register_html(){
 
 <!-- RIGHT MAIN COLUMN -->
 <div id="right_col" class="side_cols">
-    <div class="col_title">Edit search options</div>
+    <div class="col_title">Options</div>
 
     <div class="controlswitch">
         <div id="control_a">entries</div><div id="control_b">phases</div><div id="control_f">articles</div>
@@ -230,7 +230,7 @@ function register_html(){
     <ul id="interpret"></ul>
 
     <div id="dtypes">
-        <div class="col_title">Restrict data type</div>
+        <div class="col_title">Data types</div>
         <ul>
             <li class="fct_props dtypes_props" data-facet="props" data-term="crystal structure">crystal structures</li>
             <li class="fct_props dtypes_props" data-facet="props" data-term="phase diagram">phase diagrams</li>
@@ -242,7 +242,7 @@ function register_html(){
     </div>
 
     <div id="history">
-        <div class="col_title">Browse last searches</div>
+        <div class="col_title">Last searches</div>
         <ul></ul>
     </div>
 </div>
@@ -261,7 +261,7 @@ function register_html(){
     <a id="sim_trigger" href="#" class="wmbutton sim_col_ctx" rel="nofollow">Show all</a>
 
     <div id="pd_legend" class="sim_col_ctx">
-        <div class="col_title">See area colors</div>
+        <div class="col_title">Area colors</div>
         <ul>
             <li>liquid or gas <span style="color:#fff;background:#9cf;padding:2px;">blue or violet</span></li>
             <li>1-phase <span style="color:#fff;background:#d1cde6;padding:2px;">violet</span></li>
@@ -523,7 +523,7 @@ function register_html(){
 </div>
 
 <!-- PLOTS EMBED -->
-<div id="visavis"><iframe id="visavis_iframe" frameborder=0 scrolling="no" width="100%" height="100%" src="/visavis/"></iframe></div>
+<div id="visavis"><iframe id="visavis_iframe" frameborder=0 scrolling="no" width="100%" height="100%" src="/visavis/"></iframe></div><!-- NB relative URL -->
 
 <!-- DISCOVERY SETTINGS MODAL -->
 <div id="discovery_custom_box" class="modal user_dialogue">

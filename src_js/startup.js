@@ -270,7 +270,7 @@ function satisfy_requirements(){
                         if (cnt > 18) break;
                     }
                 }
-                if (suggestions.length < 6){
+                if (suggestions.length < 12){
                     for (i = 0; i < len; i++){
                         if (answer[fct_type][i].indexOf(term) != -1 && checks.indexOf(answer[fct_src][i]) == -1){
                             suggestions.push(answer[fct_src][i]);

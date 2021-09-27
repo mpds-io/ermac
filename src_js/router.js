@@ -1,5 +1,5 @@
 /**
- * MPDS.IO desktop GUI
+ * MPDS platform desktop GUI URLs
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
