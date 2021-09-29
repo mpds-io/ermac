@@ -320,7 +320,10 @@ function satisfy_requirements(){
         onItemRemove: function(value){
             var check = wmgui.multiselects['main'].read(),
                 input = this;
-            if (!check.numeric) destroy_numericbox();
+            if (!check.numeric){
+                destroy_numericbox();
+                delete wmgui.search.numeric;
+            }
             setTimeout(function(){
                 input.close();
             }, 750);

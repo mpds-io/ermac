@@ -56,6 +56,7 @@ function url__inquiry(arg, no_retrieve){
     // inventing serialization for numeric nested arrays
     if (inquiry.numeric){
         inquiry.numeric = unescape(inquiry.numeric).split(';').map(function(item){ return item.split(',') });
+        inquiry.numeric = inquiry.numeric.filter(function(item){ return item.length == 3 });
         wmgui.search_type = 1; // force phases search type
     }
     //console.log(inquiry);

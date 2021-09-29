@@ -1,5 +1,5 @@
 /**
- * MPDS.IO desktop GUI
+ * MPDS platform desktop GUI
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
@@ -14,9 +14,7 @@ function register_events(){
     $('#search_trigger').click(function(){
 
         var query = wmgui.multiselects['main'].read(),
-            val = $('#search_field-selectized').val(),
-            numeric = '',
-            sliders_numerics = document.getElementsByClassName('slider_numerics');
+            val = $('#search_field-selectized').val();
 
         if (val){
             if (val.endswith(" ") || val.endswith(",")) val = val.substr(0, val.length-1);
@@ -34,22 +32,13 @@ function register_events(){
             }
         }
 
-        // numeric search
-        for (var i = 0; i < sliders_numerics.length; i++){
-            var sdata = sliders_numerics[i].noUiSlider.get(),
-                srange = sliders_numerics[i].noUiSlider.options.range,
-                srange = [srange.min, srange.max];
-            //if (sdata[0] == srange[0] && sdata[1] == srange[1]) continue;
-            //console.log(sdata);
-
-            var prop = sliders_numerics[i].getAttribute('rel');
-            numeric += serialize_numeric(prop, '>', sdata[0]) + serialize_numeric(prop, '<', sdata[1]);
+        if (wmgui.search.numeric && !query.numeric){
+            query.numeric = '';
+            wmgui.search.numeric.forEach(function(item){
+                query.numeric += serialize_numeric.apply(this, item); // unpack
+            });
+            delete query.props; // NB to make the numeric results "more clear"
         }
-        if (numeric.length){
-            query.numeric = numeric.substr(0, numeric.length - 1);
-            delete query.props;
-        }
-        // FIXME what if query.numeric pre-exists?
 
         if ($.isEmptyObject(query)){
             wmgui.notify('Unrecognized input');
@@ -69,8 +58,6 @@ function register_events(){
     $('#advsearch_do_trigger').click(function(){
         var curval = '',
             rest_input = '',
-            numeric = '',
-            sliders_numerics = document.getElementsByClassName('slider_numerics'),
             query = {};
 
         $.each(wmgui.simple_facets, function(n, item){
@@ -99,18 +86,6 @@ function register_events(){
                     query[item] = rest_input;
             }
         });
-
-        // numeric search
-        for (var i = 0; i < sliders_numerics.length; i++){
-            var sdata = sliders_numerics[i].noUiSlider.get(),
-                srange = sliders_numerics[i].noUiSlider.options.range,
-                srange = [srange.min, srange.max];
-            //if (sdata[0] == srange[0] && sdata[1] == srange[1]) continue;
-
-            var prop = sliders_numerics[i].getAttribute('rel');
-            numeric += serialize_numeric(prop, '>', sdata[0]) + serialize_numeric(prop, '<', sdata[1]);
-        }
-        if (numeric.length) query.numeric = numeric.substr(0, numeric.length - 1);
 
         if ($.isEmptyObject(query)) return wmgui.notify('Search is empty');
 
@@ -303,7 +278,7 @@ function register_events(){
                 else         html += '<li class="extd_rfns fct_' + facet + '"><a href="#search/' + link_base + found[0] + '">' + found[0] + '</a></li>';
             });
 
-            html += '<li class="extd_rfns fct_' + facet + ' collapse_refine"><a class="collapse_refine" rel="' + facet + '" href="#">Show less</a></li>';
+            html += '<li class="extd_rfns fct_' + facet + ' collapse_refine"><a class="collapse_refine" rel="' + facet + '" href="#">Show less&nbsp;</a></li>';
             $('#refine_col > ul > li:not(.fct_' + facet + ')').addClass('hidden_rfns').slideUp();
             $('a.extd_refine[rel=' + facet + ']').parent().hide().after(wmgui.clean(html));
 
@@ -1075,6 +1050,9 @@ function register_events(){
         if ($('div.slider_numerics').length == 1){
             destroy_numericbox();
             delete wmgui.search.numeric;
+            $('#search_field-selectized').val('');
+            wmgui.multiselects['main'].clear();
+            wmgui.multiselects['main'].write(wmgui.search);
             return false;
         }
         var that = $(this);
@@ -1083,6 +1061,24 @@ function register_events(){
     });
 
     $('#numericbox_do_trigger').click(function(){
+
+        var sliders_numerics = document.getElementsByClassName('slider_numerics'),
+            numeric = [];
+
+        for (var i = 0; i < sliders_numerics.length; i++){
+            var sdata = sliders_numerics[i].noUiSlider.get(),
+                srange = sliders_numerics[i].noUiSlider.options.range,
+                srange = [srange.min, srange.max];
+            //if (sdata[0] == srange[0] && sdata[1] == srange[1]) continue;
+            //console.log(sdata);
+
+            var prop = sliders_numerics[i].getAttribute('rel');
+            numeric.push([prop, '>', sdata[0]]);
+            numeric.push([prop, '<', sdata[1]]);
+        }
+
+        if (numeric.length) wmgui.search.numeric = numeric;
+
         if ($('#advsbox').is(':visible'))
             $('#advsearch_do_trigger').trigger('click');
         else
@@ -1090,8 +1086,11 @@ function register_events(){
     });
 
     $('#numericbox_drop_trigger').click(function(){
+
         var sliders_numerics = document.getElementsByClassName('slider_numerics');
+
         //console.log(sliders_numerics);
+
         for (var i = 0; i < sliders_numerics.length; i++){
             var srange = sliders_numerics[i].noUiSlider.options.range;
             sliders_numerics[i].noUiSlider.set([srange.min, srange.max]);
@@ -1101,6 +1100,9 @@ function register_events(){
     $('#close_numericbox').click(function(){
         destroy_numericbox();
         delete wmgui.search.numeric;
+        $('#search_field-selectized').val('');
+        wmgui.multiselects['main'].clear();
+        wmgui.multiselects['main'].write(wmgui.search);
     });
 
     // mobile version switching
