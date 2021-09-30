@@ -3,7 +3,7 @@ Ermac
 
 Ermac is an embeddable GUI of the [MPDS platform](https://mpds.io). It allows browsing the MPDS scientific data from any website.
 
-Currently it predominantly uses an old-style JQuery-based ES5 JavaScript (see `src_js` folder). The Node is NOT used except the `optimize-js` module (experimental) installed with `npm install -g optimize-js` and used while creating the production bundle.
+Currently it predominantly uses an old-style JQuery-based ES5 JavaScript (see `src_js` folder). The NodeJS is NOT used except the `optimize-js` module (experimental) installed with `npm install -g optimize-js` and invoked while creating the production bundle.
 
 Several external dependencies are supplied along with the codebase simply in `src_js` folder.
 

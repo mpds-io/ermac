@@ -87,6 +87,14 @@ function register_events(){
             }
         });
 
+        if (wmgui.search.numeric){
+            query.numeric = '';
+            wmgui.search.numeric.forEach(function(item){
+                query.numeric += serialize_numeric.apply(this, item); // unpack
+            });
+            delete query.props; // NB to make the numeric results "more clear"
+        }
+
         if ($.isEmptyObject(query)) return wmgui.notify('Search is empty');
 
         var urlstr = $.param(query);
@@ -111,6 +119,7 @@ function register_events(){
         $('#aet_limit').prop('checked', false);
 
         destroy_numericbox();
+        delete wmgui.search.numeric;
         // TODO delete wmgui.search?
     });
 

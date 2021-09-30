@@ -306,7 +306,10 @@ function request_search(search, caption, without_history){
         }
 
         //console.log(search);
-        if (!search.numeric) destroy_numericbox();
+        if (!search.numeric){
+            destroy_numericbox();
+            delete wmgui.search.numeric;
+        }
         if (search.props && wmgui.numerics[search.props]){ // making a hint
             var data = wmgui.numerics[search.props],
                 prop_id = data[0],
@@ -953,6 +956,7 @@ function launch_iframed_app(rank){
 function start_visavis(plot_type){
 
     destroy_numericbox();
+    delete wmgui.search.numeric;
     if (plot_type) wmgui.visavis_curtype = plot_type;
 
     $('div.ctxpanel').hide();
