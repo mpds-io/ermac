@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.7
+ * Version: 0.6.8
  */
 "use strict";
 
@@ -22,7 +22,7 @@ wmgui.notify = function(msg){
     }, delay);
 }
 
-// external API
+// external API function
 wmgui.aug_search_cmd = function(new_fct, new_val){
 
     // Take care of mutually exclusive facets
@@ -82,45 +82,66 @@ wmgui.aug_search_cmd = function(new_fct, new_val){
     }
 }
 
-wmgui._selectize_read = function(multiselects_type){
-    var result = {},
-        selector = '#search_holder';
+// reading the selectize at the main search input (landing)
+wmgui._selectize_read_main = function(){
+    var result = {};
 
-    if (multiselects_type !== 'main')
-        selector = 'div.advs_' + multiselects_type;
+    $('#search_holder div.selectize-input.items').children().each(function(){
+        if (this.tagName !== 'DIV')
+            return;
 
-    $(selector + ' div.selectize-input.items').children().each(function(){
-        if (this.tagName == 'DIV'){
-            var facet = this.getAttribute('data-facet');
+        var facet = this.getAttribute('data-facet');
 
-            if (wmgui.other_facets.indexOf(facet) !== -1 && wmgui.search[facet])
-                result[facet] = wmgui.search[facet];
+        if (wmgui.other_facets.indexOf(facet) !== -1 && wmgui.search[facet])
+            result[facet] = wmgui.search[facet];
 
-            else if (facet == 'numeric'){
-                if (wmgui.search[facet]){
-                    result[facet] = '';
-                    wmgui.search[facet].forEach(function(item){
-                        result[facet] += serialize_numeric.apply(this, item); // unpack
-                    });
-                    if (result[facet].length) result[facet] = result[facet].substr(0, result[facet].length - 1);
-                } // NB else just skip!
-            }
-
-            else if (result[facet] && facet == 'elements')
-                result[facet] += '-' + this.getAttribute('data-term');
-
-            else if (result[facet] && wmgui.multi_facets.indexOf(facet) !== -1)
-                result[facet] += ', ' + this.getAttribute('data-term');
-
-            else if (facet == 'formulae')
-                result[facet] = this.getAttribute('data-term').replaceAll('<sub>', '').replaceAll('</sub>', '');
-
-            else
-                result[facet] = this.getAttribute('data-term');
+        else if (facet == 'numeric'){
+            if (wmgui.search[facet]){
+                result[facet] = '';
+                wmgui.search[facet].forEach(function(item){
+                    result[facet] += serialize_numeric.apply(this, item); // unpack
+                });
+                if (result[facet].length) result[facet] = result[facet].substr(0, result[facet].length - 1);
+            } // NB else just skip!
         }
+
+        else if (result[facet] && facet == 'elements')
+            result[facet] += '-' + this.getAttribute('data-term');
+
+        else if (result[facet] && wmgui.multi_facets.indexOf(facet) !== -1)
+            result[facet] += ', ' + this.getAttribute('data-term');
+
+        else if (facet == 'formulae')
+            result[facet] = this.getAttribute('data-term').replaceAll('<sub>', '').replaceAll('</sub>', '');
+
+        else
+            result[facet] = this.getAttribute('data-term');
     });
+
     return result;
 }
+
+// reading the selectize at the *wmgui.multi_facets* categories
+wmgui._selectize_read_facet = function(fct){
+    var result = {},
+        selector = 'div.advs_' + fct;
+
+    $(selector + ' div.selectize-input.items').children().each(function(){
+        if (this.tagName !== 'DIV')
+            return;
+
+        var facet = this.getAttribute('data-facet');
+
+        if (result[facet])
+            result[facet] += ', ' + this.getAttribute('data-term');
+        else
+            result[facet] = this.getAttribute('data-term');
+        return;
+    });
+
+    return result;
+}
+
 
 wmgui._selectize_write = function($this, name, search_obj){
     var given_search = {};

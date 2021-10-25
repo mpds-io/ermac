@@ -51,7 +51,7 @@ function destroy_numericbox(){
     }
 }
 
-function get_sliders_ranges(url_num_obj, num_database){ // given by (1.) WMCORE.parse_string or (2.) from inventing serialization for numeric nested arrays or (3.) by user
+function get_sliders_ranges(url_num_obj, num_database){ // given by (1.) WMCORE.parse_string or (2.) from re-inventing serialization for numeric nested arrays or (3.) by user
     var props = {},
         output = [];
 
@@ -90,6 +90,6 @@ function get_sliders_ranges(url_num_obj, num_database){ // given by (1.) WMCORE.
     return output;
 }
 
-function serialize_numeric(prop, sign, value){ // inventing serialization for numeric nested arrays
+function serialize_numeric(prop, sign, value){ // re-inventing serialization for numeric nested arrays
     return prop + ',' + sign + ',' + value + ';';
 }

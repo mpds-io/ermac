@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.7
+ * Version: 0.6.8
  */
 "use strict";
 
@@ -73,6 +73,7 @@ function register_events(){
 
         $.each(wmgui.multi_facets, function(n, item){
             curval = wmgui.multiselects[item].read();
+
             if (curval[item]){
                 curval = curval[item];
                 if (item == "authors") curval = curval.replace(/'/g, '').replaceAll('\\.', ' ').replaceAll('\\b\\w{1}\\b', '').trim();
@@ -340,11 +341,11 @@ function register_events(){
 
         } else if (act == 'sod'){
             var now = new Date(),
-                pick = now.getDate() % wmgui.sbucks.length,
+                pick = now.getDate() % wmgui.s_examples.length,
                 start = new Date(now.getFullYear(), 0, 0),
                 diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000),
                 nday = Math.floor(diff / (1000 * 60 * 60 * 24)),
-                sod = wmgui.sbucks[pick] + nday;
+                sod = wmgui.s_examples[pick] + nday;
             window.location.hash = '#entry/S' + sod;
 
         } else if (act == 'my'){
@@ -674,8 +675,8 @@ function register_events(){
                 if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
             });
 
-        } else if (desttab == 'usr_tab_ctrl'){
-            window.location.href = wmgui.static_host + (wmgui.edition === 0 ? '/ctrl' : '/labs/custom-datasets') + '?' + Math.floor(Math.random() * 1000);
+        } else if (desttab == 'usr_tab_ctrl'){ // redirect to an external app
+            window.location.href = (wmgui.edition === 0 ? '/ctrl' : '/labs/custom-datasets') + '?' + Math.floor(Math.random() * 1000);
 
         } else if (desttab == 'usr_tab_account'){
             $('#hintsbox_msg').html(WMCORE.get_random_term(wmgui.welcome_msgs));

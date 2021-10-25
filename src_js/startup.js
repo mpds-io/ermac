@@ -164,7 +164,7 @@ function satisfy_requirements(){
             })[0].selectize;
 
             wmgui.multiselects[fct].read = function(){
-                return wmgui._selectize_read(fct);
+                return wmgui._selectize_read_facet(fct);
             }
             wmgui.multiselects[fct].write = function(search_obj){
                 wmgui._selectize_write(wmgui.multiselects[fct], fct, search_obj);
@@ -355,7 +355,7 @@ function satisfy_requirements(){
     })[0].selectize;
 
     wmgui.multiselects['main'].read = function(){
-        return wmgui._selectize_read('main');
+        return wmgui._selectize_read_main();
     }
     wmgui.multiselects['main'].write = function(search_obj){
         wmgui._selectize_write(wmgui.multiselects['main'], 'main', search_obj);

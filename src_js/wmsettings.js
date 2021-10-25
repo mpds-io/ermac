@@ -42,14 +42,14 @@ wmgui.facet_names = {
     orgs: 'Organization'
 };
 wmgui.search = {};
-wmgui.multiselects = {}; // selectize instances
+wmgui.multiselects = {}; // selectize instances, for *wmgui.multi_facets* and *main*
 wmgui.unfinished_page = false;
 wmgui.quick_page_size = 150;
 wmgui.fetch_page_size = 850;
 wmgui.notify_counter = null;
 wmgui.cliff_counter = null;
 wmgui.sid = null;
-wmgui.prod = (window.location.host.indexOf('localhost') == -1);
+wmgui.prod = true; // (window.location.host.indexOf('localhost') == -1);
 
 wmgui.cliffhangers = [
     "binary compounds with negative thermal expansion",
@@ -111,7 +111,7 @@ wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
 wmgui.static_host =       'https://mpds.io';
 
-// below are the MPDS API endpoints
+// below are the main MPDS API endpoints
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';
 wmgui.logout_endpoint =   wmgui.api_host + '/users/logout';
 wmgui.restore_endpoint =  wmgui.api_host + '/users/lost_password';
@@ -272,7 +272,7 @@ wmgui.aets = {
 };
 
 wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us why, anonymously"></textarea><select id="fdwidget_msgtype"><option value="No reason" selected>Please select reason...</option><option value="Data missing">Data missing</option><option value="Error in data">Error in data</option><option value="Other">Other</option></select><div id="fdwidget_trigger" class="wmbutton">Send</div>';
-wmgui.sbucks = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
+wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
 wmgui.mockyear = new Date().getFullYear();
 wmgui.edition = null; // NB 0 or 1, determined by a currently used domain
 wmgui.editions = {

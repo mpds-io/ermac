@@ -1,4 +1,4 @@
-// now, fire in the holl!
+// now, run everything
 
 assign_edition();
 

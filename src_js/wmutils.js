@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.7
+ * Version: 0.6.8
  */
 "use strict";
 

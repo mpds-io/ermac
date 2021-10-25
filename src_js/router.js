@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.7
+ * Version: 0.6.8
  */
 "use strict";
 
@@ -53,7 +53,7 @@ function url__inquiry(arg, no_retrieve){
         if (inquiry[item]) inquiry[item] = unescape(inquiry[item].replaceAll('\\+', ' ')); // TODO XSS-protection
     });
 
-    // inventing serialization for numeric nested arrays
+    // re-inventing serialization for numeric nested arrays
     if (inquiry.numeric){
         inquiry.numeric = unescape(inquiry.numeric).split(';').map(function(item){ return item.split(',') });
         inquiry.numeric = inquiry.numeric.filter(function(item){ return item.length == 3 });
