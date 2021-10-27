@@ -1,6 +1,8 @@
 
 // spin-off from https://github.com/Pixabay/JavaScript-autoComplete
 
+var wmgui = window.wmgui || {};
+
 wmgui.create_autocomplete = (function(){
     function autoComplete(options){
         if (!document.querySelector) return;

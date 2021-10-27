@@ -247,7 +247,7 @@ div.ctxpanel{display:none;border-top:1px solid #888;margin-top:4vh;}
 #interpret li{text-align:left;list-style:none;cursor:pointer;user-select:none;line-height:1.4em;color:#fff;font-size:1em;margin-bottom:4px;padding:2px 0 2px 3px;border-bottom-left-radius:4px;overflow:hidden;text-overflow:ellipsis;}
 #interpret li span{font-size:0.9em;font-weight:bold;letter-spacing:1px;}
 
-#dtypes{display:none;margin-top:30px;width:100%;height:auto;border-top:1px solid #888;}
+#dtypes{margin-top:30px;width:100%;height:auto;border-top:1px solid #888;}
 #dtypes > ul{margin:0;padding:0;}
 #dtypes > ul > li{text-align:left;list-style:none;cursor:pointer;user-select:none;line-height:1.4em;color:#fff;font-size:1em;margin-bottom:3px;padding:2px 0 2px 3px;border-bottom-left-radius:4px;overflow:hidden;text-overflow:ellipsis;}
 #dtypes > ul > li > a{text-decoration:none;font-size:0.95em;}

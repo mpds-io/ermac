@@ -299,7 +299,6 @@ function request_search(search, caption, without_history){
         if (wmgui.visavis_terminating) stop_visavis();
 
         if (wmgui.search_type || search.phid || search.entry || search.interlinkage || search.doi || search.numeric){
-            $('#dtypes').hide();
             display_examples('#examples', true, true);
 
             if (search.phid || search.entry || search.interlinkage)
@@ -321,7 +320,6 @@ function request_search(search, caption, without_history){
             }
 
         } else {
-            $('#dtypes').show();
             wmgui.fuzzyout ? switch_control_mode(1, 11, 'a', false) : switch_control_mode(0, 10, false, false);
             request_refinement(search, (data.estimated_count > wmgui.quick_page_size));
         }
