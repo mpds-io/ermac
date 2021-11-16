@@ -79,7 +79,7 @@ div.advs.advs_classes > input{border:1px solid #E36868;}
 div.advs.advs_years > div{color:#E36868;}
 div.advs.advs_years > input{border:1px solid #E36868;}
 
-#aetmap{display:none;position:fixed;z-index:101;top:27%;left:50%;margin-left:300px;width:270px;padding-right:15px;border-right:1px solid #666;}
+#aetmap{display:none;position:fixed;z-index:101;top:27%;left:50%;margin-left:300px;width:270px;}
 #aetmap a{display:block;width:150px;height:150px;}
 #aetmap label{font-weight:normal;font-style:italic;user-select:none;}
 
