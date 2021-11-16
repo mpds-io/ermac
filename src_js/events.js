@@ -233,6 +233,25 @@ function register_events(){
         if (!close_vibox()) launch_iframed_app(this.getAttribute('data-rank'));
     });
 
+    $('#matcloudize').click(function(){
+        var url = $('#download_json').children('a').attr('href');
+
+        try { wmgui.active_ajax.abort() } catch(e){}
+        wmgui.active_ajax = $.ajax({type: 'GET', url: url}).done(function(data){
+            alert(JSON.stringify(data, null, 4));
+            console.dir(data, {depth: null});
+
+            var user = JSON.parse(window.localStorage.getItem('wm') || '{}');
+            console.log('Who has requested these data:');
+            console.log(user);
+
+            // Further MatCloud integration goes here...
+
+        }).fail(function(xhr, textStatus, errorThrown){
+            alert('Sorry, your subscription plan does not include full access to these data.');
+        });
+    });
+
     $('#refine_col').on('click', 'a.extd_refine', function(){
         var facet = $(this).attr('rel');
         if ($('#refine_col > ul > li.extd_rfns.fct_' + facet).length){

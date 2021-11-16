@@ -779,7 +779,7 @@ function open_context(el, launch_ext){
         $('#entryno').html('<a href="#entry/' + orig_id + '">' + orig_id + '</a>');
 
         $('#ctx_col').show();
-        $('#visualize, div.spinoff_pane, li.d_icon').hide();
+        $('#visualize, #matcloudize, div.spinoff_pane, li.d_icon').hide();
 
         open_sim_col(entry, entype, rank);
 
@@ -790,36 +790,36 @@ function open_context(el, launch_ext){
             $('#download_bib, #download_pdf').show();
 
         } else if (rank == 2){
-            $('#download_bib, #download_pdf, #download_json').show();
+            $('#download_bib, #download_pdf, #download_json, #matcloudize').show();
 
         } else if (rank == 3){
             $('#download_bib, #download_png, #download_cdr').show();
 
         } else if (rank == 4){
             $('#visualize').attr('data-rank', rank);
-            $('#download_bib, #download_json, #visualize').show();
+            $('#download_bib, #download_json, #visualize, #matcloudize').show();
 
         } else if (rank == 5){
             $('#visualize').attr('data-rank', rank);
-            $('#download_bib, #download_pdf, #visualize, #download_cif, #download_inp, #download_json').show();
+            $('#download_bib, #download_pdf, #visualize, #matcloudize, #download_cif, #download_inp, #download_json').show();
 
         } else if (rank == 6){
             $('#visualize').attr('data-rank', rank);
             $('#download_bib, #download_pdf, #visualize, #download_png, #download_cdr, #download_json').show();
 
         } else if (rank == 7){
-            $('#ml_data, #download_pdf, #download_json').show();
+            $('#ml_data, #download_pdf, #download_json, #matcloudize').show();
 
         } else if (rank == 8){
-            $('#ab_data, #download_pdf, #download_json, #download_raw').show();
+            $('#ab_data, #download_pdf, #download_json, #download_raw, #matcloudize').show();
 
         } else if (rank == 9){
             $('#visualize').attr('data-rank', rank);
-            $('#ab_data, #download_pdf, #download_json, #visualize, #download_png, #download_raw').show();
+            $('#ab_data, #download_pdf, #download_json, #visualize, #matcloudize, #download_png, #download_raw').show();
 
         } else if (rank == 10){
             $('#visualize').attr('data-rank', rank);
-            $('#ab_data, #download_pdf, #download_json, #visualize, #download_raw').show();
+            $('#ab_data, #download_pdf, #download_json, #visualize, #matcloudize, #download_raw').show();
 
         } else if (rank == 11){
             $('#ab_promise, #download_json').show();
