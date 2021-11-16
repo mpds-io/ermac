@@ -162,9 +162,9 @@ function url__modal(arg){
     if (arg == "login"){
         if (wmgui.sid) return window.location.replace('#modal/menu');
 
-        // external OAuth login
+        // edition-based OAuth login
         if (wmgui.edition == 1){
-            return window.location.href = '/asm_oauth.html';
+            return window.location.href = '/oauth/asm.html';
         }
 
         if ($("#restore_by_email").val()) $("#login_email").val($("#restore_by_email").val());

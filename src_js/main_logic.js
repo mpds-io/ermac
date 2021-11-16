@@ -1313,7 +1313,7 @@ function assign_edition(){
         if (!wmgui.editions[edition_key])
             edition_key = 0;
         wmgui.edition = edition_key;
-        wmgui.loadCSS(wmgui.editions[edition_key].css);
+        if (wmgui.editions[edition_key].css) wmgui.loadCSS(wmgui.editions[edition_key].css);
         if (wmgui.editions[edition_key].actions) wmgui.editions[edition_key].actions();
     }
 

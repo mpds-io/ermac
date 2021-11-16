@@ -402,7 +402,7 @@ function register_html(){
     <div style="width:150px;margin:25px auto;">
         <div id="login_trigger" class="wmbutton def_submittable">Log in</div>
     </div>
-    <div class="notice">or email <span class="href" rel="#modal/restore">an access link</span><br />or log in via <a href="/github_oauth.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="/orcid_oauth.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="/linkedin_oauth.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
+    <div class="notice">or email <span class="href" rel="#modal/restore">an access link</span><br />or log in via <a href="/oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="/oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="/oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
 </div>
 
 <!-- RESTORE MODAL -->
@@ -416,7 +416,7 @@ function register_html(){
     <div style="width:150px;margin:25px auto;">
         <div id="restore_trigger" class="wmbutton def_submittable">Send link</div>
     </div>
-    <div class="notice">or log in with <span class="href" rel="#modal/login">password</span><br />or via <a href="/github_oauth.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="/orcid_oauth.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="/linkedin_oauth.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
+    <div class="notice">or log in with <span class="href" rel="#modal/login">password</span><br />or via <a href="/oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="/oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="/oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
 </div>
 
 <!-- USER MENU MODAL -->
