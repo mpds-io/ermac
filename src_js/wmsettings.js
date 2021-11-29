@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.8
+ * Version: 0.6.9
  */
 "use strict";
 
@@ -144,6 +144,26 @@ wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api
 // below are remote files commonly used
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?040521';
 wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
+
+wmgui.edition = null; // NB edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
+
+wmgui.editions = {
+    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.static_host + '/editions/wm/style.css?260821', 'actions': function(){
+        $('#logo_l').text('MPDS');
+        $('.only_asm').hide();
+        $('.only_mpds').css('display', 'inline-block');
+    }},
+    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?260821', 'actions': function(){
+        $('.only_mpds').hide();
+        $('.only_asm').css('display', 'inline-block');
+        // custom favicon
+        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        link.href = wmgui.static_host + '/editions/asm/asm.ico';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }}
+};
 // NB all URLs are above
 
 wmgui.elemental_names = {
@@ -168,10 +188,10 @@ wmgui.collateral_links = [ // [link_href, link_rel_attr, link_value, _blank]
     [wmgui.static_host + '/labs/mpds-ml-labs/props.html', false, 'predict properties for crystal', true],
     ['#', 'idea', 'get inspiration'],
     ['#', 'sod', 'show structure of the day'],
-    ['/asm_oauth.html', false, 'connect ASM profile', true],
-    ['/github_oauth.html', false, 'connect GitHub profile', true],
-    ['/orcid_oauth.html', false, 'connect ORCID profile', true],
-    ['/linkedin_oauth.html', false, 'connect LinkedIn profile', true]
+    ['/oauth/asm.html', false, 'connect ASM profile', true],
+    ['/oauth/github.html', false, 'connect GitHub profile', true],
+    ['/oauth/orcid.html', false, 'connect ORCID profile', true],
+    ['/oauth/linkedin.html', false, 'connect LinkedIn profile', true]
 ];
 
 wmgui.aets = {
@@ -275,24 +295,6 @@ wmgui.aets = {
 wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us why, anonymously"></textarea><select id="fdwidget_msgtype"><option value="No reason" selected>Please select reason...</option><option value="Data missing">Data missing</option><option value="Error in data">Error in data</option><option value="Other">Other</option></select><div id="fdwidget_trigger" class="wmbutton">Send</div>';
 wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
 wmgui.mockyear = new Date().getFullYear();
-wmgui.edition = null; // NB 0 or 1, determined by a currently used domain
-wmgui.editions = {
-    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.static_host + '/editions/wm/style.css?260821', 'actions': function(){
-        $('#logo_l').text('MPDS');
-        $('.only_asm').hide();
-        $('.only_mpds').css('display', 'inline-block');
-    }},
-    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?260821', 'actions': function(){
-        $('.only_mpds').hide();
-        $('.only_asm').css('display', 'inline-block');
-        // custom favicon
-        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'shortcut icon';
-        link.href = wmgui.static_host + '/editions/asm/asm.ico';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }}
-};
 
 wmgui.tooltips = {
     'advsearch': {el: 'advsearch_init_trigger', oleft: 90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="hierarchy">OK, next</span>'},
