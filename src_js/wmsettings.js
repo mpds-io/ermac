@@ -83,6 +83,7 @@ wmgui.welcome_msgs = [
     "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never available online.",
     "A unique feature of the MPDS is the support of the <a href='/#polyhedra'>polyhedral type searches</a>, taking into account the atomic environments."
 ];
+// used also in Ermac detection
 wmgui.api_msg = 'Try <i>e.g.</i> the following command in a terminal. As finished, do not forget to revoke your API key. See the <a href="https://developer.mpds.io">manual</a> and the <a href="/#formal/api">license</a> for open data listing.<pre style="overflow-x:scroll;margin:1em 0;">curl -H Key:YOUR_API_KEY \'https://api.mpds.io/v0/download/facet?q=&bsol;{"elements":"Ag-K"&bsol;}\'</pre><div class="wmbutton" style="background:#999;border-color:#999;width:150px;margin:0 auto;font-size:0.9em;">Copy to clipboard</div>';
 
 wmgui.bid_history = [];

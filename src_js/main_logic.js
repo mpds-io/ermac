@@ -1277,7 +1277,7 @@ function update_dc(){
         cmp_html += '<option value="' + escape(past_str) + '">' + title + '</option>';
         count++;
     });
-    cmp_html += '<option value="Y">No comparison</option>';
+    cmp_html += '<option value="Y">No comparison</option><option value="Z">Multiple comparison</option>';
     $('#select_cmp_trigger').empty().append(cmp_html);
 }
 

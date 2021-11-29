@@ -927,9 +927,12 @@ function register_events(){
 
         if (value == 'X')
             return;
-
-        if (value == 'Y'){
+        else if (value == 'Y'){
             document.getElementById('visavis_iframe').contentWindow.cmp_discard(wmgui.visavis_curtype);
+            return;
+        }
+        else if (value == 'Z'){
+            window.location.href = '/labs/multi-cmp';
             return;
         }
 
