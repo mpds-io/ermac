@@ -83,7 +83,7 @@ wmgui.welcome_msgs = [
     "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never available online.",
     "A unique feature of the MPDS is the support of the <a href='/#polyhedra'>polyhedral type searches</a>, taking into account the atomic environments."
 ];
-// used also in Ermac detection
+// used also in Ermac detection:
 wmgui.api_msg = 'Try <i>e.g.</i> the following command in a terminal. As finished, do not forget to revoke your API key. See the <a href="https://developer.mpds.io">manual</a> and the <a href="/#formal/api">license</a> for open data listing.<pre style="overflow-x:scroll;margin:1em 0;">curl -H Key:YOUR_API_KEY \'https://api.mpds.io/v0/download/facet?q=&bsol;{"elements":"Ag-K"&bsol;}\'</pre><div class="wmbutton" style="background:#999;border-color:#999;width:150px;margin:0 auto;font-size:0.9em;">Copy to clipboard</div>';
 
 wmgui.bid_history = [];
@@ -297,16 +297,17 @@ wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 103
 wmgui.mockyear = new Date().getFullYear();
 
 wmgui.tooltips = {
-    'advsearch': {el: 'advsearch_init_trigger', oleft: 90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="hierarchy">OK, next</span>'},
-    'hierarchy': {el: 'hierarchy_trigger', oleft: 90, otop: 60, view_mode: 1, text: 'Use the <i>&mu;</i> button to select physical properties from the curated hierarchy.<br /><span rel="userbox">OK, next</span>'},
-    'userbox': {el: 'userbox', oleft: 100, otop: 65, view_mode: 1, text: 'Access your account here and enjoy the full data access.<br /><span rel="close_tooltip">OK</span>'},
-    'interpretation': {el: 'right_col', oleft: 70, otop: 99, view_mode: 2, text: 'The entries are grouped into the phases.<br /><span rel="databrowser">OK, next</span>'},
-    'databrowser': {el: 'databrowser', oleft: 0, otop: 200, view_mode: 2, text: 'Click the particular entry to get more info. Opened lock means open access.<br /><span rel="plots">OK, next</span>'},
+    'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="hierarchy">Next</span>'},
+    'hierarchy': {el: 'hierarchy_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the <i>&mu;</i> button to select physical properties from the curated hierarchy.<br /><span rel="userbox">Next</span>'},
+    'userbox': {el: 'userbox', oleft: -100, otop: 65, view_mode: 1, text: 'Access your account here and enjoy the full data access.<br /><span rel="close_tooltip">OK</span>'},
+    'interpretation': {el: 'right_col', oleft: -70, otop: 99, view_mode: 2, text: 'The entries are grouped into the phases.<br /><span rel="databrowser">Next</span>'},
+    'databrowser': {el: 'databrowser', oleft: 0, otop: 200, view_mode: 2, text: 'Click the particular entry to get more info. Opened lock means open access.<br /><span rel="plots">Next</span>'},
     'plots': {el: 'databrowser', oleft: 0, otop: 500, view_mode: 2, text: 'Use the graph chart buttons in the footer (at the very bottom of the page).<br /><span rel="close_tooltip">OK</span>'},
-    'ss_axes': {el: 'ctxpanel_plots', oleft: -60, otop: 114, view_mode: 2, text: 'Click gear icon to sort axes differently.<br /><span rel="visavis" class="forced">OK, next</span>'},
-    'visavis': {el: 'right_col', oleft: 150, otop: 500, view_mode: 2, text: 'Fine-tune visualizations with these commands.<br /><span rel="close_tooltip">OK</span>'}
+    'ss_axes': {el: 'ctxpanel_plots', oleft: 60, otop: 114, view_mode: 2, text: 'Click gear icon to sort axes differently.<br /><span rel="visavis" class="forced">Next</span>'},
+    'visavis': {el: 'right_col', oleft: -150, otop: 500, view_mode: 2, text: 'Fine-tune visualizations with these commands.<br /><span rel="close_tooltip">OK</span>'}
 };
-wmgui.tooltip_var = 0;
+wmgui.tooltip_status = 0;
+wmgui.tooltip_landing = 'advsearch';
 
 wmgui.entries_messages = {'C900500': 'This system is stable (dashed metastable)', 'C904090': 'This system is metastable (dashed stable)', 'C904091': 'This system is metastable', 'C904092': 'This system is metastable (dashed stable)', 'C904124': 'This system is metastable (dashed stable)', 'C904221': 'This system is stable; allotropic transition of Fe is not shown', 'C904222': 'This system is stable', 'C904223': 'This system is stable', 'C904313': 'This system is stable', 'C904322': 'This system is stable', 'C904329': 'This system is stable', 'C904330': 'This system is metastable (dashed stable)', 'C904331': 'This system is metastable (dashed stable)', 'C904332': 'This system is stable', 'C904343': 'This system is stable', 'C904344': 'This system is stable', 'C904345': 'This system is stable (dashed metastable)', 'C904354': 'This system is metastable (dashed stable)', 'C904366': 'This system is metastable', 'C904376': 'This system is metastable (dashed stable)', 'C904437': 'This system is stable', 'C904478': 'This system is stable', 'C905006': 'This system is metastable', 'C905621': 'This system is metastable', 'C905635': 'This system is stable (dashed metastable)', 'C905636': 'This system is stable', 'C905637': 'This system is stable (dashed metastable)', 'C905638': 'This system is stable (dashed metastable)', 'C905985': 'This system is metastable (dashed stable)', 'C906635': 'This system is stable', 'C906931': 'This system is stable', 'C908341': 'This system is stable; p = 8.0 GPa', 'C908342': 'This system is metastable', 'C908343': 'This system is metastable', 'C979860': 'This system is stable', 'C979861': 'This system is stable', 'C979862': 'This system is stable', 'C979863': 'This system is metastable', 'C979864': 'This system is stable', 'C979865': 'This system is stable', 'C102059': 'This system is metastable', 'C103150': 'This system is stable', 'C104069': 'This system is metastable', 'C105034': 'This system is metastable', 'C105035': 'This system is metastable'};
 

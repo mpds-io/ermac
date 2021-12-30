@@ -313,10 +313,12 @@ function request_search(search, caption, without_history){
             } else
                 switch_control_mode(1, 10, false, false);
 
-            if (search.entry && search.entry.substr(0, 1) == 'S'){
+            if (search.entry && (search.entry.substr(0, 1) == 'S' || search.entry.substr(0, 1) == 'C') && search.entry.indexOf('-') == -1){
                 var that = $('#e__' + search.entry);
-                that.removeClass('busy_entry');
-                open_context(that, true);
+                if (that.length && that.attr('data-rank') != 0){ // NB "!=", not "!=="
+                    that.removeClass('busy_entry');
+                    open_context(that, true);
+                }
             }
 
         } else {
@@ -377,8 +379,8 @@ function rebuild_history_box(search, caption){
         window.localStorage.setItem('wm_search_log_v4', JSON.stringify(search_log));
         if ($('#history ul li').length > 8) $('#history ul li:last').remove();
     }
-    wmgui.tooltip_var++;
-    if (wmgui.tooltip_var == 1){
+    wmgui.tooltip_status++;
+    if (wmgui.tooltip_status == 1){
         setTimeout(function(){ show_tooltip(wmgui.tooltips['interpretation']) }, 3000);
     }
 }
@@ -484,7 +486,7 @@ function switch_view_mode(mode){
 
     if (mode == 1){
         stop_visavis();
-        document.title = 'MPDS materials platform';
+        document.title = 'Materials Platform for Data Science';
         $('body').addClass('noscroll');
         $('#search_box').removeClass('fluid').css('background', 'none').css("width", "590px");
 
@@ -1173,7 +1175,7 @@ function show_tooltip(info, forced){
     var tooltip_o = (wmgui.view_mode == 1) ? $('#' + info.el).offset() : $('#' + info.el).position(), // NB workaround a bug in pos
         tooltip_el = document.getElementById('tooltip');
 
-    tooltip_el.style.left = (tooltip_o.left - info.oleft) + 'px';
+    tooltip_el.style.left = (tooltip_o.left + info.oleft) + 'px';
     tooltip_el.style.top = (tooltip_o.top + info.otop) + 'px';
     tooltip_el.firstChild.innerHTML = info.text;
     document.getElementById('tooltip').style.display = 'block';

@@ -13,7 +13,7 @@ function satisfy_requirements(){
     // building history box
     var history_html = '';
     $.each(JSON.parse(window.localStorage.getItem('wm_search_log_v4') || '[]'), function(n, past){
-        wmgui.tooltip_var++;
+        wmgui.tooltip_status++;
         if (n > 7) return false;
         var title = [];
         for (var prop in past){ title.push(past[prop]) }
