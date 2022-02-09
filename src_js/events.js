@@ -623,6 +623,12 @@ function register_events(){
         window.location.replace($(this).attr('rel'));
     });
 
+    $('div.spinoff_pane').on('click', 'span.extd', function(){
+        var that = $(this);
+        that.siblings('span.legend').toggle();
+        that.text() == 'Show more info...' ? that.text('Hide more info...') : that.text('Show more info...');
+    });
+
     $('#interpret').on('click', 'li', function(){
         var that = $(this),
             link = that.attr('rel');
@@ -946,9 +952,12 @@ function register_events(){
 
         if (value == 'X')
             return;
-
-        if (value == 'Y'){
+        else if (value == 'Y'){
             document.getElementById('visavis_iframe').contentWindow.cmp_discard(wmgui.visavis_curtype);
+            return;
+        }
+        else if (value == 'Z'){
+            window.location.href = '/labs/multi-cmp';
             return;
         }
 
@@ -1069,8 +1078,8 @@ function register_events(){
     });
 
     $('#tips_trigger').click(function(){
-        wmgui.tooltip_var = 0;
-        show_tooltip(wmgui.tooltips['advsearch']);
+        wmgui.tooltip_status = 0;
+        show_tooltip(wmgui.tooltips[wmgui.tooltip_landing]);
         return false;
     });
 

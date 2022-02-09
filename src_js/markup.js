@@ -112,13 +112,13 @@ function register_html(){
     <div class="col_title">Entry <span id="entryno"></span> <div class="cross _close_ctx" style="margin:12px 2px 0 0;"></div></div>
 
     <div id="ml_data" class="spinoff_pane">
-        <p>In-house machine-learning predictions</p><span>These data are open and freely available under the CC BY 4.0 license. Cite as: Blokhin, Villars. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="/materials-design">materials design</a> app and the <a target="_blank" href="/ml">properties prediction</a> app online.<br /><br /></span>
+        <p>In-house machine-learning predictions</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">These data are open and freely available under the CC BY 4.0 license. Cite as: Blokhin, Villars. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="/materials-design">materials design</a> app and the <a target="_blank" href="/ml">properties prediction</a> app online.<br /><br /></span>
     </div>
     <div id="ab_data" class="spinoff_pane">
-        <p>In-house <i>ab initio</i> calculations</p><span>These data are open and freely available under the CC BY 4.0 license. Cite as: Sobolev, Civalleri, Maschio, Erba, Dovesi, Villars, Blokhin. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="https://mpds.io/labs/dtypes-cmp">data types comparison</a>.<br /><br /></span>
+        <p>In-house <i>ab initio</i> calculations</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">These data are open and freely available under the CC BY 4.0 license. Cite as: Sobolev, Civalleri, Maschio, Erba, Dovesi, Villars, Blokhin. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="https://mpds.io/labs/dtypes-cmp">data types comparison</a>.<br /><br /></span>
     </div>
     <div id="ab_promise" class="spinoff_pane">
-        <p>In-house <i>ab initio</i> calculations</p><span>This calculation is in progress. Upon completion it will be freely available under the CC BY 4.0 license. Support our work purchasing <a href="#products" style="text-decoration:none;color:#000;border-bottom:1px solid #000;">our products</a>.<br /><br /></span>
+        <p>In-house <i>ab initio</i> calculations</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">This calculation is in progress. Upon completion it will be freely available under the CC BY 4.0 license. Support our work purchasing <a target="_blank" href="https://mpds.io/products" style="text-decoration:none;color:#000;border-bottom:1px solid #000;">our products</a>.<br /><br /></span>
     </div>
 
     <ul>
