@@ -113,6 +113,8 @@ wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
 wmgui.static_host =       'https://mpds.io';
 
+wmgui.matcloud_endpoint = 'https://www.matcloudplus.com/pythonapi/structures/mpds_test';
+
 // below are the main MPDS API endpoints
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';
 wmgui.logout_endpoint =   wmgui.api_host + '/users/logout';

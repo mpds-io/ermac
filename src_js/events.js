@@ -234,18 +234,20 @@ function register_events(){
     });
 
     $('#matcloudize').click(function(){
+
+        if (!wmgui.oauths || !wmgui.oauths.matcloud){
+            if (confirm('Authorize at MatCloud?')) window.location.hash = '#modal/login';
+            return;
+        }
+
         var url = $('#download_json').children('a').attr('href');
 
         try { wmgui.active_ajax.abort() } catch(e){}
-        wmgui.active_ajax = $.ajax({type: 'GET', url: url}).done(function(data){
-            alert(JSON.stringify(data, null, 4));
-            console.dir(data, {depth: null});
+        wmgui.active_ajax = $.ajax({type: 'GET', url: url}).done(function(entry){
+            $.ajax({type: 'POST', url: wmgui.matcloud_endpoint, data: {data: entry}, headers: {Authorization: 'Bearer ' + wmgui.oauths.matcloud}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
+                $('#matcloudize').hide();
 
-            var user = JSON.parse(window.localStorage.getItem('wm') || '{}');
-            console.log('Who has requested these data:');
-            console.log(user);
-
-            // Further MatCloud integration goes here...
+            }).fail(console.log);
 
         }).fail(function(xhr, textStatus, errorThrown){
             alert('Sorry, your subscription plan does not include full access to these data.');
