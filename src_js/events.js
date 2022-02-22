@@ -738,7 +738,7 @@ function register_events(){
 
         try { wmgui.active_ajax.abort() } catch(e){}
 
-        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.login_endpoint, data: {login: $('#login_email').val().trim(), pass: $('#login_password').val()}, beforeSend: wmgui.show_preloader}).always(function(){
+        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.login_endpoint, data: {login: $('#login_email').val().trim(), pass: $('#login_password').val(), ed: wmgui.edition}, beforeSend: wmgui.show_preloader}).always(function(){
             $('#login_trigger').data('busy', false);
             $('#login_trigger').text('Login');
             wmgui.hide_preloader();
@@ -792,7 +792,7 @@ function register_events(){
 
         try { wmgui.active_ajax.abort() } catch(e){}
 
-        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.password_endpoint, data: {new_password: p2, sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(function(){
+        wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.password_endpoint, data: {new_password: p2, sid: wmgui.sid, ed: wmgui.edition}, beforeSend: wmgui.show_preloader}).always(function(){
             $('#password_trigger').data('busy', false);
             $('#password_trigger').text('Change');
             wmgui.hide_preloader();
