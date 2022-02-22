@@ -236,7 +236,7 @@ function register_events(){
     $('#matcloudize').click(function(){
 
         if (!wmgui.oauths || !wmgui.oauths.matcloud){
-            if (confirm('Authorize at MatCloud?')) window.location.hash = '#modal/login';
+            if (confirm('Authorize at MatCloud?')) window.location.href = '/oauth/matcloud.html';
             return;
         }
 
@@ -245,9 +245,11 @@ function register_events(){
         try { wmgui.active_ajax.abort() } catch(e){}
         wmgui.active_ajax = $.ajax({type: 'GET', url: url}).done(function(entry){
             $.ajax({type: 'POST', url: wmgui.matcloud_endpoint, data: {data: entry}, headers: {Authorization: 'Bearer ' + wmgui.oauths.matcloud}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
-                $('#matcloudize').hide();
+                alert('Successfully added');
 
-            }).fail(console.log);
+            }).fail(function(){
+                alert('Remote server error');
+            });
 
         }).fail(function(xhr, textStatus, errorThrown){
             alert('Sorry, your subscription plan does not include full access to these data.');

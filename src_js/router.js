@@ -193,7 +193,7 @@ function url__modal(arg){
         // edition-based OAuth login
         if (wmgui.edition == 1){
             return window.location.href = '/oauth/asm.html';
-        } else if (wmgui.edition == 15 || wmgui.edition == 16){
+        } else if (wmgui.edition == 11 || wmgui.edition == 16){
             return window.location.href = '/oauth/matcloud.html';
         }
 
