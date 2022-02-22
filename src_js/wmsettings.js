@@ -163,10 +163,7 @@ wmgui.editions = {
         link.rel = 'shortcut icon';
         link.href = wmgui.static_host + '/editions/asm/asm.ico';
         document.getElementsByTagName('head')[0].appendChild(link);
-    }},
-    11: {'name': 'Ermac integration', 'prod_url': 'https://ermac.tilde.pro', 'dev_url': 'http://localhost:5556'},
-    15: {'name': 'Ermac integration', 'prod_url': 'https://ermac.absolidix.com', 'dev_url': 'http://localhost:5560'},
-    16: {'name': 'Ermac integration', 'prod_url': 'https://ermac.matcloudplus.com', 'dev_url': 'http://localhost:5561'}
+    }}
 };
 // NB all URLs are above
 
