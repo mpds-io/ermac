@@ -231,7 +231,7 @@ function url__modal(arg){
 Retrieving the access via email by the secret link
 */
 function url__access(arg){
-    $.ajax({type: 'POST', url: wmgui.access_endpoint, data: {a: arg}}).done(function(data){
+    $.ajax({type: 'POST', url: wmgui.access_endpoint, data: {a: arg, ed: wmgui.edition}}).done(function(data){
         if (data.error){
             window.location.replace('#start');
             return wmgui.notify(data.error);
@@ -253,7 +253,7 @@ function url__access(arg){
 Confirming the access via email by the secret link
 */
 function url__ratify(arg){
-    $.ajax({type: 'POST', url: wmgui.ratify_endpoint, data: {a: arg}}).done(function(data){
+    $.ajax({type: 'POST', url: wmgui.ratify_endpoint, data: {a: arg, ed: wmgui.edition}}).done(function(data){
         if (data.error){
             window.location.replace('#start');
             return wmgui.notify(data.error);
