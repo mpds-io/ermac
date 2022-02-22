@@ -49,6 +49,7 @@ wmgui.fetch_page_size = 850;
 wmgui.notify_counter = null;
 wmgui.cliff_counter = null;
 wmgui.sid = null;
+wmgui.oauths = null;
 wmgui.prod = true; // (window.location.host.indexOf('localhost') == -1);
 
 wmgui.cliffhangers = [
@@ -162,7 +163,9 @@ wmgui.editions = {
         link.rel = 'shortcut icon';
         link.href = wmgui.static_host + '/editions/asm/asm.ico';
         document.getElementsByTagName('head')[0].appendChild(link);
-    }}
+    }},
+    15: {'name': 'MatCloud/Ermac integration', 'prod_url': 'https://ermac.absolidix.com', 'dev_url': 'http://localhost:5560'},
+    16: {'name': 'MatCloud/Ermac integration', 'prod_url': 'https://ermac.matcloudplus.com', 'dev_url': 'http://localhost:5561'}
 };
 // NB all URLs are above
 
