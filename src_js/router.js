@@ -3,7 +3,7 @@
  * Author: Evgeny Blokhin /
  * Tilde Materials Informatics
  * eb@tilde.pro
- * Version: 0.6.8
+ * Version: 0.6.9
  */
 "use strict";
 
@@ -21,11 +21,18 @@ function url_redraw_react(){
     else wmgui.notify('Unknown route: ' + window.location.hash);
 }
 
+/**
+The main landing route /#start
+*/
 function url__start(arg){
     switch_view_mode(1);
     if (wmgui.tooltip_status < 2) setTimeout(function(){ show_tooltip(wmgui.tooltips[wmgui.tooltip_landing]) }, 5000);
 }
 
+/**
+The free-form NLP-based search /#search/arg
+(given by external lib)
+*/
 function url__search(arg, no_retrieve){
     var query = unescape(arg),
         parsed = WMCORE.parse_string(query);
@@ -46,6 +53,9 @@ function url__search(arg, no_retrieve){
     if (!no_retrieve) request_search(parsed, query, wmgui.search_type);
 }
 
+/**
+The parameters-based search /#inquiry/arg
+*/
 function url__inquiry(arg, no_retrieve){
     var inquiry = arg.split("&").map( function(n){ return n = n.split("="), this[n[0]] = n[1], this }.bind({}) )[0];
 
@@ -77,6 +87,9 @@ function url__inquiry(arg, no_retrieve){
     if (!no_retrieve) request_search(inquiry, pseudo_input.join(" ").replaceAll(",", " "), wmgui.search_type);
 }
 
+/**
+The plotting subsystem (Vis-a-vis) /#plot/arg
+*/
 function url__plot(arg){
     var q = arg.split('/'),
         plot_type = q[0],
@@ -111,6 +124,9 @@ function url__plot(arg){
     }
 }
 
+/**
+The individual entry display /#entry/ID
+*/
 function url__entry(arg){
     wmgui.search_type = 0;
     wmgui.visavis_terminating = true;
@@ -122,6 +138,9 @@ function url__entry(arg){
     show_interpretation();
 }
 
+/**
+The individual phase display /#phase_id/integer
+*/
 function url__phase_id(arg){
     wmgui.search_type = 0;
     $('#search_field-selectized').val('');
@@ -133,6 +152,9 @@ function url__phase_id(arg){
     request_search({'phid': phid}, 'phase_id #' + phid, true);
 }
 
+/**
+The individual phase display /#phase/ID
+*/
 function url__phase(arg){
     var phase_data = arg.split('/'),
         formula = phase_data[0],
@@ -151,6 +173,9 @@ function url__phase(arg){
     } else return wmgui.notify('Wrong phase given!');
 }
 
+/**
+The display of menu with all the physical props
+*/
 function url__hierarchy(){
     $('body').removeClass('noscroll');
     $('#overlay').show();
@@ -158,6 +183,9 @@ function url__hierarchy(){
     $('#hy_box').show();
 }
 
+/**
+The different types of modal windows
+*/
 function url__modal(arg){
     if (arg == "login"){
         if (wmgui.sid) return window.location.replace('#modal/menu');
@@ -165,6 +193,8 @@ function url__modal(arg){
         // edition-based OAuth login
         if (wmgui.edition == 1){
             return window.location.href = '/oauth/asm.html';
+        } else if (wmgui.edition == 15 || wmgui.edition == 16){
+            return window.location.href = '/oauth/matcloud.html';
         }
 
         if ($("#restore_by_email").val()) $("#login_email").val($("#restore_by_email").val());
@@ -197,6 +227,9 @@ function url__modal(arg){
     $('#overlay').show();
 }
 
+/**
+Retrieving the access via email by the secret link
+*/
 function url__access(arg){
     $.ajax({type: 'POST', url: wmgui.access_endpoint, data: {a: arg}}).done(function(data){
         if (data.error){
@@ -207,7 +240,7 @@ function url__access(arg){
             window.location.replace('#start');
             return wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
         }
-        user_login(data.sid, data.name, data.acclogin, data.admin);
+        user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths);
         window.location.replace('#start');
 
     }).fail(function(xhr, textStatus, errorThrown){
@@ -216,6 +249,9 @@ function url__access(arg){
     });
 }
 
+/**
+Confirming the access via email by the secret link
+*/
 function url__ratify(arg){
     $.ajax({type: 'POST', url: wmgui.ratify_endpoint, data: {a: arg}}).done(function(data){
         if (data.error){
@@ -226,7 +262,7 @@ function url__ratify(arg){
             window.location.replace('#start');
             return wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
         }
-        user_login(data.sid, data.name, data.acclogin, data.admin);
+        user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths);
         window.location.replace('#modal/menu');
 
     }).fail(function(xhr, textStatus, errorThrown){
@@ -235,6 +271,9 @@ function url__ratify(arg){
     });
 }
 
+/**
+A special display of the related entries
+*/
 function url__interlinkage(arg){
     wmgui.search_type = 1;
     request_search({'interlinkage': arg}, 'linked phases for ' + arg, true);
@@ -244,6 +283,9 @@ function url__interlinkage(arg){
     show_interpretation();
 }
 
+/**
+All polyhedra menu
+*/
 function url__polyhedra(arg){
     $('body').removeClass('noscroll');
     $('#overlay').show();
@@ -252,6 +294,9 @@ function url__polyhedra(arg){
     $('#all_polyhedra_box').show();
 }
 
+/**
+Access denied route: trying to identify the reason
+*/
 function url__junction(arg){
     if (!wmgui.sid)
         return window.location.replace('#products');

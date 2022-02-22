@@ -1181,7 +1181,7 @@ function show_tooltip(info, forced){
     document.getElementById('tooltip').style.display = 'block';
 }
 
-function user_login(sid, name, acclogin, admin){
+function user_login(sid, name, acclogin, admin, oauths){
     var corner_name = (name.length > 40) ? name.substr(0, 37) + '&hellip;' : name;
     $('#auth_user').html(corner_name);
 
@@ -1189,6 +1189,7 @@ function user_login(sid, name, acclogin, admin){
     $('#account_holder_acclogin > span').html('<a href="mailto:' + acclogin + '">' + acclogin + '</a>');
 
     wmgui.sid = sid;
+    wmgui.oauths = oauths;
 
     $('div.logged_out').hide();
     $('div.logged_in').show();
@@ -1215,7 +1216,7 @@ function local_user_login(){ // FIXME window.location.reload();
         return;
 
     if (locals.sid && locals.name && locals.acclogin){
-        user_login(locals.sid, locals.name, locals.acclogin, locals.admin);
+        user_login(locals.sid, locals.name, locals.acclogin, locals.admin, locals.oauths);
     }
 }
 

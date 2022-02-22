@@ -746,7 +746,7 @@ function register_events(){
         }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
             if (!data.sid || !data.name || !data.acclogin) return wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
-            user_login(data.sid, data.name, data.acclogin, data.admin);
+            user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths);
             $('#userbox').trigger('click');
 
         }).fail(function(xhr, textStatus, errorThrown){
@@ -799,7 +799,7 @@ function register_events(){
 
         }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
-            user_login(data.sid, data.name, data.acclogin, data.admin);
+            user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths);
             window.location.replace('#start');
             $('#account_pass_change').hide();
 
