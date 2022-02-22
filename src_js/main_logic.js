@@ -1225,6 +1225,7 @@ function user_logout(silent){
         return;
 
     wmgui.sid = null;
+    wmgui.oauths = null;
     $('li.admin').hide();
     $('div.logged_in').hide();
     $('div.logged_out').show();
