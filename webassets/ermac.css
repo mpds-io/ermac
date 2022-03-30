@@ -19,11 +19,11 @@ div.gear{float:right;margin:12px 2px 0 0;width:16px;height:16px;font-size:10px;t
 #notifybox{z-index:210;position:fixed;top:12%;left:50%;margin-left:-220px;width:400px;background:#fc6;border-radius:5px;padding:20px;font-size:1.1em;line-height:1.5em;text-align:center;}
 
 #ermac_logo{width:200px;height:250px;margin:0 auto;background:url(wm_logo_opt.png) center center no-repeat;background-size:85%;transition-duration:0.5s;}
-#ermac_logo.cornered{position:fixed;top:0;left:0;width:58px;height:58px;margin:0 0 0 5%;z-index:52;transition-property:top left;transition-duration:0.5s;}
-#ermac_logo.shifted{position:fixed;top:0;left:0;width:105px;height:105px;margin:0 0 0 2%;z-index:52;transition-property:top left;transition-duration:0.5s;}
+#ermac_logo.cornered{position:fixed;top:0;left:0;width:58px;height:58px;margin:0 0 0 5%;z-index:52;transition-property:none;transition-duration:0.5s;}
+#ermac_logo.shifted{position:fixed;top:58px;left:0;width:105px;height:105px;margin:0 0 0 1.5%;z-index:52;transition-property:top;transition-duration:0.5s;}
 #ermac_logo > a{display:block;width:100%;height:100%;}
 #main{width:100%;min-height:100%;height:auto !important;margin:0 0 -33px 0;padding:0;}
-#footer{width:100%;height:24px;padding-top:8px;text-align:center;font-size:0.85em;color:#555;background:#fafafa;border-top:1px solid #eee;}
+#footer{width:100%;height:24px;padding-top:8px;text-align:center;font-size:0.85em;color:#555;background:#fff;}
 #footer a{text-decoration:none;color:#555;border-bottom:1px solid #555;}
 h2, h3{line-height:3em;font-weight:normal;color:#E36868;}
 
@@ -39,8 +39,8 @@ h2, h3{line-height:3em;font-weight:normal;color:#E36868;}
 #search_field-selectized{font-size:1.15em;letter-spacing:0.5px;}
 
 #hierarchy_trigger{display:none;float:right;width:25px;height:29px;line-height:29px;text-align:left;padding-left:10px;margin-left:4px;}
-#ptable_trigger{display:none;float:right;width:35px;height:29px;line-height:22px;margin-left:4px;font-size:15px;}
-#ptable_trigger sup{font-size:10px;}
+#ptable_trigger{display:none;float:right;width:35px;height:29px;line-height:22px;margin-left:4px;font-size:14px;letter-spacing:-0.5px;}
+#ptable_trigger sup{font-size:9px;}
 #advsearch_init_trigger{display:block;float:right;width:35px;height:29px;line-height:29px;margin-left:4px;}
 #search_trigger{display:block;float:right;width:35px;height:29px;line-height:29px;}
 
@@ -234,6 +234,8 @@ div.col_title a{text-decoration:none;color:#000;border-bottom:1px solid #000;}
 #visavis_col > ul > li{line-height:1.1em;margin-bottom:4px;padding:4px 0 4px 6px;background:#bfbfbf;}
 #visavis_col > ul > li.embodied{background:#FE9A2E;}
 #visavis_col > ul > li > a{display:block;outline:none;text-decoration:none;color:#fff;}
+#ind_col{display:none;position:fixed;top:62px;left:0;width:13.5%;height:90%;z-index:54;background:#fff;border-top:1px solid #888;text-align:center;}
+#ind_col a{text-decoration:none;color:#333;border-bottom:1px solid #333;line-height:2em;letter-spacing:-0.5px;}
 
 div.ctxpanel{display:none;border-top:1px solid #888;margin-top:4vh;}
 #ctxpanel_plots li{line-height:1.1em;margin-bottom:4px;padding:4px 0 4px 6px;background:#bfbfbf;}
