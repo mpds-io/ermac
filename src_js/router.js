@@ -1,10 +1,4 @@
-/**
- * MPDS platform desktop GUI URLs
- * Author: Evgeny Blokhin /
- * Tilde Materials Informatics
- * eb@tilde.pro
- * Version: 0.6.9
- */
+
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -26,7 +20,7 @@ The main landing route /#start
 */
 function url__start(arg){
     switch_view_mode(1);
-    if (wmgui.tooltip_status < 2) setTimeout(function(){ show_tooltip(wmgui.tooltips[wmgui.tooltip_landing]) }, 5000);
+    if (wmgui.tooltip_counter < 2) setTimeout(function(){ show_tooltip(wmgui.tooltips[wmgui.tooltip_landing]) }, 4000);
 }
 
 /**
@@ -119,7 +113,7 @@ function url__plot(arg){
     else
         wmgui.visavis_starting = true;
 
-    if (wmgui.tooltip_status < 2 && (plot_type == 'matrix' || plot_type == 'cube')){
+    if (wmgui.tooltip_counter < 2 && (plot_type == 'matrix' || plot_type == 'cube')){
         setTimeout(function(){ show_tooltip(wmgui.tooltips['ss_axes'], true) }, 4000);
     }
 }
@@ -133,8 +127,8 @@ function url__entry(arg){
     request_search({'entry': arg}, 'entry ' + arg, true);
     wmgui.search = {}; // mockup to reset previous properties
     wmgui.passive_sim_col = true;
-    $('#search_field-selectized').val('');
-    wmgui.multiselects['main'].clear();
+    //$('#search_field-selectized').val('');
+    //wmgui.multiselects['main'].clear();
     show_interpretation();
 }
 
@@ -143,13 +137,13 @@ The individual phase display /#phase_id/integer
 */
 function url__phase_id(arg){
     wmgui.search_type = 0;
-    $('#search_field-selectized').val('');
-    wmgui.multiselects['main'].clear();
+    //$('#search_field-selectized').val('');
+    //wmgui.multiselects['main'].clear();
     show_interpretation();
     var phid = parseInt(arg);
     wmgui.search = {'phid': phid};
     wmgui.search.search_type = wmgui.search_type;
-    request_search({'phid': phid}, 'phase_id #' + phid, true);
+    request_search({'phid': phid}, 'phase ' + phid, true);
 }
 
 /**
@@ -192,7 +186,7 @@ function url__modal(arg){
 
         // edition-based OAuth login
         if (wmgui.edition == 1){
-            return window.location.href = '/oauth/asm.html';
+            return window.location.href = 'oauth/asm.html';
         }
 
         if ($("#restore_by_email").val()) $("#login_email").val($("#restore_by_email").val());
@@ -202,6 +196,7 @@ function url__modal(arg){
         $("#login_email").focus();
 
         // for OAuth linking redirect only
+        // see *wm_u_email* in email_chain.html
         var u_email = window.localStorage.getItem('wm_u_email') || false;
         if (u_email){
             $("#login_email").val(u_email);
@@ -276,8 +271,8 @@ function url__interlinkage(arg){
     wmgui.search_type = 1;
     request_search({'interlinkage': arg}, 'linked phases for ' + arg, true);
     wmgui.search = {'numeric': true}; // mockup FIXME?
-    $('#search_field-selectized').val('');
-    wmgui.multiselects['main'].clear();
+    //$('#search_field-selectized').val('');
+    //wmgui.multiselects['main'].clear();
     show_interpretation();
 }
 

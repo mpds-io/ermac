@@ -1,10 +1,4 @@
-/**
- * MPDS platform desktop GUI
- * Author: Evgeny Blokhin /
- * Tilde Materials Informatics
- * eb@tilde.pro
- * Version: 0.6.8
- */
+
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -144,6 +138,9 @@ wmgui._selectize_read_facet = function(fct){
 
 
 wmgui._selectize_write = function($this, name, search_obj){
+
+    wmgui.selectize_emit = false;
+
     var given_search = {};
     $.extend(given_search, search_obj);
 
@@ -182,6 +179,7 @@ wmgui._selectize_write = function($this, name, search_obj){
     });
 
     $this.clearOptions();
+    wmgui.selectize_emit = true;
 }
 
 wmgui._selectize_display = function($this, facet, term){
@@ -299,19 +297,30 @@ function request_search(search, caption, without_history){
         if (wmgui.visavis_terminating) stop_visavis();
 
         if (wmgui.search_type || search.phid || search.entry || search.interlinkage || search.doi || search.numeric){
-            display_examples('#examples', true, true);
 
-            if (search.phid || search.entry || search.interlinkage)
+            if (search.phid || search.entry){
                 switch_control_mode(9, 11, 'a', 'c');
+                $('#ind_title').html( search.phid ? 'Phase ' + search.phid : 'Entry ' + search.entry );
+                $('#ind_link').attr('href', 'https://mpds.io/' + (search.phid ? 'phase_id' : 'entry') + '/' + (search.phid || search.entry));
+                $('#ind_link').html('www.mpds.io/' + (search.phid ? 'phase_id' : 'entry') + '/' + (search.phid || search.entry));
+                $('#refine_col, #ctx_col').hide();
+                $('#ind_col').show();
 
-            else if (search.numeric){
+            } else if (search.interlinkage){
+                switch_control_mode(9, 11, 'a', 'c');
+                display_examples('#examples', true, true);
+
+            } else if (search.numeric){
                 switch_control_mode(1, 12, 'b', false);
                 //console.log(search.numeric);
                 destroy_numericbox();
                 $.each(get_sliders_ranges(search.numeric, wmgui.numerics), function(n, item){ create_floating_slider.apply(this, item) }); // unpack
+                display_examples('#examples', true, true);
 
-            } else
+            } else {
                 switch_control_mode(1, 10, false, false);
+                display_examples('#examples', true, true);
+            }
 
             if (search.entry && (search.entry.substr(0, 1) == 'S' || search.entry.substr(0, 1) == 'C') && search.entry.indexOf('-') == -1){
                 var that = $('#e__' + search.entry);
@@ -360,7 +369,7 @@ function rebuild_history_box(search, caption){
     for (var prop in orepr){ title.push(orepr[prop].toLowerCase()) }
     title.sort();
     var fingerprint = title.join(" "),
-        search_log = JSON.parse(window.localStorage.getItem('wm_search_log_v4') || '[]'),
+        search_log = JSON.parse(window.localStorage.getItem(wmgui.storage_history_key) || '[]'),
         chk_searches = [];
     if (search_log.length > 8) search_log = search_log.slice(0, 7);
     $.each(search_log, function(n, item){
@@ -376,11 +385,11 @@ function rebuild_history_box(search, caption){
 
         $('#history ul').prepend('<li>' + wmgui.clean(item) + '</li>');
         search_log.unshift(orepr);
-        window.localStorage.setItem('wm_search_log_v4', JSON.stringify(search_log));
+        window.localStorage.setItem(wmgui.storage_history_key, JSON.stringify(search_log));
         if ($('#history ul li').length > 8) $('#history ul li:last').remove();
     }
-    wmgui.tooltip_status++;
-    if (wmgui.tooltip_status == 1){
+    wmgui.tooltip_counter++;
+    if (wmgui.tooltip_counter == 1){
         setTimeout(function(){ show_tooltip(wmgui.tooltips['interpretation']) }, 3000);
     }
 }
@@ -498,6 +507,19 @@ function switch_view_mode(mode){
         $('#search_area').removeClass('prolonged');
         $('#ermac_logo').removeClass('cornered');
 
+        if (wmgui.ptable.enabled){
+            $('#hierarchy_trigger').hide();
+            $('#ptable_trigger').show();
+
+            if (wmgui.ptable.visible){
+                wmgui.ptable.show();
+                $('#ermac_logo').addClass('shifted');
+
+            } else {
+                wmgui.ptable.hide();
+            }
+        }
+
     } else if (mode == 2){
         $('#landing_box, #intro_stats, #subnav, #legend').hide();
         $('#ctx_col').hide();
@@ -508,7 +530,13 @@ function switch_view_mode(mode){
 
         $('#right_col').show();
         $('#search_holder, #search_area').addClass('prolonged');
-        $('#ermac_logo').addClass('cornered');
+        $('#ermac_logo').removeClass('shifted').addClass('cornered');
+
+        if (wmgui.ptable.enabled){
+            $('#hierarchy_trigger').show();
+            $('#ptable_trigger').hide();
+            wmgui.ptable.hide();
+        }
     }
 }
 
@@ -608,7 +636,7 @@ function build_thumbs(json){
             return a[1] > b[1] ? 1 : a[1] < b[1] ? -1 : 0;
         });
         $.each(json, function(k, row){
-            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img"><div class="phased">' + row[1] + '<br /><br />SG ' + row[2] + '</div></div><div class="gallery_label"><a class=launch_ph href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
+            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img"><div class="phased">' + row[1] + '<br /><br />space group ' + row[2] + '</div></div><div class="gallery_label"><a class=launch_ph href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
         });
     } else {
         if (json[0].length != 8){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -653,7 +681,7 @@ function build_thumbs(json){
 }
 
 function request_refinement(query_obj, is_heavy){
-    $('#examples').hide();
+    $('#examples, #ind_col').hide();
     $('#refine_col > ul').empty().parent().show();
     $('#refine_col > div.col_title').show();
 
@@ -939,8 +967,6 @@ function launch_iframed_app(rank){
     var that = $('.busy_entry');
     if (!that.length) return;
 
-    //console.log(rank);
-
     var entry = that.attr('id').substr(3),
         entype = entry.substr(0, 1),
         iframe_src,
@@ -1172,7 +1198,7 @@ function show_tooltip(info, forced){
     if (info.view_mode != wmgui.view_mode || (wmgui.visavis_working && !forced) || $('div.modal').is(':visible'))
         return;
 
-    var tooltip_o = (wmgui.view_mode == 1) ? $('#' + info.el).offset() : $('#' + info.el).position(), // NB workaround a bug in pos
+    var tooltip_o = $('#' + info.el).position(),
         tooltip_el = document.getElementById('tooltip');
 
     tooltip_el.style.left = (tooltip_o.left + info.oleft) + 'px';
@@ -1194,7 +1220,7 @@ function user_login(sid, name, acclogin, admin, oauths){
     $('div.logged_out').hide();
     $('div.logged_in').show();
 
-    window.localStorage.setItem('wm', JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin}));
+    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin}));
     admin ? $('li.admin').show() : $('li.admin').hide();
 
     try {
@@ -1211,7 +1237,7 @@ function local_user_login(){ // FIXME window.location.reload();
     //if (wmgui.sid)
     //    return;
 
-    var locals = JSON.parse(window.localStorage.getItem('wm') || '{}');
+    var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
     if (locals.sid == wmgui.sid)
         return;
 
@@ -1230,7 +1256,7 @@ function user_logout(silent){
     $('div.logged_in').hide();
     $('div.logged_out').show();
 
-    window.localStorage.removeItem('wm');
+    window.localStorage.removeItem(wmgui.storage_user_key);
 
     try {
         document.getElementById('visavis_iframe').contentWindow.location.reload();
@@ -1251,8 +1277,8 @@ function force_relogin(show_msg){
 
 function communicate_windows(runnable_name){
     // NB the active window doesn't receive a storage event
-    window.localStorage.setItem('wm_reload', runnable_name);
-    window.localStorage.removeItem('wm_reload');
+    window.localStorage.setItem('wm_reload_tmp', runnable_name);
+    window.localStorage.removeItem('wm_reload_tmp');
 }
 
 function update_dc(){
@@ -1269,7 +1295,7 @@ function update_dc(){
         cur_str = JSON.stringify(orepr),
         cmp_html = '<option value="X" selected>Last search...</option>';
 
-    $.each(JSON.parse(window.localStorage.getItem('wm_search_log_v4') || '[]'), function(n, past){
+    $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_history_key) || '[]'), function(n, past){
         if (count > 5) return false;
 
         var title = [],

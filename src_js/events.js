@@ -158,7 +158,7 @@ function register_events(){
             bid = that.attr('rel');
         $('a.resolve_ref[rel=' + bid + ']').addClass('visited'); // :visited
         wmgui.bid_history.push(parseInt(bid));
-        window.localStorage.setItem('bid_history', JSON.stringify(wmgui.bid_history));
+        window.localStorage.setItem(wmgui.storage_bids_key, JSON.stringify(wmgui.bid_history));
         return true;
     });
 
@@ -343,7 +343,7 @@ function register_events(){
             window.location.hash = '#entry/S' + sod;
 
         } else if (act == 'my'){
-            var locals = JSON.parse(window.localStorage.getItem('wm') || '{}');
+            var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
             if (locals.name){
                 var names = locals.name.split(' ');
                 window.location.hash = '#inquiry/authors=' + escape(names[names.length - 1]);
@@ -1053,7 +1053,7 @@ function register_events(){
     });
 
     $('#tips_trigger').click(function(){
-        wmgui.tooltip_status = 0;
+        wmgui.tooltip_counter = 0;
         show_tooltip(wmgui.tooltips[wmgui.tooltip_landing]);
         return false;
     });
