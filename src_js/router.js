@@ -16,20 +16,20 @@ function url_redraw_react(){
 }
 
 /**
-The main landing route /#start
-*/
+ * The main landing route /#start
+ */
 function url__start(arg){
     switch_view_mode(1);
     if (wmgui.tooltip_counter < 2) setTimeout(function(){ show_tooltip(wmgui.tooltips[wmgui.tooltip_landing]) }, 4000);
 }
 
 /**
-The free-form NLP-based search /#search/arg
-(given by external lib)
-*/
+ * The free-form NLP-based search /#search/arg
+ * given by the OptimadeNLP wmutils
+ */
 function url__search(arg, no_retrieve){
     var query = unescape(arg),
-        parsed = WMCORE.parse_string(query);
+        parsed = wmutils.guess(query);
     //console.log(parsed);
 
     if (parsed.numeric) wmgui.search_type = 1;
@@ -48,8 +48,8 @@ function url__search(arg, no_retrieve){
 }
 
 /**
-The parameters-based search /#inquiry/arg
-*/
+ * The parameters-based search /#inquiry/arg
+ */
 function url__inquiry(arg, no_retrieve){
     var inquiry = arg.split("&").map( function(n){ return n = n.split("="), this[n[0]] = n[1], this }.bind({}) )[0];
 
@@ -82,8 +82,8 @@ function url__inquiry(arg, no_retrieve){
 }
 
 /**
-The plotting subsystem (Vis-a-vis) /#plot/arg
-*/
+ * The plotting subsystem (Vis-a-vis) /#plot/arg
+ */
 function url__plot(arg){
     var q = arg.split('/'),
         plot_type = q[0],
@@ -119,8 +119,8 @@ function url__plot(arg){
 }
 
 /**
-The individual entry display /#entry/ID
-*/
+ * The individual entry display /#entry/ID
+ */
 function url__entry(arg){
     wmgui.search_type = 0;
     wmgui.visavis_terminating = true;
@@ -133,8 +133,8 @@ function url__entry(arg){
 }
 
 /**
-The individual phase display /#phase_id/integer
-*/
+ * The individual phase display /#phase_id/integer
+ */
 function url__phase_id(arg){
     wmgui.search_type = 0;
     //$('#search_field-selectized').val('');
@@ -147,8 +147,8 @@ function url__phase_id(arg){
 }
 
 /**
-The individual phase display /#phase/ID
-*/
+ * The individual phase display /#phase/ID
+ */
 function url__phase(arg){
     var phase_data = arg.split('/'),
         formula = phase_data[0],
@@ -168,8 +168,8 @@ function url__phase(arg){
 }
 
 /**
-The display of menu with all the physical props
-*/
+ * The display of menu with all the physical props
+ */
 function url__hierarchy(){
     $('body').removeClass('noscroll');
     $('#overlay').show();
@@ -178,8 +178,8 @@ function url__hierarchy(){
 }
 
 /**
-The different types of modal windows
-*/
+ * The different types of modal windows
+ */
 function url__modal(arg){
     if (arg == "login"){
         if (wmgui.sid) return window.location.replace('#modal/menu');
@@ -221,8 +221,8 @@ function url__modal(arg){
 }
 
 /**
-Retrieving the access via email by the secret link
-*/
+ * Retrieving the access via email by the secret link
+ */
 function url__access(arg){
     $.ajax({type: 'POST', url: wmgui.access_endpoint, data: {a: arg, ed: wmgui.edition}}).done(function(data){
         if (data.error){
@@ -243,8 +243,8 @@ function url__access(arg){
 }
 
 /**
-Confirming the access via email by the secret link
-*/
+ * Confirming the access via email by the secret link
+ */
 function url__ratify(arg){
     $.ajax({type: 'POST', url: wmgui.ratify_endpoint, data: {a: arg, ed: wmgui.edition}}).done(function(data){
         if (data.error){
@@ -265,8 +265,8 @@ function url__ratify(arg){
 }
 
 /**
-A special display of the related entries
-*/
+ * A special display of the related entries
+ */
 function url__interlinkage(arg){
     wmgui.search_type = 1;
     request_search({'interlinkage': arg}, 'linked phases for ' + arg, true);
@@ -277,8 +277,8 @@ function url__interlinkage(arg){
 }
 
 /**
-All polyhedra menu
-*/
+ * All polyhedra menu
+ */
 function url__polyhedra(arg){
     $('body').removeClass('noscroll');
     $('#overlay').show();
@@ -288,8 +288,8 @@ function url__polyhedra(arg){
 }
 
 /**
-Access denied route: trying to identify the reason
-*/
+ * Access denied route: trying to identify the reason
+ */
 function url__junction(arg){
     if (!wmgui.sid)
         return window.location.replace('#products');

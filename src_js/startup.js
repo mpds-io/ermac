@@ -38,14 +38,10 @@ function satisfy_requirements(){
     // set client-side data features
     $.getJSON(wmgui.client_data_addr, function(answer){
 
-        WMCORE = WMCORE(answer.classes, answer.props, answer.props_ref);
-
         var i = 0, len = answer.props_ref.length;
         for (i; i < len; i++){
             if (!answer.props_ref[i]) answer.props_ref[i] = answer.props[i];
         }
-
-        answer.classes.extend(answer.classes_ite);
 
         // local search algo
         // #1

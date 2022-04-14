@@ -230,7 +230,7 @@ div.col_title a{text-decoration:none;color:#000;border-bottom:1px solid #000;}
 
 #visavis_col{display:none;position:fixed;top:62px;left:0;width:13.5%;height:90%;z-index:57;background:#fff;border-top:1px solid #888;}
 #visavis_col li{display:block;cursor:pointer;user-select:none;text-align:left;list-style:none;color:#fff;border-bottom-right-radius:4px;letter-spacing:0.5px;}
-#visavis_col > ul{margin:0;padding:0;}
+#visavis_col ul{margin:0;padding:0;}
 #visavis_col > ul > li{line-height:1.1em;margin-bottom:4px;padding:4px 0 4px 6px;background:#bfbfbf;}
 #visavis_col > ul > li.embodied{background:#FE9A2E;}
 #visavis_col > ul > li > a{display:block;outline:none;text-decoration:none;color:#fff;}

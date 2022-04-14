@@ -172,7 +172,7 @@ wmgui._selectize_write = function($this, name, search_obj){
                 $this.display(facet, part);
             });
         } else if (facet == 'formulae'){
-            given_search[facet] = WMCORE.to_formula(given_search[facet]);
+            given_search[facet] = wmgui.to_formula(given_search[facet]);
             $this.display(facet, given_search[facet]);
 
         } else $this.display(facet, given_search[facet]);
@@ -191,7 +191,7 @@ wmgui._selectize_display = function($this, facet, term){
 function show_interpretation(search){
     // FIXME only allow fixed props
     $('#interpret').html(
-        wmgui.clean(WMCORE.get_interpretation(search, wmgui.facet_names, wmgui.numerics))
+        wmgui.clean(wmgui.get_interpretation(search, wmgui.facet_names, wmgui.numerics))
     );
 }
 
@@ -445,7 +445,7 @@ function rebuild_visavis(){
 }
 
 function rotate_interesting(){
-    $('#legend').html('<i>e.g.</i> <a href="#">' + WMCORE.get_interesting()['text'].replace(/\d/g, "&#x208$&;") + '</a>');
+    $('#legend').html('<i>e.g.</i> <a href="#">' + wmgui.get_interesting()['text'].replace(/\d/g, "&#x208$&;") + '</a>');
 }
 
 function display_examples(box, more_examples, fix_rfn_header){
@@ -454,7 +454,7 @@ function display_examples(box, more_examples, fix_rfn_header){
     for (var i = 0; i < (more_examples ? 12 : 3); i++){
         wmgui.cliff_counter += 1;
         if (wmgui.cliff_counter > wmgui.cliffhangers.length-1) wmgui.cliff_counter = 0;
-        html += '<li><a href="#search/' + WMCORE.termify_formulae(wmgui.cliffhangers[wmgui.cliff_counter]) + '">' + wmgui.cliffhangers[wmgui.cliff_counter].charAt(0).toUpperCase() + wmgui.cliffhangers[wmgui.cliff_counter].slice(1) + '</a></li>';
+        html += '<li><a href="#search/' + wmutils.termify_formulae(wmgui.cliffhangers[wmgui.cliff_counter]) + '">' + wmgui.cliffhangers[wmgui.cliff_counter].charAt(0).toUpperCase() + wmgui.cliffhangers[wmgui.cliff_counter].slice(1) + '</a></li>';
     }
     $(box + ' > ul').empty().append(html);
     $(box).show();
@@ -483,7 +483,7 @@ function arrange_menu_collateral(){
     };
     $('#tagcloudbox').append(links_html);
 
-    $('#hintsbox_msg').append(WMCORE.get_random_term(wmgui.welcome_msgs));
+    $('#hintsbox_msg').append(wmgui.get_random_term(wmgui.welcome_msgs));
 }
 
 function switch_view_mode(mode){

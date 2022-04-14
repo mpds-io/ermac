@@ -3,7 +3,8 @@
 
 var wmgui = window.wmgui || {};
 
-function create_floating_slider(prop_name, prop_id, units, p_min, p_max, p_step, p_start, p_end){ // FIXME compatibilize with *wmgui.numerics*
+function create_floating_slider(prop_name, prop_id, units, p_min, p_max, p_step, p_start, p_end){
+    // FIXME compatibilize with *wmgui.numerics*
 
     if ($('#slider_' + prop_id).length){
         console.log('Attempted to create an existing slider id' + prop_id);
@@ -13,10 +14,13 @@ function create_floating_slider(prop_name, prop_id, units, p_min, p_max, p_step,
     //console.log(prop_name, prop_id, units, p_min, p_max, p_step, p_start, p_end);
 
     var html = '<li>';
-    html += '<div class="slider_title">' + (wmgui.numerics[prop_name][5] || prop_name) + (units ? (',&nbsp;<em>' + units + '</em>') : '') + '</div>';
+    html += '<div class="slider_title">';
+    html +=   (wmgui.numerics[prop_name][5] || prop_name) + (units ? (',&nbsp;<em>' + units + '</em>') : '');
+    html += '</div>';
     html += '<div class="cross slider_close"></div>';
     html += '<div class="slider">'; // #numericbox > ul > li > div.slider
-    html += '<img src="' + wmgui.pdist_endpoint + '?pdist=' + encodeURIComponent(prop_name) + '&q=' + encodeURIComponent(JSON.stringify(wmgui.search)) + '" width="530" height="25" />';
+    html += '<img src="' + wmgui.pdist_endpoint + '?pdist=' + encodeURIComponent(prop_name);
+    html +=   '&q=' + encodeURIComponent(JSON.stringify(wmgui.search)) + '" width="530" height="25" />';
     html += '<div id="slider_' + prop_id + '" class="slider_numerics" rel="' + prop_name + '"></div></div>';
     html += '</li>';
 
@@ -51,7 +55,11 @@ function destroy_numericbox(){
     }
 }
 
-function get_sliders_ranges(url_num_obj, num_database){ // given by (1.) WMCORE.parse_string or (2.) from re-inventing serialization for numeric nested arrays or (3.) by user
+function get_sliders_ranges(url_num_obj, num_database){
+    // given by:
+    // (1.) wmutils.guess, or
+    // (2.) from re-inventing serialization for numeric nested arrays, or
+    // (3.) by the user
     var props = {},
         output = [];
 
