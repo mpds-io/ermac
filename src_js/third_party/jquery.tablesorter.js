@@ -319,7 +319,7 @@
                         }
                     }
                 } else {
-                    if (typeof(config.textExtraction) == "function") {
+                    if (typeof (config.textExtraction) == "function") {
                         text = config.textExtraction(node);
                     } else {
                         text = $(node).text();
@@ -331,7 +331,7 @@
             function appendToTable(table, cache) {
 
                 if (table.config.debug) {
-                    var appendTime = new Date()
+                    var appendTime = new Date();
                 }
 
                 var c = cache,
@@ -435,21 +435,21 @@
                         var rowIndex = c.parentNode.rowIndex;
                         var cellId = rowIndex + "-" + c.cellIndex;
                         var rowSpan = c.rowSpan || 1;
-                        var colSpan = c.colSpan || 1
+                        var colSpan = c.colSpan || 1;
                         var firstAvailCol;
-                        if (typeof(matrix[rowIndex]) == "undefined") {
+                        if (typeof (matrix[rowIndex]) == "undefined") {
                             matrix[rowIndex] = [];
                         }
                         // Find first available column in the first row
                         for (var k = 0; k < matrix[rowIndex].length + 1; k++) {
-                            if (typeof(matrix[rowIndex][k]) == "undefined") {
+                            if (typeof (matrix[rowIndex][k]) == "undefined") {
                                 firstAvailCol = k;
                                 break;
                             }
                         }
                         lookup[cellId] = firstAvailCol;
                         for (var k = rowIndex; k < rowIndex + rowSpan; k++) {
-                            if (typeof(matrix[k]) == "undefined") {
+                            if (typeof (matrix[k]) == "undefined") {
                                 matrix[k] = [];
                             }
                             var matrixrow = matrix[k];
@@ -496,13 +496,13 @@
                 return false;
             }
 
-             function checkHeaderOptionsSortingLocked(table, i) {
+            function checkHeaderOptionsSortingLocked(table, i) {
                 if ((table.config.headers[i]) && (table.config.headers[i].lockedOrder)) return table.config.headers[i].lockedOrder;
                 return false;
             }
 
             function formatSortingOrder(v) {
-                if (typeof(v) != "Number") {
+                if (typeof (v) != "Number") {
                     return (v.toLowerCase() == "desc") ? 1 : 0;
                 } else {
                     return (v == 1) ? 1 : 0;
@@ -696,8 +696,8 @@
                     fixColumnWidth(this);
                     // apply event handling to headers
                     // this is to big, perhaps break it out?
-                    $headers.unbind();
-                    $headers.click(function (e){
+                    $headers.off();
+                    $headers.on('click', function (e) {
                         if (window.iframe) return false;
                         var totalRows = ($this[0].tBodies[0] && $this[0].tBodies[0].rows.length) || 0;
                         if (!this.sortDisabled && totalRows > 0) {
@@ -711,7 +711,7 @@
                             // get current column sort order
                             this.order = this.count++ % 2;
                             // always sort on the locked order.
-                            if(this.lockedOrder) this.order = this.lockedOrder;
+                            if (this.lockedOrder) this.order = this.lockedOrder;
 
                             // user only whants to sort on one
                             // column
@@ -763,14 +763,14 @@
                     }).mousedown(function () {
                         if (config.cancelSelection) {
                             this.onselectstart = function () {
-                                return false
+                                return false;
                             };
                             return false;
                         }
                     });
                     // apply easy methods that trigger binded events
-                    $this.unbind("update updateCell sorton appendCache");
-                    $this.bind("update", function () {
+                    $this.off("update updateCell sorton appendCache");
+                    $this.on("update", function () {
                         var me = this;
                         setTimeout(function () {
                             // rebuild parsers.
@@ -778,13 +778,13 @@
                             // rebuild the cache map
                             cache = buildCache(me);
                         }, 1);
-                    }).bind("updateCell", function (e, cell) {
+                    }).on("updateCell", function (e, cell) {
                         var config = this.config;
                         // get position from the dom.
                         var pos = [(cell.parentNode.rowIndex - 1), cell.cellIndex];
                         // update cache
                         cache.normalized[pos[0]][pos[1]] = config.parsers[pos[1]].format(getElementText(config, cell), cell);
-                    }).bind("sorton", function (e, list) {
+                    }).on("sorton", function (e, list) {
                         $(this).trigger("sortStart");
                         config.sortList = list;
                         // update and store the sortlist
@@ -795,7 +795,7 @@
                         setHeadersCss(this, $headers, sortList, sortCSS);
                         // sort the table and append it to the dom
                         appendToTable(this, multisort(this, sortList, cache));
-                    }).bind("appendCache", function () {
+                    }).on("appendCache", function () {
                         appendToTable(this, cache);
                     });
                     if ($.metadata && ($(this).metadata() && $(this).metadata().sortlist)) {
@@ -901,4 +901,4 @@
             return $(cell).metadata()[p];
         }, type: "numeric"
     });
-})(jQuery);
+})($);

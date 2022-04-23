@@ -3,10 +3,10 @@
 
 var wmgui = window.wmgui || {};
 
-function create_floating_slider(prop_name, prop_id, units, p_min, p_max, p_step, p_start, p_end){
+function create_floating_slider(prop_name, prop_id, units, p_min, p_max, p_step, p_start, p_end) {
     // FIXME compatibilize with *wmgui.numerics*
 
-    if ($('#slider_' + prop_id).length){
+    if ($('#slider_' + prop_id).length) {
         console.log('Attempted to create an existing slider id' + prop_id);
         return;
     }
@@ -15,12 +15,12 @@ function create_floating_slider(prop_name, prop_id, units, p_min, p_max, p_step,
 
     var html = '<li>';
     html += '<div class="slider_title">';
-    html +=   (wmgui.numerics[prop_name][5] || prop_name) + (units ? (',&nbsp;<em>' + units + '</em>') : '');
+    html += (wmgui.numerics[prop_name][5] || prop_name) + (units ? (',&nbsp;<em>' + units + '</em>') : '');
     html += '</div>';
     html += '<div class="cross slider_close"></div>';
     html += '<div class="slider">'; // #numericbox > ul > li > div.slider
     html += '<img src="' + wmgui.pdist_endpoint + '?pdist=' + encodeURIComponent(prop_name);
-    html +=   '&q=' + encodeURIComponent(JSON.stringify(wmgui.search)) + '" width="530" height="25" />';
+    html += '&q=' + encodeURIComponent(JSON.stringify(wmgui.search)) + '" width="530" height="25" />';
     html += '<div id="slider_' + prop_id + '" class="slider_numerics" rel="' + prop_name + '"></div></div>';
     html += '</li>';
 
@@ -33,20 +33,20 @@ function create_floating_slider(prop_name, prop_id, units, p_min, p_max, p_step,
     noUiSlider.create(document.getElementById('slider_' + prop_id), {
         start: [p_start || p_min, p_end || p_max],
         step: p_step || ((p_max - p_min) / 250),
-        tooltips: [wNumb({decimals: decimals}), wNumb({decimals: decimals})],
+        tooltips: [wNumb({ decimals: decimals }), wNumb({ decimals: decimals })],
         connect: true,
         behaviour: 'drag',
-        range: {'min': p_min, 'max': p_max},
+        range: { 'min': p_min, 'max': p_max },
         format: {
-            to: function (value){ return value },
-            from: function(value){ return Number(value) }
+            to: function (value) { return value; },
+            from: function (value) { return Number(value); }
         }
     });
 }
 
-function destroy_numericbox(){
-    if ($('#numericbox').is(':visible')){
-        $('#numericbox > ul > li').each(function(){
+function destroy_numericbox() {
+    if ($('#numericbox').is('[style="display: block"]')) {
+        $('#numericbox > ul > li').each(function () {
             var that = $(this);
             that.find('div.slider_numerics')[0].noUiSlider.destroy();
             that.remove();
@@ -55,7 +55,7 @@ function destroy_numericbox(){
     }
 }
 
-function get_sliders_ranges(url_num_obj, num_database){
+function get_sliders_ranges(url_num_obj, num_database) {
     // given by:
     // (1.) wmutils.guess, or
     // (2.) from re-inventing serialization for numeric nested arrays, or
@@ -63,19 +63,19 @@ function get_sliders_ranges(url_num_obj, num_database){
     var props = {},
         output = [];
 
-    for (var i = 0; i < url_num_obj.length; i++){
+    for (var i = 0; i < url_num_obj.length; i++) {
         if (url_num_obj[i][1] !== '>' && url_num_obj[i][1] !== '<')
             continue;
 
         var prop = (url_num_obj[i][1] == '>' ? 'start' : 'end');
 
-        if (!props[ url_num_obj[i][0] ]) props[url_num_obj[i][0]] = {};
+        if (!props[url_num_obj[i][0]]) props[url_num_obj[i][0]] = {};
 
         props[url_num_obj[i][0]][prop] = parseFloat(url_num_obj[i][2]); // TODO? consequent series like > 100, > 200, etc.
     }
     //console.log(props);
-    for (var key in props){
-        if (!num_database[key]){ console.log("Unsupported key: " + key); continue; }
+    for (var key in props) {
+        if (!num_database[key]) { console.log("Unsupported key: " + key); continue; }
 
         if (!props[key]['start']) props[key]['start'] = num_database[key][2]; // min
         else if (!props[key]['end']) props[key]['end'] = num_database[key][3]; // max
@@ -92,12 +92,12 @@ function get_sliders_ranges(url_num_obj, num_database){
             props[key]['end']
         ]);
     }
-    output.sort(function(a, b){
+    output.sort(function (a, b) {
         return a[1] > b[1] ? 1 : -1; // prop_id
     });
     return output;
 }
 
-function serialize_numeric(prop, sign, value){ // re-inventing serialization for numeric nested arrays
+function serialize_numeric(prop, sign, value) { // re-inventing serialization for numeric nested arrays
     return prop + ',' + sign + ',' + value + ';';
 }
