@@ -1,41 +1,51 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<meta charset="utf-8" />
-<link rel="stylesheet" type="text/css" href="webassets/ermac.css" />
-<script type="text/javascript" src="jquery.min.js"></script>
-</head>
-<body class="noscroll">
 
-<script type="text/javascript">
-// a very simple env loader
-var to_load = [
-    'src_js/third_party/jquery.tablesorter.js',
-    'src_js/third_party/wNumb.js',
-    'src_js/third_party/nouislider.js',
-    'src_js/third_party/selectize.js',
-    'src_js/third_party/selectize_preserve_on_blur.js',
-    'src_js/third_party/optimade_mpds_nlp.js',
-    'src_js/wmsettings.js',
-    'src_js/wmcore.js',
-    'src_js/sliders.js',
-    'src_js/third_party/autocomplete.js',
-    'src_js/router.js',
-    'src_js/events.js',
-    'src_js/markup.js',
-    'src_js/main_logic.js',
-    'src_js/startup.js',
-    'src_js/execute.js'
-];
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="webassets/ermac.css" />
+        <!-- <script type="text/javascript" src="jquery.min.js"></script> -->
+        <script type="text/javascript" src="https://unpkg.com/cash-dom@8.1.1"></script>
+    </head>
 
-var head = document.getElementsByTagName('head')[0];
-for (var i = 0; i < to_load.length; i++){
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = to_load[i];
-    script.async = false;
-    head.appendChild(script);
-}
-</script>
-</body>
+    <body class="noscroll">
+
+        <script defer type="text/javascript">
+            // a very simple env loader
+            var to_load = [
+                'src_js/wmgui$.js',
+                'src_js/lemon.js',
+                'src_js/log.js',
+                'src_js/clean.js',
+                // 'src_js/$.js',
+
+                'src_js/third_party/jquery.tablesorter.js',
+                'src_js/third_party/wNumb.js',
+                'src_js/third_party/nouislider.js',
+                'src_js/third_party/selectize.js',
+                'src_js/third_party/selectize_preserve_on_blur.js',
+                'src_js/third_party/optimade_mpds_nlp.js',
+                'src_js/wmsettings.js',
+                'src_js/wmcore.js',
+                'src_js/sliders.js',
+                'src_js/third_party/autocomplete.js',
+                'src_js/router.js',
+                'src_js/events.js',
+                'src_js/markup.js',
+                'src_js/main_logic.js',
+                'src_js/startup.js',
+                'src_js/execute.js',
+            ];
+
+            var head = document.getElementsByTagName('head')[0];
+            for (var i = 0; i < to_load.length; i++) {
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = to_load[i];
+                script.async = false;
+                head.appendChild(script);
+            }
+        </script>
+    </body>
+
 </html>

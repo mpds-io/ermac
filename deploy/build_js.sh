@@ -13,6 +13,8 @@ java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js 
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/third_party/selectize.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/third_party/selectize_preserve_on_blur.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT_NEXT    --js $ROOT/src_js/third_party/optimade_mpds_nlp.js >> $JSTARGET
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT_NEXT    --js $ROOT/src_js/wmgui$.js >> $JSTARGET
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT_NEXT    --js $ROOT/src_js/clean.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/wmsettings.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT_NEXT    --js $ROOT/src_js/wmcore.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/sliders.js >> $JSTARGET
