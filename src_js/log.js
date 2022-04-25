@@ -22,7 +22,9 @@ const array = ['a', 'b'];
 window.onload = () => {
     console.log(
         'DOM',
-        $('.controlswitch').children()
+        $('.controlswitch').children(''),
+        // lemon.log(),
+        // lemon('#search_box').parent()
         // wmgui.$(),
         // 'window:', wmgui.$(window).nodes,
         // 'attr:', wmgui.$('#search_box').style(),
