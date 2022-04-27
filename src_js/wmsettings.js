@@ -145,12 +145,12 @@ wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
 wmgui.edition = null; // NB edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
 
 wmgui.editions = {
-    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.static_host + '/editions/wm/style.css?260821', 'actions': function(){
+    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.static_host + '/editions/wm/style.css?300422', 'actions': function(){
         $('#logo_l').text('MPDS');
         $('.only_asm').hide();
         $('.only_mpds').css('display', 'inline-block');
     }},
-    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?260821', 'actions': function(){
+    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?300422', 'actions': function(){
         $('.only_mpds').hide();
         $('.only_asm').css('display', 'inline-block');
         // custom favicon

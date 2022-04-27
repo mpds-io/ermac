@@ -9,7 +9,7 @@ function register_html(){
 
 <div id="preloader"><div></div></div>
 
-<div id="overlay" class="sky"></div>
+<div id="overlay"></div>
 
 <div id="aetmap"><a style="float:left;" href="#polyhedra" class="link_adjuster"></a><div style="float:right;margin-top:25px;"><input type="checkbox" id="aet_limit" /><label for="aet_limit">&nbsp;No other types</label></div></div>
 
@@ -32,7 +32,7 @@ function register_html(){
                 <select id="search_field" autocomplete="false" multiple autofocus></select>
             </div>
             <a href="#hierarchy" id="hierarchy_trigger" class="wmbutton" title="Show list of properties">&mu;<span><sub>x</sub><sup>&deg;</sup></span></a>
-            <a id="ptable_trigger" class="wmbutton" title="Show periodic table"><sup>118</sup>Og</a>
+            <a id="ptable_trigger" class="wmbutton" title="Show periodic table"><sup>26</sup>Fe</a>
             <a href="#" id="advsearch_init_trigger" class="wmbutton" title="Show search options">&#9776;</a>
             <a href="#" id="search_trigger" class="wmbutton" title="Search">&#x23ce;</a>
         </div>
