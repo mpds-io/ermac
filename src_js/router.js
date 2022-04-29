@@ -54,7 +54,7 @@ function url__inquiry(arg, no_retrieve){
     var inquiry = arg.split("&").map( function(n){ return n = n.split("="), this[n[0]] = n[1], this }.bind({}) )[0];
 
     wmgui.facets.forEach(function(item){
-        if (inquiry[item]) inquiry[item] = unescape(inquiry[item].replaceAll('\\+', ' ')); // TODO XSS-protection
+        if (inquiry[item]) inquiry[item] = unescape(inquiry[item].replaceAll('+', ' ')); // TODO XSS-protection
     });
 
     // re-inventing serialization for numeric nested arrays
