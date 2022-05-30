@@ -304,7 +304,10 @@ function request_search(search, caption, without_history){
                 $('#ind_link').attr('href', 'https://mpds.io/' + (search.phid ? 'phase_id' : 'entry') + '/' + (search.phid || search.entry));
                 $('#ind_link').html('www.mpds.io/' + (search.phid ? 'phase_id' : 'entry') + '/' + (search.phid || search.entry));
                 $('#refine_col, #ctx_col').hide();
+                $('#ind_col > span').empty();
+                if (search.phid) $('#ind_col > span').html('<img src="' + wmgui.static_host + '/phid_thumbs/' + search.phid + '.png" />');
                 $('#ind_col').show();
+                $('#dtypes').hide();
 
             } else if (search.interlinkage){
                 switch_control_mode(9, 11, 'a', 'c');
@@ -529,6 +532,7 @@ function switch_view_mode(mode){
         $('#search_box').css('background', '#fff').css("width", "100%").addClass('fluid');
 
         $('#right_col').show();
+        $('#dtypes').show();
         $('#search_holder, #search_area').addClass('prolonged');
         $('#ermac_logo').removeClass('shifted').addClass('cornered');
 
@@ -575,7 +579,7 @@ function switch_control_mode(mode, next_mode, active_abf, active_cde){ // NB (0,
 }
 
 function build_cells(json, header, footer){
-    var cls_map = {7: ' ml_data', 8: ' ab_data', 9: ' ab_data', 10: ' ab_data', 11: ' ab_data'}, // NB space
+    var cls_map = {7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data'},
         result_html = '';
     if (header) result_html += header;
 
@@ -599,11 +603,11 @@ function build_cells(json, header, footer){
         $.each(json, function(k, row){
             row[7] = parseInt(row[7]);
             var dtype = row[0].substr(0, 1),
-                preview = (row[3] == 4 || row[3] == 5 || row[3] == 6 || row[3] == 9 || row[3] == 10) ? '<span class=launch_v>Show</span>' : ' ',
+                preview = (row[3] == 4 || row[3] == 5 || row[3] == 6 || row[3] == 9 || row[3] == 10 || row[3] == 12) ? '<span class=launch_v>Show</span>' : ' ',
                 biblio_html = (row[7] == 999999) ? '<td class=cj>&mdash;</td><td class=c4>' + wmgui.mockyear + '</td><td class=c5>&mdash;</td>' :
                 '<td class=cj>' + row[5] + '</td><td class=c4>' + row[6] + '</td><td class=c5>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[7]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[7] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[7] + '" target="_blank" rel="noopener noreferrer">' + row[7] + '</a>]</td>'; // special *ref_id*, only handled in GUI
 
-            result_html += '<tr id="e__' + row[0] + '" class="tcell' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><td class=c1>' + row[1] + '</td><td class=cp>' + preview + '</td><td class=c2>' + row[2] + '</td>' + biblio_html + '</tr>';
+            result_html += '<tr id="e__' + row[0] + '" class="tcell ' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><td class=c1>' + row[1] + '</td><td class=cp>' + preview + '</td><td class=c2>' + row[2] + '</td>' + biblio_html + '</tr>';
         });
     }
     if (footer) result_html += footer;
@@ -611,7 +615,7 @@ function build_cells(json, header, footer){
 }
 
 function build_thumbs(json){
-    var cls_map = {6: ' pd_full', 7: ' ml_data', 8: ' ab_data', 9: ' ab_data', 10: ' ab_data', 11: ' ab_data'}, // NB space
+    var cls_map = {6: 'pd_full', 7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data'},
         result_html = '';
 
     if (wmgui.search_type == 2){
@@ -672,9 +676,10 @@ function build_thumbs(json){
             else {
                 row[2] = row[2].split(';')[0];
                 row[2] = row[2].split(' ')[row[2].split(' ').length - 1]; // FIXME!
-                content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + '/pd_thumbs/' + row[0].split('-')[0] + '.png" /><p>' + row[2] + '</p>';
+                var url_dest = (row[3] == 12) ? '/prism' : '/pd_thumbs/' + row[0].split('-')[0];
+                content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + url_dest + '.png" /><p>' + row[2] + '</p>';
             }
-            result_html += '<div class="gallery_item' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" id="e__' + row[0] + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><div class="gallery_img">' + content + '</div><div class="gallery_label">' + row[1] + biblio_html + '</div></div>';
+            result_html += '<div class="gallery_item ' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" id="e__' + row[0] + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><div class="gallery_img">' + content + '</div><div class="gallery_label">' + row[1] + biblio_html + '</div></div>';
         });
     }
     return result_html;
@@ -682,6 +687,7 @@ function build_thumbs(json){
 
 function request_refinement(query_obj, is_heavy){
     $('#examples, #ind_col').hide();
+    $('#ind_col > span').empty();
     $('#refine_col > ul').empty().parent().show();
     $('#refine_col > div.col_title').show();
 
@@ -787,6 +793,7 @@ function request_refinement(query_obj, is_heavy){
  * 9 - ab initio entry (P-array) electron spectra
  * 10 - ab initio entry (P-array) phonon spectra
  * 11 - ab initio data in progress (unproc)
+ * 12 - 3d combination of C-diagrams
  */
 function open_context(el, launch_ext){
     close_vibox();
@@ -853,6 +860,10 @@ function open_context(el, launch_ext){
 
         } else if (rank == 11){
             $('#ab_promise, #download_json').show();
+
+        } else if (rank == 12){
+            $('#visualize').attr('data-rank', rank);
+            $('#pd3d_data, #visualize').show();
         }
         $('#ctx_col > ul > li.d_icon:visible > a').each(function(){
             var fmt = $(this).attr('rel'),
@@ -899,9 +910,8 @@ function open_sim_col(entry, entype, rank){
                 if (entype == 'C') $('#pd_legend').show();
             }
         } else {
-            var prop;
-            if (wmgui.thumbed_display) prop = $('div.busy_entry > div.gallery_img > div').text().split(';')[0];
-            else                       prop = $('tr.busy_entry > td.c2').text().split(';')[0];
+            // FIXME this is fragile
+            var prop = wmgui.thumbed_display ? $('div.busy_entry > div.gallery_img > div').text().split(';')[0] : $('tr.busy_entry > td.c2').text().split(';')[0];
 
             $.each(data.out.sim, function(k, row){
                 if (counter == 8) return false;
@@ -914,7 +924,7 @@ function open_sim_col(entry, entype, rank){
             if (allpurpose)         $('#sim_legend').removeClass('apparent').text('Also studied by these authors:');
             else if (entype == 'C') $('#sim_legend').removeClass('apparent').text('Phases at the diagram:');
             else if (entype == 'S') $('#sim_legend').removeClass('apparent').text('The same prototype structures:');
-            else                    $('#sim_legend').removeClass('apparent').text('Similar ' + prop + ':'); // NB prop
+            else                    $('#sim_legend').removeClass('apparent').text('Similar ' + prop + ':');
 
             if (counter > 7){
                 //var link = (entype == 'C') ? '#entry/' + $('#entryno').text() : '#interlinkage/' + entry;
@@ -926,10 +936,22 @@ function open_sim_col(entry, entype, rank){
             if (allpurpose)
                 $('#sim_legend').addClass('apparent').text('No cross-links found');
 
-            else if (entype == 'C' && rank == 3)
-                $('#sim_legend').addClass('apparent').html('<br /><a href="#entry/' + entry.split('-')[0] + '"><img alt="C-entry" src="' + wmgui.static_host + '/pd_thumbs/' + entry.split('-')[0] + '.png" /><br /><span>Full phase diagram</span></a>');
+            else if (entype == 'C' && rank == 3){
+                // FIXME this is fragile
+                var els, html_3d = '';
 
-            else if (entype == 'C' && rank == 5)
+                if (wmgui.thumbed_display){
+                    els = $('div.busy_entry > div.gallery_img > p').text().split('-');
+                } else {
+                    els = $('tr.busy_entry > td.c2').text().split(' ');
+                    els = els[els.length - 1].split('-');
+                }
+                if (els.length == 3)
+                    html_3d = '<br /><br /><a href="#inquiry/classes=prism&props=phase%20diagram&elements=' + els.join('-') + '"><img alt="3d" src="' + wmgui.static_host + '/prism.png" /><br /><span>3d phase diagram</span></a>';
+
+                $('#sim_legend').addClass('apparent').html('<br /><a href="#entry/' + entry.split('-')[0] + '"><img alt="C-entry" src="' + wmgui.static_host + '/pd_thumbs/' + entry.split('-')[0] + '.png" /><br /><span>Full phase diagram</span></a>' + html_3d);
+
+            } else if (entype == 'C' && rank == 5)
                 $('#sim_legend').addClass('apparent').text('No links to other phases found');
 
             else if (entype == 'S')
@@ -982,7 +1004,12 @@ function launch_iframed_app(rank){
             iframe_src = wmgui.v_sd_addr + entry, iframe_height = 550;
 
     } else {
-        iframe_src = (wmgui.sid ? wmgui.v_pd_addr : wmgui.v_pd_addr_anon) + entry, iframe_height = 600;
+        if (rank == 12) {
+            var triple = wmgui.thumbed_display ? $('div.busy_entry > div.gallery_img > p').text() : $('tr.busy_entry > td.c1').text().split(' ')[0];
+            iframe_src = wmgui.v_pd_3d_addr + triple, iframe_height = 550;
+
+        } else
+            iframe_src = (wmgui.sid ? wmgui.v_pd_addr : wmgui.v_pd_addr_anon) + entry, iframe_height = 600;
 
         if (entry.startswith('C3') || entry.startswith('C4'))
             wmgui.notify('This entry is now in preparation');

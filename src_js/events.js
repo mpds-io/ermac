@@ -658,21 +658,21 @@ function register_events(){
                 $('#usr_api_key').html(data.msg);
                 if (data.revokable)      $('#revoke_usr_api_key_holder').show();
                 else if (data.creatable) $('#create_usr_api_key_holder').show();
-                else return wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+                else return wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
 
             }).fail(function(xhr, textStatus, errorThrown){
-                if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+                if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
             });
 
         } else if (desttab == 'usr_tab_perms'){
             $('#hintsbox_msg').html(wmgui.get_random_term(wmgui.welcome_msgs));
             wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.perms_endpoint, data: {sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
                 if (data.error) return wmgui.notify(data.error);
-                if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api')) return wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+                if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api')) return wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
                 $('#perms_view').html(describe_perms(data));
 
             }).fail(function(xhr, textStatus, errorThrown){
-                if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+                if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
             });
 
         } else if (desttab == 'usr_tab_ctrl'){ // redirect to an external app
@@ -709,7 +709,7 @@ function register_events(){
             $('#revoke_usr_api_key_holder').show();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
     $('#revoke_usr_api_key').click(function(){
@@ -721,7 +721,7 @@ function register_events(){
             $('#create_usr_api_key_holder').show();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
 
@@ -798,7 +798,7 @@ function register_events(){
             $('#account_pass_change').hide();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
 

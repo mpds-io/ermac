@@ -76,7 +76,7 @@ wmgui.welcome_msgs = [
     "Our data are used in such products as Springer Materials&trade;, ICDD PDF-4&trade;, ASM Alloy Phase Diagrams&trade;, Pearson's Crystal Data, MedeA Materials Design&trade;, and AtomWork Advanced.",
     "Each peer-reviewed crystal structure, phase diagram, or physical property at the MPDS originates from a particular publication.",
     "There are two search modes, <b>simple</b> and <b>advanced</b>. The simple presents one \"smart\" input field, the advanced offers many various search fields.",
-    "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never available online.",
+    "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never online.",
     "A unique feature of the MPDS is the support of the <a href='/#polyhedra'>polyhedral type searches</a>, taking into account the atomic environments."
 ];
 // used also in Ermac detection:
@@ -137,6 +137,7 @@ wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' + wmgui.api_host 
 wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/c?fmt=json&q=';
 wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_pd_3d_addr =      wmgui.static_host + '/labs/prisms/?';
 
 // below are remote files commonly used
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?040521';

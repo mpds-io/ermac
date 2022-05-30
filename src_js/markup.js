@@ -121,6 +121,9 @@ function register_html(){
     <div id="ab_promise" class="spinoff_pane">
         <p>In-house <i>ab initio</i> calculations</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">This calculation is in progress. Upon completion it will be freely available under the CC BY 4.0 license. Support our work purchasing <a target="_blank" href="https://mpds.io/products" style="text-decoration:none;color:#000;border-bottom:1px solid #000;">our products</a>.<br /><br /></span>
     </div>
+    <div id="pd3d_data" class="spinoff_pane">
+        <p>Automatically combined phase diagrams</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">The 3d prisms and tetrahedra were automatically combined and rendered by the platform from the suitable binary and (or) ternary phase diagrams.<br /><br /></span>
+    </div>
 
     <ul>
         <li id="visualize" class="wmbutton">Visualize</li>
@@ -138,6 +141,7 @@ function register_html(){
 <!-- LEFT INDIVIDUAL ID COLUMN -->
 <div id="ind_col" class="side_cols">
     <div class="col_title" id="ind_title"></div>
+    <span></span>
     <p>Permanent link:<br /><a id="ind_link"></a></p>
 </div>
 
