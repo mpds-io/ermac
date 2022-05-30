@@ -331,7 +331,7 @@ div.divider{width:100%;border-bottom:1px dotted #000;margin:15px 0;}
 div.user_dialogue input{width:98%;height:30px;font-size:1.25em;border:1px solid #888;padding:0 2px;text-align:center;}
 label{font-size:0.95em;line-height:30px;cursor:pointer;}
 
-#usr_api_key strong{display:block;font-size:0.85em;line-height:3em;font-weight:normal;}
+#usr_api_key strong{display:block;font-size:0.85em;line-height:3em;font-weight:normal;letter-spacing:-0.5px;}
 #perms_view > ul{margin:0;padding:0;}
 #perms_view > ul > li{list-style:none;line-height:1.5em;font-size:0.85em;}
 #perms_view > ul > li.perms_view{text-align:left;padding:0 2px;}
