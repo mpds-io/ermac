@@ -182,7 +182,8 @@ function url__hierarchy(){
  */
 function url__modal(arg){
     if (arg == "login"){
-        if (wmgui.sid) return window.location.replace('#modal/menu');
+        //if (wmgui.sid) return window.location.replace('#modal/menu');
+        if (wmgui.sid) return window.location.replace('#start'); // for Matcloud
 
         // edition-based OAuth login
         if (wmgui.edition == 1){

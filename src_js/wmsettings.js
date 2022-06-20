@@ -300,7 +300,7 @@ wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 103
 wmgui.mockyear = new Date().getFullYear();
 
 wmgui.storage_history_key = 'wm_search_log_v5';
-wmgui.storage_user_key = 'wm';
+wmgui.storage_user_key = 'wm_v2';
 wmgui.storage_bids_key = 'bid_history';
 
 wmgui.tooltips = {

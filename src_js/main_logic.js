@@ -1247,7 +1247,7 @@ function user_login(sid, name, acclogin, admin, oauths){
     $('div.logged_out').hide();
     $('div.logged_in').show();
 
-    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin}));
+    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin, oauths: oauths}));
     admin ? $('li.admin').show() : $('li.admin').hide();
 
     try {
