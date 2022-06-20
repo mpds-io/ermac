@@ -7,9 +7,9 @@ function register_html(){
     $('body').append(`
 <div id="notifybox">Web-browser is either busy or not supported: try to <a href="javascript:location.reload()" rel="nofollow">restart</a></div>
 
-<div id="preloader"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>
+<div id="preloader"><div></div></div>
 
-<div id="overlay" class="sky"></div>
+<div id="overlay"></div>
 
 <div id="aetmap"><a style="float:left;" href="#polyhedra" class="link_adjuster"></a><div style="float:right;margin-top:25px;"><input type="checkbox" id="aet_limit" /><label for="aet_limit">&nbsp;No other types</label></div></div>
 
@@ -32,6 +32,7 @@ function register_html(){
                 <select id="search_field" autocomplete="false" multiple autofocus></select>
             </div>
             <a href="#hierarchy" id="hierarchy_trigger" class="wmbutton" title="Show list of properties">&mu;<span><sub>x</sub><sup>&deg;</sup></span></a>
+            <a id="ptable_trigger" class="wmbutton" title="Show periodic table"><sup>26</sup>Fe</a>
             <a href="#" id="advsearch_init_trigger" class="wmbutton" title="Show search options">&#9776;</a>
             <a href="#" id="search_trigger" class="wmbutton" title="Search">&#x23ce;</a>
         </div>
@@ -80,7 +81,7 @@ function register_html(){
     <div id="results"><table id="databrowser"></table></div>
 
     <div id="loadscroll" class="context_msg">Getting the rest of data...</div>
-    <div id="toomuch" class="context_msg">There are <span></span> results not shown &mdash; please, refine the search.</div>
+    <div id="toomuch" class="context_msg">There are <span></span> results not shown &mdash; please, refine the search or use API.</div>
     <div id="plthint" class="context_msg">
         <div id="plt_pie"><a class="plthint_links" title="Plot pie charts (overview)" rel="nofollow" href="/" rev="pie"></a></div>
         <div id="plt_lit"><a class="plthint_links" title="Plot bar charts (literature)" rel="nofollow" href="/" rev="lit"></a></div>
@@ -120,6 +121,9 @@ function register_html(){
     <div id="ab_promise" class="spinoff_pane">
         <p>In-house <i>ab initio</i> calculations</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">This calculation is in progress. Upon completion it will be freely available under the CC BY 4.0 license. Support our work purchasing <a target="_blank" href="https://mpds.io/products" style="text-decoration:none;color:#000;border-bottom:1px solid #000;">our products</a>.<br /><br /></span>
     </div>
+    <div id="pd3d_data" class="spinoff_pane">
+        <p>Automatically combined phase diagrams</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">The 3d prisms and tetrahedra were automatically combined and rendered by the platform from the suitable binary and (or) ternary phase diagrams.<br /><br /></span>
+    </div>
 
     <ul>
         <li id="matcloudize" class="wmbutton">Add to MatCloud</li>
@@ -133,6 +137,13 @@ function register_html(){
         <li id="download_bib" class="d_icon"><a rel="bib" href="#" target="_blank" title="Get original citation" rel="nofollow"></a></li>
         <li id="download_raw" class="d_icon"><a rel="raw" href="#" target="_blank" title="Get raw calculation data" rel="nofollow"></a></li>
     </ul>
+</div>
+
+<!-- LEFT INDIVIDUAL ID COLUMN -->
+<div id="ind_col" class="side_cols">
+    <div class="col_title" id="ind_title"></div>
+    <span></span>
+    <p>Permanent link:<br /><a id="ind_link"></a></p>
 </div>
 
 <!-- LEFT PLOTTING COLUMN -->
@@ -403,7 +414,7 @@ function register_html(){
     <div style="width:150px;margin:25px auto;">
         <div id="login_trigger" class="wmbutton def_submittable">Log in</div>
     </div>
-    <div class="notice">or email <span class="href" rel="#modal/restore">an access link</span><br />or log in via <a href="/oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="/oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="/oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
+    <div class="notice">or email <span class="href" rel="#modal/restore">an access link</span><br />or log in via <a href="oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
 </div>
 
 <!-- RESTORE MODAL -->
@@ -417,7 +428,7 @@ function register_html(){
     <div style="width:150px;margin:25px auto;">
         <div id="restore_trigger" class="wmbutton def_submittable">Send link</div>
     </div>
-    <div class="notice">or log in with <span class="href" rel="#modal/login">password</span><br />or via <a href="/oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="/oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="/oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
+    <div class="notice">or log in with <span class="href" rel="#modal/login">password</span><br />or via <a href="oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
 </div>
 
 <!-- USER MENU MODAL -->

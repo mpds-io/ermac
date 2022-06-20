@@ -7,18 +7,23 @@ function satisfy_requirements(){
 
     $('#notifybox, #preloader').hide();
     //document.title = document.body.clientWidth + ' px';
+    wmgui.ptable.enabled ? $('#ptable_trigger').show() : $('#hierarchy_trigger').show();
 
     local_user_login();
 
     // building history box
     var history_html = '';
-    $.each(JSON.parse(window.localStorage.getItem('wm_search_log_v4') || '[]'), function(n, past){
-        wmgui.tooltip_status++;
-        if (n > 7) return false;
-        var title = [];
+    $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_history_key) || '[]'), function(n, past){
+        wmgui.tooltip_counter++;
+
+        if (n > 7)
+            return false;
+
+        var title = [],
+            inquiry = false;
+
         for (var prop in past){ title.push(past[prop]) }
         title = title.join(" ");
-        var inquiry = false;
         $.each(wmgui.inquiries, function(m, i){ if (past[i]){   inquiry = true; return false;   } });
 
         if (inquiry) history_html += '<li><a href="#inquiry/' + $.param(past) + '">' + title + '</a></li>';
@@ -26,21 +31,17 @@ function satisfy_requirements(){
     });
     $('#history ul').append(history_html);
 
-    $.each(JSON.parse(window.localStorage.getItem('bid_history') || '[]'), function(n, i){
+    $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_bids_key) || '[]'), function(n, i){
         wmgui.bid_history.push(parseInt(i));
     });
 
     // set client-side data features
     $.getJSON(wmgui.client_data_addr, function(answer){
 
-        WMCORE = WMCORE(answer.classes, answer.props, answer.props_ref);
-
         var i = 0, len = answer.props_ref.length;
         for (i; i < len; i++){
             if (!answer.props_ref[i]) answer.props_ref[i] = answer.props[i];
         }
-
-        answer.classes.extend(answer.classes_ite);
 
         // local search algo
         // #1
@@ -317,12 +318,19 @@ function satisfy_requirements(){
         onInitialize: function(){
             $('#search_field-selectized').focus();
         },
-        onItemRemove: function(value){
+        onItemAdd: function(){
+            if (wmgui.ptable.enabled && wmgui.selectize_emit){
+                var check = wmgui.multiselects['main'].read();
+                wmgui.ptable.draw(check.elements);
+            }
+        },
+        onItemRemove: function(){
             var check = wmgui.multiselects['main'].read(),
                 input = this;
             if (!check.numeric){
                 destroy_numericbox();
                 delete wmgui.search.numeric;
+                if (wmgui.ptable.enabled && wmgui.selectize_emit) wmgui.ptable.draw(check.elements);
             }
             setTimeout(function(){
                 input.close();

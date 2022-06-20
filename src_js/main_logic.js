@@ -1,10 +1,4 @@
-/**
- * MPDS platform desktop GUI
- * Author: Evgeny Blokhin /
- * Tilde Materials Informatics
- * eb@tilde.pro
- * Version: 0.6.8
- */
+
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -144,6 +138,9 @@ wmgui._selectize_read_facet = function(fct){
 
 
 wmgui._selectize_write = function($this, name, search_obj){
+
+    wmgui.selectize_emit = false;
+
     var given_search = {};
     $.extend(given_search, search_obj);
 
@@ -175,13 +172,14 @@ wmgui._selectize_write = function($this, name, search_obj){
                 $this.display(facet, part);
             });
         } else if (facet == 'formulae'){
-            given_search[facet] = WMCORE.to_formula(given_search[facet]);
+            given_search[facet] = wmgui.to_formula(given_search[facet]);
             $this.display(facet, given_search[facet]);
 
         } else $this.display(facet, given_search[facet]);
     });
 
     $this.clearOptions();
+    wmgui.selectize_emit = true;
 }
 
 wmgui._selectize_display = function($this, facet, term){
@@ -193,7 +191,7 @@ wmgui._selectize_display = function($this, facet, term){
 function show_interpretation(search){
     // FIXME only allow fixed props
     $('#interpret').html(
-        wmgui.clean(WMCORE.get_interpretation(search, wmgui.facet_names, wmgui.numerics))
+        wmgui.clean(wmgui.get_interpretation(search, wmgui.facet_names, wmgui.numerics))
     );
 }
 
@@ -299,19 +297,33 @@ function request_search(search, caption, without_history){
         if (wmgui.visavis_terminating) stop_visavis();
 
         if (wmgui.search_type || search.phid || search.entry || search.interlinkage || search.doi || search.numeric){
-            display_examples('#examples', true, true);
 
-            if (search.phid || search.entry || search.interlinkage)
+            if (search.phid || search.entry){
                 switch_control_mode(9, 11, 'a', 'c');
+                $('#ind_title').html( search.phid ? 'Phase ' + search.phid : 'Entry ' + search.entry );
+                $('#ind_link').attr('href', 'https://mpds.io/' + (search.phid ? 'phase_id' : 'entry') + '/' + (search.phid || search.entry));
+                $('#ind_link').html('www.mpds.io/' + (search.phid ? 'phase_id' : 'entry') + '/' + (search.phid || search.entry));
+                $('#refine_col, #ctx_col').hide();
+                $('#ind_col > span').empty();
+                if (search.phid) $('#ind_col > span').html('<img src="' + wmgui.static_host + '/phid_thumbs/' + search.phid + '.png" />');
+                $('#ind_col').show();
+                $('#dtypes').hide();
 
-            else if (search.numeric){
+            } else if (search.interlinkage){
+                switch_control_mode(9, 11, 'a', 'c');
+                display_examples('#examples', true, true);
+
+            } else if (search.numeric){
                 switch_control_mode(1, 12, 'b', false);
                 //console.log(search.numeric);
                 destroy_numericbox();
                 $.each(get_sliders_ranges(search.numeric, wmgui.numerics), function(n, item){ create_floating_slider.apply(this, item) }); // unpack
+                display_examples('#examples', true, true);
 
-            } else
+            } else {
                 switch_control_mode(1, 10, false, false);
+                display_examples('#examples', true, true);
+            }
 
             if (search.entry && (search.entry.substr(0, 1) == 'S' || search.entry.substr(0, 1) == 'C') && search.entry.indexOf('-') == -1){
                 var that = $('#e__' + search.entry);
@@ -360,7 +372,7 @@ function rebuild_history_box(search, caption){
     for (var prop in orepr){ title.push(orepr[prop].toLowerCase()) }
     title.sort();
     var fingerprint = title.join(" "),
-        search_log = JSON.parse(window.localStorage.getItem('wm_search_log_v4') || '[]'),
+        search_log = JSON.parse(window.localStorage.getItem(wmgui.storage_history_key) || '[]'),
         chk_searches = [];
     if (search_log.length > 8) search_log = search_log.slice(0, 7);
     $.each(search_log, function(n, item){
@@ -376,11 +388,11 @@ function rebuild_history_box(search, caption){
 
         $('#history ul').prepend('<li>' + wmgui.clean(item) + '</li>');
         search_log.unshift(orepr);
-        window.localStorage.setItem('wm_search_log_v4', JSON.stringify(search_log));
+        window.localStorage.setItem(wmgui.storage_history_key, JSON.stringify(search_log));
         if ($('#history ul li').length > 8) $('#history ul li:last').remove();
     }
-    wmgui.tooltip_status++;
-    if (wmgui.tooltip_status == 1){
+    wmgui.tooltip_counter++;
+    if (wmgui.tooltip_counter == 1){
         setTimeout(function(){ show_tooltip(wmgui.tooltips['interpretation']) }, 3000);
     }
 }
@@ -436,7 +448,7 @@ function rebuild_visavis(){
 }
 
 function rotate_interesting(){
-    $('#legend').html('<i>e.g.</i> <a href="#">' + WMCORE.get_interesting()['text'].replace(/\d/g, "&#x208$&;") + '</a>');
+    $('#legend').html('<i>e.g.</i> <a href="#">' + wmgui.get_interesting()['text'].replace(/\d/g, "&#x208$&;") + '</a>');
 }
 
 function display_examples(box, more_examples, fix_rfn_header){
@@ -445,7 +457,7 @@ function display_examples(box, more_examples, fix_rfn_header){
     for (var i = 0; i < (more_examples ? 12 : 3); i++){
         wmgui.cliff_counter += 1;
         if (wmgui.cliff_counter > wmgui.cliffhangers.length-1) wmgui.cliff_counter = 0;
-        html += '<li><a href="#search/' + WMCORE.termify_formulae(wmgui.cliffhangers[wmgui.cliff_counter]) + '">' + wmgui.cliffhangers[wmgui.cliff_counter].charAt(0).toUpperCase() + wmgui.cliffhangers[wmgui.cliff_counter].slice(1) + '</a></li>';
+        html += '<li><a href="#search/' + wmutils.termify_formulae(wmgui.cliffhangers[wmgui.cliff_counter]) + '">' + wmgui.cliffhangers[wmgui.cliff_counter].charAt(0).toUpperCase() + wmgui.cliffhangers[wmgui.cliff_counter].slice(1) + '</a></li>';
     }
     $(box + ' > ul').empty().append(html);
     $(box).show();
@@ -474,7 +486,7 @@ function arrange_menu_collateral(){
     };
     $('#tagcloudbox').append(links_html);
 
-    $('#hintsbox_msg').append(WMCORE.get_random_term(wmgui.welcome_msgs));
+    $('#hintsbox_msg').append(wmgui.get_random_term(wmgui.welcome_msgs));
 }
 
 function switch_view_mode(mode){
@@ -498,6 +510,19 @@ function switch_view_mode(mode){
         $('#search_area').removeClass('prolonged');
         $('#ermac_logo').removeClass('cornered');
 
+        if (wmgui.ptable.enabled){
+            $('#hierarchy_trigger').hide();
+            $('#ptable_trigger').show();
+
+            if (wmgui.ptable.visible){
+                wmgui.ptable.show();
+                $('#ermac_logo').addClass('shifted');
+
+            } else {
+                wmgui.ptable.hide();
+            }
+        }
+
     } else if (mode == 2){
         $('#landing_box, #intro_stats, #subnav, #legend').hide();
         $('#ctx_col').hide();
@@ -507,8 +532,15 @@ function switch_view_mode(mode){
         $('#search_box').css('background', '#fff').css("width", "100%").addClass('fluid');
 
         $('#right_col').show();
+        $('#dtypes').show();
         $('#search_holder, #search_area').addClass('prolonged');
-        $('#ermac_logo').addClass('cornered');
+        $('#ermac_logo').removeClass('shifted').addClass('cornered');
+
+        if (wmgui.ptable.enabled){
+            $('#hierarchy_trigger').show();
+            $('#ptable_trigger').hide();
+            wmgui.ptable.hide();
+        }
     }
 }
 
@@ -547,7 +579,7 @@ function switch_control_mode(mode, next_mode, active_abf, active_cde){ // NB (0,
 }
 
 function build_cells(json, header, footer){
-    var cls_map = {7: ' ml_data', 8: ' ab_data', 9: ' ab_data', 10: ' ab_data', 11: ' ab_data'}, // NB space
+    var cls_map = {7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data'},
         result_html = '';
     if (header) result_html += header;
 
@@ -571,11 +603,11 @@ function build_cells(json, header, footer){
         $.each(json, function(k, row){
             row[7] = parseInt(row[7]);
             var dtype = row[0].substr(0, 1),
-                preview = (row[3] == 4 || row[3] == 5 || row[3] == 6 || row[3] == 9 || row[3] == 10) ? '<span class=launch_v>Show</span>' : ' ',
+                preview = (row[3] == 4 || row[3] == 5 || row[3] == 6 || row[3] == 9 || row[3] == 10 || row[3] == 12) ? '<span class=launch_v>Show</span>' : ' ',
                 biblio_html = (row[7] == 999999) ? '<td class=cj>&mdash;</td><td class=c4>' + wmgui.mockyear + '</td><td class=c5>&mdash;</td>' :
                 '<td class=cj>' + row[5] + '</td><td class=c4>' + row[6] + '</td><td class=c5>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[7]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[7] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[7] + '" target="_blank" rel="noopener noreferrer">' + row[7] + '</a>]</td>'; // special *ref_id*, only handled in GUI
 
-            result_html += '<tr id="e__' + row[0] + '" class="tcell' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><td class=c1>' + row[1] + '</td><td class=cp>' + preview + '</td><td class=c2>' + row[2] + '</td>' + biblio_html + '</tr>';
+            result_html += '<tr id="e__' + row[0] + '" class="tcell ' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><td class=c1>' + row[1] + '</td><td class=cp>' + preview + '</td><td class=c2>' + row[2] + '</td>' + biblio_html + '</tr>';
         });
     }
     if (footer) result_html += footer;
@@ -583,7 +615,7 @@ function build_cells(json, header, footer){
 }
 
 function build_thumbs(json){
-    var cls_map = {6: ' pd_full', 7: ' ml_data', 8: ' ab_data', 9: ' ab_data', 10: ' ab_data', 11: ' ab_data'}, // NB space
+    var cls_map = {6: 'pd_full', 7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data'},
         result_html = '';
 
     if (wmgui.search_type == 2){
@@ -608,7 +640,7 @@ function build_thumbs(json){
             return a[1] > b[1] ? 1 : a[1] < b[1] ? -1 : 0;
         });
         $.each(json, function(k, row){
-            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img"><div class="phased">' + row[1] + '<br /><br />SG ' + row[2] + '</div></div><div class="gallery_label"><a class=launch_ph href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
+            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img"><div class="phased">' + row[1] + '<br /><br />space group ' + row[2] + '</div></div><div class="gallery_label"><a class=launch_ph href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
         });
     } else {
         if (json[0].length != 8){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -644,16 +676,18 @@ function build_thumbs(json){
             else {
                 row[2] = row[2].split(';')[0];
                 row[2] = row[2].split(' ')[row[2].split(' ').length - 1]; // FIXME!
-                content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + '/pd_thumbs/' + row[0].split('-')[0] + '.png" /><p>' + row[2] + '</p>';
+                var url_dest = (row[3] == 12) ? '/prism' : '/pd_thumbs/' + row[0].split('-')[0];
+                content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + url_dest + '.png" /><p>' + row[2] + '</p>';
             }
-            result_html += '<div class="gallery_item' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" id="e__' + row[0] + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><div class="gallery_img">' + content + '</div><div class="gallery_label">' + row[1] + biblio_html + '</div></div>';
+            result_html += '<div class="gallery_item ' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" id="e__' + row[0] + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><div class="gallery_img">' + content + '</div><div class="gallery_label">' + row[1] + biblio_html + '</div></div>';
         });
     }
     return result_html;
 }
 
 function request_refinement(query_obj, is_heavy){
-    $('#examples').hide();
+    $('#examples, #ind_col').hide();
+    $('#ind_col > span').empty();
     $('#refine_col > ul').empty().parent().show();
     $('#refine_col > div.col_title').show();
 
@@ -759,6 +793,7 @@ function request_refinement(query_obj, is_heavy){
  * 9 - ab initio entry (P-array) electron spectra
  * 10 - ab initio entry (P-array) phonon spectra
  * 11 - ab initio data in progress (unproc)
+ * 12 - 3d combination of C-diagrams
  */
 function open_context(el, launch_ext){
     close_vibox();
@@ -825,6 +860,10 @@ function open_context(el, launch_ext){
 
         } else if (rank == 11){
             $('#ab_promise, #download_json').show();
+
+        } else if (rank == 12){
+            $('#visualize').attr('data-rank', rank);
+            $('#pd3d_data, #visualize').show();
         }
         $('#ctx_col > ul > li.d_icon:visible > a').each(function(){
             var fmt = $(this).attr('rel'),
@@ -871,9 +910,8 @@ function open_sim_col(entry, entype, rank){
                 if (entype == 'C') $('#pd_legend').show();
             }
         } else {
-            var prop;
-            if (wmgui.thumbed_display) prop = $('div.busy_entry > div.gallery_img > div').text().split(';')[0];
-            else                       prop = $('tr.busy_entry > td.c2').text().split(';')[0];
+            // FIXME this is fragile
+            var prop = wmgui.thumbed_display ? $('div.busy_entry > div.gallery_img > div').text().split(';')[0] : $('tr.busy_entry > td.c2').text().split(';')[0];
 
             $.each(data.out.sim, function(k, row){
                 if (counter == 8) return false;
@@ -886,7 +924,7 @@ function open_sim_col(entry, entype, rank){
             if (allpurpose)         $('#sim_legend').removeClass('apparent').text('Also studied by these authors:');
             else if (entype == 'C') $('#sim_legend').removeClass('apparent').text('Phases at the diagram:');
             else if (entype == 'S') $('#sim_legend').removeClass('apparent').text('The same prototype structures:');
-            else                    $('#sim_legend').removeClass('apparent').text('Similar ' + prop + ':'); // NB prop
+            else                    $('#sim_legend').removeClass('apparent').text('Similar ' + prop + ':');
 
             if (counter > 7){
                 //var link = (entype == 'C') ? '#entry/' + $('#entryno').text() : '#interlinkage/' + entry;
@@ -898,10 +936,22 @@ function open_sim_col(entry, entype, rank){
             if (allpurpose)
                 $('#sim_legend').addClass('apparent').text('No cross-links found');
 
-            else if (entype == 'C' && rank == 3)
-                $('#sim_legend').addClass('apparent').html('<br /><a href="#entry/' + entry.split('-')[0] + '"><img alt="C-entry" src="' + wmgui.static_host + '/pd_thumbs/' + entry.split('-')[0] + '.png" /><br /><span>Full phase diagram</span></a>');
+            else if (entype == 'C' && rank == 3){
+                // FIXME this is fragile
+                var els, html_3d = '';
 
-            else if (entype == 'C' && rank == 5)
+                if (wmgui.thumbed_display){
+                    els = $('div.busy_entry > div.gallery_img > p').text().split('-');
+                } else {
+                    els = $('tr.busy_entry > td.c2').text().split(' ');
+                    els = els[els.length - 1].split('-');
+                }
+                if (els.length == 3)
+                    html_3d = '<br /><br /><a href="#inquiry/classes=prism&props=phase%20diagram&elements=' + els.join('-') + '"><img alt="3d" src="' + wmgui.static_host + '/prism.png" /><br /><span>3d phase diagram</span></a>';
+
+                $('#sim_legend').addClass('apparent').html('<br /><a href="#entry/' + entry.split('-')[0] + '"><img alt="C-entry" src="' + wmgui.static_host + '/pd_thumbs/' + entry.split('-')[0] + '.png" /><br /><span>Full phase diagram</span></a>' + html_3d);
+
+            } else if (entype == 'C' && rank == 5)
                 $('#sim_legend').addClass('apparent').text('No links to other phases found');
 
             else if (entype == 'S')
@@ -939,8 +989,6 @@ function launch_iframed_app(rank){
     var that = $('.busy_entry');
     if (!that.length) return;
 
-    //console.log(rank);
-
     var entry = that.attr('id').substr(3),
         entype = entry.substr(0, 1),
         iframe_src,
@@ -956,7 +1004,12 @@ function launch_iframed_app(rank){
             iframe_src = wmgui.v_sd_addr + entry, iframe_height = 550;
 
     } else {
-        iframe_src = (wmgui.sid ? wmgui.v_pd_addr : wmgui.v_pd_addr_anon) + entry, iframe_height = 600;
+        if (rank == 12) {
+            var triple = wmgui.thumbed_display ? $('div.busy_entry > div.gallery_img > p').text() : $('tr.busy_entry > td.c1').text().split(' ')[0];
+            iframe_src = wmgui.v_pd_3d_addr + triple, iframe_height = 550;
+
+        } else
+            iframe_src = (wmgui.sid ? wmgui.v_pd_addr : wmgui.v_pd_addr_anon) + entry, iframe_height = 600;
 
         if (entry.startswith('C3') || entry.startswith('C4'))
             wmgui.notify('This entry is now in preparation');
@@ -1172,7 +1225,7 @@ function show_tooltip(info, forced){
     if (info.view_mode != wmgui.view_mode || (wmgui.visavis_working && !forced) || $('div.modal').is(':visible'))
         return;
 
-    var tooltip_o = (wmgui.view_mode == 1) ? $('#' + info.el).offset() : $('#' + info.el).position(), // NB workaround a bug in pos
+    var tooltip_o = $('#' + info.el).position(),
         tooltip_el = document.getElementById('tooltip');
 
     tooltip_el.style.left = (tooltip_o.left + info.oleft) + 'px';
@@ -1194,7 +1247,7 @@ function user_login(sid, name, acclogin, admin, oauths){
     $('div.logged_out').hide();
     $('div.logged_in').show();
 
-    window.localStorage.setItem('wm', JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin}));
+    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin}));
     admin ? $('li.admin').show() : $('li.admin').hide();
 
     try {
@@ -1211,7 +1264,7 @@ function local_user_login(){ // FIXME window.location.reload();
     //if (wmgui.sid)
     //    return;
 
-    var locals = JSON.parse(window.localStorage.getItem('wm') || '{}');
+    var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
     if (locals.sid == wmgui.sid)
         return;
 
@@ -1230,7 +1283,7 @@ function user_logout(silent){
     $('div.logged_in').hide();
     $('div.logged_out').show();
 
-    window.localStorage.removeItem('wm');
+    window.localStorage.removeItem(wmgui.storage_user_key);
 
     try {
         document.getElementById('visavis_iframe').contentWindow.location.reload();
@@ -1251,8 +1304,8 @@ function force_relogin(show_msg){
 
 function communicate_windows(runnable_name){
     // NB the active window doesn't receive a storage event
-    window.localStorage.setItem('wm_reload', runnable_name);
-    window.localStorage.removeItem('wm_reload');
+    window.localStorage.setItem('wm_reload_tmp', runnable_name);
+    window.localStorage.removeItem('wm_reload_tmp');
 }
 
 function update_dc(){
@@ -1269,7 +1322,7 @@ function update_dc(){
         cur_str = JSON.stringify(orepr),
         cmp_html = '<option value="X" selected>Last search...</option>';
 
-    $.each(JSON.parse(window.localStorage.getItem('wm_search_log_v4') || '[]'), function(n, past){
+    $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_history_key) || '[]'), function(n, past){
         if (count > 5) return false;
 
         var title = [],

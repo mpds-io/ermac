@@ -1,15 +1,9 @@
-/**
- * MPDS platform shared utils
- * Author: Evgeny Blokhin /
- * Tilde Materials Informatics
- * eb@tilde.pro
- * Version: 0.6.9
- */
+
 "use strict";
 
 var wmgui = window.wmgui || {};
 
-wmgui.view_mode = 1;
+wmgui.view_mode = 1; // 1 = intro screen, 2 = results screen
 wmgui.search_type = 0; // 0 = entries, 1 = phases, or 2 = articles
 wmgui.thumbed_display = false;
 wmgui.ntab_tolerance = 100;
@@ -43,6 +37,7 @@ wmgui.facet_names = {
 };
 wmgui.search = {};
 wmgui.multiselects = {}; // selectize instances, for *wmgui.multi_facets* and *main*
+wmgui.selectize_emit = true;
 wmgui.unfinished_page = false;
 wmgui.quick_page_size = 150;
 wmgui.fetch_page_size = 850;
@@ -81,7 +76,7 @@ wmgui.welcome_msgs = [
     "Our data are used in such products as Springer Materials&trade;, ICDD PDF-4&trade;, ASM Alloy Phase Diagrams&trade;, Pearson's Crystal Data, MedeA Materials Design&trade;, and AtomWork Advanced.",
     "Each peer-reviewed crystal structure, phase diagram, or physical property at the MPDS originates from a particular publication.",
     "There are two search modes, <b>simple</b> and <b>advanced</b>. The simple presents one \"smart\" input field, the advanced offers many various search fields.",
-    "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never available online.",
+    "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never online.",
     "A unique feature of the MPDS is the support of the <a href='/#polyhedra'>polyhedral type searches</a>, taking into account the atomic environments."
 ];
 // used also in Ermac detection:
@@ -90,6 +85,7 @@ wmgui.api_msg = 'Try <i>e.g.</i> the following command in a terminal. As finishe
 wmgui.bid_history = [];
 wmgui.journal_converter = {j2c: function(){}, c2j: function(){}};
 wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure - ab initio calculations', 'vibrational spectra - ab initio calculations']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
+
 wmgui.visavis_curtype = 'pie'; // TODO: heuristic plot type detection
 wmgui.visavis_ready = false;
 wmgui.visavis_working = false;
@@ -143,6 +139,7 @@ wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' + wmgui.api_host 
 wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/c?fmt=json&q=';
 wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_pd_3d_addr =      wmgui.static_host + '/labs/prisms/?';
 
 // below are remote files commonly used
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?040521';
@@ -151,12 +148,12 @@ wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
 wmgui.edition = null; // NB edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
 
 wmgui.editions = {
-    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.static_host + '/editions/wm/style.css?260821', 'actions': function(){
+    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.static_host + '/editions/wm/style.css?300422', 'actions': function(){
         $('#logo_l').text('MPDS');
         $('.only_asm').hide();
         $('.only_mpds').css('display', 'inline-block');
     }},
-    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?260821', 'actions': function(){
+    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?300422', 'actions': function(){
         $('.only_mpds').hide();
         $('.only_asm').css('display', 'inline-block');
         // custom favicon
@@ -194,10 +191,10 @@ wmgui.collateral_links = [ // [link_href, link_rel_attr, link_value, _blank]
     [wmgui.static_host + '/labs/mpds-ml-labs/props.html', false, 'predict properties for crystal', true],
     ['#', 'idea', 'get inspiration'],
     ['#', 'sod', 'show structure of the day'],
-    ['/oauth/asm.html', false, 'connect ASM profile', true],
-    ['/oauth/github.html', false, 'connect GitHub profile', true],
-    ['/oauth/orcid.html', false, 'connect ORCID profile', true],
-    ['/oauth/linkedin.html', false, 'connect LinkedIn profile', true]
+    ['oauth/asm.html', false, 'connect ASM profile', true],
+    ['oauth/github.html', false, 'connect GitHub profile', true],
+    ['oauth/orcid.html', false, 'connect ORCID profile', true],
+    ['oauth/linkedin.html', false, 'connect LinkedIn profile', true]
 ];
 
 wmgui.aets = {
@@ -302,19 +299,32 @@ wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us wh
 wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
 wmgui.mockyear = new Date().getFullYear();
 
+wmgui.storage_history_key = 'wm_search_log_v5';
+wmgui.storage_user_key = 'wm';
+wmgui.storage_bids_key = 'bid_history';
+
 wmgui.tooltips = {
-    'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="hierarchy">Next</span>'},
-    'hierarchy': {el: 'hierarchy_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the <i>&mu;</i> button to select physical properties from the curated hierarchy.<br /><span rel="userbox">Next</span>'},
+    //'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="userbox">Next</span>'},
+    //'hierarchy': {el: 'advsearch_init_trigger', oleft: -50, otop: 60, view_mode: 1, text: 'Use the <i>&mu;</i> button to select physical properties from the curated hierarchy.<br /><span rel="userbox">Next</span>'},
     'userbox': {el: 'userbox', oleft: -100, otop: 65, view_mode: 1, text: 'Access your account here and enjoy the full data access.<br /><span rel="close_tooltip">OK</span>'},
-    'interpretation': {el: 'right_col', oleft: -70, otop: 99, view_mode: 2, text: 'The entries are grouped into the phases.<br /><span rel="databrowser">Next</span>'},
-    'databrowser': {el: 'databrowser', oleft: 0, otop: 200, view_mode: 2, text: 'Click the particular entry to get more info. Opened lock means open access.<br /><span rel="plots">Next</span>'},
-    'plots': {el: 'databrowser', oleft: 0, otop: 500, view_mode: 2, text: 'Use the graph chart buttons in the footer (at the very bottom of the page).<br /><span rel="close_tooltip">OK</span>'},
+    'interpretation': {el: 'right_col', oleft: -70, otop: 99, view_mode: 2, text: 'The entries are grouped in the phases.<br /><span rel="databrowser">Next</span>'},
+    'databrowser': {el: 'databrowser', oleft: 0, otop: 200, view_mode: 2, text: 'Click the particular entry to get more info. Opened lock means open access.<br /><span rel="close_tooltip">OK</span>'},
+    //'plots': {el: 'databrowser', oleft: 0, otop: 500, view_mode: 2, text: 'Use the graph chart buttons in the footer (at the very bottom of the page).<br /><span rel="close_tooltip">OK</span>'},
     'ss_axes': {el: 'ctxpanel_plots', oleft: 60, otop: 114, view_mode: 2, text: 'Click gear icon to sort axes differently.<br /><span rel="visavis" class="forced">Next</span>'},
-    'visavis': {el: 'right_col', oleft: -150, otop: 500, view_mode: 2, text: 'Fine-tune visualizations with these commands.<br /><span rel="close_tooltip">OK</span>'}
+    'visavis': {el: 'right_col', oleft: -150, otop: 500, view_mode: 2, text: 'Fine-tune visualizations with the commands here.<br /><span rel="close_tooltip">OK</span>'}
 };
-wmgui.tooltip_status = 0;
-wmgui.tooltip_landing = 'advsearch';
+wmgui.tooltip_counter = 0;
+wmgui.tooltip_landing = 'userbox';
 
 wmgui.entries_messages = {'C900500': 'This system is stable (dashed metastable)', 'C904090': 'This system is metastable (dashed stable)', 'C904091': 'This system is metastable', 'C904092': 'This system is metastable (dashed stable)', 'C904124': 'This system is metastable (dashed stable)', 'C904221': 'This system is stable; allotropic transition of Fe is not shown', 'C904222': 'This system is stable', 'C904223': 'This system is stable', 'C904313': 'This system is stable', 'C904322': 'This system is stable', 'C904329': 'This system is stable', 'C904330': 'This system is metastable (dashed stable)', 'C904331': 'This system is metastable (dashed stable)', 'C904332': 'This system is stable', 'C904343': 'This system is stable', 'C904344': 'This system is stable', 'C904345': 'This system is stable (dashed metastable)', 'C904354': 'This system is metastable (dashed stable)', 'C904366': 'This system is metastable', 'C904376': 'This system is metastable (dashed stable)', 'C904437': 'This system is stable', 'C904478': 'This system is stable', 'C905006': 'This system is metastable', 'C905621': 'This system is metastable', 'C905635': 'This system is stable (dashed metastable)', 'C905636': 'This system is stable', 'C905637': 'This system is stable (dashed metastable)', 'C905638': 'This system is stable (dashed metastable)', 'C905985': 'This system is metastable (dashed stable)', 'C906635': 'This system is stable', 'C906931': 'This system is stable', 'C908341': 'This system is stable; p = 8.0 GPa', 'C908342': 'This system is metastable', 'C908343': 'This system is metastable', 'C979860': 'This system is stable', 'C979861': 'This system is stable', 'C979862': 'This system is stable', 'C979863': 'This system is metastable', 'C979864': 'This system is stable', 'C979865': 'This system is stable', 'C102059': 'This system is metastable', 'C103150': 'This system is stable', 'C104069': 'This system is metastable', 'C105034': 'This system is metastable', 'C105035': 'This system is metastable'};
 
 wmgui.poly_limits = {1: 'isopolyhedral', 2: 'dipolyhedral', 3: 'tripolyhedral'};
+
+// external integrations
+wmgui.ptable = {};
+wmgui.ptable.enabled = false;
+wmgui.ptable.visible = false;
+wmgui.ptable.draw = function(){};
+wmgui.ptable.show = function(){};
+wmgui.ptable.hide = function(){};
+// TODO account contentWindow iframe calls here

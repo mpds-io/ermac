@@ -1,10 +1,4 @@
-/**
- * MPDS platform desktop GUI
- * Author: Evgeny Blokhin /
- * Tilde Materials Informatics
- * eb@tilde.pro
- * Version: 0.6.8
- */
+
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -17,8 +11,8 @@ function register_events(){
             val = $('#search_field-selectized').val();
 
         if (val){
-            if (val.endswith(" ") || val.endswith(",")) val = val.substr(0, val.length-1);
-            var parsed = WMCORE.parse_string(val);
+            if (val.endsWith(" ") || val.endsWith(",")) val = val.substr(0, val.length - 1);
+            var parsed = wmutils.guess(val);
 
             for (var key in parsed){
                 if (key == 'ignored')
@@ -63,7 +57,7 @@ function register_events(){
         $.each(wmgui.simple_facets, function(n, item){
             curval = $('#advs_fct_' + item).val();
             if (curval){
-                if (item == "formulae") curval = WMCORE.termify_formulae(curval);
+                if (item == "formulae") curval = wmutils.termify_formulae(curval);
                 else if (item == "elements") curval = curval.replaceAll(',', '').replaceAll(' ', '-');
                 else if (item == "doi") curval = curval.replace('http:\/\/dx\.doi\.org\/', '').replace('http:\/\/doi\.org\/', '').trim();
                 else if (item == "codens") curval = wmgui.journal_converter.j2c(curval);
@@ -164,7 +158,7 @@ function register_events(){
             bid = that.attr('rel');
         $('a.resolve_ref[rel=' + bid + ']').addClass('visited'); // :visited
         wmgui.bid_history.push(parseInt(bid));
-        window.localStorage.setItem('bid_history', JSON.stringify(wmgui.bid_history));
+        window.localStorage.setItem(wmgui.storage_bids_key, JSON.stringify(wmgui.bid_history));
         return true;
     });
 
@@ -360,7 +354,7 @@ function register_events(){
             $('div.menu_collateral').hide();
 
         } else if (act == 'idea'){
-            window.location.hash = '#plot/' + WMCORE.get_random_term(['pie', 'lit', 'graph']) + '/search/' + WMCORE.get_interesting()['text'];
+            window.location.hash = '#plot/' + wmgui.get_random_term(['pie', 'lit', 'graph']) + '/search/' + wmgui.get_interesting()['text'];
 
         } else if (act == 'sod'){
             var now = new Date(),
@@ -372,7 +366,7 @@ function register_events(){
             window.location.hash = '#entry/S' + sod;
 
         } else if (act == 'my'){
-            var locals = JSON.parse(window.localStorage.getItem('wm') || '{}');
+            var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
             if (locals.name){
                 var names = locals.name.split(' ');
                 window.location.hash = '#inquiry/authors=' + escape(names[names.length - 1]);
@@ -687,28 +681,28 @@ function register_events(){
                 $('#usr_api_key').html(data.msg);
                 if (data.revokable)      $('#revoke_usr_api_key_holder').show();
                 else if (data.creatable) $('#create_usr_api_key_holder').show();
-                else return wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+                else return wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
 
             }).fail(function(xhr, textStatus, errorThrown){
-                if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+                if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
             });
 
         } else if (desttab == 'usr_tab_perms'){
-            $('#hintsbox_msg').html(WMCORE.get_random_term(wmgui.welcome_msgs));
+            $('#hintsbox_msg').html(wmgui.get_random_term(wmgui.welcome_msgs));
             wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.perms_endpoint, data: {sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
                 if (data.error) return wmgui.notify(data.error);
-                if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api')) return wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+                if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api')) return wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
                 $('#perms_view').html(describe_perms(data));
 
             }).fail(function(xhr, textStatus, errorThrown){
-                if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+                if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
             });
 
         } else if (desttab == 'usr_tab_ctrl'){ // redirect to an external app
             window.location.href = (wmgui.edition === 0 ? '/ctrl' : '/labs/custom-datasets') + '?' + Math.floor(Math.random() * 1000);
 
         } else if (desttab == 'usr_tab_account'){
-            $('#hintsbox_msg').html(WMCORE.get_random_term(wmgui.welcome_msgs));
+            $('#hintsbox_msg').html(wmgui.get_random_term(wmgui.welcome_msgs));
         }
     });
 
@@ -738,7 +732,7 @@ function register_events(){
             $('#revoke_usr_api_key_holder').show();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
     $('#revoke_usr_api_key').click(function(){
@@ -750,7 +744,7 @@ function register_events(){
             $('#create_usr_api_key_holder').show();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
 
@@ -827,7 +821,7 @@ function register_events(){
             $('#account_pass_change').hide();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Login error: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
 
@@ -902,7 +896,7 @@ function register_events(){
             orepr[key] = wmgui.search[key];
         }
         while (true){
-            var plot_type = WMCORE.get_random_term(['matrix', 'cube']); // the most interesting visualization types
+            var plot_type = wmgui.get_random_term(['matrix', 'cube']); // the most interesting visualization types
             if (plot_type != wmgui.visavis_curtype) break;
         }
         window.location.hash = '#plot/' + plot_type + '/inquiry/' + $.param(orepr);
@@ -1082,7 +1076,7 @@ function register_events(){
     });
 
     $('#tips_trigger').click(function(){
-        wmgui.tooltip_status = 0;
+        wmgui.tooltip_counter = 0;
         show_tooltip(wmgui.tooltips[wmgui.tooltip_landing]);
         return false;
     });
