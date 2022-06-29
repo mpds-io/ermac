@@ -304,6 +304,7 @@ function request_search(search, caption, without_history){
             } else if (search.interlinkage){
                 switch_control_mode(9, 11, 'a', 'c');
                 show_examples('#examples', true, true);
+                $('#dtypes').hide();
 
             } else if (search.numeric){
                 switch_control_mode(1, 12, 'b', false);
