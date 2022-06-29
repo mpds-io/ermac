@@ -7,7 +7,9 @@ function satisfy_requirements(){
 
     $('#notifybox, #preloader').hide();
     //document.title = document.body.clientWidth + ' px';
-    wmgui.ptable.enabled ? $('#ptable_trigger').show() : $('#hierarchy_trigger').show();
+
+    wmgui.ptable.els_data = read_ptable_html();
+    wmgui.ptable.draw = select_ptable_series;
 
     local_user_login();
 
@@ -229,6 +231,7 @@ function satisfy_requirements(){
         $('#hy_scalars > ul').append(html_scalars);
 
         $.each(wmgui.hy_complex, function(n, item){
+            // FIXME cannot process with optimade NLP parser
             html_complex += '<li><a class="dynprop" data-val="' + item + '" href="#search/' + item + '">' + item + '</a></li>';
         });
         $('#hy_complex > ul').append(html_complex);
@@ -319,7 +322,7 @@ function satisfy_requirements(){
             $('#search_field-selectized').focus();
         },
         onItemAdd: function(){
-            if (wmgui.ptable.enabled && wmgui.selectize_emit){
+            if (wmgui.selectize_emit){
                 var check = wmgui.multiselects['main'].read();
                 wmgui.ptable.draw(check.elements);
             }
@@ -330,7 +333,7 @@ function satisfy_requirements(){
             if (!check.numeric){
                 destroy_numericbox();
                 delete wmgui.search.numeric;
-                if (wmgui.ptable.enabled && wmgui.selectize_emit) wmgui.ptable.draw(check.elements);
+                if (wmgui.selectize_emit) wmgui.ptable.draw(check.elements);
             }
             setTimeout(function(){
                 input.close();

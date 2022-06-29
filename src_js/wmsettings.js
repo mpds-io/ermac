@@ -84,7 +84,7 @@ wmgui.api_msg = 'Try <i>e.g.</i> the following command in a terminal. As finishe
 
 wmgui.bid_history = [];
 wmgui.journal_converter = {j2c: function(){}, c2j: function(){}};
-wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure - ab initio calculations', 'vibrational spectra - ab initio calculations']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
+wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure', 'electron density of states', 'vibrational spectra']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
 
 wmgui.visavis_curtype = 'pie'; // TODO: heuristic plot type detection
 wmgui.visavis_ready = false;
@@ -122,9 +122,10 @@ wmgui.api_key_endpoint =  wmgui.api_host + '/users/api_key';
 wmgui.perms_endpoint =    wmgui.api_host + '/users/perms';
 wmgui.funnel_endpoint =   wmgui.api_host + '/users/funnel';
 wmgui.fd_endpoint =       wmgui.api_host + '/users/feedback';
-wmgui.srch_endpoint =     wmgui.api_host + '/search/facet';
+wmgui.search_endpoint =   wmgui.api_host + '/search/facet';
 wmgui.rfn_endpoint =      wmgui.api_host + '/search/refinement';
 wmgui.sim_endpoint =      wmgui.api_host + '/search/interlinkage';
+wmgui.phase_endpoint =    wmgui.api_host + '/search/phase';
 wmgui.phph_endpoint =     wmgui.api_host + '/search/phase_phid';
 wmgui.auto_endpoint =     wmgui.api_host + '/search/selectize';
 wmgui.refs_endpoint =     wmgui.api_host + '/download/bib';
@@ -321,10 +322,9 @@ wmgui.entries_messages = {'C900500': 'This system is stable (dashed metastable)'
 wmgui.poly_limits = {1: 'isopolyhedral', 2: 'dipolyhedral', 3: 'tripolyhedral'};
 
 // external integrations
-wmgui.ptable = {};
-wmgui.ptable.enabled = false;
-wmgui.ptable.visible = false;
-wmgui.ptable.draw = function(){};
-wmgui.ptable.show = function(){};
-wmgui.ptable.hide = function(){};
 // TODO account contentWindow iframe calls here
+
+wmgui.mpdsgui = {};
+wmgui.mpdsgui.view = function(){};
+wmgui.mpdsgui.ptable_activate = function(){};
+wmgui.mpdsgui.ptable_deactivate = function(){};

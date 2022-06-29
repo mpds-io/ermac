@@ -529,7 +529,7 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
 
             } else addr = window.location.hash + ' ' + value;
 
-            arity_helper_html += '<li class="fct_classes" rel="' + addr + '" style="letter-spacing:0.5px;">Show only ' + value.substr(0, value.length - 1) + 'ies?</li>';
+            arity_helper_html += '<li class="fct_classes" rel="' + addr + '" style="letter-spacing:0.5px;">Show only ' + value.substr(0, value.length - 1) + 'ies</li>';
         });
         if (add_arity_helper) interpret_html += arity_helper_html;
     }
