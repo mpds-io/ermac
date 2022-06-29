@@ -25,14 +25,14 @@ wmgui.aug_search_cmd = function(new_fct, new_val){
         if (wmgui.search[checks[i][0]] && new_fct == checks[i][1]){ delete wmgui.search[checks[i][0]]; break; }
     }
 
-    var inquiry_mode = false;
+    var inquiry_mode = true;
 
-    $.each(wmgui.inquiries, function(n, fct){
+    /*$.each(wmgui.inquiries, function(n, fct){
         if (wmgui.search[fct] || fct == new_fct){
             inquiry_mode = true;
             return false;
         }
-    });
+    });*/
 
     if (inquiry_mode){
 
@@ -136,7 +136,6 @@ wmgui._selectize_read_facet = function(fct){
     return result;
 }
 
-
 wmgui._selectize_write = function($this, name, search_obj){
 
     wmgui.selectize_emit = false;
@@ -214,7 +213,7 @@ function request_search(search, caption, without_history){
     try { wmgui.active_ajax.abort() } catch(e){}
     try { wmgui.quick_ajax.abort() } catch(e){}
 
-    wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.srch_endpoint, data: {q: JSON.stringify(search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
+    wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.search_endpoint, data: {q: JSON.stringify(search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
         if (data.error)
             return wmgui.notify(data.error);
 
@@ -300,29 +299,22 @@ function request_search(search, caption, without_history){
 
             if (search.phid || search.entry){
                 switch_control_mode(9, 11, 'a', 'c');
-                $('#ind_title').html( search.phid ? 'Phase ' + search.phid : 'Entry ' + search.entry );
-                $('#ind_link').attr('href', 'https://mpds.io/' + (search.phid ? 'phase_id' : 'entry') + '/' + (search.phid || search.entry));
-                $('#ind_link').html('www.mpds.io/' + (search.phid ? 'phase_id' : 'entry') + '/' + (search.phid || search.entry));
-                $('#refine_col, #ctx_col').hide();
-                $('#ind_col > span').empty();
-                if (search.phid) $('#ind_col > span').html('<img src="' + wmgui.static_host + '/phid_thumbs/' + search.phid + '.png" />');
-                $('#ind_col').show();
-                $('#dtypes').hide();
+                show_dunit_info(search.phid, search.entry);
 
             } else if (search.interlinkage){
                 switch_control_mode(9, 11, 'a', 'c');
-                display_examples('#examples', true, true);
+                show_examples('#examples', true, true);
 
             } else if (search.numeric){
                 switch_control_mode(1, 12, 'b', false);
                 //console.log(search.numeric);
                 destroy_numericbox();
                 $.each(get_sliders_ranges(search.numeric, wmgui.numerics), function(n, item){ create_floating_slider.apply(this, item) }); // unpack
-                display_examples('#examples', true, true);
+                show_examples('#examples', true, true);
 
             } else {
                 switch_control_mode(1, 10, false, false);
-                display_examples('#examples', true, true);
+                show_examples('#examples', true, true);
             }
 
             if (search.entry && (search.entry.substr(0, 1) == 'S' || search.entry.substr(0, 1) == 'C') && search.entry.indexOf('-') == -1){
@@ -451,7 +443,7 @@ function rotate_interesting(){
     $('#legend').html('<i>e.g.</i> <a href="#">' + wmgui.get_interesting()['text'].replace(/\d/g, "&#x208$&;") + '</a>');
 }
 
-function display_examples(box, more_examples, fix_rfn_header){
+function show_examples(box, more_examples, fix_rfn_header){
     if (wmgui.cliff_counter === null) wmgui.cliff_counter = Math.floor(Math.random() * wmgui.cliffhangers.length);
     var html = '';
     for (var i = 0; i < (more_examples ? 12 : 3); i++){
@@ -500,48 +492,35 @@ function switch_view_mode(mode){
         stop_visavis();
         document.title = 'Materials Platform for Data Science';
         $('body').addClass('noscroll');
-        $('#search_box').removeClass('fluid').css('background', 'none').css("width", "590px");
+        $('#search_box').removeClass('fluid');
 
         $('div.side_cols').hide();
-
-        $('#landing_box, #intro_stats, #subnav, #legend').show();
+        $('#legend').show();
 
         $('#search_holder').removeClass('prolonged').focus();
         $('#search_area').removeClass('prolonged');
         $('#ermac_logo').removeClass('cornered');
 
-        if (wmgui.ptable.enabled){
-            $('#hierarchy_trigger').hide();
-            $('#ptable_trigger').show();
-
-            if (wmgui.ptable.visible){
-                wmgui.ptable.show();
-                $('#ermac_logo').addClass('shifted');
-
-            } else {
-                wmgui.ptable.hide();
-            }
-        }
+        wmgui.ptable.decide();
 
     } else if (mode == 2){
-        $('#landing_box, #intro_stats, #subnav, #legend').hide();
+
+        $('#legend').hide();
         $('#ctx_col').hide();
         if (wmgui.passive_sim_col) $('#sim_col').hide();
 
         $('body').removeClass('noscroll');
-        $('#search_box').css('background', '#fff').css("width", "100%").addClass('fluid');
+        $('#search_box').addClass('fluid');
 
         $('#right_col').show();
         $('#dtypes').show();
         $('#search_holder, #search_area').addClass('prolonged');
-        $('#ermac_logo').removeClass('shifted').addClass('cornered');
+        $('#ermac_logo').addClass('cornered');
 
-        if (wmgui.ptable.enabled){
-            $('#hierarchy_trigger').show();
-            $('#ptable_trigger').hide();
-            wmgui.ptable.hide();
-        }
+        wmgui.ptable.hide();
     }
+    // hook back into a parent integration
+    wmgui.mpdsgui.view(mode);
 }
 
 function switch_control_mode(mode, next_mode, active_abf, active_cde){ // NB (0, 10) is the most common 6-button layout
@@ -640,7 +619,7 @@ function build_thumbs(json){
             return a[1] > b[1] ? 1 : a[1] < b[1] ? -1 : 0;
         });
         $.each(json, function(k, row){
-            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img"><div class="phased">' + row[1] + '<br /><br />space group ' + row[2] + '</div></div><div class="gallery_label"><a class=launch_ph href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
+            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img" rel="#phase_id/' + row[0] + '"><div class="phased">' + row[1] + '<br /><br />space group ' + row[2] + '</div></div><div class="gallery_label"><a class=launch_ph href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
         });
     } else {
         if (json[0].length != 8){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -763,10 +742,10 @@ function request_refinement(query_obj, is_heavy){
 
         if (is_heavy) refine_html += '<li class="fct_' + was_facet + ' extd_refine"><a class="extd_refine" rel="' + was_facet + '" href="#">Show more&nbsp;</a></li>';
 
-        if (num_terms == 0) display_examples('#examples', true, true);
+        if (num_terms == 0) show_examples('#examples', true, true);
         else {
             $('#refine_col > ul').show().append(wmgui.clean(refine_html));
-            if (num_terms <= 10) display_examples('#examples', false, false);
+            if (num_terms <= 10) show_examples('#examples', false, false);
         }
 
     }).fail(function(xhr, textStatus, errorThrown){
@@ -908,6 +887,7 @@ function open_sim_col(entry, entype, rank){
                     counter++;
                 });
                 if (entype == 'C') $('#pd_legend').show();
+                else if (counter == 1) counter = 0;
             }
         } else {
             // FIXME this is fragile
@@ -1362,6 +1342,33 @@ function render_all_polyhedra(){
         aetypes_html += '<div class="gallery_item" rel="' + value + '"><div style="width:125px;height:' + coords[1] + 'px;margin:10px auto;background:url(' + wmgui.aetmap_addr + ') 0 -' + coords[0] + 'px no-repeat;"></div><span>' + value + '</span></div>';
     });
     $('#all_polyhedra_content').html(aetypes_html);
+}
+
+function show_dunit_info(phid, entry){
+    $('#ind_title').html( phid ? 'Phase ' + phid : 'Entry ' + entry );
+    $('#ind_link').attr('href', 'https://mpds.io/' + (phid ? 'phase_id' : 'entry') + '/' + (phid || entry));
+    $('#ind_link').html('www.mpds.io/' + (phid ? 'phase_id' : 'entry') + '/' + (phid || entry));
+    $('#refine_col, #ctx_col').hide();
+    $('#phase_info, #ind_col > span').empty();
+
+    if (phid){
+        $('#ind_col > span').html('<img src="' + wmgui.static_host + '/phid_thumbs/' + phid + '.png" />');
+
+        wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.phase_endpoint, data: {phid: phid}}).done(function(data){
+            if (data.error) return wmgui.notify(data.error);
+
+            var html = '<h4>' + data.out.formula_html.split(' ')[0] + ' ' + (data.out.spg || '?') + ' ' + (data.out.pearson || '&mdash;') + '</h4><p>This phase was reported in ' + data.out.articles_count + ' article' + (data.out.articles_count > 1 ? 's' : '')  + '.';
+            if (data.out.sim_count > 1) html += ' There are <a href="#interlinkage/' + phid + '">' + data.out.sim_count + ' structurally similar phases</a> known.';
+            html += '</p>'
+            $('#phase_info').html(html);
+
+        }).fail(function(xhr, textStatus, errorThrown){
+            if (textStatus != 'abort') wmgui.notify('A network error occured. Please, try again');
+        });
+    }
+
+    $('#ind_col').show();
+    $('#dtypes').hide();
 }
 
 function assign_edition(){

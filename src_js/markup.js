@@ -23,61 +23,62 @@ function register_html(){
     </div>
 </div>
 
-<!-- LANDING AND DATAGRID -->
-<div id="main">
+<!-- SEARCH -->
+<div id="search_box">
     <div id="ermac_logo"><a href="#start"></a></div>
-    <div id="search_box">
-        <div id="search_area">
-            <div id="search_holder">
-                <select id="search_field" autocomplete="false" multiple autofocus></select>
-            </div>
-            <a href="#hierarchy" id="hierarchy_trigger" class="wmbutton" title="Show list of properties">&mu;<span><sub>x</sub><sup>&deg;</sup></span></a>
-            <a id="ptable_trigger" class="wmbutton" title="Show periodic table"><sup>26</sup>Fe</a>
-            <a href="#" id="advsearch_init_trigger" class="wmbutton" title="Show search options">&#9776;</a>
-            <a href="#" id="search_trigger" class="wmbutton" title="Search">&#x23ce;</a>
-        </div>
 
-        <div id="legend"></div>
-
-        <div id="header_entries">
-            <table id="dataheader_entries">
-                <thead><tr>
-                    <th class="c1">Formula</th>
-                    <th class="cp"></th>
-                    <th class="c2">Property</th>
-                    <th class="cj">J. code</th>
-                    <th class="c4">Year</th>
-                    <th class="c5">Ref.</th>
-                </tr></thead>
-            </table>
+    <div id="search_area">
+        <div id="search_holder">
+            <select id="search_field" autocomplete="false" multiple autofocus></select>
         </div>
-
-        <div id="header_phases">
-            <table id="dataheader_phases">
-                <thead><tr>
-                    <th class="p1">Phase</th>
-                    <th class="p2">Space group num.</th>
-                    <th class="p3">Exp. entries</th>
-                    <th class="p4">Publications</th>
-                    <th class="p5"></th>
-                </tr></thead>
-            </table>
-        </div>
-
-        <div id="header_articles">
-            <table id="dataheader_articles">
-                <thead><tr>
-                    <th class="c55">Ref.</th>
-                    <th class="a1">Authors</th>
-                    <th class="a2">Title</th>
-                    <th class="a5">J. name</th>
-                    <th class="cj">J. code</th>
-                    <th class="c4">Year</th>
-                </tr></thead>
-            </table>
-        </div>
+        <a href="#hierarchy" id="hierarchy_trigger" class="wmbutton" title="Show list of properties">&mu;<span><sub>x</sub><sup>&deg;</sup></span></a>
+        <a href="#" id="advsearch_init_trigger" class="wmbutton" title="Show search options">&#9776;</a>
+        <a href="#" id="search_trigger" class="wmbutton" title="Search">&#x23ce;</a>
     </div>
 
+    <div id="legend"></div>
+
+    <div id="header_entries">
+        <table id="dataheader_entries">
+            <thead><tr>
+                <th class="c1">Formula</th>
+                <th class="cp"></th>
+                <th class="c2">Property</th>
+                <th class="cj">J. code</th>
+                <th class="c4">Year</th>
+                <th class="c5">Ref.</th>
+            </tr></thead>
+        </table>
+    </div>
+
+    <div id="header_phases">
+        <table id="dataheader_phases">
+            <thead><tr>
+                <th class="p1">Phase</th>
+                <th class="p2">Space group num.</th>
+                <th class="p3">Exp. entries</th>
+                <th class="p4">Publications</th>
+                <th class="p5"></th>
+            </tr></thead>
+        </table>
+    </div>
+
+    <div id="header_articles">
+        <table id="dataheader_articles">
+            <thead><tr>
+                <th class="c55">Ref.</th>
+                <th class="a1">Authors</th>
+                <th class="a2">Title</th>
+                <th class="a5">J. name</th>
+                <th class="cj">J. code</th>
+                <th class="c4">Year</th>
+            </tr></thead>
+        </table>
+    </div>
+</div>
+
+<!-- DATAGRID -->
+<div id="main">
     <div id="results"><table id="databrowser"></table></div>
 
     <div id="loadscroll" class="context_msg">Getting the rest of data...</div>
@@ -91,9 +92,202 @@ function register_html(){
         <div id="plt_cube"><a class="plthint_links" title="Plot ternaries cube" rel="nofollow" href="/" rev="cube"></a></div>
     </div>
 
-    <div id="apihint" class="context_msg">Get machine-readable data in full using API: curl -H Key:<a href="#modal/menu">YOUR_API_KEY</a> 'https://api.mpds.io/v0/download/facet?q=<span></span>&amp;fmt=json'</div>
+    <div id="apihint" class="context_msg">Get full machine-readable data using API: curl -H Key:<a href="#modal/menu">YOUR_API_KEY</a> 'https://api.mpds.io/v0/download/facet?q=<span></span>&amp;fmt=json'</div>
 
     <div id="fdwidget" class="context_msg"></div>
+</div>
+
+<!-- PERIODIC TABLE -->
+<div id="ptable_holder">
+<div id="ptable_area">
+<ul>
+    <!-- Period 1 -->
+    <li data-pos="1" class="type_1 cat_2">H<span>Hydrogen</span></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li data-pos="2" class="type_2 cat_2">He<span>Helium</span></li>
+
+    <!-- Period 2 -->
+    <li data-pos="3" class="type_3 cat_0">Li<span>Lithium</span></li>
+    <li data-pos="4" class="type_4 cat_0">Be<span>Beryllium</span></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li data-pos="5" class="type_5 cat_0">B<span>Boron</span></li>
+    <li data-pos="6" class="type_5 cat_0">C<span>Carbon</span></li>
+    <li data-pos="7" class="type_5 cat_2">N<span>Nitrogen</span></li>
+    <li data-pos="8" class="type_5 cat_2">O<span>Oxygen</span></li>
+    <li data-pos="9" class="type_5 cat_2">F<span>Fluorine</span></li>
+    <li data-pos="10" class="type_2 cat_2">Ne<span>Neon</span></li>
+
+    <!-- Period 3 -->
+    <li data-pos="11" class="type_3 cat_0">Na<span>Sodium</span></li>
+    <li data-pos="12" class="type_4 cat_0">Mg<span>Magnesium</span></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li data-pos="13" class="type_7 cat_0">Al<span>Aluminium</span></li>
+    <li data-pos="14" class="type_5 cat_0">Si<span>Silicon</span></li>
+    <li data-pos="15" class="type_5 cat_0">P<span>Phosphorus</span></li>
+    <li data-pos="16" class="type_5 cat_0">S<span>Sulfur</span></li>
+    <li data-pos="17" class="type_5 cat_2">Cl<span>Chlorine</span></li>
+    <li data-pos="18" class="type_2 cat_2">Ar<span>Argon</span></li>
+
+    <!-- Period 4 -->
+    <li data-pos="19" class="type_3 cat_0">K<span>Potassium</span></li>
+    <li data-pos="20" class="type_4 cat_0">Ca<span>Calcium</span></li>
+    <li data-pos="21" class="type_6 cat_0">Sc<span>Scandium</span></li>
+    <li data-pos="22" class="type_6 cat_0">Ti<span>Titanium</span></li>
+    <li data-pos="23" class="type_6 cat_0">V<span>Vanadium</span></li>
+    <li data-pos="24" class="type_6 cat_0">Cr<span>Chromium</span></li>
+    <li data-pos="25" class="type_6 cat_0">Mn<span>Manganese</span></li>
+    <li data-pos="26" class="type_6 cat_0">Fe<span>Iron</span></li>
+    <li data-pos="27" class="type_6 cat_0">Co<span>Cobalt</span></li>
+    <li data-pos="28" class="type_6 cat_0">Ni<span>Nickel</span></li>
+    <li data-pos="29" class="type_6 cat_0">Cu<span>Copper</span></li>
+    <li data-pos="30" class="type_6 cat_0">Zn<span>Zinc</span></li>
+    <li data-pos="31" class="type_7 cat_0">Ga<span>Gallium</span></li>
+    <li data-pos="32" class="type_7 cat_0">Ge<span>Germanium</span></li>
+    <li data-pos="33" class="type_5 cat_0">As<span>Arsenic</span></li>
+    <li data-pos="34" class="type_5 cat_0">Se<span>Selenium</span></li>
+    <li data-pos="35" class="type_5 cat_1">Br<span>Bromine</span></li>
+    <li data-pos="36" class="type_2 cat_2">Kr<span>Krypton</span></li>
+
+    <!-- Period 5 -->
+    <li data-pos="37" class="type_3 cat_0">Rb<span>Rubidium</span></li>
+    <li data-pos="38" class="type_4 cat_0">Sr<span>Strontium</span></li>
+    <li data-pos="39" class="type_6 cat_0">Y<span>Yttrium</span></li>
+    <li data-pos="40" class="type_6 cat_0">Zr<span>Zirconium</span></li>
+    <li data-pos="41" class="type_6 cat_0">Nb<span>Niobium</span></li>
+    <li data-pos="42" class="type_6 cat_0">Mo<span>Molybdenum</span></li>
+    <li data-pos="43" class="type_6 cat_0">Tc<span>Technetium</span></li>
+    <li data-pos="44" class="type_6 cat_0">Ru<span>Ruthenium</span></li>
+    <li data-pos="45" class="type_6 cat_0">Rh<span>Rhodium</span></li>
+    <li data-pos="46" class="type_6 cat_0">Pd<span>Palladium</span></li>
+    <li data-pos="47" class="type_6 cat_0">Ag<span>Silver</span></li>
+    <li data-pos="48" class="type_6 cat_0">Cd<span>Cadmium</span></li>
+    <li data-pos="49" class="type_7 cat_0">In<span>Indium</span></li>
+    <li data-pos="50" class="type_7 cat_0">Sn<span>Tin</span></li>
+    <li data-pos="51" class="type_7 cat_0">Sb<span>Antimony</span></li>
+    <li data-pos="52" class="type_5 cat_0">Te<span>Tellurium</span></li>
+    <li data-pos="53" class="type_5 cat_0">I<span>Iodine</span></li>
+    <li data-pos="54" class="type_2 cat_2">Xe<span>Xenon</span></li>
+
+    <!-- Period 6 -->
+    <li data-pos="55" class="type_3 cat_0">Cs<span>Caesium</span></li>
+    <li data-pos="56" class="type_4 cat_0">Ba<span>Barium</span></li>
+    <li data-pos="71" class="type_6 cat_0">Lu<span>Lutetium</span></li>
+    <li data-pos="72" class="type_6 cat_0">Hf<span>Hafnium</span></li>
+    <li data-pos="73" class="type_6 cat_0">Ta<span>Tantalum</span></li>
+    <li data-pos="74" class="type_6 cat_0">W<span>Tungsten</span></li>
+    <li data-pos="75" class="type_6 cat_0">Re<span>Rhenium</span></li>
+    <li data-pos="76" class="type_6 cat_0">Os<span>Osmium</span></li>
+    <li data-pos="77" class="type_6 cat_0">Ir<span>Iridium</span></li>
+    <li data-pos="78" class="type_6 cat_0">Pt<span>Platinum</span></li>
+    <li data-pos="79" class="type_6 cat_0">Au<span>Gold</span></li>
+    <li data-pos="80" class="type_6 cat_1">Hg<span>Mercury</span></li>
+    <li data-pos="81" class="type_7 cat_0">Tl<span>Thallium</span></li>
+    <li data-pos="82" class="type_7 cat_0">Pb<span>Lead</span></li>
+    <li data-pos="83" class="type_7 cat_0">Bi<span>Bismuth</span></li>
+    <li data-pos="84" class="type_7 cat_0">Po<span>Polonium</span></li>
+    <li data-pos="85" class="type_5 cat_0">At<span>Astatine</span></li>
+    <li data-pos="86" class="type_2 cat_2">Rn<span>Radon</span></li>
+
+    <!-- Period 7 -->
+    <li data-pos="87" class="type_3 cat_0">Fr<span>Francium</span></li>
+    <li data-pos="88" class="type_4 cat_0">Ra<span>Radium</span></li>
+    <li data-pos="103" class="type_6 cat_0">Lr<span>Lawrencium</span></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+
+    <!-- Lanthanides -->
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li data-pos="57" class="type_1 cat_0">La<span>Lanthanum</span></li>
+    <li data-pos="58" class="type_1 cat_0">Ce<span>Cerium</span></li>
+    <li data-pos="59" class="type_1 cat_0">Pr<span>Praseodymium</span></li>
+    <li data-pos="60" class="type_1 cat_0">Nd<span>Neodynium</span></li>
+    <li data-pos="61" class="type_1 cat_0">Pm<span>Promethium</span></li>
+    <li data-pos="62" class="type_1 cat_0">Sm<span>Samarium</span></li>
+    <li data-pos="63" class="type_1 cat_0">Eu<span>Europium</span></li>
+    <li data-pos="64" class="type_1 cat_0">Gd<span>Gadolinium</span></li>
+    <li data-pos="65" class="type_1 cat_0">Tb<span>Terbium</span></li>
+    <li data-pos="66" class="type_1 cat_0">Dy<span>Dysprosium</span></li>
+    <li data-pos="67" class="type_1 cat_0">Ho<span>Holmium</span></li>
+    <li data-pos="68" class="type_1 cat_0">Er<span>Erbium</span></li>
+    <li data-pos="69" class="type_1 cat_0">Tm<span>Thulium</span></li>
+    <li data-pos="70" class="type_1 cat_0">Yb<span>Ytterbium</span></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+
+    <!-- Actinides -->
+    <li class="empty"></li>
+    <li class="empty"></li>
+    <li data-pos="89" class="type_1 cat_0">Ac<span>Actinium</span></li>
+    <li data-pos="90" class="type_1 cat_0">Th<span>Thorium</span></li>
+    <li data-pos="91" class="type_1 cat_0">Pa<span>Protactinium</span></li>
+    <li data-pos="92" class="type_1 cat_0">U<span>Uranium</span></li>
+    <li data-pos="93" class="type_1 cat_0">Np<span>Neptunium</span></li>
+    <li data-pos="94" class="type_1 cat_0">Pu<span>Plutonium</span></li>
+    <li data-pos="95" class="type_1 cat_0">Am<span>Americium</span></li>
+    <li data-pos="96" class="type_1 cat_0">Cm<span>Curium</span></li>
+    <li data-pos="97" class="type_1 cat_0">Bk<span>Berkelium</span></li>
+    <li data-pos="98" class="type_1 cat_0">Cf<span>Californium</span></li>
+    <li data-pos="99" class="type_1 cat_0">Es<span>Einsteinium</span></li>
+    <li data-pos="100" class="type_1 cat_0">Fm<span>Fermium</span></li>
+    <li data-pos="101" class="type_1 cat_0">Md<span>Mendelevium</span></li>
+    <li data-pos="102" class="type_1 cat_0">No<span>Nobelium</span></li>
+    <li class="empty"></li>
+    <li class="empty"></li>
+</ul>
+</div>
+
+<!-- PERIODIC TABLE OUTPUT -->
+<div id="ptable_results">
+    <div id="ptable_previews"></div>
+    <div id="ptable_vis"></div>
+</div>
 </div>
 
 <!-- LEFT MAIN COLUMN -->
@@ -143,6 +337,7 @@ function register_html(){
     <div class="col_title" id="ind_title"></div>
     <span></span>
     <p>Permanent link:<br /><a id="ind_link"></a></p>
+    <div id="phase_info"></div>
 </div>
 
 <!-- LEFT PLOTTING COLUMN -->
@@ -228,7 +423,7 @@ function register_html(){
 
 <!-- RIGHT MAIN COLUMN -->
 <div id="right_col" class="side_cols">
-    <div class="col_title">Options</div>
+    <div class="col_title">Display</div>
 
     <div class="controlswitch">
         <div id="control_a">entries</div><div id="control_b">phases</div><div id="control_f">articles</div>
@@ -269,7 +464,7 @@ function register_html(){
 
     <ul></ul>
 
-    <a id="sim_trigger" href="#" class="wmbutton sim_col_ctx" rel="nofollow">Show all</a>
+    <a id="sim_trigger" href="#" class="wmbutton sim_col_ctx" rel="nofollow">Show more</a>
 
     <div id="pd_legend" class="sim_col_ctx">
         <div class="col_title">Area colors</div>

@@ -5,6 +5,16 @@ var wmgui = window.wmgui || {};
 
 function register_events(){
 
+    document.querySelector('#ptable_area > ul').addEventListener('click', function(event){
+        const that = event.target;
+        if (!that.hasAttribute('data-pos'))
+            return;
+
+        wmgui.ptable.update_selectize = true;
+        const selected_el = wmgui.ptable.elements[that.getAttribute('data-pos')];
+        select_ptable_el(selected_el, that);
+    });
+
     $('#search_trigger').click(function(){
 
         var query = wmgui.multiselects['main'].read(),
@@ -120,9 +130,9 @@ function register_events(){
 
     $('#advsearch_init_trigger').click(function(){
         $('#advstab_options li').removeClass('working');
-        $('#advstab_options li[rev=advstab_bib]').addClass('working');
-        $('#advstab_bib').show();
-        $('#advstab_main, #advstab_cry').hide();
+        $('#advstab_options li[rev=advstab_cry]').addClass('working');
+        $('#advstab_cry').show();
+        $('#advstab_main, #advstab_bib').hide();
         show_advsbox();
         return false;
     });
@@ -151,6 +161,10 @@ function register_events(){
         //if (legend.indexOf('-vertex') !== -1) show_aetmap(legend);
 
         return false;
+    });
+
+    $('#databrowser, #ptable_results').on('click', 'div.gallery_img', function(){
+        if ($(this).attr('rel')) window.location.hash = $(this).attr('rel');
     });
 
     $('#databrowser').on('mousedown', 'a.resolve_ref', function(e){
@@ -483,7 +497,10 @@ function register_events(){
     });
 
     $('#hy_box').on('click', 'a.dynprop', function(){
-        if (wmgui.view_mode == 1) return true;
+        // FIXME cannot process with optimade NLP parser
+        //if (wmgui.view_mode == 1)
+        //    return true;
+
         var value = $(this).attr('data-val');
         window.location.hash = wmgui.aug_search_cmd("props", value);
         return false;
@@ -546,13 +563,16 @@ function register_events(){
     $(window).scroll(wmgui.debounce(function(){
         if (wmgui.view_mode == 2 && wmgui.unfinished_page){
             if ($('#footer').offset().top - $(window).scrollTop() - $(window).height() < 50){ // footer pos - scrolling - window height
-                if (!wmgui.unfinished_page) return;
+
+                if (!wmgui.unfinished_page)
+                    return;
+
                 wmgui.unfinished_page = false;
                 var cur_search = {offset: wmgui.quick_page_size};
                 $.extend(cur_search, wmgui.search);
 
                 // NB no abort of the other requests!
-                wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.srch_endpoint, data: {q: JSON.stringify(cur_search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
+                wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.search_endpoint, data: {q: JSON.stringify(cur_search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
                     if (data.error) return wmgui.notify(data.error);
                     $('div.context_msg').hide();
                     show_hints();
