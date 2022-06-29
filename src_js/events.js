@@ -6,12 +6,12 @@ var wmgui = window.wmgui || {};
 function register_events(){
 
     document.querySelector('#ptable_area > ul').addEventListener('click', function(event){
-        const that = event.target;
+        var that = event.target;
         if (!that.hasAttribute('data-pos'))
             return;
 
         wmgui.ptable.update_selectize = true;
-        const selected_el = wmgui.ptable.elements[that.getAttribute('data-pos')];
+        var selected_el = wmgui.ptable.elements[that.getAttribute('data-pos')];
         select_ptable_el(selected_el, that);
     });
 
