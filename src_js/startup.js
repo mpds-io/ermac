@@ -38,7 +38,7 @@ function satisfy_requirements(){
     });
 
     $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_matcloud_key) || '[]'), function(n, item){
-        wmgui.matcloud_history.push(parseInt(item));
+        wmgui.matcloud_history.push(item);
     });
 
     // set client-side data features

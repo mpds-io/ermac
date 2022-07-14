@@ -304,7 +304,7 @@ wmgui.mockyear = new Date().getFullYear();
 wmgui.storage_history_key = 'wm_search_log_v5';
 wmgui.storage_user_key = 'wm_v2';
 wmgui.storage_bids_key = 'bid_history';
-wmgui.storage_matcloud_key = 'matcloud_v1';
+wmgui.storage_matcloud_key = 'matcloud_v2';
 
 wmgui.tooltips = {
     //'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="userbox">Next</span>'},

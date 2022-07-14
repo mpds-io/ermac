@@ -261,12 +261,14 @@ function register_events(){
 
             $.ajax({type: 'POST', url: wmgui.matcloud_endpoint, data: {data: entry_json}, headers: {Authorization: 'Bearer ' + wmgui.oauths.matcloud}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(answer){
                 //console.log(answer);
-                if (answer.code === 1)
+                if (answer.code === 1){
                     alert('An error occured while adding data');
-                else {
+                    console.error(answer);
+                } else {
                     var entry = entry_json.entry || entry_json.sample.material.entry;
                     console.log('Added to MatCloud: ' + entry);
                     wmgui.matcloud_history.push(entry);
+                    window.localStorage.setItem(wmgui.storage_matcloud_key, JSON.stringify(wmgui.matcloud_history));
                     $('#matcloudize').removeClass('wmbutton');
                 }
             }).fail(function(){
