@@ -320,7 +320,7 @@ function register_html(){
     </div>
 
     <ul>
-        <li id="matcloudize" class="wmbutton">Add to MatCloud</li>
+        <li id="matcloudize" class="wmbutton"><span class="active">Add to MatCloud</span><span class="disabled">&#x2714; added to MatCloud</span></li>
         <li id="visualize" class="wmbutton">Visualize</li>
         <li id="download_pdf" class="d_icon"><a rel="pdf" href="#" target="_blank" title="Get HTML / PDF document" rel="nofollow"></a></li>
         <li id="download_json" class="d_icon"><a rel="json" href="#" target="_blank" title="Get machine-readable JSON file" rel="nofollow"></a></li>

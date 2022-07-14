@@ -243,6 +243,8 @@ function register_events(){
 
     $('#matcloudize').click(function(){
 
+        if (!$(this).hasClass('wmbutton')) return false;
+
         if (!wmgui.oauths || !wmgui.oauths.matcloud){
             if (confirm('Authorize at MatCloud?')) window.location.href = 'oauth/matcloud.html';
             return;
@@ -251,16 +253,22 @@ function register_events(){
         var url = $('#download_json').children('a').attr('href');
 
         try { wmgui.active_ajax.abort() } catch(e){}
-        wmgui.active_ajax = $.ajax({type: 'GET', url: url}).done(function(entry){
+        wmgui.active_ajax = $.ajax({type: 'GET', url: url}).done(function(entry_json){
 
-            //console.log(entry);
-            if (typeof entry !== 'object')
+            //console.log(entry_json);
+            if (typeof entry_json !== 'object')
                 return alert('Sorry, your subscription plan does not include full access to these data.');
 
-            $.ajax({type: 'POST', url: wmgui.matcloud_endpoint, data: {data: entry}, headers: {Authorization: 'Bearer ' + wmgui.oauths.matcloud}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(answer){
+            $.ajax({type: 'POST', url: wmgui.matcloud_endpoint, data: {data: entry_json}, headers: {Authorization: 'Bearer ' + wmgui.oauths.matcloud}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(answer){
                 //console.log(answer);
-                alert(answer.code === 1 ? 'An error occured while adding data' : 'Successfully added');
-
+                if (answer.code === 1)
+                    alert('An error occured while adding data');
+                else {
+                    var entry = entry_json.entry || entry_json.sample.material.entry;
+                    console.log('Added to MatCloud: ' + entry);
+                    wmgui.matcloud_history.push(entry);
+                    $('#matcloudize').removeClass('wmbutton');
+                }
             }).fail(function(){
                 alert('Remote server error');
             });

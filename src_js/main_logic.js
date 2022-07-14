@@ -853,6 +853,9 @@ function open_context(el, launch_ext){
 
             $(this).attr('href', link_url);
         });
+
+        (wmgui.matcloud_history.indexOf(entry) == -1) ? $('#matcloudize').addClass('wmbutton') : $('#matcloudize').removeClass('wmbutton');
+
         if (launch_ext) launch_iframed_app(rank);
     }
 }
