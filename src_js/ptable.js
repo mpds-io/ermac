@@ -7,7 +7,7 @@ wmgui.ptable.update_selectize = false;
 wmgui.ptable.active_ajax = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 wmgui.ptable.query = null;
 wmgui.ptable.els_data = [];
-wmgui.ptable.pdsvg_path = (window.location.host.indexOf('localhost')==-1) ? '/pds_svgs' : '/labs/ptable/pds_svgs';
+wmgui.ptable.pdsvg_path = wmgui.static_host + '/pds_svgs';
 wmgui.ptable.first_el = null;
 wmgui.ptable.second_el = null;
 wmgui.ptable.visible = false; // needed to debounce
@@ -17,7 +17,7 @@ wmgui.ptable.elements = ['X'].concat(wmutils.periodic_elements_cased);
 
 wmgui.ptable.arity = {1: 'unary', 2: 'binary', 3: 'ternary'};
 
-wmgui.ptable.pd3d_renderer = '/labs/prisms/?';
+wmgui.ptable.pd3d_renderer = wmgui.static_host + '/labs/prisms/?';
 
 wmgui.ptable.show = function(){
     if (wmgui.ptable.visible)
@@ -71,9 +71,11 @@ function clear_results_area(){
     wmgui.ptable.deactivate();
 }
 
-function update_screen(elA, elB, elC){
+function refresh_table(elA, elB, elC){
 
     if (wmgui.view_mode !== 1) return;
+
+    //console.log('Refreshing table with ' + [elA, elB, elC]);
 
     const els = [elA, elB, elC].filter(function(item){ return !!item }),
         query_ph = els.length ? {search_type: 1, classes: wmgui.ptable.arity[els.length], elements: els.join('-')} : false;
@@ -133,7 +135,6 @@ function render_left(data){
 
 function render_right(data){
     data = JSON.parse(data);
-    console.log(data);
     if (data.error)
         return alert(data.error);
 
@@ -178,13 +179,16 @@ function render_unaries(){
 }
 
 function render_binaries(elA, elB){
+
+    //console.log('RENDERING BINARIES FOR: ' + [elA, elB]);
+
     document.querySelectorAll('#ptable_area > ul > li').forEach(function(item){
         if (!item.hasAttribute('data-pos'))
             return;
 
         const current_el = wmgui.ptable.elements[item.getAttribute('data-pos')];
         if (current_el != elB && current_el != elA){
-            item.style.backgroundImage = "url('" + wmgui.ptable.pdsvg_path + "/pds_bin/" + elB + "-" + current_el + ".svg')";
+            item.style.backgroundImage = "url('" + wmgui.ptable.pdsvg_path + "/pds_bin/" + elA + "-" + current_el + ".svg')";
             item.className = 'active_a';
         }
     });
@@ -244,7 +248,7 @@ function build_thumbs_pd(json){ // FIXME duplicates another function *build_thum
 }
 
 function select_ptable_el(selected_el, dom_el){
-    //console.log('Ptable for ' + selected_el);
+    //console.log('Selected element is ' + selected_el);
 
     if (!dom_el){
         var dom_el = document.querySelector('#ptable_area > ul > li[data-pos="' + wmgui.ptable.elements.indexOf(selected_el) + '"]');
@@ -255,25 +259,25 @@ function select_ptable_el(selected_el, dom_el){
         // first element removal
         dom_el.classList.remove('selected_a');
         render_unaries();
-        update_screen();
+        refresh_table();
 
     } else if (dom_el.classList.contains('selected_b')){
         // second element removal
         dom_el.classList.remove('selected_b');
         render_binaries(wmgui.ptable.first_el, selected_el);
         wmgui.ptable.second_el = null;
-        update_screen(wmgui.ptable.first_el);
+        refresh_table(wmgui.ptable.first_el);
 
     } else if (dom_el.classList.contains('selected_c')){
         // third element removal
         dom_el.classList.remove('selected_c');
-        update_screen(wmgui.ptable.first_el, wmgui.ptable.second_el);
+        refresh_table(wmgui.ptable.first_el, wmgui.ptable.second_el);
 
     } else if (dom_el.classList.contains('active_b')){
         // third element selection
         removeAllCls('selected_c');
         dom_el.classList.add('selected_c');
-        update_screen(wmgui.ptable.first_el, wmgui.ptable.second_el, selected_el);
+        refresh_table(wmgui.ptable.first_el, wmgui.ptable.second_el, selected_el);
 
     } else if (dom_el.classList.contains('active_a')){
         // second element selection
@@ -281,18 +285,19 @@ function select_ptable_el(selected_el, dom_el){
         dom_el.classList.add('selected_b');
         render_ternaries(wmgui.ptable.first_el, selected_el);
         wmgui.ptable.second_el = selected_el;
-        update_screen(wmgui.ptable.first_el, selected_el);
+        refresh_table(wmgui.ptable.first_el, selected_el);
 
     } else {
         // first element selection
         dom_el.classList.add('selected_a');
         wmgui.ptable.first_el = selected_el;
         render_binaries(wmgui.ptable.first_el, selected_el);
-        update_screen(selected_el);
+        refresh_table(selected_el);
     }
 }
 
 function select_ptable_series(els){
+    //console.log('Received for TABLE DRAW: ' + els);
     if (!els){
         render_unaries();
         clear_results_area();
@@ -336,5 +341,5 @@ function select_ptable_series(els){
         }
         render_ternaries(els[0], els[1]);
     }
-    update_screen(...els);
+    refresh_table(...els);
 }
