@@ -12,7 +12,7 @@ function url_redraw_react(){
     try { wmgui.quick_ajax.abort() } catch(e){}
 
     if (window['url__' + anchors[0]]) window['url__' + anchors[0]](anchors.slice(1).join('/'));
-    else wmgui.notify('Unknown route: ' + window.location.hash);
+    else wmgui.notify('Unknown route requested');
 }
 
 /**
@@ -164,7 +164,7 @@ function url__phase(arg){
             if (textStatus != 'abort') wmgui.notify('A network error occured. Please, try again');
         });
 
-    } else return wmgui.notify('Wrong phase given!');
+    } else return wmgui.notify('Wrong phase given');
 }
 
 /**
@@ -181,6 +181,10 @@ function url__hierarchy(){
  * The different types of modal windows
  */
 function url__modal(arg){
+
+    //var url_params = new URLSearchParams(window.location.search),
+    //    redir = url_params.get('redir');
+
     if (arg == "login"){
         if (wmgui.sid) return window.location.replace('#modal/menu');
 
@@ -216,7 +220,7 @@ function url__modal(arg){
         arrange_menu_collateral();
         $('#menubox, div.menu_collateral').show();
 
-    } else return wmgui.notify("Unknown modal dialogue!");
+    } else return wmgui.notify("Unknown modal window");
     $('#overlay').show();
 }
 

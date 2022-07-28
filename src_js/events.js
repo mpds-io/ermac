@@ -698,6 +698,9 @@ function register_events(){
         } else if (desttab == 'usr_tab_ctrl'){ // redirect to an external app
             window.location.href = (wmgui.edition === 0 ? '/ctrl' : '/labs/custom-datasets') + '?' + Math.floor(Math.random() * 1000);
 
+        } else if (desttab == 'usr_tab_absolidix'){ // redirect to an external app
+            window.location.href = wmgui.mydata_addr;
+
         } else if (desttab == 'usr_tab_account'){
             $('#hintsbox_msg').html(wmgui.get_random_term(wmgui.welcome_msgs));
         }

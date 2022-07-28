@@ -12,7 +12,7 @@ wmgui.notify = function(msg){
     }
     setTimeout(function(){
         $('#notifybox').html(wmgui.clean(msg)).show();
-        wmgui.notify_counter = setTimeout(function(){ $('#notifybox').hide() }, 5000);
+        wmgui.notify_counter = setTimeout(function(){ $('#notifybox').hide() }, 4000);
     }, delay);
 }
 

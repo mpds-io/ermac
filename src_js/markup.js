@@ -629,6 +629,7 @@ function register_html(){
 <div id="menubox" class="modal user_dialogue">
     <ul id="tab_links">
         <li rev="usr_tab_account" class="working">account</li>
+        <li rev="usr_tab_absolidix">my data</li>
         <li rev="usr_tab_perms">data access</li>
         <li rev="usr_tab_api_key">API key</li>
         <li rev="usr_tab_ctrl" style="display:none;" class="admin">management</li>
@@ -669,6 +670,10 @@ function register_html(){
         <div class="divider"></div>
 
         <div id="perms_view"></div>
+    </div>
+
+    <div id="usr_tab_absolidix" class="menu_tabs" style="display:none;">
+        <br /><br /><br /><br /><br />
     </div>
 
     <div id="usr_tab_api_key" class="menu_tabs" style="display:none;">
