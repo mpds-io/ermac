@@ -83,6 +83,7 @@ wmgui.welcome_msgs = [
 wmgui.api_msg = 'Try <i>e.g.</i> the following command in a terminal. As finished, do not forget to revoke your API key. See the <a href="https://developer.mpds.io">manual</a> and the <a href="/#formal/api">license</a> for open data listing.<pre style="overflow-x:scroll;margin:1em 0;">curl -H Key:YOUR_API_KEY \'https://api.mpds.io/v0/download/facet?q=&bsol;{"elements":"Ag-K"&bsol;}\'</pre><div class="wmbutton" style="background:#999;border-color:#999;width:150px;margin:0 auto;font-size:0.9em;">Copy to clipboard</div>';
 
 wmgui.bid_history = [];
+wmgui.mydata_history = [];
 wmgui.journal_converter = {j2c: function(){}, c2j: function(){}};
 wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure', 'electron density of states', 'vibrational spectra']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
 
@@ -129,9 +130,10 @@ wmgui.auto_endpoint =     wmgui.api_host + '/search/selectize';
 wmgui.refs_endpoint =     wmgui.api_host + '/download/bib';
 wmgui.vis_endpoint =      wmgui.api_host + '/visavis';
 wmgui.pdist_endpoint =    wmgui.api_host + '/visavis/pdistribs';
+wmgui.mydata_endpoint =   wmgui.api_host + '/extension/mydata';
 
 wmgui.dd_addr_tpl =       wmgui.api_host + '/download';
-wmgui.mydata_addr =       wmgui.prod ? 'https://bff.absolidix.com/v0/auth/mpds' : 'http://localhost:3000/v0/auth/dummy';
+wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localhost:5000';
 
 // below are resources used in the *iframe*
 wmgui.v_player_addr =     wmgui.static_host + '/player/player.html#' + wmgui.api_host + '/download/s?fmt=cif&q=';
@@ -300,11 +302,12 @@ wmgui.storage_history_key = 'wm_search_log_v5';
 wmgui.storage_user_key = 'wm';
 wmgui.storage_bids_key = 'bid_history'; // TODO rename to wm_bid_history
 //wmgui.storage_redir_key = 'wm_redir';
+wmgui.storage_mydata_key = 'absolidix_v1';
 
 wmgui.tooltips = {
     //'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="userbox">Next</span>'},
     //'hierarchy': {el: 'advsearch_init_trigger', oleft: -50, otop: 60, view_mode: 1, text: 'Use the <i>&mu;</i> button to select physical properties from the curated hierarchy.<br /><span rel="userbox">Next</span>'},
-    'userbox': {el: 'userbox', oleft: -100, otop: 65, view_mode: 1, text: 'Log in here and enjoy the full data access.<br /><span rel="close_tooltip">OK</span>'},
+    'userbox': {el: 'userbox', oleft: -105, otop: 60, view_mode: 1, text: 'Log in here and enjoy the full data access.<br /><span rel="close_tooltip">OK</span>'},
     'interpretation': {el: 'right_col', oleft: -70, otop: 99, view_mode: 2, text: 'The entries are grouped in the phases.<br /><span rel="databrowser">Next</span>'},
     'databrowser': {el: 'databrowser', oleft: 0, otop: 200, view_mode: 2, text: 'Click the particular entry to get more info. Opened lock means open access.<br /><span rel="close_tooltip">OK</span>'},
     //'plots': {el: 'databrowser', oleft: 0, otop: 500, view_mode: 2, text: 'Use the graph chart buttons in the footer (at the very bottom of the page).<br /><span rel="close_tooltip">OK</span>'},

@@ -241,6 +241,30 @@ function register_events(){
         if (!close_vibox()) launch_iframed_app(this.getAttribute('data-rank'));
     });
 
+    $('#absolidize').click(function(){
+
+        if (!$(this).hasClass('wmbutton')) return false;
+
+        if (!wmgui.sid){
+            return window.location.replace('#modal/login');
+        }
+
+        var entry = $('#entryno > a').text();
+
+        try { wmgui.active_ajax.abort() } catch(e){}
+        $.ajax({type: 'GET', url: wmgui.mydata_endpoint, data: {q: entry, sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
+
+            if (data.error) return wmgui.notify(data.error);
+
+            wmgui.mydata_history.push(entry);
+            window.localStorage.setItem(wmgui.storage_mydata_key, JSON.stringify(wmgui.mydata_history));
+            $('#absolidize').removeClass('wmbutton');
+
+        }).fail(function(xhr, textStatus, errorThrown){
+            wmgui.notify("Sorry, cannot perform that action at this time");
+        });
+    });
+
     $('#refine_col').on('click', 'a.extd_refine', function(){
         var facet = $(this).attr('rel');
         if ($('#refine_col > ul > li.extd_rfns.fct_' + facet).length){

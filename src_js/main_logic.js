@@ -796,7 +796,8 @@ function open_context(el, launch_ext){
         $('#entryno').html('<a href="#entry/' + orig_id + '">' + orig_id + '</a>');
 
         $('#ctx_col').show();
-        $('#visualize, div.spinoff_pane, li.d_icon').hide();
+        $('#visualize').attr('data-rank', rank);
+        $('#visualize, #absolidize, div.spinoff_pane, li.d_icon').hide();
 
         open_sim_col(entry, entype, rank);
 
@@ -813,15 +814,12 @@ function open_context(el, launch_ext){
             $('#download_bib, #download_png, #download_cdr').show();
 
         } else if (rank == 4){
-            $('#visualize').attr('data-rank', rank);
             $('#download_bib, #download_json, #visualize').show();
 
         } else if (rank == 5){
-            $('#visualize').attr('data-rank', rank);
-            $('#download_bib, #download_pdf, #visualize, #download_cif, #download_inp, #download_json').show();
+            $('#download_bib, #download_pdf, #visualize, #absolidize, #download_cif, #download_inp, #download_json').show();
 
         } else if (rank == 6){
-            $('#visualize').attr('data-rank', rank);
             $('#download_bib, #download_pdf, #visualize, #download_png, #download_cdr, #download_json').show();
 
         } else if (rank == 7){
@@ -831,18 +829,15 @@ function open_context(el, launch_ext){
             $('#ab_data, #download_pdf, #download_json, #download_raw').show();
 
         } else if (rank == 9){
-            $('#visualize').attr('data-rank', rank);
             $('#ab_data, #download_pdf, #download_json, #visualize, #download_png, #download_raw').show();
 
         } else if (rank == 10){
-            $('#visualize').attr('data-rank', rank);
             $('#ab_data, #download_pdf, #download_json, #visualize, #download_raw').show();
 
         } else if (rank == 11){
             $('#ab_promise, #download_json').show();
 
         } else if (rank == 12){
-            $('#visualize').attr('data-rank', rank);
             $('#pd3d_data, #visualize').show();
         }
         $('#ctx_col > ul > li.d_icon:visible > a').each(function(){
@@ -853,6 +848,9 @@ function open_context(el, launch_ext){
 
             $(this).attr('href', link_url);
         });
+
+        (wmgui.mydata_history.indexOf(entry) == -1) ? $('#absolidize').addClass('wmbutton') : $('#absolidize').removeClass('wmbutton');
+
         if (launch_ext) launch_iframed_app(rank);
     }
 }
@@ -1228,7 +1226,7 @@ function user_login(sid, name, acclogin, admin, oauths){
     $('div.logged_out').hide();
     $('div.logged_in').show();
 
-    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin}));
+    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin})); // oauths: oauths
     admin ? $('li.admin').show() : $('li.admin').hide();
 
     try {

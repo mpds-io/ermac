@@ -1213,6 +1213,7 @@ const OptimadeNLP = function () {
 		'stoner enhancement factor',
 		'stoner parameter',
 		'stoner product',
+		'structural properties',
 		'structural transition',
 		'structural transitions',
 		'superconducting transition temperature',

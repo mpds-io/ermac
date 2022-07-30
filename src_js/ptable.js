@@ -126,7 +126,7 @@ function ajax_download(api, url, callback){
 function render_left(data){
     data = JSON.parse(data);
     if (data.error)
-        return alert(data.error);
+        return wmgui.notify(data.error);
 
     const header = '<h4>Known phases of ' + wmgui.ptable.query.elements + (wmgui.ptable.query.elements.indexOf('-') == -1 ? '' : ' system') + '</h4>';
 
@@ -136,7 +136,7 @@ function render_left(data){
 function render_right(data){
     data = JSON.parse(data);
     if (data.error)
-        return alert(data.error);
+        return wmgui.notify(data.error);
 
     if (data.fuzzy_notice || !data.out.length)
         document.getElementById('ptable_vis').innerHTML = '';
@@ -252,7 +252,7 @@ function select_ptable_el(selected_el, dom_el){
 
     if (!dom_el){
         var dom_el = document.querySelector('#ptable_area > ul > li[data-pos="' + wmgui.ptable.elements.indexOf(selected_el) + '"]');
-        if (!dom_el) return alert('Wrong element: ' + selected_el);
+        if (!dom_el) return wmgui.notify('Wrong element: ' + selected_el);
     }
 
     if (dom_el.classList.contains('selected_a')){
