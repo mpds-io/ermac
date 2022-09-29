@@ -924,7 +924,7 @@ function open_sim_col(entry, entype, rank){
                 if (wmgui.thumbed_display){
                     els = $('div.busy_entry > div.gallery_img > p').text().split('-');
                 } else {
-                    els = $('tr.busy_entry > td.c2').text().split(' ');
+                    els = $('tr.busy_entry > td.c2').text().replace('; ', '').split(' ');
                     els = els[els.length - 1].split('-');
                 }
                 if (els.length == 3 || els.length == 4)
