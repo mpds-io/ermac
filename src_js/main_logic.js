@@ -654,9 +654,10 @@ function build_thumbs(json){
             else if (dtype == 'S')
                 content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + '/rd_thumbs/' + row[0].split('-')[0] + '.png" />';
             else {
+                // FIXME
                 row[2] = row[2].split(';')[0];
-                row[2] = row[2].split(' ')[row[2].split(' ').length - 1]; // FIXME!
-                var url_dest = (row[3] == 12) ? '/prism' : '/pd_thumbs/' + row[0].split('-')[0];
+                row[2] = row[2].split(' ')[row[2].split(' ').length - 1];
+                var url_dest = (row[3] == 12) ? (row[2].split('-').length == 3 ? '/prism' : '/tetrahedron') : '/pd_thumbs/' + row[0].split('-')[0];
                 content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + url_dest + '.png" /><p>' + row[2] + '</p>';
             }
             result_html += '<div class="gallery_item ' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" id="e__' + row[0] + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><div class="gallery_img">' + content + '</div><div class="gallery_label">' + row[1] + biblio_html + '</div></div>';
@@ -917,7 +918,8 @@ function open_sim_col(entry, entype, rank){
 
             else if (entype == 'C' && rank == 3){
                 // FIXME this is fragile
-                var els, html_3d = '';
+                var els,
+                    html_3d = '';
 
                 if (wmgui.thumbed_display){
                     els = $('div.busy_entry > div.gallery_img > p').text().split('-');
@@ -925,8 +927,8 @@ function open_sim_col(entry, entype, rank){
                     els = $('tr.busy_entry > td.c2').text().split(' ');
                     els = els[els.length - 1].split('-');
                 }
-                if (els.length == 3)
-                    html_3d = '<br /><br /><a href="#inquiry/classes=prism&props=phase%20diagram&elements=' + els.join('-') + '"><img alt="3d" src="' + wmgui.static_host + '/prism.png" /><br /><span>3d phase diagram</span></a>';
+                if (els.length == 3 || els.length == 4)
+                    html_3d = '<br /><br /><a href="#inquiry/classes=' + (els.length == 3 ? 'prism' : 'tetrahedron') + '&props=phase%20diagram&elements=' + els.join('-') + '"><img alt="3d" src="' + wmgui.static_host + '/' + (els.length == 3 ? 'prism' : 'tetrahedron') + '.png" /><br /><span>3d phase diagram</span></a>';
 
                 $('#sim_legend').addClass('apparent').html('<br /><a href="#entry/' + entry.split('-')[0] + '"><img alt="C-entry" src="' + wmgui.static_host + '/pd_thumbs/' + entry.split('-')[0] + '.png" /><br /><span>Full phase diagram</span></a>' + html_3d);
 
