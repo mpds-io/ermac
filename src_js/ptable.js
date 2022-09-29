@@ -17,8 +17,6 @@ wmgui.ptable.elements = ['X'].concat(wmutils.periodic_elements_cased);
 
 wmgui.ptable.arity = {1: 'unary', 2: 'binary', 3: 'ternary'};
 
-wmgui.ptable.pd3d_renderer = wmgui.static_host + '/labs/prisms/?';
-
 wmgui.ptable.show = function(){
     if (wmgui.ptable.visible)
         return;
@@ -98,7 +96,7 @@ function refresh_table(elA, elB, elC){
             ajax_download(null, wmgui.search_endpoint + '?q=' + JSON.stringify(query_pds), render_right);
 
         } else {
-            document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="' + (window.innerHeight - 300) + '" src="' + wmgui.ptable.pd3d_renderer + els.join('-') + '"></iframe>';
+            document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="' + (window.innerHeight - 300) + '" src="' + wmgui.v_pd_3d_addr + els.join('-') + '"></iframe>';
         }
         ajax_download(wmgui.ptable.active_ajax, wmgui.search_endpoint + '?q=' + JSON.stringify(query_ph) + '&strict=1', render_left);
 
@@ -128,7 +126,7 @@ function render_left(data){
     if (data.error)
         return wmgui.notify(data.error);
 
-    const header = '<h4>Known phases of ' + wmgui.ptable.query.elements + (wmgui.ptable.query.elements.indexOf('-') == -1 ? '' : ' system') + '</h4>';
+    const header = '<h4>Reported phases of ' + wmgui.ptable.query.elements + (wmgui.ptable.query.elements.indexOf('-') == -1 ? '' : ' system') + '</h4>';
 
     document.getElementById('ptable_previews').innerHTML = header + (data.out.length ? build_thumbs_ph(data.out) : '<img src="' + wmgui.static_host + '/question.svg" width=200 />');
 }
@@ -141,7 +139,7 @@ function render_right(data){
     if (data.fuzzy_notice || !data.out.length)
         document.getElementById('ptable_vis').innerHTML = '';
     else
-        document.getElementById('ptable_vis').innerHTML = '<h4>Known phase diagrams of ' + wmgui.ptable.query.elements + ' system</h4>' + build_thumbs_pd(data.out);
+        document.getElementById('ptable_vis').innerHTML = '<h4>Reported phase diagrams of ' + wmgui.ptable.query.elements + ' system</h4>' + build_thumbs_pd(data.out);
 }
 
 function read_ptable_html(){
