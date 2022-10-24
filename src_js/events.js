@@ -181,7 +181,10 @@ function register_events(){
                 $('div.gallery_item.active').removeClass('active');
                 that.parent().addClass('active');
 
-            } else window.location.hash = '#phase_id/' + that.attr('rel');
+            } else {
+                var path = that.attr('data-path') || "phase_id";
+                window.location.hash = '#' + path + '/' + that.attr('rel');
+            }
         }
     });
 

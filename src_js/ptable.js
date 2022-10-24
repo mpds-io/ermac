@@ -371,7 +371,7 @@ function build_thumbs_pd(json){ // FIXME duplicates another function *build_thum
         const content = '<img alt="' + row[0] + '" src="https://mpds.io/pd_thumbs/' + row[0].split('-')[0] + '.png" /><p>' + row[2] + '</p>';
 
         result_html += '<div class="gallery_item' + (row[4] ? ' opened' : '') + '">';
-        result_html += '  <div class="gallery_img" rel="#entry/' + row[0] + '">' + content + '</div>';
+        result_html += '  <div class="gallery_img" rel="' + row[0] + '" data-path="entry">' + content + '</div>';
         result_html += '  <div class="gallery_label"><a class="launch_ph" href="#entry/' + row[0] + '">' + row[0] + '</a>' + '<br />[' + row[5] + '&rsquo;' + row[6].toString().substr(2, 2) + ']' + '</div>';
         result_html += '</div>';
     });
