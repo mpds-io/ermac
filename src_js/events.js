@@ -1,4 +1,3 @@
-
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -14,6 +13,16 @@ function register_events(){
         var selected_el = wmgui.ptable.elements[that.getAttribute('data-pos')];
         select_ptable_el(selected_el, that);
     });
+
+    var radios = document.querySelectorAll('input[name="ptable_dtypes"]');
+    for (var i = 0; i < radios.length; i++){
+        radios[i].addEventListener('change', function(){
+            if (!this.checked) return;
+            wmgui.ptable.dtypes = this.value;
+            var check = wmgui.multiselects['main'].read();
+            select_ptable_series(check.elements);
+        });
+    }
 
     $('#search_trigger').click(function(){
 
@@ -164,7 +173,16 @@ function register_events(){
     });
 
     $('#databrowser, #ptable_results').on('click', 'div.gallery_img', function(){
-        if ($(this).attr('rel')) window.location.hash = $(this).attr('rel');
+        var that = $(this);
+        if (that.attr('rel')){
+            if (wmgui.view_mode === 1 && wmgui.ptable.dtypes == 2){
+                var phid = that.attr('rel');
+                document.querySelector('#ptable_vis > iframe').contentWindow.location.hash = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1';
+                $('div.gallery_item.active').removeClass('active');
+                that.parent().addClass('active');
+
+            } else window.location.hash = '#phase_id/' + that.attr('rel');
+        }
     });
 
     $('#databrowser').on('mousedown', 'a.resolve_ref', function(e){
@@ -338,7 +356,7 @@ function register_events(){
         return false;
     });
 
-    $('#fdwidget').on('click', 'span', function(){
+    /*$('#fdwidget').on('click', 'span', function(){
         var what = $(this).attr('id');
         if (what == 'fdwidget_yes'){
             $('#fdwidget').html('We appreciate your feedback!');
@@ -346,9 +364,9 @@ function register_events(){
             $('#fdwidget').html(wmgui.contact_html);
             $('#fdwidget_msg').focus();
         }
-    });
+    });*/
 
-    $('#fdwidget').on('click', 'div.wmbutton', function(){
+    /*$('#fdwidget').on('click', 'div.wmbutton', function(){
         if ($(this).data('busy')) return;
         $(this).data('busy', true);
         $.ajax({type: 'POST', url: wmgui.fd_endpoint, data: {fdwidget_msg: $('#fdwidget_msg').val(), fdwidget_msgtype: $('#fdwidget_msgtype').val(), fdwidget_url: window.location.href}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
@@ -359,7 +377,7 @@ function register_events(){
         }).fail(function(xhr, textStatus, errorThrown){
             wmgui.notify("Sorry, cannot process your input");
         });
-    });
+    });*/
 
     $('#tagcloudbox').on('click', 'a.collateral', function(){
         $('#userbox').data('saved_hash', false)
@@ -585,36 +603,49 @@ function register_events(){
     });
 
     $(window).scroll(wmgui.debounce(function(){
-        if (wmgui.view_mode == 2 && wmgui.unfinished_page){
-            if ($('#footer').offset().top - $(window).scrollTop() - $(window).height() < 50){ // footer pos - scrolling - window height
+        if (wmgui.view_mode == 2){
+            if (wmgui.unfinished_page){
+                if ($('#footer').offset().top - $(window).scrollTop() - $(window).height() < 50){ // footer pos - scrolling - window height
 
-                if (!wmgui.unfinished_page)
-                    return;
+                    wmgui.unfinished_page = false;
+                    var cur_search = {offset: wmgui.quick_page_size};
+                    $.extend(cur_search, wmgui.search);
 
-                wmgui.unfinished_page = false;
-                var cur_search = {offset: wmgui.quick_page_size};
-                $.extend(cur_search, wmgui.search);
+                    // NB no abort of the other requests!
+                    wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.search_endpoint, data: {q: JSON.stringify(cur_search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
+                        if (data.error) return wmgui.notify(data.error);
+                        $('div.context_msg').hide();
+                        show_hints();
+                        if (!data.out.length)
+                            return;
+                        if (wmgui.thumbed_display){
+                            $('#databrowser tr td').append(build_thumbs(data.out));
+                        } else {
+                            $('#databrowser tbody').append(build_cells(data.out));
+                            $('#databrowser').trigger('update');
+                        }
+                    }).fail(function(xhr, textStatus, errorThrown){
+                        if (textStatus != 'abort') wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
+                    });
+                }
+            }
+            var iframe = $('#iframe');
+            if (iframe.length && !wmgui.is_inview(iframe)) close_vibox();
 
-                // NB no abort of the other requests!
-                wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.search_endpoint, data: {q: JSON.stringify(cur_search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
-                    if (data.error) return wmgui.notify(data.error);
-                    $('div.context_msg').hide();
-                    show_hints();
-                    if (!data.out.length)
-                        return;
-                    if (wmgui.thumbed_display){
-                        $('#databrowser tr td').append(build_thumbs(data.out));
-                    } else {
-                        $('#databrowser tbody').append(build_cells(data.out));
-                        $('#databrowser').trigger('update');
-                    }
-                }).fail(function(xhr, textStatus, errorThrown){
-                    if (textStatus != 'abort') wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
-                });
+        } else if (wmgui.ptable.activated){
+
+            var scroll_pos = window.scrollY;
+            //console.log(scroll_pos);
+
+            if (scroll_pos > 40){
+                document.getElementById('ptable_dtypes_box').classList.remove('resulted');
+                document.getElementById('legend').style.display = 'none';
+
+            } else {
+                document.getElementById('ptable_dtypes_box').classList.add('resulted');
+                document.getElementById('legend').style.display = 'block';
             }
         }
-        var iframe = $('#iframe');
-        if (iframe.length && !wmgui.is_inview(iframe)) close_vibox();
     }, 300));
 
     $('#userbox').click(function(){
@@ -1208,4 +1239,22 @@ function register_events(){
         if (document.body.clientWidth < 1000) $('#mobilebox').show();
         else                                  $('#mobilebox').hide();
     });*/
+
+    document.querySelector('#ptable_previews').addEventListener('click', function(event){
+        if (event.target.classList.contains('subphases_trigger')){
+            var state = parseInt(event.target.getAttribute('data-state')),
+                req = Object.assign({}, wmgui.ptable.query),
+                param;
+
+            if (state === 1){
+                param = 'strict=1';
+
+            } else {
+                param = 'subphases=1';
+                delete req.classes;
+            }
+            ajax_download(wmgui.ptable.active_ajax, wmgui.search_endpoint + '?q=' + JSON.stringify(req) + '&' + param, render_left);
+            wmgui.ptable.subphases_set(state);
+        }
+    });
 }

@@ -1,4 +1,3 @@
-
 "use strict";
 
 if (!OptimadeNLP){

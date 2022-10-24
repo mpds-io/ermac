@@ -1,4 +1,3 @@
-
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -87,7 +86,7 @@ wmgui.mydata_history = [];
 wmgui.journal_converter = {j2c: function(){}, c2j: function(){}};
 wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure', 'electron density of states', 'vibrational spectra']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
 
-wmgui.visavis_curtype = 'pie'; // TODO: heuristic plot type detection
+wmgui.visavis_curtype = 'pie'; // pie, graph, discovery, matrix, cube, qproj, lit TODO: heuristic plot type detection
 wmgui.visavis_ready = false;
 wmgui.visavis_working = false;
 wmgui.visavis_terminating = false;
@@ -136,10 +135,11 @@ wmgui.dd_addr_tpl =       wmgui.api_host + '/download';
 wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localhost:5000';
 
 // below are resources used in the *iframe*
-wmgui.v_player_addr =     wmgui.static_host + '/player/player.html#' + wmgui.api_host + '/download/s?fmt=cif&q=';
-wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' + wmgui.api_host + '/download/c?fmt=png&q=';
-wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/c?fmt=json&q=';
-wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?280420#' + wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_player_addr_tpl = '/crystvis/player.html#';
+wmgui.v_player_addr =     wmgui.v_player_addr_tpl +                    wmgui.api_host + '/download/s?fmt=cif&q=';
+wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' +       wmgui.api_host + '/download/c?fmt=png&q=';
+wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?280420#' +    wmgui.api_host + '/download/c?fmt=json&q=';
+wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?280420#' +    wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_pd_3d_addr =      wmgui.static_host + '/labs/pd3d/?';
 
@@ -294,7 +294,8 @@ wmgui.aets = {
 'bicapped hexagonal pyramid 9-vertex': [10621, 116]
 };
 
-wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us why, anonymously"></textarea><select id="fdwidget_msgtype"><option value="No reason" selected>Please select reason...</option><option value="Data missing">Data missing</option><option value="Error in data">Error in data</option><option value="Other">Other</option></select><div id="fdwidget_trigger" class="wmbutton">Send</div>';
+//wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us why, anonymously"></textarea><select id="fdwidget_msgtype"><option value="No reason" selected>Please select reason...</option><option value="Data missing">Data missing</option><option value="Error in data">Error in data</option><option value="Other">Other</option></select><div id="fdwidget_trigger" class="wmbutton">Send</div>';
+
 wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
 wmgui.mockyear = new Date().getFullYear();
 

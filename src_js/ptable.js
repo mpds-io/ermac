@@ -1,21 +1,20 @@
-
 "use strict";
 
 wmgui.ptable = {};
-wmgui.ptable.draw = function(){};
 wmgui.ptable.update_selectize = false;
 wmgui.ptable.active_ajax = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 wmgui.ptable.query = null;
 wmgui.ptable.els_data = [];
 wmgui.ptable.pdsvg_path = wmgui.static_host + '/pds_svgs';
+wmgui.ptable.crsvg_path = wmgui.static_host + '/crs_svgs';
+wmgui.ptable.ppsvg_path = wmgui.static_host + '/pps_svgs';
 wmgui.ptable.first_el = null;
 wmgui.ptable.second_el = null;
 wmgui.ptable.visible = false; // needed to debounce
 wmgui.ptable.activated = false; // should it "jump" on top by input
-
+wmgui.ptable.dtypes = 1; // 0, 1, 2, or 3, see #ptable_dtypes
+wmgui.ptable.subphases_button = '';
 wmgui.ptable.elements = ['X'].concat(wmutils.periodic_elements_cased);
-
-wmgui.ptable.arity = {1: 'unary', 2: 'binary', 3: 'ternary'};
 
 wmgui.ptable.show = function(){
     if (wmgui.ptable.visible)
@@ -35,6 +34,7 @@ wmgui.ptable.activate = function(){
     wmgui.ptable.activated = true;
     document.getElementById('ermac_logo').classList.add('resulted');
     document.getElementById('ptable_holder').classList.add('resulted');
+    document.getElementById('ptable_dtypes_box').classList.add('resulted');
     wmgui.mpdsgui.ptable_activate();
 };
 
@@ -42,11 +42,12 @@ wmgui.ptable.deactivate = function(){
     wmgui.ptable.activated = false;
     document.getElementById('ermac_logo').classList.remove('resulted');
     document.getElementById('ptable_holder').classList.remove('resulted');
+    document.getElementById('ptable_dtypes_box').classList.remove('resulted');
     wmgui.mpdsgui.ptable_deactivate();
 };
 
 wmgui.ptable.decide = function(){
-    var scroll_pos = window.scrollY;
+    const scroll_pos = window.scrollY;
     //console.log(scroll_pos);
 
     if (scroll_pos > 60) // forward to intro_stats screen
@@ -54,6 +55,37 @@ wmgui.ptable.decide = function(){
 
     else // back to ptable screen
         wmgui.ptable.show();
+}
+
+wmgui.ptable.subphases_set = function(state){
+    if (!state){
+        wmgui.ptable.subphases_button = '';
+
+    } else if (state === 1){
+        wmgui.ptable.subphases_button = '<div class="wmbutton subphases_trigger" data-state="2">Load binary and ternary phases <span>&uarr;</span></div>';
+
+    } else {
+        wmgui.ptable.subphases_button = '<div class="wmbutton subphases_trigger" data-state="1">Load ternary phases only <span>&uarr;</span></div>';
+    }
+}
+
+function read_ptable_html(){
+    let unaries_data = [{}]; // NB zero-th element (X)
+
+    wmgui.ptable.elements.forEach(function(_, idx){
+        if (idx == 0 || idx > 103) // X - Lr
+            return;
+
+        const item = document.querySelector('#ptable_area > ul > li[data-pos="' + idx + '"]');
+        let elem_data = {pos: idx, classes: []}; // NB prop html:
+
+        item.classList.forEach(function(cls){
+            elem_data.classes.push(cls);
+        });
+
+        unaries_data.push(elem_data);
+    });
+    return unaries_data;
 }
 
 function removeAllCls(cls){
@@ -69,14 +101,14 @@ function clear_results_area(){
     wmgui.ptable.deactivate();
 }
 
-function refresh_table(elA, elB, elC){
+function refresh_ptable_results(elA, elB, elC){
 
     if (wmgui.view_mode !== 1) return;
 
     //console.log('Refreshing table with ' + [elA, elB, elC]);
 
     const els = [elA, elB, elC].filter(function(item){ return !!item }),
-        query_ph = els.length ? {search_type: 1, classes: wmgui.ptable.arity[els.length], elements: els.join('-')} : false;
+        query_ph = els.length ? {search_type: 1, classes: wmutils.arity_keys[els.length], elements: els.join('-')} : false;
 
     if (wmgui.ptable.update_selectize){
         wmgui.ptable.update_selectize = false;
@@ -85,20 +117,61 @@ function refresh_table(elA, elB, elC){
         wmgui.multiselects['main'].write({'elements': els.join('-')});
     }
 
+    wmgui.ptable.subphases_set();
+
     if (query_ph){
         wmgui.ptable.query = query_ph;
 
+        let iframe_addr,
+            iframe_height = 900;
+
         if (els.length == 1){
-            document.getElementById('ptable_vis').innerHTML = '';
+
+            if (wmgui.ptable.dtypes == 2){
+                iframe_addr = wmgui.v_player_addr_tpl;
+
+            } else if (wmgui.ptable.dtypes == 3){
+                iframe_addr = get_visavis_url({elements: els.join('-'), classes: wmutils.arity_keys[els.length]}, 'graph', iframe_height);
+
+            } else
+                document.getElementById('ptable_vis').innerHTML = '';
 
         } else if (els.length == 2) {
-            const query_pds = {search_type: 0, classes: wmgui.ptable.arity[els.length], elements: els.join('-'), props: 'phase diagram'};
-            ajax_download(null, wmgui.search_endpoint + '?q=' + JSON.stringify(query_pds), render_right);
+            iframe_height = 800;
+
+            if (wmgui.ptable.dtypes == 1){
+                const query_pds = {search_type: 0, classes: wmutils.arity_keys[els.length], elements: els.join('-'), props: 'phase diagram'};
+                ajax_download(null, wmgui.search_endpoint + '?q=' + JSON.stringify(query_pds), render_right);
+
+            } else if (wmgui.ptable.dtypes == 2){
+                iframe_addr = wmgui.v_player_addr_tpl;
+
+            } else if (wmgui.ptable.dtypes == 3){
+                iframe_addr = get_visavis_url({elements: els.join('-'), classes: wmutils.arity_keys[els.length]}, 'graph', iframe_height);
+
+            } else
+                document.getElementById('ptable_vis').innerHTML = '';
 
         } else {
-            document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="' + (window.innerHeight - 300) + '" src="' + wmgui.v_pd_3d_addr + els.join('-') + '"></iframe>';
+            wmgui.ptable.subphases_set(1);
+            iframe_height = window.innerHeight - 200;
+
+            if (wmgui.ptable.dtypes == 1){
+                iframe_addr = wmgui.v_pd_3d_addr + els.join('-');
+
+            } else if (wmgui.ptable.dtypes == 2){
+                iframe_addr = wmgui.v_player_addr_tpl;
+
+            } else if (wmgui.ptable.dtypes == 3){
+                iframe_addr = get_visavis_url({elements: els.join('-')}, 'graph', iframe_height);
+
+            } else
+                document.getElementById('ptable_vis').innerHTML = '';
         }
         ajax_download(wmgui.ptable.active_ajax, wmgui.search_endpoint + '?q=' + JSON.stringify(query_ph) + '&strict=1', render_left);
+
+        if (iframe_addr)
+            document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="' + iframe_height + '" src="' + iframe_addr + '"></iframe>';
 
         wmgui.ptable.activate();
 
@@ -128,7 +201,21 @@ function render_left(data){
 
     const header = '<h4>Reported phases of ' + wmgui.ptable.query.elements + (wmgui.ptable.query.elements.indexOf('-') == -1 ? '' : ' system') + '</h4>';
 
-    document.getElementById('ptable_previews').innerHTML = header + (data.out.length ? build_thumbs_ph(data.out) : '<img src="' + wmgui.static_host + '/question.svg" width=200 />');
+    const parent = document.getElementById('ptable_previews');
+    parent.className = "";
+    parent.classList.add('ptable_dtype_' + wmgui.ptable.dtypes);
+    parent.innerHTML = header + (data.out.length ? build_thumbs_ph(data.out) : '<img src="' + wmgui.static_host + '/question.svg" width=320 />') + wmgui.ptable.subphases_button;
+
+    if (wmgui.ptable.dtypes == 2){
+        const els = document.querySelectorAll('#ptable_results div.gallery_img');
+        if (els.length){
+            const rnd_i = Math.floor(Math.random() * els.length);
+            els[rnd_i].parentNode.classList.add('active');
+            const phid = els[rnd_i].getAttribute('rel');
+            document.querySelector('#ptable_vis > iframe').contentWindow.location.hash = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1';
+
+        } else document.getElementById('ptable_vis').innerHTML = '';
+    }
 }
 
 function render_right(data){
@@ -142,34 +229,19 @@ function render_right(data){
         document.getElementById('ptable_vis').innerHTML = '<h4>Reported phase diagrams of ' + wmgui.ptable.query.elements + ' system</h4>' + build_thumbs_pd(data.out);
 }
 
-function read_ptable_html(){
-    let unaries_data = [];
-    document.querySelectorAll('#ptable_area > ul > li').forEach(function(item){
-
-        if (!item.hasAttribute('data-pos'))
-            return;
-
-        let elem_data = {html: item.innerHTML, pos: item.getAttribute('data-pos'), classes: []};
-
-        item.classList.forEach(function(cls){
-            elem_data.classes.push(cls);
-        });
-
-        unaries_data.push(elem_data);
-    });
-    return unaries_data;
-}
-
 function render_unaries(){
 
     if (!wmgui.ptable.first_el)
         return;
 
     wmgui.ptable.els_data.forEach(function(elem_data){
+        if (!elem_data.pos)
+            return;
+
         const that = document.querySelector('#ptable_area > ul > li[data-pos="' + elem_data.pos + '"]');
-        that.style.backgroundImage = 'none';
+        that.style.backgroundImage = "none";
         //that.innerHTML = elem_data.html;
-        that.className = '';
+        that.className = "";
         that.classList.add(...elem_data.classes);
     });
 
@@ -184,25 +256,89 @@ function render_binaries(elA, elB){
         if (!item.hasAttribute('data-pos'))
             return;
 
-        const current_el = wmgui.ptable.elements[item.getAttribute('data-pos')];
-        if (current_el != elB && current_el != elA){
-            item.style.backgroundImage = "url('" + wmgui.ptable.pdsvg_path + "/pds_bin/" + elA + "-" + current_el + ".svg')";
-            item.className = 'active_a';
+        const current_el = wmgui.ptable.elements[parseInt(item.getAttribute('data-pos'))];
+
+        if (wmgui.ptable.dtypes == 1){
+
+            if (current_el != elA && current_el != elB){
+                item.style.backgroundImage = "url('" + wmgui.ptable.pdsvg_path + "/bin/" + elA + "-" + current_el + ".svg')";
+                item.className = "active_a";
+            }
+        } else if (wmgui.ptable.dtypes == 2){
+
+            if (current_el != elA && current_el != elB){
+                let pair = [elA, current_el];
+                pair.sort();
+                item.style.backgroundImage = "url('" + wmgui.ptable.crsvg_path + "/bin/" + pair.join("-") + ".svg')";
+                item.className = "active_a";
+            }
+        } else if (wmgui.ptable.dtypes == 3){
+
+            if (current_el != elA && current_el != elB){
+                let pair = [elA, current_el];
+                pair.sort();
+                item.style.backgroundImage = "url('" + wmgui.ptable.ppsvg_path + "/bin/" + pair.join("-") + ".svg')";
+                item.className = "active_a";
+            }
+        } else {
+            if (current_el != elA && current_el != elB){
+                item.style.backgroundImage = "none";
+                item.className = "active_a";
+
+            } else if (current_el == elA) {
+                item.className = "selected_a";
+                item.classList.add(...wmgui.ptable.els_data[parseInt(item.getAttribute('data-pos'))].classes);
+            }
         }
     });
 }
 
 function render_ternaries(elA, elB){
+
+    //console.log('RENDERING TERNARIES FOR: ' + [elA, elB]);
+
     document.querySelectorAll('#ptable_area > ul > li').forEach(function(item){
         if (!item.hasAttribute('data-pos'))
             return;
 
-        const current_el = wmgui.ptable.elements[item.getAttribute('data-pos')];
-        if (current_el != elB && current_el != elA){
-            let triple = [elA, elB, current_el];
-            triple.sort();
-            item.style.backgroundImage = "url('" + wmgui.ptable.pdsvg_path + "/pds_ter/" + triple.join("-") + ".svg')";
-            item.classList.add('active_b');
+        const current_el = wmgui.ptable.elements[parseInt(item.getAttribute('data-pos'))];
+
+        if (wmgui.ptable.dtypes == 1){
+
+            if (current_el != elA && current_el != elB){
+                let triple = [elA, elB, current_el];
+                triple.sort();
+                item.style.backgroundImage = "url('" + wmgui.ptable.pdsvg_path + "/ter/" + triple.join("-") + ".svg')";
+                item.classList.add('active_b');
+            }
+        } else if (wmgui.ptable.dtypes == 2){
+
+            if (current_el != elA && current_el != elB){
+                let triple = [elA, elB, current_el];
+                triple.sort();
+                item.style.backgroundImage = "url('" + wmgui.ptable.crsvg_path + "/ter/" + triple.join("-") + ".svg')";
+                item.classList.add('active_b');
+            }
+        } else if (wmgui.ptable.dtypes == 3){
+
+            if (current_el != elA && current_el != elB){
+                let triple = [elA, elB, current_el];
+                triple.sort();
+                item.style.backgroundImage = "url('" + wmgui.ptable.ppsvg_path + "/ter/" + triple.join("-") + ".svg')";
+                item.classList.add('active_b');
+            }
+        } else {
+            if (current_el != elA && current_el != elB){
+                item.style.backgroundImage = "none";
+                item.classList.add('active_b');
+
+            } else if (current_el == elA) {
+                item.className = "selected_a";
+                item.classList.add(...wmgui.ptable.els_data[parseInt(item.getAttribute('data-pos'))].classes);
+
+            } else if (current_el == elB) {
+                item.className = "selected_b";
+            }
         }
     });
 }
@@ -216,8 +352,8 @@ function build_thumbs_ph(json){ // FIXME duplicates another function *build_thum
 
     json.forEach(function(row){
         result_html += '<div class="gallery_item">';
-        result_html += '  <div class="gallery_img" rel="#phase_id/' + row[0] + '" style="background-image:url(https://mpds.io/phid_thumbs/' + row[0] + '.png);"><span><p>' + row[1] + '<br />space group ' + row[2] + '</p></span></div>';
-        result_html += '  <div class="gallery_label"><a class=launch_ph href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div>';
+        result_html += '  <div class="gallery_img" rel="' + row[0] + '" style="background-image:url(https://mpds.io/phid_thumbs/' + row[0] + '.png);"><span><p>' + row[1] + '<br />space group ' + row[2] + '</p></span></div>';
+        result_html += '  <div class="gallery_label"><a class="launch_ph" href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div>';
         result_html += '</div>';
     });
     return result_html;
@@ -239,7 +375,7 @@ function build_thumbs_pd(json){ // FIXME duplicates another function *build_thum
 
         result_html += '<div class="gallery_item' + (row[4] ? ' opened' : '') + '">';
         result_html += '  <div class="gallery_img" rel="#entry/' + row[0] + '">' + content + '</div>';
-        result_html += '  <div class="gallery_label"><a class=launch_ph href="#entry/' + row[0] + '">' + row[0] + '</a>' + '<br />[' + row[5] + '&rsquo;' + row[6].toString().substr(2, 2) + ']' + '</div>';
+        result_html += '  <div class="gallery_label"><a class="launch_ph" href="#entry/' + row[0] + '">' + row[0] + '</a>' + '<br />[' + row[5] + '&rsquo;' + row[6].toString().substr(2, 2) + ']' + '</div>';
         result_html += '</div>';
     });
     return result_html;
@@ -257,25 +393,25 @@ function select_ptable_el(selected_el, dom_el){
         // first element removal
         dom_el.classList.remove('selected_a');
         render_unaries();
-        refresh_table();
+        refresh_ptable_results();
 
     } else if (dom_el.classList.contains('selected_b')){
         // second element removal
         dom_el.classList.remove('selected_b');
         render_binaries(wmgui.ptable.first_el, selected_el);
         wmgui.ptable.second_el = null;
-        refresh_table(wmgui.ptable.first_el);
+        refresh_ptable_results(wmgui.ptable.first_el);
 
     } else if (dom_el.classList.contains('selected_c')){
         // third element removal
         dom_el.classList.remove('selected_c');
-        refresh_table(wmgui.ptable.first_el, wmgui.ptable.second_el);
+        refresh_ptable_results(wmgui.ptable.first_el, wmgui.ptable.second_el);
 
     } else if (dom_el.classList.contains('active_b')){
         // third element selection
         removeAllCls('selected_c');
         dom_el.classList.add('selected_c');
-        refresh_table(wmgui.ptable.first_el, wmgui.ptable.second_el, selected_el);
+        refresh_ptable_results(wmgui.ptable.first_el, wmgui.ptable.second_el, selected_el);
 
     } else if (dom_el.classList.contains('active_a')){
         // second element selection
@@ -283,14 +419,14 @@ function select_ptable_el(selected_el, dom_el){
         dom_el.classList.add('selected_b');
         render_ternaries(wmgui.ptable.first_el, selected_el);
         wmgui.ptable.second_el = selected_el;
-        refresh_table(wmgui.ptable.first_el, selected_el);
+        refresh_ptable_results(wmgui.ptable.first_el, selected_el);
 
     } else {
         // first element selection
         dom_el.classList.add('selected_a');
         wmgui.ptable.first_el = selected_el;
         render_binaries(wmgui.ptable.first_el, selected_el);
-        refresh_table(selected_el);
+        refresh_ptable_results(selected_el);
     }
 }
 
@@ -310,6 +446,7 @@ function select_ptable_series(els){
     wmgui.ptable.second_el = els[1] || null;
 
     const domelA = document.querySelector('#ptable_area > ul > li[data-pos="' + wmgui.ptable.elements.indexOf(els[0]) + '"]');
+
     if (domelA){
         removeAllCls('selected_a');
         domelA.classList.add('selected_a');
@@ -320,18 +457,24 @@ function select_ptable_series(els){
 
     } else if (els.length == 2){
         const domelB = document.querySelector('#ptable_area > ul > li[data-pos="' + wmgui.ptable.elements.indexOf(els[1]) + '"]');
+
         if (domelB){
             removeAllCls('selected_b');
             domelB.classList.add('selected_b');
+            domelB.classList.add(...wmgui.ptable.els_data[parseInt(domelB.getAttribute('data-pos'))].classes);
+            domelB.style.backgroundImage = "none";
         }
         render_ternaries(els[0], els[1]);
 
     } else {
         const domelB = document.querySelector('#ptable_area > ul > li[data-pos="' + wmgui.ptable.elements.indexOf(els[1]) + '"]'),
             domelC = document.querySelector('#ptable_area > ul > li[data-pos="' + wmgui.ptable.elements.indexOf(els[2]) + '"]');
+
         if (domelB){
             removeAllCls('selected_b');
             domelB.classList.add('selected_b');
+            domelB.classList.add(...wmgui.ptable.els_data[parseInt(domelB.getAttribute('data-pos'))].classes);
+            domelB.style.backgroundImage = "none";
         }
         if (domelC){
             removeAllCls('selected_c');
@@ -339,5 +482,5 @@ function select_ptable_series(els){
         }
         render_ternaries(els[0], els[1]);
     }
-    refresh_table(...els);
+    refresh_ptable_results(...els);
 }

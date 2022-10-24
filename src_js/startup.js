@@ -1,4 +1,3 @@
-
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -10,7 +9,6 @@ function satisfy_requirements(){
     $('#absolidize > span.disabled > span.href').attr('rel', wmgui.mydata_addr);
 
     wmgui.ptable.els_data = read_ptable_html();
-    wmgui.ptable.draw = select_ptable_series;
 
     local_user_login();
 
@@ -329,7 +327,7 @@ function satisfy_requirements(){
         onItemAdd: function(){
             if (wmgui.selectize_emit){
                 var check = wmgui.multiselects['main'].read();
-                wmgui.ptable.draw(check.elements);
+                select_ptable_series(check.elements);
             }
         },
         onItemRemove: function(){
@@ -338,7 +336,7 @@ function satisfy_requirements(){
             if (!check.numeric){
                 destroy_numericbox();
                 delete wmgui.search.numeric;
-                if (wmgui.selectize_emit) wmgui.ptable.draw(check.elements);
+                if (wmgui.selectize_emit) select_ptable_series(check.elements);
             }
             setTimeout(function(){
                 input.close();

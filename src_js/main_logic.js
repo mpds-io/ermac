@@ -1,4 +1,3 @@
-
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -390,56 +389,6 @@ function rebuild_history_box(search, caption){
     }
 }
 
-function rebuild_visavis(){
-    var extr = window.location.hash.indexOf('search/');
-    if (extr == -1){
-        var extr = window.location.hash.indexOf('inquiry/');
-        if (extr == -1) return;
-    }
-
-    var query = window.location.hash.substr(extr);
-
-    $('a.pltcol_links').each(function(){
-        var that = $(this),
-            plot_type = that.attr('rev');
-        that.attr('href', wmgui.gui_host + window.location.pathname + '#plot/' + plot_type + '/' + query);
-    });
-
-    $('#visavis_col > ul > li').removeClass('embodied');
-    $('#pltchoice_' + wmgui.visavis_curtype).addClass('embodied');
-
-    // ctx reset
-    if (['matrix', 'cube', 'discovery'].indexOf(wmgui.visavis_curtype) > -1)
-        update_dc();
-
-    if (wmgui.visavis_curtype == 'matrix'){
-        $('#ctxpanel_matrix > ul > li.embodied').removeClass('embodied');
-        var y_id = $('#ctxpanel_matrix > ul > li.ss_y');
-        if (y_id.length) y_id.removeClass('ss_y');
-        $('#vismatrix_nump').addClass('embodied'); // set the default sort order (also in Visavis: TODO)
-        $('span.sops').remove();
-
-    } else if (wmgui.visavis_curtype == 'cube'){
-        $('#ctxpanel_cube > ul > li.embodied').removeClass('embodied');
-        var y_id = $('#ctxpanel_cube > ul > li.ss_y'),
-            z_id = $('#ctxpanel_cube > ul > li.ss_z');
-        if (y_id.length) y_id.removeClass('ss_y');
-        if (z_id.length) z_id.removeClass('ss_z');
-        $('#viscube_nump').addClass('embodied');
-        $('span.sops').remove();
-
-    } else if (wmgui.visavis_curtype == 'graph'){
-        $('#ctxpanel_graph > ul > li.embodied').removeClass('embodied');
-        $('#visgraph_props').addClass('embodied');
-    }
-
-    try {
-        document.getElementById('visavis_iframe').contentWindow.fixel_manage(wmgui.visavis_curtype == 'cube' && wmgui.search.elements);
-    } catch (e){
-        console.error('No iframe access');
-    }
-}
-
 function rotate_interesting(){
     $('#legend').html('<i>e.g.</i> <a href="#">' + wmgui.get_interesting()['text'].replace(/\d/g, "&#x208$&;") + '</a>');
 }
@@ -503,6 +452,7 @@ function switch_view_mode(mode){
         $('#ermac_logo').removeClass('cornered');
 
         wmgui.ptable.decide();
+        if (wmgui.ptable.activated) document.getElementById('ptable_dtypes_box').classList.add('resulted');
 
     } else if (mode == 2){
 
@@ -519,6 +469,7 @@ function switch_view_mode(mode){
         $('#ermac_logo').addClass('cornered');
 
         wmgui.ptable.hide();
+        document.getElementById('ptable_dtypes_box').classList.remove('resulted');
     }
     // hook back into a parent integration
     wmgui.mpdsgui.view(mode);
@@ -575,7 +526,7 @@ function build_cells(json, header, footer){
         if (json[0].length != 5){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
 
         $.each(json, function(k, row){
-            result_html += '<tr id="e__Z' + row[0] + '" class="tcell" data-type="Z"><td class=p1>' + row[1] + '</td><td class=p2>' + row[2] + '</td><td class=p3>' + row[3] + '</td><td class=p4>' + row[4] + '</td><td class=p5><a class=launch_ph href="#phase_id/' + row[0] + '">Show entries</a></td></tr>';
+            result_html += '<tr id="e__Z' + row[0] + '" class="tcell" data-type="Z"><td class=p1>' + row[1] + '</td><td class=p2>' + row[2] + '</td><td class=p3>' + row[3] + '</td><td class=p4>' + row[4] + '</td><td class=p5><a class="launch_ph" href="#phase_id/' + row[0] + '">Show entries</a></td></tr>';
         });
     } else {
         if (json[0].length != 8){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -620,7 +571,7 @@ function build_thumbs(json){
             return a[1] > b[1] ? 1 : a[1] < b[1] ? -1 : 0;
         });
         $.each(json, function(k, row){
-            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img" rel="#phase_id/' + row[0] + '"><div class="phased">' + row[1] + '<br /><br />space group ' + row[2] + '</div></div><div class="gallery_label"><a class=launch_ph href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
+            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img" rel="' + row[0] + '"><div class="phased">' + row[1] + '<br /><br />space group ' + row[2] + '</div></div><div class="gallery_label"><a class="launch_ph" href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
         });
     } else {
         if (json[0].length != 8){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -1073,17 +1024,69 @@ function manage_visavis(callback_fn, param_a, param_b){
     return true;
 }
 
+function rebuild_visavis(){
+    var extr = window.location.hash.indexOf('search/');
+    if (extr == -1){
+        var extr = window.location.hash.indexOf('inquiry/');
+        if (extr == -1) return;
+    }
+
+    var query = window.location.hash.substr(extr);
+
+    $('a.pltcol_links').each(function(){
+        var that = $(this),
+            plot_type = that.attr('rev');
+        that.attr('href', wmgui.gui_host + window.location.pathname + '#plot/' + plot_type + '/' + query);
+    });
+
+    $('#visavis_col > ul > li').removeClass('embodied');
+    $('#pltchoice_' + wmgui.visavis_curtype).addClass('embodied');
+
+    // ctx reset
+    if (['matrix', 'cube', 'discovery'].indexOf(wmgui.visavis_curtype) > -1)
+        update_dc();
+
+    if (wmgui.visavis_curtype == 'matrix'){
+        $('#ctxpanel_matrix > ul > li.embodied').removeClass('embodied');
+        var y_id = $('#ctxpanel_matrix > ul > li.ss_y');
+        if (y_id.length) y_id.removeClass('ss_y');
+        $('#vismatrix_nump').addClass('embodied'); // set the default sort order (also in Visavis: TODO)
+        $('span.sops').remove();
+
+    } else if (wmgui.visavis_curtype == 'cube'){
+        $('#ctxpanel_cube > ul > li.embodied').removeClass('embodied');
+        var y_id = $('#ctxpanel_cube > ul > li.ss_y'),
+            z_id = $('#ctxpanel_cube > ul > li.ss_z');
+        if (y_id.length) y_id.removeClass('ss_y');
+        if (z_id.length) z_id.removeClass('ss_z');
+        $('#viscube_nump').addClass('embodied');
+        $('span.sops').remove();
+
+    } else if (wmgui.visavis_curtype == 'graph'){
+        $('#ctxpanel_graph > ul > li.embodied').removeClass('embodied');
+        $('#visgraph_props').addClass('embodied');
+    }
+
+    try {
+        document.getElementById('visavis_iframe').contentWindow.fixel_manage(wmgui.visavis_curtype == 'cube' && wmgui.search.elements);
+    } catch (e){
+        console.error('No iframe access');
+    }
+}
+
 function stop_visavis(){
     $('#visavis, #visavis_col').hide();
     wmgui.visavis_working = false;
     wmgui.visavis_terminating = false;
 }
 
-function get_visavis_url(request){
-    if (wmgui.visavis_curtype == 'pie')
+function get_visavis_url(request, type, height){
+    if (wmgui.visavis_curtype == 'pie' && !type)
         return wmgui.static_host + '/visavis/#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
 
-    return wmgui.static_host + '/visavis/#' + wmgui.vis_endpoint + '/' + wmgui.visavis_curtype + '?q=' + escape(JSON.stringify(request));
+    var height_str = height ? ('&visavis_height=' + height) : '';
+
+    return wmgui.static_host + '/visavis/#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
 }
 
 function describe_perms(perms){
@@ -1179,7 +1182,7 @@ function show_advsbox(){
 
 function show_hints(disabled){
 
-    $('#fdwidget').html('Were you satisfied with the data quality? Did everything work as expected? <span id="fdwidget_yes">Yes</span><span id="fdwidget_no">No</span>').show();
+    //$('#fdwidget').html('Were you satisfied with the data quality? Did everything work as expected? <span id="fdwidget_yes">Yes</span><span id="fdwidget_no">No</span>').show();
 
     if (disabled || wmgui.search.numeric || wmgui.search.doi || wmgui.search.phid || wmgui.fuzzyout || wmgui.search_type == 2)
         return;
