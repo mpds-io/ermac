@@ -294,10 +294,10 @@ function register_html(){
 <div id="ptable_dtypes_box">
     <span><span>&#x1f6c8;</span> Show chemical elements as: </span>
     <div>
-        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_1" value="1" checked><label for="ptable_dtypes_1">phase diagrams</label><br />
-        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_2" value="2"><label for="ptable_dtypes_2">crystal structure counts</label><br />
-        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_3" value="3"><label for="ptable_dtypes_3">physical property counts</label><br />
-        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_0" value="0"><label for="ptable_dtypes_0">empty cells</label>
+        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_1" value="1" checked><label for="ptable_dtypes_1"> phase diagrams</label><br />
+        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_2" value="2"><label for="ptable_dtypes_2"> crystal structure counts</label><br />
+        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_3" value="3"><label for="ptable_dtypes_3"> physical property counts</label><br />
+        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_0" value="0"><label for="ptable_dtypes_0"> empty cells</label>
     </div>
 </div>
 

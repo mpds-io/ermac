@@ -1086,7 +1086,7 @@ function get_visavis_url(request, type, height){
 
     var height_str = height ? ('&visavis_height=' + height) : '';
 
-    return wmgui.static_host + '/visavis/#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
+    return wmgui.static_host + '/visavis/?241022#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
 }
 
 function describe_perms(perms){
