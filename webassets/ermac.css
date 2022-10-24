@@ -443,7 +443,6 @@ div.sops_col{letter-spacing:1px;}
   height: 54px;
   line-height: 1;
   border: 1px solid #bbb;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
   position: relative;
   font-size: 18px;
   float: left;
@@ -453,7 +452,6 @@ div.sops_col{letter-spacing:1px;}
   padding-top: 14px;
   overflow: hidden;
   transition: all .3s ease-in;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
   background-repeat: no-repeat;
 }
 
@@ -469,7 +467,6 @@ div.sops_col{letter-spacing:1px;}
 #ptable_area > ul li.empty {
   z-index: 0;
   border: none;
-  box-shadow: none;
   cursor: default;
 }
 
@@ -487,9 +484,9 @@ div.sops_col{letter-spacing:1px;}
 #ptable_area > ul li.selected_a{border:1px solid #3f0;box-shadow:0 0 5px #3f0;}
 #ptable_area > ul li.selected_b{border:1px solid #0cf;box-shadow:0 0 5px #0cf;}
 #ptable_area > ul li.selected_c{border:1px solid #c00;box-shadow:0 0 5px #c00;}
-#ptable_area > ul li.active_a{background-color:#fff;}
+#ptable_area > ul li.active_a, #ptable_area > ul li.active_c{background-color:#fff;}
 #ptable_area > ul li:hover{transform:scale(1.5);z-index:100;}
-#ptable_area > ul li.empty:hover{box-shadow:none;transform:none;}
+#ptable_area > ul li.empty:hover{transform:none;}
 #ptable_area > ul li.type_1{background:#ddd;}
 #ptable_area > ul li.type_2{background:#a8bffa;}
 #ptable_area > ul li.type_3{background:#F8B707;}
@@ -722,7 +719,6 @@ div.prolonged .selectize-dropdown {
   padding:2px;
 }
 .selectize-control.multi .selectize-input {
-  text-shadow: 0 1px 0 rgba(0, 51, 83, 0.3);
   background-repeat: repeat-x;
   box-shadow: 0 1px 0 rgba(0,0,0,0.2),inset 0 1px rgba(255,255,255,0.03);
 }

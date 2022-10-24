@@ -130,9 +130,6 @@ function refresh_ptable_results(elA, elB, elC){
             if (wmgui.ptable.dtypes == 2){
                 iframe_addr = wmgui.v_player_addr_tpl;
 
-            } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = get_visavis_url({elements: els.join('-'), classes: wmutils.arity_keys[els.length]}, 'graph', iframe_height);
-
             } else
                 document.getElementById('ptable_vis').innerHTML = '';
 
