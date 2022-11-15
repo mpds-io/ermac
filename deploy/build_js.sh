@@ -7,6 +7,7 @@ JSTARGET=$ROOT/ermac.min.js
 echo '/* Author: Evgeny Blokhin, Tilde Materials Informatics */' > $JSTARGET
 
 # Desktop (not mobile) GUI
+java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/browser_chk.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/third_party/jquery.tablesorter.js --compilation_level WHITESPACE_ONLY >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/third_party/wNumb.js >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/third_party/nouislider.js >> $JSTARGET

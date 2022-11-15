@@ -292,7 +292,7 @@ function register_html(){
 
 <!-- PERIODIC TABLE DATATYPES CONTROL -->
 <div id="ptable_dtypes_box">
-    <span><span>&#x1f6c8;</span> Show chemical elements as: </span>
+    <span><span>&#9432;</span> Show chemical elements as: </span>
     <div>
         <input type="radio" name="ptable_dtypes" id="ptable_dtypes_1" value="1" checked><label for="ptable_dtypes_1"> phase diagrams</label><br />
         <input type="radio" name="ptable_dtypes" id="ptable_dtypes_2" value="2"><label for="ptable_dtypes_2"> crystal structure counts</label><br />

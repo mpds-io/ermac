@@ -503,9 +503,9 @@ div.sops_col{letter-spacing:1px;}
 
 #ptable_dtypes_box{display:none;position:fixed;z-index:2;width:460px;height:auto;top:294px;left:50%;margin-left:-297px;color:#333;letter-spacing:0.3px;user-select:none;}
 #ptable_dtypes_box.resulted{display:block;top:94px;}
-#ptable_dtypes_box > span{display:inline-block;font-size:0.9em;background:#fbfbfb;vertical-align:top;}
+#ptable_dtypes_box > span{display:inline-block;font-size:0.9em;background:#fbfbfb;vertical-align:top;line-height:32px;}
 #ptable_dtypes_box > span > span{font-size:24px;}
-#ptable_dtypes_box > div{display:inline-block;padding-top:4px;}
+#ptable_dtypes_box > div{display:inline-block;padding-top:3px;line-height:32px;}
 #ptable_dtypes_box > div > label{font-size:0.9em;background:#fbfbfb;}
 
 /* AUTOCOMPLETE */
