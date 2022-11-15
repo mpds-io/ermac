@@ -109,6 +109,8 @@ wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
 wmgui.static_host =       'https://mpds.io';
 
+wmgui.matcloud_endpoint = 'https://www.matcloudplus.com/pythonapi/structures/mpds_test';
+
 // below are the main MPDS API endpoints
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';
 wmgui.logout_endpoint =   wmgui.api_host + '/users/logout';
@@ -129,10 +131,10 @@ wmgui.auto_endpoint =     wmgui.api_host + '/search/selectize';
 wmgui.refs_endpoint =     wmgui.api_host + '/download/bib';
 wmgui.vis_endpoint =      wmgui.api_host + '/visavis';
 wmgui.pdist_endpoint =    wmgui.api_host + '/visavis/pdistribs';
-wmgui.mydata_endpoint =   wmgui.api_host + '/extension/mydata';
+///wmgui.mydata_endpoint =   wmgui.api_host + '/extension/mydata';
 
 wmgui.dd_addr_tpl =       wmgui.api_host + '/download';
-wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localhost:5000';
+///wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localhost:5000';
 
 // below are resources used in the *iframe*
 wmgui.v_player_addr_tpl = '/crystvis/player.html';
@@ -164,7 +166,10 @@ wmgui.editions = {
         link.rel = 'shortcut icon';
         link.href = wmgui.static_host + '/editions/asm/asm.ico';
         document.getElementsByTagName('head')[0].appendChild(link);
-    }}
+    }},
+    11: {'name': 'Ermac integration', 'prod_url': 'https://ermac.tilde.pro', 'dev_url': 'http://localhost:5556'},
+    15: {'name': 'Ermac integration', 'prod_url': 'https://ermac.absolidix.com', 'dev_url': 'http://localhost:5560'},
+    16: {'name': 'Ermac integration', 'prod_url': 'https://ermac.matcloudplus.com', 'dev_url': 'http://localhost:5561'}
 };
 // NB all URLs are above
 
@@ -300,10 +305,10 @@ wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 103
 wmgui.mockyear = new Date().getFullYear();
 
 wmgui.storage_history_key = 'wm_search_log_v5';
-wmgui.storage_user_key = 'wm';
-wmgui.storage_bids_key = 'bid_history'; // TODO rename to wm_bid_history
+wmgui.storage_user_key = 'wm_v2';
+wmgui.storage_bids_key = 'wm_bid_history';
 //wmgui.storage_redir_key = 'wm_redir';
-wmgui.storage_mydata_key = 'absolidix_v1';
+wmgui.storage_mydata_key = 'matcloud_v2';
 
 wmgui.tooltips = {
     //'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="userbox">Next</span>'},

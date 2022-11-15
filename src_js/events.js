@@ -262,27 +262,42 @@ function register_events(){
         if (!close_vibox()) launch_iframed_app(this.getAttribute('data-rank'));
     });
 
-    $('#absolidize').click(function(){
+    $('#matcloudize').click(function(){
 
         if (!$(this).hasClass('wmbutton')) return false;
 
-        if (!wmgui.sid){
-            return window.location.replace('#modal/login');
+        if (!wmgui.oauths || !wmgui.oauths.matcloud){
+            if (confirm('Authorize at MatCloud?')) window.location.href = 'oauth/matcloud.html';
+            return;
         }
 
-        var entry = $('#entryno > a').text();
+        var url = $('#download_json').children('a').attr('href');
 
         try { wmgui.active_ajax.abort() } catch(e){}
-        $.ajax({type: 'GET', url: wmgui.mydata_endpoint, data: {q: entry, sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
+        wmgui.active_ajax = $.ajax({type: 'GET', url: url}).done(function(entry_json){
 
-            if (data.error) return wmgui.notify(data.error);
+            //console.log(entry_json);
+            if (typeof entry_json !== 'object')
+                return alert('Sorry, your subscription plan does not include full access to these data.');
 
-            wmgui.mydata_history.push(entry);
-            window.localStorage.setItem(wmgui.storage_mydata_key, JSON.stringify(wmgui.mydata_history));
-            $('#absolidize').removeClass('wmbutton');
+            $.ajax({type: 'POST', url: wmgui.matcloud_endpoint, data: {data: entry_json}, headers: {Authorization: 'Bearer ' + wmgui.oauths.matcloud}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(answer){
+                //console.log(answer);
+                if (answer.code === 1){
+                    alert('An error occured while adding data');
+                    console.error(answer);
+                } else {
+                    var entry = entry_json.entry || entry_json.sample.material.entry;
+                    console.log('Added to MatCloud: ' + entry);
+                    wmgui.mydata_history.push(entry);
+                    window.localStorage.setItem(wmgui.storage_mydata_key, JSON.stringify(wmgui.mydata_history));
+                    $('#matcloudize').removeClass('wmbutton');
+                }
+            }).fail(function(){
+                alert('Remote server error');
+            });
 
         }).fail(function(xhr, textStatus, errorThrown){
-            wmgui.notify("Sorry, cannot perform that action at this time");
+            alert('Sorry, your subscription plan does not include full access to these data.');
         });
     });
 
@@ -756,8 +771,8 @@ function register_events(){
         } else if (desttab == 'usr_tab_ctrl'){ // redirect to an external app
             window.location.href = (wmgui.edition === 0 ? '/ctrl' : '/labs/custom-datasets') + '?' + Math.floor(Math.random() * 1000);
 
-        } else if (desttab == 'usr_tab_absolidix'){ // redirect to an external app
-            window.location.href = wmgui.mydata_addr;
+        ///} else if (desttab == 'usr_tab_absolidix'){ // redirect to an external app
+        ///    window.location.href = wmgui.mydata_addr;
 
         } else if (desttab == 'usr_tab_account'){
             $('#hintsbox_msg').html(wmgui.get_random_term(wmgui.welcome_msgs));

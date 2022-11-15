@@ -1,4 +1,3 @@
-
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -331,8 +330,8 @@ function register_html(){
     </div>
 
     <ul>
+        <li id="matcloudize" class="wmbutton"><span class="active">Add to MatCloud</span><span class="disabled">&#x2714; in MatCloud</span></li>
         <li id="visualize" class="wmbutton">Visualize</li>
-        <li id="absolidize" class="wmbutton"><span class="active">Simulate</span><span class="disabled"><i>&#x2714;</i> in <span class="href">my data</span></span></li>
         <li id="download_pdf" class="d_icon"><a rel="pdf" href="#" target="_blank" title="Get HTML / PDF document" rel="nofollow"></a></li>
         <li id="download_json" class="d_icon"><a rel="json" href="#" target="_blank" title="Get machine-readable JSON file" rel="nofollow"></a></li>
         <li id="download_png" class="d_icon"><a rel="png" href="#" target="_blank" title="Get PNG raster image" rel="nofollow"></a></li>
@@ -641,7 +640,6 @@ function register_html(){
 <div id="menubox" class="modal user_dialogue">
     <ul id="tab_links">
         <li rev="usr_tab_account" class="working">account</li>
-        <li rev="usr_tab_absolidix">my data</li>
         <li rev="usr_tab_perms">data access</li>
         <li rev="usr_tab_api_key">API key</li>
         <li rev="usr_tab_ctrl" style="display:none;" class="admin">management</li>
@@ -682,10 +680,6 @@ function register_html(){
         <div class="divider"></div>
 
         <div id="perms_view"></div>
-    </div>
-
-    <div id="usr_tab_absolidix" class="menu_tabs" style="display:none;">
-        <br /><br /><br /><br /><br />
     </div>
 
     <div id="usr_tab_api_key" class="menu_tabs" style="display:none;">

@@ -185,16 +185,16 @@ function url__modal(arg){
     //    redir = url_params.get('redir');
 
     if (arg == "login"){
-        if (wmgui.sid) return window.location.replace('#modal/menu');
-        //if (wmgui.sid) return window.location.replace('#start'); // for Matcloud
+        ///if (wmgui.sid) return window.location.replace('#modal/menu');
+        if (wmgui.sid) return window.location.replace('#start'); // for Matcloud
 
         // edition-based OAuth login
         if (wmgui.edition == 1){
             return window.location.href = 'oauth/asm.html';
 
-        } /* else if (wmgui.edition == 11 || wmgui.edition == 16){
+        } else if (wmgui.edition == 11 || wmgui.edition == 16){
             return window.location.href = 'oauth/matcloud.html';
-        } */
+        }
 
         if ($("#restore_by_email").val()) $("#login_email").val($("#restore_by_email").val());
         else $("#login_email").val('');

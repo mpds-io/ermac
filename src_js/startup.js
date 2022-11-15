@@ -6,7 +6,7 @@ function satisfy_requirements(){
 
     $('#notifybox, #preloader').hide();
     //document.title = document.body.clientWidth + ' px';
-    $('#absolidize > span.disabled > span.href').attr('rel', wmgui.mydata_addr);
+    ///$('#absolidize > span.disabled > span.href').attr('rel', wmgui.mydata_addr);
 
     wmgui.ptable.els_data = read_ptable_html();
 

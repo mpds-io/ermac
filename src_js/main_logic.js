@@ -749,7 +749,7 @@ function open_context(el, launch_ext){
 
         $('#ctx_col').show();
         $('#visualize').attr('data-rank', rank);
-        $('#visualize, #absolidize, div.spinoff_pane, li.d_icon').hide();
+        $('#visualize, #matcloudize, div.spinoff_pane, li.d_icon').hide();
 
         open_sim_col(entry, entype, rank);
 
@@ -760,31 +760,31 @@ function open_context(el, launch_ext){
             $('#download_bib, #download_pdf').show();
 
         } else if (rank == 2){
-            $('#download_bib, #download_pdf, #download_json').show();
+            $('#download_bib, #download_pdf, #download_json, #matcloudize').show();
 
         } else if (rank == 3){
             $('#download_bib, #download_png, #download_cdr').show();
 
         } else if (rank == 4){
-            $('#download_bib, #download_json, #visualize').show();
+            $('#download_bib, #download_json, #visualize, #matcloudize').show();
 
         } else if (rank == 5){
-            $('#download_bib, #download_pdf, #visualize, #absolidize, #download_cif, #download_inp, #download_json').show();
+            $('#download_bib, #download_pdf, #visualize, #matcloudize, #download_cif, #download_inp, #download_json').show();
 
         } else if (rank == 6){
             $('#download_bib, #download_pdf, #visualize, #download_png, #download_cdr, #download_json').show();
 
         } else if (rank == 7){
-            $('#ml_data, #download_pdf, #download_json').show();
+            $('#ml_data, #download_pdf, #download_json, #matcloudize').show();
 
         } else if (rank == 8){
-            $('#ab_data, #download_pdf, #download_json, #download_raw').show();
+            $('#ab_data, #download_pdf, #download_json, #download_raw, #matcloudize').show();
 
         } else if (rank == 9){
-            $('#ab_data, #download_pdf, #download_json, #visualize, #download_png, #download_raw').show();
+            $('#ab_data, #download_pdf, #download_json, #visualize, #download_png, #download_raw, #matcloudize').show();
 
         } else if (rank == 10){
-            $('#ab_data, #download_pdf, #download_json, #visualize, #download_raw').show();
+            $('#ab_data, #download_pdf, #download_json, #visualize, #download_raw, #matcloudize').show();
 
         } else if (rank == 11){
             $('#ab_promise, #download_json').show();
@@ -801,7 +801,7 @@ function open_context(el, launch_ext){
             $(this).attr('href', link_url);
         });
 
-        (wmgui.mydata_history.indexOf(entry) == -1) ? $('#absolidize').addClass('wmbutton') : $('#absolidize').removeClass('wmbutton');
+        (wmgui.mydata_history.indexOf(entry) == -1) ? $('#matcloudize').addClass('wmbutton') : $('#matcloudize').removeClass('wmbutton');
 
         if (launch_ext) launch_iframed_app(rank);
     }
@@ -1231,7 +1231,7 @@ function user_login(sid, name, acclogin, admin, oauths){
     $('div.logged_out').hide();
     $('div.logged_in').show();
 
-    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin})); // oauths: oauths
+    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin, oauths: oauths}));
     admin ? $('li.admin').show() : $('li.admin').hide();
 
     try {
