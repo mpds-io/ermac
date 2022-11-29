@@ -201,7 +201,7 @@ function render_left(data){
     const parent = document.getElementById('ptable_previews');
     parent.className = "";
     parent.classList.add('ptable_dtype_' + wmgui.ptable.dtypes);
-    parent.innerHTML = header + (data.out.length ? build_thumbs_ph(data.out) : '<img src="' + wmgui.static_host + '/question.svg" width=320 />') + wmgui.ptable.subphases_button;
+    parent.innerHTML = header + (data.out.length ? build_thumbs_ph(data.out) : '<img src="' + wmgui.static_host + '/question.svg" width=100 />') + wmgui.ptable.subphases_button;
 
     if (wmgui.ptable.dtypes == 2){
         const els = document.querySelectorAll('#ptable_results div.gallery_img');

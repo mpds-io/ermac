@@ -297,7 +297,7 @@ wmgui.aets = {
 //wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us why, anonymously"></textarea><select id="fdwidget_msgtype"><option value="No reason" selected>Please select reason...</option><option value="Data missing">Data missing</option><option value="Error in data">Error in data</option><option value="Other">Other</option></select><div id="fdwidget_trigger" class="wmbutton">Send</div>';
 
 wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
-wmgui.mockyear = new Date().getFullYear();
+wmgui.mockyear = '2022'; // used for the in-house generated data
 
 wmgui.storage_history_key = 'wm_search_log_v5';
 wmgui.storage_user_key = 'wm';
