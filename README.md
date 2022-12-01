@@ -5,12 +5,12 @@ Ermac
 
 Ermac is an embeddable GUI of the [MPDS platform](https://mpds.io). It allows browsing the MPDS scientific data from any website or integrating the MPDS GUI into the existing codebases.
 
-**This is completely free software. Upon compilation it's just a few _static_ web files. Copy them to your web-server in a subfolder and enjoy your _own_ MPDS platform. The data stays at the MPDS server.**
+**Ermac is completely free software. Upon compilation it's just a few _static_ web files. Copy them to your web-server in a subfolder and enjoy your _own_ MPDS platform. The data stays at the MPDS server.**
 
 
 ## Usage
 
-An arbitrary static web-server is required, e.g. `python -m SimpleHTTPServer` or `php -S localhost:5555` or `npm i -g http-server && http-server` or whatever. All the content is static. In the **development mode**, the code is served from the `src_js` folder. In the **production mode**, the code in `src_js` should be compiled into a bundle `ermac.min.js`, which is then served. See `example_dev.html` and `example_prod.html` correspondingly.
+An arbitrary static web-server is required, e.g. `python -m http.server` or `php -S localhost:5555` or `npm i -g http-server && http-server` or whatever. All the content is static. In the **development mode**, the code is served from the `src_js` folder. In the **production mode**, the code in `src_js` should be compiled into a bundle `ermac.min.js`, which is then served. See `example_dev.html` and `example_prod.html` correspondingly.
 
 ```
 git clone https://github.com/mpds-io/ermac

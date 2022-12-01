@@ -794,6 +794,6 @@ function register_html(){
     </div>
 </div>
 
-<div id="footer">Editor-in-Chief: Pierre Villars. Section editors: Karin Cenzual, Ihor Savysyuk, Riccarda Caputo. Developed by <a href="https://tilde.pro" target="_blank">Tilde MI</a>.</div>
+<div id="footer">Editor-in-Chief: Pierre Villars. Section editors: Karin Cenzual, Ihor Savysyuk, Riccarda Caputo. <a href="https://github.com/mpds-io">Open-source</a> development by <a href="https://tilde.pro" target="_blank">Tilde MI</a>.</div>
 `);
 }
