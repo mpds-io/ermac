@@ -1,10 +1,12 @@
 Ermac
 ==========
 
+![MPDS free open-source GUI](https://raw.githubusercontent.com/mpds-io/ermac/master/ermac.png "MPDS free open-source GUI")
+
 Ermac is an embeddable GUI of the [MPDS platform](https://mpds.io). It allows browsing the MPDS scientific data from any website or integrating the MPDS GUI into the existing codebases.
 
 
-**WARNING!** Ermac is based on the old-style JQuery-fashioned ES5 JavaScript (see `src_js` folder). The `Node` and `npm` are intentionally **NOT** used. Several external dependencies are supplied simply along with the codebase in `third_party` and `src_js/third_party` folders. For future, we might consider re-implementation of the codebase in the modular TypeScript framework. Please [contact us](mailto:hello@tilde.pro) if you'd like to know more or help.
+**WARNING!** Ermac is based on the old-style JQuery-fashioned ES5 JavaScript (see `src_js` folder). The `Node` and `npm` are intentionally **NOT** used. Several external dependencies are supplied simply along with the codebase in `third_party` and `src_js/third_party` folders. For future, we consider re-implementation of this codebase in the modular TypeScript framework. Please [contact us](mailto:hello@tilde.pro) if you'd like to know more or help.
 
 
 ## Usage
