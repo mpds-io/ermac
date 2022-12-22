@@ -1082,11 +1082,11 @@ function stop_visavis(){
 
 function get_visavis_url(request, type, height){
     if (wmgui.visavis_curtype == 'pie' && !type)
-        return wmgui.static_host + '/visavis/#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
+        return wmgui.v_vis_addr + '#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
 
     var height_str = height ? ('&visavis_height=' + height) : '';
 
-    return wmgui.static_host + '/visavis/?241022#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
+    return wmgui.v_vis_addr + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
 }
 
 function describe_perms(perms){

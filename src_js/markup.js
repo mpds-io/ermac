@@ -29,7 +29,7 @@ function register_html(){
 
     <div id="search_area">
         <div id="search_holder">
-            <select id="search_field" autocomplete="false" multiple autofocus></select>
+            <select id="search_field" autocomplete="off" autofocus></select>
         </div>
         <a href="#hierarchy" id="hierarchy_trigger" class="wmbutton" title="Show list of properties">&mu;<span><sub>x</sub><sup>&deg;</sup></span></a>
         <a href="#" id="advsearch_init_trigger" class="wmbutton" title="Show search options">&#9776;</a>

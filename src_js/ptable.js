@@ -14,6 +14,7 @@ wmgui.ptable.visible = false; // needed to debounce
 wmgui.ptable.activated = false; // should it "jump" on top by input
 wmgui.ptable.dtypes = 1; // 0, 1, 2, or 3, see #ptable_dtypes
 wmgui.ptable.subphases_button = '';
+wmgui.ptable.vis_fixed = false;
 wmgui.ptable.elements = ['X'].concat(wmutils.periodic_elements_cased);
 
 wmgui.ptable.show = function(){
@@ -121,6 +122,7 @@ function refresh_ptable_results(elA, elB, elC){
 
     if (query_ph){
         wmgui.ptable.query = query_ph;
+        wmgui.ptable.vis_fixed = false;
 
         let iframe_addr,
             iframe_height = 900;
@@ -129,6 +131,11 @@ function refresh_ptable_results(elA, elB, elC){
 
             if (wmgui.ptable.dtypes == 2){
                 iframe_addr = wmgui.v_player_addr_tpl;
+                wmgui.ptable.vis_fixed = true;
+
+            } else if (wmgui.ptable.dtypes == 3){
+                iframe_addr = wmgui.v_vis_addr;
+                wmgui.ptable.vis_fixed = true;
 
             } else
                 document.getElementById('ptable_vis').innerHTML = '';
@@ -142,9 +149,11 @@ function refresh_ptable_results(elA, elB, elC){
 
             } else if (wmgui.ptable.dtypes == 2){
                 iframe_addr = wmgui.v_player_addr_tpl;
+                wmgui.ptable.vis_fixed = true;
 
             } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = get_visavis_url({elements: els.join('-'), classes: wmutils.arity_keys[els.length]}, 'graph', iframe_height);
+                iframe_addr = wmgui.v_vis_addr;
+                wmgui.ptable.vis_fixed = true;
 
             } else
                 document.getElementById('ptable_vis').innerHTML = '';
@@ -152,6 +161,7 @@ function refresh_ptable_results(elA, elB, elC){
         } else {
             wmgui.ptable.subphases_set(1);
             iframe_height = window.innerHeight - 200;
+            wmgui.ptable.vis_fixed = true;
 
             if (wmgui.ptable.dtypes == 1){
                 iframe_addr = wmgui.v_pd_3d_addr + els.join('-');
@@ -160,7 +170,7 @@ function refresh_ptable_results(elA, elB, elC){
                 iframe_addr = wmgui.v_player_addr_tpl;
 
             } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = get_visavis_url({elements: els.join('-')}, 'graph', iframe_height);
+                iframe_addr = wmgui.v_vis_addr;
 
             } else
                 document.getElementById('ptable_vis').innerHTML = '';
@@ -203,6 +213,8 @@ function render_left(data){
     parent.classList.add('ptable_dtype_' + wmgui.ptable.dtypes);
     parent.innerHTML = header + (data.out.length ? build_thumbs_ph(data.out) : '<img src="' + wmgui.static_host + '/question.svg" width=100 />') + wmgui.ptable.subphases_button;
 
+    if (data.out.length < 10) wmgui.ptable.vis_fixed = false; // prevent screen jumping
+
     if (wmgui.ptable.dtypes == 2){
         const els = document.querySelectorAll('#ptable_results div.gallery_img');
         if (els.length){
@@ -210,6 +222,16 @@ function render_left(data){
             els[rnd_i].parentNode.classList.add('active');
             const phid = els[rnd_i].getAttribute('rel');
             document.querySelector('#ptable_vis > iframe').contentWindow.location.hash = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1';
+
+        } else document.getElementById('ptable_vis').innerHTML = '';
+
+    } else if (wmgui.ptable.dtypes == 3){
+        const els = document.querySelectorAll('#ptable_results div.gallery_img');
+        if (els.length){
+            const rnd_i = Math.floor(Math.random() * els.length);
+            els[rnd_i].parentNode.classList.add('active');
+            const phid = els[rnd_i].getAttribute('rel');
+            document.querySelector('#ptable_vis > iframe').contentWindow.location.replace(get_visavis_url({phid: phid}, 'graph', window.innerHeight - 50));
 
         } else document.getElementById('ptable_vis').innerHTML = '';
     }

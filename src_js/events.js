@@ -175,9 +175,13 @@ function register_events(){
     $('#databrowser, #ptable_results').on('click', 'div.gallery_img', function(){
         var that = $(this);
         if (that.attr('rel')){
-            if (wmgui.view_mode === 1 && wmgui.ptable.dtypes == 2){
+            if (wmgui.view_mode === 1 && wmgui.ptable.dtypes > 1){
                 var phid = that.attr('rel');
-                document.querySelector('#ptable_vis > iframe').contentWindow.location.hash = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1';
+
+                wmgui.ptable.dtypes == 2 ?
+                document.querySelector('#ptable_vis > iframe').contentWindow.location.hash = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1' :
+                document.querySelector('#ptable_vis > iframe').contentWindow.location.replace(get_visavis_url({phid: phid}, 'graph', window.innerHeight - 50));
+
                 $('div.gallery_item.active').removeClass('active');
                 that.parent().addClass('active');
 
@@ -644,9 +648,13 @@ function register_events(){
                 document.getElementById('ptable_dtypes_box').classList.remove('resulted');
                 document.getElementById('legend').style.display = 'none';
 
+                (wmgui.ptable.vis_fixed && scroll_pos > 550) ? document.getElementById('ptable_vis').classList.add('fixed') :
+                    document.getElementById('ptable_vis').classList.remove('fixed');
+
             } else {
                 document.getElementById('ptable_dtypes_box').classList.add('resulted');
                 document.getElementById('legend').style.display = 'block';
+                document.getElementById('ptable_vis').classList.remove('fixed');
             }
         }
     }, 300));
