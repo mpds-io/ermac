@@ -211,7 +211,7 @@ function render_left(data){
     const parent = document.getElementById('ptable_previews');
     parent.className = "";
     parent.classList.add('ptable_dtype_' + wmgui.ptable.dtypes);
-    parent.innerHTML = header + (data.out.length ? build_thumbs_ph(data.out) : '<img src="' + wmgui.static_host + '/question.svg" width=100 />') + wmgui.ptable.subphases_button;
+    parent.innerHTML = header + (data.out.length ? build_thumbs_ph(data.out) : '<p>No results</p>') + wmgui.ptable.subphases_button;
 
     if (data.out.length < 10) wmgui.ptable.vis_fixed = false; // prevent screen jumping
 
@@ -220,8 +220,12 @@ function render_left(data){
         if (els.length){
             const rnd_i = Math.floor(Math.random() * els.length);
             els[rnd_i].parentNode.classList.add('active');
-            const phid = els[rnd_i].getAttribute('rel');
-            document.querySelector('#ptable_vis > iframe').contentWindow.location.hash = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1';
+            const phid = els[rnd_i].getAttribute('rel'),
+                target = document.querySelector('#ptable_vis > iframe'),
+                target_addr = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1';
+
+            if (target) target.contentWindow.location.hash = target_addr;
+            else document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="850" src="' + wmgui.v_player_addr_tpl + target_addr + '"></iframe>';
 
         } else document.getElementById('ptable_vis').innerHTML = '';
 
@@ -230,8 +234,12 @@ function render_left(data){
         if (els.length){
             const rnd_i = Math.floor(Math.random() * els.length);
             els[rnd_i].parentNode.classList.add('active');
-            const phid = els[rnd_i].getAttribute('rel');
-            document.querySelector('#ptable_vis > iframe').contentWindow.location.replace(get_visavis_url({phid: phid}, 'graph', window.innerHeight - 50));
+            const phid = els[rnd_i].getAttribute('rel'),
+                target = document.querySelector('#ptable_vis > iframe'),
+                target_addr = get_visavis_url({phid: phid}, 'graph', window.innerHeight - 50);
+
+            if (target) target.contentWindow.location.replace(target_addr);
+            else document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="850" src="' + target_addr + '"></iframe>';
 
         } else document.getElementById('ptable_vis').innerHTML = '';
     }
