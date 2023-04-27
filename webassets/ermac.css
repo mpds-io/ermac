@@ -229,7 +229,7 @@ div.col_title a{text-decoration:none;color:#000;border-bottom:1px solid #000;}
 #absolidize > span.active{display:none;}
 #absolidize > span.disabled{display:block;}
 #absolidize > span.disabled > i{color:green;font-size:30px;}
-#absolidize.wmbutton{color:#fff;}
+#absolidize.wmbutton{color:#fff;border:1px solid #acc2b3;background:#acc2b3;}
 #absolidize.wmbutton > span.active{display:block;}
 #absolidize.wmbutton > span.disabled{display:none;}
 #download_cif{background:url(icons.png) 0 5px no-repeat;}

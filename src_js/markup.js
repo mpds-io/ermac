@@ -641,9 +641,9 @@ function register_html(){
 <div id="menubox" class="modal user_dialogue">
     <ul id="tab_links">
         <li rev="usr_tab_account" class="working">account</li>
-        <li rev="usr_tab_absolidix">my data</li>
         <li rev="usr_tab_perms">data access</li>
         <li rev="usr_tab_api_key">API key</li>
+        <li rev="usr_tab_absolidix" class="only_mpds">my data</li>
         <li rev="usr_tab_ctrl" style="display:none;" class="admin">management</li>
     </ul>
 
@@ -684,10 +684,6 @@ function register_html(){
         <div id="perms_view"></div>
     </div>
 
-    <div id="usr_tab_absolidix" class="menu_tabs" style="display:none;">
-        <br /><br /><br /><br /><br />
-    </div>
-
     <div id="usr_tab_api_key" class="menu_tabs" style="display:none;">
         <div class="cross close_user_dialogue" style="margin-top:25px;"></div>
         <div style="clear:both;"></div>
@@ -703,6 +699,10 @@ function register_html(){
         <div id="create_usr_api_key_holder" style="display:none;width:150px;margin:30px auto 10px;">
             <div id="create_usr_api_key" class="wmbutton">Create</div>
         </div>
+    </div>
+
+    <div id="usr_tab_absolidix" class="menu_tabs" style="display:none;">
+        <br /><br /><br /><br /><br />
     </div>
 
     <div id="usr_tab_ctrl" class="menu_tabs" style="display:none;">
