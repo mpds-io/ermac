@@ -1,6 +1,8 @@
 Ermac
 ==========
 
+[![DOI](https://zenodo.org/badge/468932582.svg)](https://doi.org/10.5281/zenodo.7693197)
+
 ![MPDS free open-source GUI](https://raw.githubusercontent.com/mpds-io/ermac/master/ermac.png "MPDS free open-source GUI")
 
 Ermac is an embeddable GUI of the [MPDS platform](https://mpds.io). It allows browsing the MPDS scientific data from any website or integrating the MPDS GUI into the existing codebases.
