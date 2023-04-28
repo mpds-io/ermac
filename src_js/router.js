@@ -11,7 +11,7 @@ function url_redraw_react(){
     try { wmgui.quick_ajax.abort() } catch(e){}
 
     if (window['url__' + anchors[0]]) window['url__' + anchors[0]](anchors.slice(1).join('/'));
-    else wmgui.notify('Unknown route requested');
+    else wmgui.notify('Sorry, unknown route requested');
 }
 
 /**
@@ -90,7 +90,7 @@ function url__plot(arg){
         query = q[2];
 
     if (!plot_type || !search_verb || !query)
-        return wmgui.notify('Unknown route: ' + arg);
+        return wmgui.notify('Sorry, unknown route: ' + arg);
 
     if (search_verb == 'search')
         url__search(query, true);
@@ -99,7 +99,7 @@ function url__plot(arg){
         url__inquiry(query, true);
 
     else
-        return wmgui.notify('Unknown route: ' + arg);
+        return wmgui.notify('Sorry, unknown route: ' + arg);
 
     wmgui.visavis_curtype = plot_type;
 
@@ -160,10 +160,11 @@ function url__phase(arg){
             window.location.replace('#phase_id/' + data.phid);
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('A network error occured. Please, try again');
+            if (textStatus != 'abort')
+                wmgui.notify('Sorry, a network error occured. Please, try again');
         });
 
-    } else return wmgui.notify('Wrong phase given');
+    } else return wmgui.notify('Sorry, wrong phase given');
 }
 
 /**
@@ -223,7 +224,7 @@ function url__modal(arg){
         arrange_menu_collateral();
         $('#menubox, div.menu_collateral').show();
 
-    } else return wmgui.notify("Unknown modal window");
+    } else return wmgui.notify("Sorry, unknown modal window");
     $('#overlay').show();
 }
 
@@ -245,7 +246,7 @@ function url__access(arg){
 
     }).fail(function(xhr, textStatus, errorThrown){
         window.location.replace('#start');
-        return wmgui.notify('A network error occured. Please, try again');
+        return wmgui.notify('Sorry, a network error occured. Please, try again');
     });
 }
 
@@ -267,7 +268,7 @@ function url__ratify(arg){
 
     }).fail(function(xhr, textStatus, errorThrown){
         window.location.replace('#start');
-        return wmgui.notify('A network error occured. Please, try again');
+        return wmgui.notify('Sorry, a network error occured. Please, try again');
     });
 }
 
@@ -302,8 +303,10 @@ function url__junction(arg){
         return window.location.replace('#products');
 
     wmgui.active_ajax = $.ajax({type: 'POST', url: wmgui.perms_endpoint, data: {sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
+
         if (data.error)
             return wmgui.notify(data.error);
+
         if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api'))
             return force_relogin('Please, re-login');
 
@@ -313,7 +316,6 @@ function url__junction(arg){
         $('div.menu_tabs').hide();
         $('#usr_tab_perms').show();
         $('#perms_view').html(describe_perms(data));
-        wmgui.notify('Sorry, you have no access to these data');
 
     }).fail(function(xhr, textStatus, errorThrown){
         if (textStatus != 'abort')

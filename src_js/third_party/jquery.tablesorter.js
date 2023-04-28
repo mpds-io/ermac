@@ -331,7 +331,7 @@
             function appendToTable(table, cache) {
 
                 if (table.config.debug) {
-                    var appendTime = new Date()
+                    var appendTime = new Date();
                 }
 
                 var c = cache,
@@ -763,7 +763,7 @@
                     }).mousedown(function () {
                         if (config.cancelSelection) {
                             this.onselectstart = function () {
-                                return false
+                                return false;
                             };
                             return false;
                         }

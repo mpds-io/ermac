@@ -54,7 +54,7 @@ function register_events(){
         }
 
         if ($.isEmptyObject(query)){
-            wmgui.notify('Unrecognized input');
+            wmgui.notify('Sorry, unrecognized input');
             return false;
         }
 
@@ -109,7 +109,7 @@ function register_events(){
             delete query.props; // NB to make the numeric results "more clear"
         }
 
-        if ($.isEmptyObject(query)) return wmgui.notify('Search is empty');
+        if ($.isEmptyObject(query)) return wmgui.notify('Sorry, search is empty');
 
         var urlstr = $.param(query);
         if (window.location.hash == '#inquiry/' + urlstr){
@@ -286,7 +286,8 @@ function register_events(){
             $('#absolidize').removeClass('wmbutton');
 
         }).fail(function(xhr, textStatus, errorThrown){
-            wmgui.notify("Sorry, cannot perform that action at this time");
+            if (textStatus != 'abort')
+                wmgui.notify('Please, make sure <a href="#junction">your access works</a> <br /> and try again');
         });
     });
 
@@ -350,7 +351,8 @@ function register_events(){
             $('a.extd_refine[rel=' + facet + ']').parent().hide().after(wmgui.clean(html));
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
+            if (textStatus != 'abort')
+                wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
         });
         return false;
     });
@@ -632,7 +634,8 @@ function register_events(){
                             $('#databrowser').trigger('update');
                         }
                     }).fail(function(xhr, textStatus, errorThrown){
-                        if (textStatus != 'abort') wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
+                        if (textStatus != 'abort')
+                            wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
                     });
                 }
             }
@@ -747,7 +750,8 @@ function register_events(){
                 else return wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
 
             }).fail(function(xhr, textStatus, errorThrown){
-                if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                if (textStatus != 'abort')
+                    wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
             });
 
         } else if (desttab == 'usr_tab_perms'){
@@ -758,7 +762,8 @@ function register_events(){
                 $('#perms_view').html(describe_perms(data));
 
             }).fail(function(xhr, textStatus, errorThrown){
-                if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                if (textStatus != 'abort')
+                    wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
             });
 
         } else if (desttab == 'usr_tab_ctrl'){ // redirect to an external app
@@ -798,7 +803,8 @@ function register_events(){
             $('#revoke_usr_api_key_holder').show();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort')
+                wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
     $('#revoke_usr_api_key').click(function(){
@@ -810,7 +816,8 @@ function register_events(){
             $('#create_usr_api_key_holder').show();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort')
+                wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
 
@@ -855,7 +862,8 @@ function register_events(){
             $('#userbox').trigger('click');
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('A network error occured. Please, try again');
+            if (textStatus != 'abort')
+                wmgui.notify('Sorry, a network error occured. Please, try again');
         });
     });
 
@@ -887,7 +895,8 @@ function register_events(){
             $('#account_pass_change').hide();
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+            if (textStatus != 'abort')
+                wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
         });
     });
 

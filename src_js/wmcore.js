@@ -32,7 +32,7 @@ Number.prototype.count_decimals = function(){
  */
 
 wmgui.clean = function(str){
-    var html = $(str.bold());
+    var html = $((str || '').bold());
     html.find('script').remove();
     return html.html();
 }

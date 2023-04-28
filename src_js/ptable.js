@@ -413,7 +413,7 @@ function select_ptable_el(selected_el, dom_el){
 
     if (!dom_el){
         var dom_el = document.querySelector('#ptable_area > ul > li[data-pos="' + wmgui.ptable.elements.indexOf(selected_el) + '"]');
-        if (!dom_el) return wmgui.notify('Wrong element: ' + selected_el);
+        if (!dom_el) return wmgui.notify('Sorry, wrong element: ' + selected_el);
     }
 
     if (dom_el.classList.contains('selected_a')){

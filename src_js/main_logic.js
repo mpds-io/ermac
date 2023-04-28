@@ -347,7 +347,8 @@ function request_search(search, caption, without_history){
         if (!without_history) rebuild_history_box(search, caption);
 
     }).fail(function(xhr, textStatus, errorThrown){
-        if (textStatus != 'abort') wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
+        if (textStatus != 'abort')
+            wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
     });
 }
 
@@ -702,12 +703,8 @@ function request_refinement(query_obj, is_heavy){
         }
 
     }).fail(function(xhr, textStatus, errorThrown){
-        if (textStatus != 'abort'){
-            if (xhr.status == 429)
-                wmgui.notify('Request rate limiting policy: please retry in a few seconds');
-            else
-                wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
-        }
+        if (textStatus != 'abort')
+            wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
     });
 }
 
@@ -897,12 +894,8 @@ function open_sim_col(entry, entype, rank){
             $('#own_phase').html('<a href="#phase_id/' + data.out.own[0][1] + '"><img alt="Phase" src="' + wmgui.static_host + '/rd_thumbs/' + data.out.own[0][0] + '.png" /><br /><span>Linked ' + (entype == 'S' ? 'distinct phase' : 'crystalline structure') + '</span></a>').show();
 
     }).fail(function(xhr, textStatus, errorThrown){
-        if (textStatus != 'abort'){
-            if (xhr.status == 429)
-                wmgui.notify('Request rate limiting policy: please retry in a few seconds');
-            else
-                wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
-        }
+        if (textStatus != 'abort')
+            wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
     });
 }
 
@@ -1367,7 +1360,8 @@ function show_dunit_info(phid, entry){
             $('#phase_info').html(html);
 
         }).fail(function(xhr, textStatus, errorThrown){
-            if (textStatus != 'abort') wmgui.notify('A network error occured. Please, try again');
+            if (textStatus != 'abort')
+                wmgui.notify('Sorry, a network error occured. Please, try again');
         });
     }
 

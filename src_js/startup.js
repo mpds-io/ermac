@@ -183,7 +183,7 @@ function satisfy_requirements(){
         wmgui.journal_converter.j2c = function(x){
             var fi = answer.jfull.indexOf(x);
             if (fi == -1){
-                wmgui.notify("Unknown journal: " + x);
+                wmgui.notify("Sorry, unknown journal: " + x);
                 return x;
             }
             return answer.codens[fi];
@@ -191,7 +191,7 @@ function satisfy_requirements(){
         wmgui.journal_converter.c2j = function(x){
             var fi = answer.codens.indexOf(x);
             if (fi == -1){
-                wmgui.notify("Unknown CODEN: " + x);
+                wmgui.notify("Sorry, unknown CODEN: " + x);
                 return x;
             }
             return answer.jfull[fi];
