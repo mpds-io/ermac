@@ -190,7 +190,7 @@ function url__modal(arg){
         //if (wmgui.sid) return window.location.replace('#start'); // for Matcloud
 
         // edition-based OAuth login
-        if (wmgui.edition == 1){
+        if (wmgui.edition == 1 || wmgui.edition == 6){
             return window.location.href = 'oauth/asm.html';
 
         } /* else if (wmgui.edition == 11 || wmgui.edition == 16){

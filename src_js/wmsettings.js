@@ -165,6 +165,16 @@ wmgui.editions = {
         link.rel = 'shortcut icon';
         link.href = wmgui.static_host + '/editions/asm/asm.ico';
         document.getElementsByTagName('head')[0].appendChild(link);
+    }},
+    6: {'name': 'ASM International Materials Platform', 'prod_url': 'https://mpds.asminternational.org', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?300422', 'actions': function(){
+        $('.only_mpds').hide();
+        $('.only_asm').css('display', 'inline-block');
+        // custom favicon
+        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        link.href = wmgui.static_host + '/editions/asm/asm.ico';
+        document.getElementsByTagName('head')[0].appendChild(link);
     }}
 };
 // NB all URLs are above
