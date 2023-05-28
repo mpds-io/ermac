@@ -307,6 +307,15 @@ function register_html(){
     <div id="rfn_preloader"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>
     <ul></ul>
 
+    <div id="phases_ctx">
+        <div class="col_title">Distinct phases</div>
+        <br />
+        &nbsp;<input type="checkbox" id="ctx_strict_phases_trigger" checked />&nbsp;<label for="ctx_strict_phases_trigger">other elements and impurities</label>
+        <!-- br />
+        &nbsp;<input type="checkbox" id="ctx_subphases_trigger" />&nbsp;<label for="ctx_subphases_trigger">constituent phases</label -->
+        <span>See the <a target="_blank" href="https://github.com/mpds-io/mpds-distinct-phases">public dumps</a> of the distinct phases appeared at least once in the literature.</span>
+    </div>
+
     <div id="examples" class="examples">
         <div class="col_title">Examples</div>
         <ul></ul>

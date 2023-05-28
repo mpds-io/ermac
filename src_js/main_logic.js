@@ -212,7 +212,18 @@ function request_search(search, caption, without_history){
     try { wmgui.active_ajax.abort() } catch(e){}
     try { wmgui.quick_ajax.abort() } catch(e){}
 
-    wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.search_endpoint, data: {q: JSON.stringify(search), sid: wmgui.sid}, beforeSend: wmgui.show_preloader}).always(wmgui.hide_preloader).done(function(data){
+    wmgui.active_ajax = $.ajax({
+        type: 'GET',
+        url: wmgui.search_endpoint,
+        data: {
+            q: JSON.stringify(search),
+            strict: wmgui.ctx_strict_phases,
+            //subphases: wmgui.ctx_subphases,
+            sid: wmgui.sid
+        },
+        beforeSend: wmgui.show_preloader
+
+    }).always(wmgui.hide_preloader).done(function(data){
         if (data.error)
             return wmgui.notify(data.error);
 
@@ -276,7 +287,7 @@ function request_search(search, caption, without_history){
         // count & show ctx
         wmgui.unfinished_page = false;
         if (wmgui.search_type || search.phid){
-            if (data.estimated_count >= (wmgui.quick_page_size*3)) $('#toomuch span').html('other').parent().show();
+            if (data.estimated_count >= wmgui.quick_page_size * 3) $('#toomuch span').html('other').parent().show();
             show_hints(search.entry || search.interlinkage);
 
         } else {
@@ -345,6 +356,7 @@ function request_search(search, caption, without_history){
             create_floating_slider(search.props, prop_id, units, min, max, step);
         }
         if (!without_history) rebuild_history_box(search, caption);
+        wmgui.search.elements && wmgui.search_type == 1 ? $('#phases_ctx').show() : $('#phases_ctx').hide();
 
     }).fail(function(xhr, textStatus, errorThrown){
         if (textStatus != 'abort')
@@ -397,7 +409,7 @@ function rotate_interesting(){
 function show_examples(box, more_examples, fix_rfn_header){
     if (wmgui.cliff_counter === null) wmgui.cliff_counter = Math.floor(Math.random() * wmgui.cliffhangers.length);
     var html = '';
-    for (var i = 0; i < (more_examples ? 12 : 3); i++){
+    for (var i = 0; i < (more_examples ? 7 : 3); i++){
         wmgui.cliff_counter += 1;
         if (wmgui.cliff_counter > wmgui.cliffhangers.length-1) wmgui.cliff_counter = 0;
         html += '<li><a href="#search/' + wmutils.termify_formulae(wmgui.cliffhangers[wmgui.cliff_counter]) + '">' + wmgui.cliffhangers[wmgui.cliff_counter].charAt(0).toUpperCase() + wmgui.cliffhangers[wmgui.cliff_counter].slice(1) + '</a></li>';
@@ -629,7 +641,13 @@ function request_refinement(query_obj, is_heavy){
     try { wmgui.active_ajax.abort() } catch(e){}
 
     //console.log(given_search);
-    wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.rfn_endpoint, data: {q: JSON.stringify(given_search)}, beforeSend: function(){ $('#rfn_preloader').show() }}).always(function(){ $('#rfn_preloader').hide() }).done(function(data){
+    wmgui.active_ajax = $.ajax({
+        type: 'GET',
+        url: wmgui.rfn_endpoint,
+        data: {q: JSON.stringify(given_search)},
+        beforeSend: function(){ $('#rfn_preloader').show() }
+
+    }).always(function(){ $('#rfn_preloader').hide() }).done(function(data){
         if (data.error) return wmgui.notify(data.error);
 
         var was_facet = null,
@@ -814,7 +832,14 @@ function open_sim_col(entry, entype, rank){
     if (allpurpose) cur_obj.allpurpose = true;
 
     try { wmgui.quick_ajax.abort() } catch(e){}
-    wmgui.quick_ajax = $.ajax({type: 'GET', url: wmgui.sim_endpoint, data: cur_obj, beforeSend: function(){ $('#sim_preloader').show() }}).always(function(){ $('#sim_preloader').hide() }).done(function(data){
+
+    wmgui.quick_ajax = $.ajax({
+        type: 'GET',
+        url: wmgui.sim_endpoint,
+        data: cur_obj,
+        beforeSend: function(){ $('#sim_preloader').show() }
+
+    }).always(function(){ $('#sim_preloader').hide() }).done(function(data){
         if (data.error) return wmgui.notify(data.error);
         var counter = 0,
             sim_html = '';
@@ -1273,7 +1298,12 @@ function user_logout(silent){
 }
 
 function force_relogin(show_msg){
-    $.ajax({type: 'POST', url: wmgui.logout_endpoint, data: {sid: wmgui.sid}}).done(function(data){}).fail(function(xhr, textStatus, errorThrown){});
+    $.ajax({
+        type: 'POST',
+        url: wmgui.logout_endpoint,
+        data: {sid: wmgui.sid}
+
+    }).done(function(data){}).fail(function(xhr, textStatus, errorThrown){});
     user_logout(true);
     window.location.replace('#modal/login');
     if (show_msg) wmgui.notify(show_msg);
@@ -1351,7 +1381,12 @@ function show_dunit_info(phid, entry){
     if (phid){
         $('#ind_col > span').html('<img src="' + wmgui.static_host + '/phid_thumbs/' + phid + '.png" />');
 
-        wmgui.active_ajax = $.ajax({type: 'GET', url: wmgui.phase_endpoint, data: {phid: phid}}).done(function(data){
+        wmgui.active_ajax = $.ajax({
+            type: 'GET',
+            url: wmgui.phase_endpoint,
+            data: {phid: phid}
+
+        }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
 
             var html = '<h4>' + data.out.formula_html.split(' ')[0] + ' ' + (data.out.spg || '?') + ' ' + (data.out.pearson || '&mdash;') + '</h4><p>This phase was reported in ' + data.out.articles_count + ' article' + (data.out.articles_count > 1 ? 's' : '')  + '.';

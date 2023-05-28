@@ -5,6 +5,8 @@ var wmgui = window.wmgui || {};
 wmgui.view_mode = 1; // 1 = intro screen, 2 = results screen
 wmgui.search_type = 0; // 0 = entries, 1 = phases, or 2 = articles
 wmgui.thumbed_display = false;
+wmgui.ctx_strict_phases = ''; // empty string or anything (bool)
+//wmgui.ctx_subphases = ''; // empty string or anything (bool)
 wmgui.ntab_tolerance = 100;
 wmgui.chosen_table_browser = false;
 wmgui.fuzzyout = false;
