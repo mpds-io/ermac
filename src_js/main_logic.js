@@ -1268,7 +1268,7 @@ function show_modal(which){
 function user_login(sid, name, acclogin, admin, oauths, ipbased){
     var corner_name = (name.length > 40) ? name.substr(0, 37) + '&hellip;' : name;
     $('#auth_user').html(corner_name);
-    $('#account_holder_name').html('Hi ' + name + ' &#x1f44d;');
+    $('#account_holder_name').html('Hello, ' + name + ' &#x1f44d;');
     $('#account_holder_acclogin > span').html(ipbased ? 'location-based' : '<a href="mailto:' + acclogin + '">' + acclogin + '</a>');
 
     wmgui.sid = sid;
@@ -1276,6 +1276,7 @@ function user_login(sid, name, acclogin, admin, oauths, ipbased){
 
     $('div.logged_out').hide();
     $('div.logged_in').show();
+    $('#account_pass_change').hide();
 
     window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({
         sid: sid,
