@@ -82,7 +82,7 @@ function register_html(){
     <div id="results"><table id="databrowser"></table></div>
 
     <div id="loadscroll" class="context_msg">Getting the rest of data...</div>
-    <div id="toomuch" class="context_msg">There are <span></span> results not shown &mdash; please, refine the search or use API.</div>
+    <div id="toomuch" class="context_msg">There are <span></span> results not shown &mdash; please, refine the search or use the MPDS API.</div>
     <div id="plthint" class="context_msg">
         <div id="plt_pie"><a class="plthint_links" title="Plot pie charts (overview)" rel="nofollow" href="/" rev="pie"></a></div>
         <div id="plt_lit"><a class="plthint_links" title="Plot bar charts (literature)" rel="nofollow" href="/" rev="lit"></a></div>
@@ -651,8 +651,8 @@ function register_html(){
     <ul id="tab_links">
         <li rev="usr_tab_account" class="working">account</li>
         <li rev="usr_tab_perms">data access</li>
-        <li rev="usr_tab_api_key">API key</li>
-        <li rev="usr_tab_absolidix" class="only_mpds">my data</li>
+        <li rev="usr_tab_api_key" class="only_regular">API key</li>
+        <li rev="usr_tab_absolidix" class="only_regular only_mpds">my data</li>
         <li rev="usr_tab_ctrl" style="display:none;" class="admin">management</li>
     </ul>
 
@@ -663,7 +663,7 @@ function register_html(){
 
         <div id="account_holder_name"></div>
         <div id="account_holder_acclogin">Login: <span></span></div>
-        <div id="account_holder_accpass">Password: <span>change</span></div>
+        <div id="account_holder_accpass">Password: <span id="accpass_trigger"></span></div>
 
         <div id="account_pass_change" style="display:none;">
             <div id="account_pass_hint">MPDS password is optional.<br />If not set, other ways to log in can be used.</div>
@@ -681,7 +681,7 @@ function register_html(){
         <div class="divider"></div>
 
         <div style="width:150px;margin:30px auto 10px;">
-            <div id="logout_trigger" class="wmbutton" style="background:#c00;border-color:#c00;">Logout</div>
+            <div id="logout_trigger" class="wmbutton">Logout</div>
         </div>
     </div>
 

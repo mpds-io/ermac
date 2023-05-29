@@ -117,11 +117,13 @@ wmgui.logout_endpoint =   wmgui.api_host + '/users/logout';
 wmgui.restore_endpoint =  wmgui.api_host + '/users/lost_password';
 wmgui.password_endpoint = wmgui.api_host + '/users/new_password';
 wmgui.access_endpoint =   wmgui.api_host + '/users/access';
+wmgui.ip_endpoint =       wmgui.api_host + '/users/ip';
 wmgui.ratify_endpoint =   wmgui.api_host + '/users/ratify';
 wmgui.api_key_endpoint =  wmgui.api_host + '/users/api_key';
 wmgui.perms_endpoint =    wmgui.api_host + '/users/perms';
+wmgui.ip_perms_endpoint = wmgui.api_host + '/users/ip_perms';
 wmgui.funnel_endpoint =   wmgui.api_host + '/users/funnel';
-wmgui.fd_endpoint =       wmgui.api_host + '/users/feedback';
+//wmgui.fd_endpoint =       wmgui.api_host + '/users/feedback';
 wmgui.search_endpoint =   wmgui.api_host + '/search/facet';
 wmgui.rfn_endpoint =      wmgui.api_host + '/search/refinement';
 wmgui.sim_endpoint =      wmgui.api_host + '/search/interlinkage';
@@ -310,7 +312,7 @@ wmgui.aets = {
 //wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us why, anonymously"></textarea><select id="fdwidget_msgtype"><option value="No reason" selected>Please select reason...</option><option value="Data missing">Data missing</option><option value="Error in data">Error in data</option><option value="Other">Other</option></select><div id="fdwidget_trigger" class="wmbutton">Send</div>';
 
 wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
-wmgui.mockyear = '2022'; // used for the in-house generated data
+wmgui.mockyear = '2022'; // used for the in-house generated data, TODO switch to 2023
 
 wmgui.storage_history_key = 'wm_search_log_v5';
 wmgui.storage_user_key = 'wm';

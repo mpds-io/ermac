@@ -203,26 +203,25 @@ function url__modal(arg){
             return window.location.href = 'oauth/matcloud.html';
         } */
 
-        if ($("#restore_by_email").val()) $("#login_email").val($("#restore_by_email").val());
-        else $("#login_email").val('');
-        $("#login_password").val('');
-        $('#loginbox').show();
-        $("#login_email").focus();
+        $.ajax({
+            type: 'POST',
+            url: wmgui.ip_endpoint,
 
-        // for OAuth linking redirect only
-        // see *wm_u_email* in email_chain.html
-        var u_email = window.localStorage.getItem('wm_u_email') || false;
-        if (u_email){
-            $("#login_email").val(u_email);
-            window.localStorage.removeItem('wm_u_email');
-        }
+        }).done(function(data){
+
+            if (!data.sid || !data.name || !data.acclogin)
+                return show_modal(arg);
+
+            user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths, true);
+            $('#userbox').trigger('click');
+
+        }).fail(function(xhr, textStatus, errorThrown){
+            return show_modal(arg);
+        });
 
     } else if (arg == "restore"){
         if (wmgui.sid) return window.location.replace('#modal/menu');
-        if ($("#login_email").val()) $("#restore_by_email").val($("#login_email").val());
-        else $("#restore_by_email").val('');
-        $('#restorebox').show();
-        $("#restore_by_email").focus();
+        show_modal(arg);
 
     } else if (arg == "menu"){
         if (!wmgui.sid) return window.location.replace('#modal/login');
@@ -231,6 +230,7 @@ function url__modal(arg){
         $('#menubox, div.menu_collateral').show();
 
     } else return wmgui.notify("Sorry, unknown modal window");
+
     $('#overlay').show();
 }
 
@@ -318,9 +318,11 @@ function url__junction(arg){
     if (!wmgui.sid)
         return window.location.replace('#products');
 
+    var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
+
     wmgui.active_ajax = $.ajax({
         type: 'POST',
-        url: wmgui.perms_endpoint,
+        url: locals.ipbased ? wmgui.ip_perms_endpoint : wmgui.perms_endpoint,
         data: {sid: wmgui.sid},
         beforeSend: wmgui.show_preloader
 

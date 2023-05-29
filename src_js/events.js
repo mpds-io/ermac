@@ -434,7 +434,10 @@ function register_events(){
 
         } else if (act == 'my'){
             var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
-            if (locals.name){
+            if (locals.ipbased){
+                window.location.hash = '#inquiry/orgs=' + locals.name;
+
+            } else if (locals.name){
                 var names = locals.name.split(' ');
                 window.location.hash = '#inquiry/authors=' + escape(names[names.length - 1]);
             }
@@ -772,6 +775,7 @@ function register_events(){
 
         var that = $(this),
             desttab = that.attr('rev');
+
         that.addClass('working').siblings().removeClass('working');
         $('div.menu_tabs').hide();
         $('#' + desttab).show();
@@ -800,9 +804,11 @@ function register_events(){
         } else if (desttab == 'usr_tab_perms'){
             $('#hintsbox_msg').html(wmgui.get_random_term(wmgui.welcome_msgs));
 
+            var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
+
             wmgui.active_ajax = $.ajax({
                 type: 'POST',
-                url: wmgui.perms_endpoint,
+                url: locals.ipbased ? wmgui.ip_perms_endpoint : wmgui.perms_endpoint,
                 data: {sid: wmgui.sid},
                 beforeSend: wmgui.show_preloader
 
@@ -943,7 +949,10 @@ function register_events(){
         });
     });
 
-    $('#account_holder_accpass > span').click(function(){
+    $('#accpass_trigger').click(function(){
+
+        if ($(this).hasClass('disabled')) return false;
+
         $('#account_pass_change').toggle();
     });
 
@@ -983,6 +992,9 @@ function register_events(){
     });
 
     $('#logout_trigger').click(function(){
+
+        if ($(this).hasClass('disabled')) return false;
+
         $.ajax({
             type: 'POST',
             url: wmgui.logout_endpoint,

@@ -1108,11 +1108,11 @@ function get_visavis_url(request, type, height){
 }
 
 function describe_perms(perms){
-    var out_gui = '<h3>Web-browser access</h3><ul>',
+    var out_gui = '<h3>Web-browser access = GUI</h3><ul>',
         out_api = '<h3>Programmatic access = API</h3><ul>';
 
     if (perms.gui){
-        if (perms.gui.root) out_gui += '<li>Complete access</li>';
+        if (perms.gui.root) out_gui += '<li>complete access</li>';
         else {
             if (!$.isArray(perms.gui)) perms.gui = [perms.gui];
             $.each(perms.gui, function(m, ruleset){
@@ -1127,16 +1127,17 @@ function describe_perms(perms){
                         } catch(e){ return false }
                     }
                 });
-                if (ruleset.refs == 'ALL')            out_gui += '<li>Full access to reference details</li>';
-                else if (ruleset.refs == 'MENTIONED') out_gui += '<li>Access to corresponding references</li>';
-                else                                  out_gui += '<li>No access to reference details</li>';
+                if (ruleset.refs == 'ALL')            out_gui += '<li>full access to reference details</li>';
+                else if (ruleset.refs == 'MENTIONED') out_gui += '<li>access to corresponding references</li>';
+                else                                  out_gui += '<li>no access to reference details</li>';
                 out_gui += '<li style="font-size:0.8em;line-height:0.8em;"><br /></li>';
             });
         }
-    } else out_gui += '<li>Only open data</li>';
+    } else out_gui += '<li>only open data</li>';
 
     if (perms.api){
-        if (perms.api.root) out_api += '<li>Complete access</li>';
+        if (perms.api.root) out_api += '<li>complete access</li>';
+        else if (perms.api.disabled) out_api += '<li>disabled; please check on the other device</li>';
         else {
             if (!$.isArray(perms.api)) perms.api = [perms.api];
             $.each(perms.api, function(m, ruleset){
@@ -1154,7 +1155,7 @@ function describe_perms(perms){
                 out_api += '<li style="font-size:0.8em;line-height:0.8em;"><br /></li>';
             });
         }
-    } else out_api += '<li>Only open data</li>';
+    } else out_api += '<li>only open data</li>';
 
     return out_gui + '</ul><div class="divider"></div>' + out_api + '</ul>';
 }
@@ -1236,12 +1237,39 @@ function show_tooltip(info, forced){
     document.getElementById('tooltip').style.display = 'block';
 }
 
-function user_login(sid, name, acclogin, admin, oauths){
+function show_modal(which){
+
+    if (which == 'login'){
+
+        if ($("#restore_by_email").val()) $("#login_email").val($("#restore_by_email").val());
+        else $("#login_email").val('');
+
+        $("#login_password").val('');
+        $('#loginbox').show();
+        $("#login_email").focus();
+
+        // for OAuth linking redirect only
+        // see *wm_u_email* in email_chain.html
+        var u_email = window.localStorage.getItem('wm_u_email') || false;
+        if (u_email){
+            $("#login_email").val(u_email);
+            window.localStorage.removeItem('wm_u_email');
+        }
+    } else if (which == 'restore'){
+
+        if ($("#login_email").val()) $("#restore_by_email").val($("#login_email").val());
+        else $("#restore_by_email").val('');
+
+        $('#restorebox').show();
+        $("#restore_by_email").focus();
+    }
+}
+
+function user_login(sid, name, acclogin, admin, oauths, ipbased){
     var corner_name = (name.length > 40) ? name.substr(0, 37) + '&hellip;' : name;
     $('#auth_user').html(corner_name);
-
-    $('#account_holder_name').text('Hi ' + name + '!');
-    $('#account_holder_acclogin > span').html('<a href="mailto:' + acclogin + '">' + acclogin + '</a>');
+    $('#account_holder_name').html('Hi ' + name + ' &#x1f44d;');
+    $('#account_holder_acclogin > span').html(ipbased ? 'location-based' : '<a href="mailto:' + acclogin + '">' + acclogin + '</a>');
 
     wmgui.sid = sid;
     wmgui.oauths = oauths;
@@ -1249,8 +1277,26 @@ function user_login(sid, name, acclogin, admin, oauths){
     $('div.logged_out').hide();
     $('div.logged_in').show();
 
-    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({sid: sid, name: name, acclogin: acclogin, admin: admin})); // oauths: oauths
+    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({
+        sid: sid,
+        name: name,
+        acclogin: acclogin,
+        admin: admin,
+        ipbased: ipbased
+    })); // TODO? oauths: oauths
+
     admin ? $('li.admin').show() : $('li.admin').hide();
+
+    if (ipbased){
+        $('.only_regular').hide();
+        $('#logout_trigger').addClass('disabled');
+        $('#accpass_trigger').text('disabled').addClass('disabled');
+
+    } else {
+        $('.only_regular').show();
+        $('#logout_trigger').removeClass('disabled');
+        $('#accpass_trigger').text('change').removeClass('disabled');
+    }
 
     try {
         document.getElementById('visavis_iframe').contentWindow.location.reload();
@@ -1259,7 +1305,7 @@ function user_login(sid, name, acclogin, admin, oauths){
     }
     communicate_windows('local_user_login');
 
-    wmgui.notify('You are logged in');
+    wmgui.notify('Logged in as ' + name);
 }
 
 function local_user_login(){ // FIXME window.location.reload();
@@ -1271,7 +1317,7 @@ function local_user_login(){ // FIXME window.location.reload();
         return;
 
     if (locals.sid && locals.name && locals.acclogin){
-        user_login(locals.sid, locals.name, locals.acclogin, locals.admin, locals.oauths);
+        user_login(locals.sid, locals.name, locals.acclogin, locals.admin, locals.oauths, locals.ipbased);
     }
 }
 
