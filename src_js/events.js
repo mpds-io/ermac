@@ -2,8 +2,48 @@
 
 var wmgui = window.wmgui || {};
 
+const visavis = {
+    elementals_on: ['nump'],
+}
+
+const messageHandler = {
+
+    'bar_click': function({facet, value}) {
+        stop_visavis()
+        window.location.hash = wmgui.aug_search_cmd(facet, value)
+    },
+
+    'pie_click': function({facet, value}) {
+        stop_visavis()
+        window.location.hash = wmgui.aug_search_cmd(facet, value)
+    },
+
+    'graph_click': function({facet, label}) {
+        stop_visavis()
+        let value = label
+        if (facet == 'codens') {
+        	value = label.split("'")[0]; // FIXME years lost
+        } else if (facet == 'formulae') {
+        	value = wmutils.termify_formulae(label.split(",")[0]);
+        }
+        window.location.hash = wmgui.aug_search_cmd(facet, value)
+    },
+
+    'discovery_click': function({label}) {
+        const uri = window.location.protocol + "//" + window.location.host + window.location.pathname + window.parent.wmgui.aug_search_cmd("elements", label)
+        window.open(uri);
+    },
+
+}
+
 function register_events(){
 
+    window.addEventListener('message', function(event){
+        const handler = messageHandler[event.data.name]
+        if (handler) handler(event.data.args)
+        else throw new Error(`no handler for message "${event.data.name}"`)
+    });
+    
     document.querySelector('#ptable_area > ul').addEventListener('click', function(event){
         var that = event.target;
         if (!that.hasAttribute('data-pos'))
@@ -508,9 +548,15 @@ function register_events(){
             if (z_op) $('<span class="sops" rel="z">' + z_op + '</span>').appendTo('#viscube_' + z_sort);
 
             if (document.getElementById('visavis_iframe').contentWindow.location.hash.indexOf('fixel=1') !== -1)
-                document.getElementById('visavis_iframe').contentWindow.matrix_order(x_sort, y_sort, x_op, y_op);
+                document.getElementById('visavis_iframe').contentWindow.postMessage({
+                    name: 'matrix_order', 
+                    args: {x_sort, y_sort, x_op, y_op}
+                }, '*')
             else
-                document.getElementById('visavis_iframe').contentWindow.cube_order(x_sort, y_sort, z_sort, x_op, y_op, z_op);
+                document.getElementById('visavis_iframe').contentWindow.postMessage({
+                    name: 'cube_order', 
+                    args: {x_sort, y_sort, z_sort, x_op, y_op, z_op}
+                }, '*')
 
         } else {
             if ((x_op && x_sort == 'count') || (y_op && y_sort == 'count')) return wmgui.notify('Sorry, data counts are not supported');
@@ -524,7 +570,10 @@ function register_events(){
             if (x_op) $('<span class="sops" rel="x">' + x_op + '</span>').appendTo('#vismatrix_' + x_sort);
             if (y_op) $('<span class="sops" rel="y">' + y_op + '</span>').appendTo('#vismatrix_' + y_sort);
 
-            document.getElementById('visavis_iframe').contentWindow.matrix_order(x_sort, y_sort, x_op, y_op);
+            document.getElementById('visavis_iframe').contentWindow.postMessage({
+                name: 'matrix_order', 
+                args: {x_sort, y_sort, x_op, y_op}
+            }, '*')
         }
         $('#ss_custom_box, #overlay').hide();
         $('div.ss_col > ul').empty();
@@ -533,7 +582,10 @@ function register_events(){
     $('#close_dc_dialogue').click(function(){
         $('#discovery_custom_box, #overlay').hide();
         $('#discovery_enabled, #discovery_disabled').empty();
-        document.getElementById('visavis_iframe').contentWindow.discovery_rerun();
+        document.getElementById('visavis_iframe').contentWindow.postMessage({
+            name: 'discovery_elementals_on', 
+            args: {elementals_on: visavis.elementals_on}
+        }, '*')
         $('#select_cmp_trigger').val('X');
     });
 
@@ -1129,7 +1181,10 @@ function register_events(){
         that.addClass('embodied');
         $('span.sops').remove();
 
-        document.getElementById('visavis_iframe').contentWindow.matrix_order(type);
+        document.getElementById('visavis_iframe').contentWindow.postMessage({
+            name: 'matrix_order', 
+            args: {x_sort: type}
+        }, '*')
     });
     $('#ctxpanel_cube > ul > li').click(function(){
         var that = $(this);
@@ -1144,9 +1199,15 @@ function register_events(){
         $('span.sops').remove();
 
         if (document.getElementById('visavis_iframe').contentWindow.location.hash.indexOf('fixel=1') !== -1)
-            document.getElementById('visavis_iframe').contentWindow.matrix_order(type);
+            document.getElementById('visavis_iframe').contentWindow.postMessage({
+                name: 'matrix_order', 
+                args: {x_sort: type}
+            }, '*')
         else
-            document.getElementById('visavis_iframe').contentWindow.cube_order(type, type, type);
+            document.getElementById('visavis_iframe').contentWindow.postMessage({
+                name: 'cube_order', 
+                args: {x_sort: type, y_sort: type, z_sort: type}
+            }, '*')
     });
     $('#ctxpanel_graph > ul > li').click(function(){
         var that = $(this);
@@ -1155,7 +1216,11 @@ function register_events(){
         $('#ctxpanel_graph > ul > li.embodied').removeClass('embodied');
         that.addClass('embodied');
 
-        document.getElementById('visavis_iframe').contentWindow.graph_rebuild(type);
+        const mapping = {'props': 'prel', 'aetypes': 'hrel', 'lattices': 'trel', 'articles': 'arel', 'geos': 'grel'};
+        document.getElementById('visavis_iframe').contentWindow.postMessage({
+            name: 'graph_rel_change', 
+            args: {rel: mapping[type]}
+        }, '*')
     });
     $('#select_cmp_trigger').change(function(){
         var value = $(this).val(),
@@ -1167,7 +1232,10 @@ function register_events(){
         if (value == 'X')
             return;
         else if (value == 'Y'){
-            document.getElementById('visavis_iframe').contentWindow.cmp_discard(wmgui.visavis_curtype);
+            document.getElementById('visavis_iframe').contentWindow.postMessage({
+                name: 'cmp_discard', 
+                args: {type: wmgui.visavis_curtype}
+            }, '*')
             return;
         }
         else if (value == 'Z'){
@@ -1179,13 +1247,16 @@ function register_events(){
             return;
 
         var url = wmgui.vis_endpoint + '/' + wmgui.visavis_curtype + '?q=' + value;
-        document.getElementById('visavis_iframe').contentWindow.cmp_download(url, wmgui.visavis_curtype);
+        document.getElementById('visavis_iframe').contentWindow.postMessage({
+            name: 'cmp_download', 
+            args: {url, type: wmgui.visavis_curtype}
+        }, '*')
     });
     $('li.discovery_custom').click(function(){
         if (!document.getElementById('visavis_iframe') || !document.getElementById('visavis_iframe').contentWindow)
             return false;
 
-        var list = document.getElementById('visavis_iframe').contentWindow.visavis.elementals_on,
+        var list = visavis.elementals_on,
             html_list_on = '',
             html_list_off = '';
 
@@ -1203,15 +1274,15 @@ function register_events(){
     $('#discovery_custom_box').on('click', 'div.rearrange', function(){
         var that = $(this),
             prop = that.attr('rel'),
-            idx = document.getElementById('visavis_iframe').contentWindow.visavis.elementals_on.indexOf(prop);
+            idx = visavis.elementals_on.indexOf(prop);
         if (that.parent().attr('id') == 'discovery_enabled'){
             if ($('#discovery_enabled div.rearrange').length == 1)
                 return false;
-            if (idx !== -1) document.getElementById('visavis_iframe').contentWindow.visavis.elementals_on.splice(idx, 1);
+            if (idx !== -1) visavis.elementals_on.splice(idx, 1);
             $('#discovery_disabled').append('<div class="rearrange" rel="' + prop + '">' + wmgui.elemental_names[prop] + ' (+)</div>');
             $('#dc_' + prop).hide();
         } else {
-            if (idx == -1) document.getElementById('visavis_iframe').contentWindow.visavis.elementals_on.push(prop);
+            if (idx == -1) visavis.elementals_on.push(prop);
             $('#discovery_enabled').append('<div class="rearrange" rel="' + prop + '">' + wmgui.elemental_names[prop] + ' (&minus;)</div>');
             $('#dc_' + prop).show();
         }

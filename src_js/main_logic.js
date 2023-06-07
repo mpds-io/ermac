@@ -1086,7 +1086,10 @@ function rebuild_visavis(){
     }
 
     try {
-        document.getElementById('visavis_iframe').contentWindow.fixel_manage(wmgui.visavis_curtype == 'cube' && wmgui.search.elements);
+        document.getElementById('visavis_iframe').contentWindow.postMessage({
+            name: 'fixel_manage',
+            args: {status:wmgui.visavis_curtype == 'cube' && wmgui.search.elements}
+        });
     } catch (e){
         console.error('No iframe access');
     }
@@ -1098,13 +1101,15 @@ function stop_visavis(){
     wmgui.visavis_terminating = false;
 }
 
-function get_visavis_url(request, type, height){
+function get_api_mpds_url(request, type){
     if (wmgui.visavis_curtype == 'pie' && !type)
-        return wmgui.v_vis_addr + '#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
+        return wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request))
+    return wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request));
+}
 
-    var height_str = height ? ('&visavis_height=' + height) : '';
+function get_visavis_url(request, type, height){
+    return wmgui.v_vis_addr + '#' + get_api_mpds_url(request, type)
 
-    return wmgui.v_vis_addr + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
 }
 
 function describe_perms(perms){

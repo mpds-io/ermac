@@ -89,7 +89,7 @@ wmgui.journal_converter = {j2c: function(){}, c2j: function(){}};
 wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure', 'electron density of states', 'vibrational spectra']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
 
 wmgui.visavis_curtype = 'pie'; // pie, graph, discovery, matrix, cube, qproj, lit TODO: heuristic plot type detection
-wmgui.visavis_ready = false;
+wmgui.visavis_ready = true;
 wmgui.visavis_working = false;
 wmgui.visavis_terminating = false;
 wmgui.visavis_starting = false;
@@ -142,9 +142,12 @@ wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localho
 wmgui.v_player_addr_tpl = '/crystvis/player.html';
 wmgui.v_player_addr =     wmgui.v_player_addr_tpl + '#' +              wmgui.api_host + '/download/s?fmt=cif&q=';
 wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' +       wmgui.api_host + '/download/c?fmt=png&q=';
-wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?241022#' +    wmgui.api_host + '/download/c?fmt=json&q=';
-wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?241022#' +    wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_vis_addr =        wmgui.static_host + '/visavis/?nobanner&241022';
+wmgui.v_pd_addr_anon =    'http://localhost:9080/visavis/frame/-/test.html' + '?241022#' +    wmgui.api_host + '/download/c?fmt=json&q=';
+// wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?241022#' +    wmgui.api_host + '/download/c?fmt=json&q=';
+wmgui.v_sd_addr =         'http://localhost:9080/visavis/frame/-/test.html' + '?241022#' +    wmgui.api_host + '/download/p?fmt=json&q=';
+// wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?241022#' +    wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_vis_addr =        'http://localhost:9080/visavis/frame/-/test.html' + '?nobanner&241022'
+// wmgui.v_vis_addr =        wmgui.static_host + '/visavis/?nobanner&241022';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_pd_3d_addr =      wmgui.static_host + '/labs/pd3d/?';
 
