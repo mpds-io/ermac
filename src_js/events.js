@@ -34,6 +34,16 @@ const messageHandler = {
         window.open(uri);
     },
 
+    'matrix_click': function({cmt}) {
+        const uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/binary%20' + cmt
+        window.open(uri);
+    },
+
+    'cube_click': function({label}) {
+        const uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/' + label
+        window.open(uri);
+    },
+
 }
 
 function register_events(){
@@ -1198,16 +1208,10 @@ function register_events(){
         that.addClass('embodied');
         $('span.sops').remove();
 
-        if (document.getElementById('visavis_iframe').contentWindow.location.hash.indexOf('fixel=1') !== -1)
-            document.getElementById('visavis_iframe').contentWindow.postMessage({
-                name: 'matrix_order', 
-                args: {x_sort: type}
-            }, '*')
-        else
-            document.getElementById('visavis_iframe').contentWindow.postMessage({
-                name: 'cube_order', 
-                args: {x_sort: type, y_sort: type, z_sort: type}
-            }, '*')
+        document.getElementById('visavis_iframe').contentWindow.postMessage({
+            name: 'cube_order', 
+            args: {x_sort: type, y_sort: type, z_sort: type}
+        }, '*')
     });
     $('#ctxpanel_graph > ul > li').click(function(){
         var that = $(this);
@@ -1233,8 +1237,7 @@ function register_events(){
             return;
         else if (value == 'Y'){
             document.getElementById('visavis_iframe').contentWindow.postMessage({
-                name: 'cmp_discard', 
-                args: {type: wmgui.visavis_curtype}
+                name: 'cmp_discard',
             }, '*')
             return;
         }

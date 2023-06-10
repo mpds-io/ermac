@@ -1085,6 +1085,13 @@ function rebuild_visavis(){
         $('#visgraph_props').addClass('embodied');
     }
 
+    if (wmgui.visavis_curtype == 'discovery'){
+        document.getElementById('visavis_iframe').contentWindow.postMessage({
+            name: 'discovery_elementals_on', 
+            args: {elementals_on: visavis.elementals_on}
+        }, '*')
+    }
+
     try {
         document.getElementById('visavis_iframe').contentWindow.postMessage({
             name: 'fixel_manage',

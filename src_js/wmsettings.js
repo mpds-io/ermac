@@ -110,6 +110,9 @@ wmgui.numerics = {
 wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
 wmgui.static_host =       'https://mpds.io';
+wmgui.visavis_host =      'http://visavis.mpds.io';
+// wmgui.visavis_host =      wmgui.static_host + '/visavis/;
+// wmgui.visavis_host =      'http://localhost:9080/visavis/-/test.html'; //
 
 // below are the main MPDS API endpoints
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';
@@ -142,12 +145,9 @@ wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localho
 wmgui.v_player_addr_tpl = '/crystvis/player.html';
 wmgui.v_player_addr =     wmgui.v_player_addr_tpl + '#' +              wmgui.api_host + '/download/s?fmt=cif&q=';
 wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' +       wmgui.api_host + '/download/c?fmt=png&q=';
-wmgui.v_pd_addr_anon =    'http://localhost:9080/visavis/frame/-/test.html' + '?241022#' +    wmgui.api_host + '/download/c?fmt=json&q=';
-// wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?241022#' +    wmgui.api_host + '/download/c?fmt=json&q=';
-wmgui.v_sd_addr =         'http://localhost:9080/visavis/frame/-/test.html' + '?241022#' +    wmgui.api_host + '/download/p?fmt=json&q=';
-// wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?241022#' +    wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_vis_addr =        'http://localhost:9080/visavis/frame/-/test.html' + '?nobanner&241022'
-// wmgui.v_vis_addr =        wmgui.static_host + '/visavis/?nobanner&241022';
+wmgui.v_pd_addr_anon =    wmgui.visavis_host + '?241022#' +    wmgui.api_host + '/download/c?fmt=json&q=';
+wmgui.v_sd_addr =         wmgui.visavis_host + '?241022#' +    wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_vis_addr =        wmgui.visavis_host + '?nobanner&241022'
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_pd_3d_addr =      wmgui.static_host + '/labs/pd3d/?';
 
