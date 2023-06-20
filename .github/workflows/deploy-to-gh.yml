@@ -23,8 +23,11 @@ jobs:
 
       - name: Only leave necessary files
         run: |
-          find . -maxdepth 1 ! -name 'example_dev.html' ! -name 'jquery.min.js' ! -name 'ermac.min.js' -type f -exec rm -f {} +
-          find . ! -name '.git' ! -name 'webassets' ! -name 'crystvis' ! -name '.' -type d -exec rm -rf {} +
+          rm -rf third_party
+          rm -rf src_js
+          rm -rf deploy
+          rm -rf oauth
+          mv example_prod.html index.html
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.7
