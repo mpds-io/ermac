@@ -30,4 +30,4 @@ jobs:
       - name: Clean deployment
         run: |
           find . ! -name 'example_dev.html' ! -name 'jquery.min.js' ! -name 'ermac.min.js' -type f -exec rm -f {} +
-          find . ! -name 'webassets' ! -name 'crystvis' -type d -exec rm -rf {} +
+          find . ! -name 'webassets' ! -name 'crystvis' ! -name '.' -type d -exec rm -rf {} +
