@@ -21,14 +21,6 @@ jobs:
         run: bash deploy/build_js.sh
         shell: bash
 
-      - name: Only leave necessary files
-        run: |
-          rm -rf third_party
-          rm -rf src_js
-          rm -rf deploy
-          rm -rf oauth
-          mv example_prod.html index.html
-
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
