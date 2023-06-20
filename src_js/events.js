@@ -2,23 +2,28 @@
 
 var wmgui = window.wmgui || {};
 
-const visavis = {
-    elementals_on: ['nump'],
-}
+var visavis_plot
+var discovery_elementals_on = ['nump']
 
-const messageHandler = {
+function register_events(){
+    visavis_plot = document.getElementsByTagName('visavis-plot')[0].view
 
-    'bar_click': function({facet, value}) {
+    visavis_plot.matrix_click = ({cmt}) => {
+        const uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/binary%20' + cmt
+        window.open(uri);
+    }
+
+    visavis_plot.bar_click = ({facet, value}) => {
         stop_visavis()
         window.location.hash = wmgui.aug_search_cmd(facet, value)
-    },
+    }
 
-    'pie_click': function({facet, value}) {
+    visavis_plot.pie_click = ({facet, value}) => {
         stop_visavis()
         window.location.hash = wmgui.aug_search_cmd(facet, value)
-    },
+    }
 
-    'graph_click': function({facet, label}) {
+    visavis_plot.graph_click = ({facet, label}) => {
         stop_visavis()
         let value = label
         if (facet == 'codens') {
@@ -27,26 +32,17 @@ const messageHandler = {
         	value = wmutils.termify_formulae(label.split(",")[0]);
         }
         window.location.hash = wmgui.aug_search_cmd(facet, value)
-    },
+    }
 
-    'discovery_click': function({label}) {
+    visavis_plot.discovery_click = ({label}) => {
         const uri = window.location.protocol + "//" + window.location.host + window.location.pathname + window.parent.wmgui.aug_search_cmd("elements", label)
         window.open(uri);
-    },
+    }
 
-    'matrix_click': function({cmt}) {
-        const uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/binary%20' + cmt
-        window.open(uri);
-    },
-
-    'cube_click': function({label}) {
+    visavis_plot.cube_click = ({label}) => {
         const uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/' + label
         window.open(uri);
-    },
-
-}
-
-function register_events(){
+    }
 
     window.addEventListener('message', function(event){
         const handler = messageHandler[event.data.name]
@@ -557,16 +553,12 @@ function register_events(){
             if (y_op) $('<span class="sops" rel="y">' + y_op + '</span>').appendTo('#viscube_' + y_sort);
             if (z_op) $('<span class="sops" rel="z">' + z_op + '</span>').appendTo('#viscube_' + z_sort);
 
-            if (document.getElementById('visavis_iframe').contentWindow.location.hash.indexOf('fixel=1') !== -1)
-                document.getElementById('visavis_iframe').contentWindow.postMessage({
-                    name: 'matrix_order', 
-                    args: {x_sort, y_sort, x_op, y_op}
-                }, '*')
-            else
-                document.getElementById('visavis_iframe').contentWindow.postMessage({
-                    name: 'cube_order', 
-                    args: {x_sort, y_sort, z_sort, x_op, y_op, z_op}
-                }, '*')
+            visavis_plot.x_sort(x_sort)
+            visavis_plot.y_sort(y_sort)
+            visavis_plot.z_sort(z_sort)
+            visavis_plot.x_op(x_op)
+            visavis_plot.y_op(y_op)
+            visavis_plot.z_op(z_op)
 
         } else {
             if ((x_op && x_sort == 'count') || (y_op && y_sort == 'count')) return wmgui.notify('Sorry, data counts are not supported');
@@ -580,10 +572,10 @@ function register_events(){
             if (x_op) $('<span class="sops" rel="x">' + x_op + '</span>').appendTo('#vismatrix_' + x_sort);
             if (y_op) $('<span class="sops" rel="y">' + y_op + '</span>').appendTo('#vismatrix_' + y_sort);
 
-            document.getElementById('visavis_iframe').contentWindow.postMessage({
-                name: 'matrix_order', 
-                args: {x_sort, y_sort, x_op, y_op}
-            }, '*')
+            visavis_plot.matrix_x_sort(x_sort)
+            visavis_plot.matrix_y_sort(y_sort)
+            visavis_plot.matrix_x_op(x_op)
+            visavis_plot.matrix_y_op(y_op)
         }
         $('#ss_custom_box, #overlay').hide();
         $('div.ss_col > ul').empty();
@@ -592,10 +584,7 @@ function register_events(){
     $('#close_dc_dialogue').click(function(){
         $('#discovery_custom_box, #overlay').hide();
         $('#discovery_enabled, #discovery_disabled').empty();
-        document.getElementById('visavis_iframe').contentWindow.postMessage({
-            name: 'discovery_elementals_on', 
-            args: {elementals_on: visavis.elementals_on}
-        }, '*')
+        visavis_plot.discovery_elementals_on([...discovery_elementals_on])
         $('#select_cmp_trigger').val('X');
     });
 
@@ -1191,10 +1180,10 @@ function register_events(){
         that.addClass('embodied');
         $('span.sops').remove();
 
-        document.getElementById('visavis_iframe').contentWindow.postMessage({
-            name: 'matrix_order', 
-            args: {x_sort: type}
-        }, '*')
+        visavis_plot.matrix_x_sort( type )
+        visavis_plot.matrix_y_sort( type )
+        visavis_plot.matrix_x_op( null )
+        visavis_plot.matrix_y_op( null )
     });
     $('#ctxpanel_cube > ul > li').click(function(){
         var that = $(this);
@@ -1208,10 +1197,12 @@ function register_events(){
         that.addClass('embodied');
         $('span.sops').remove();
 
-        document.getElementById('visavis_iframe').contentWindow.postMessage({
-            name: 'cube_order', 
-            args: {x_sort: type, y_sort: type, z_sort: type}
-        }, '*')
+        visavis_plot.x_sort( type )
+        visavis_plot.y_sort( type )
+        visavis_plot.z_sort( type )
+        visavis_plot.x_op( null )
+        visavis_plot.y_op( null )
+        visavis_plot.z_op( null )
     });
     $('#ctxpanel_graph > ul > li').click(function(){
         var that = $(this);
@@ -1221,10 +1212,7 @@ function register_events(){
         that.addClass('embodied');
 
         const mapping = {'props': 'prel', 'aetypes': 'hrel', 'lattices': 'trel', 'articles': 'arel', 'geos': 'grel'};
-        document.getElementById('visavis_iframe').contentWindow.postMessage({
-            name: 'graph_rel_change', 
-            args: {rel: mapping[type]}
-        }, '*')
+        visavis_plot.graph_rel(mapping[type])
     });
     $('#select_cmp_trigger').change(function(){
         var value = $(this).val(),
@@ -1236,9 +1224,7 @@ function register_events(){
         if (value == 'X')
             return;
         else if (value == 'Y'){
-            document.getElementById('visavis_iframe').contentWindow.postMessage({
-                name: 'cmp_discard',
-            }, '*')
+            visavis_plot.json_cmp_request(null)
             return;
         }
         else if (value == 'Z'){
@@ -1250,21 +1236,14 @@ function register_events(){
             return;
 
         var url = wmgui.vis_endpoint + '/' + wmgui.visavis_curtype + '?q=' + value;
-        document.getElementById('visavis_iframe').contentWindow.postMessage({
-            name: 'cmp_download', 
-            args: {url, type: wmgui.visavis_curtype}
-        }, '*')
+        visavis_plot.json_cmp_request(url)
     });
     $('li.discovery_custom').click(function(){
-        if (!document.getElementById('visavis_iframe') || !document.getElementById('visavis_iframe').contentWindow)
-            return false;
-
-        var list = visavis.elementals_on,
-            html_list_on = '',
+        var html_list_on = '',
             html_list_off = '';
 
         for (var prop in wmgui.elemental_names){
-            if (list.indexOf(prop) !== -1)
+            if (discovery_elementals_on.indexOf(prop) !== -1)
                 html_list_on += '<div class="rearrange" rel="' + prop + '">' + wmgui.elemental_names[prop] + ' (&minus;)</div>';
             else
                 html_list_off += '<div class="rearrange" rel="' + prop + '">' + wmgui.elemental_names[prop] + ' (+)</div>';
@@ -1277,15 +1256,15 @@ function register_events(){
     $('#discovery_custom_box').on('click', 'div.rearrange', function(){
         var that = $(this),
             prop = that.attr('rel'),
-            idx = visavis.elementals_on.indexOf(prop);
+            idx = discovery_elementals_on.indexOf(prop);
         if (that.parent().attr('id') == 'discovery_enabled'){
             if ($('#discovery_enabled div.rearrange').length == 1)
                 return false;
-            if (idx !== -1) visavis.elementals_on.splice(idx, 1);
+            if (idx !== -1) discovery_elementals_on.splice(idx, 1);
             $('#discovery_disabled').append('<div class="rearrange" rel="' + prop + '">' + wmgui.elemental_names[prop] + ' (+)</div>');
             $('#dc_' + prop).hide();
         } else {
-            if (idx == -1) visavis.elementals_on.push(prop);
+            if (idx == -1) discovery_elementals_on.push(prop);
             $('#discovery_enabled').append('<div class="rearrange" rel="' + prop + '">' + wmgui.elemental_names[prop] + ' (&minus;)</div>');
             $('#dc_' + prop).show();
         }

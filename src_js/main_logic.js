@@ -1007,11 +1007,7 @@ function start_visavis(plot_type){
     var cur_obj = {total_count: 1};
     $.extend(cur_obj, wmgui.search);
 
-    try {
-        document.getElementById('visavis_iframe').contentWindow.location.replace(get_visavis_url(cur_obj));
-    } catch (e){
-        console.error('No iframe access');
-    }
+    visavis_plot.json_request(get_mpds_request(cur_obj))
 }
 
 function manage_visavis(callback_fn, param_a, param_b){
@@ -1032,11 +1028,8 @@ function manage_visavis(callback_fn, param_a, param_b){
     var cur_obj = {total_count: 1};
     $.extend(cur_obj, wmgui.search);
 
-    try {
-        document.getElementById('visavis_iframe').contentWindow.location.replace(get_visavis_url(cur_obj));
-    } catch (e){
-        console.error('No iframe access');
-    }
+    visavis_plot.json_cmp_request(null)
+    visavis_plot.json_request(get_mpds_request(cur_obj))
 
     if (callback_fn) callback_fn(param_a, param_b);
     return true;
@@ -1086,20 +1079,12 @@ function rebuild_visavis(){
     }
 
     if (wmgui.visavis_curtype == 'discovery'){
-        document.getElementById('visavis_iframe').contentWindow.postMessage({
-            name: 'discovery_elementals_on', 
-            args: {elementals_on: visavis.elementals_on}
-        }, '*')
+        visavis_plot.discovery_elementals_on([...discovery_elementals_on])
     }
 
-    try {
-        document.getElementById('visavis_iframe').contentWindow.postMessage({
-            name: 'fixel_manage',
-            args: {status:wmgui.visavis_curtype == 'cube' && wmgui.search.elements}
-        });
-    } catch (e){
-        console.error('No iframe access');
-    }
+    // visavis_plot.fixel_manage(
+    //     {status:wmgui.visavis_curtype == 'cube' && wmgui.search.elements}
+    // )
 }
 
 function stop_visavis(){
@@ -1108,15 +1093,10 @@ function stop_visavis(){
     wmgui.visavis_terminating = false;
 }
 
-function get_api_mpds_url(request, type){
+function get_mpds_request(request, type){
     if (wmgui.visavis_curtype == 'pie' && !type)
         return wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request))
     return wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request));
-}
-
-function get_visavis_url(request, type, height){
-    return wmgui.v_vis_addr + '#' + get_api_mpds_url(request, type)
-
 }
 
 function describe_perms(perms){

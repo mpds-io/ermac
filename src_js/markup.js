@@ -755,7 +755,7 @@ function register_html(){
 </div>
 
 <!-- PLOTS EMBED -->
-<div id="visavis"><iframe id="visavis_iframe" frameborder=0 scrolling="no" width="100%" height="100%" src=""></iframe></div><!-- NB relative URL -->
+<div id="visavis"><visavis-plot></visavis-plot></div>
 
 <!-- DISCOVERY SETTINGS MODAL -->
 <div id="discovery_custom_box" class="modal user_dialogue">
