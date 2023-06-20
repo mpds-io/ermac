@@ -21,13 +21,13 @@ jobs:
         run: bash deploy/build_js.sh
         shell: bash
 
+      - name: Clean layout
+        run: |
+          find . ! -name 'example_dev.html' ! -name 'jquery.min.js' ! -name 'ermac.min.js' -type f -exec rm -f {} +
+          find . ! -name 'webassets' ! -name 'crystvis' ! -name '.' -type d -exec rm -rf {} +
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
           branch: gh-pages
           folder: .
-
-      - name: Clean deployment
-        run: |
-          find . ! -name 'example_dev.html' ! -name 'jquery.min.js' ! -name 'ermac.min.js' -type f -exec rm -f {} +
-          find . ! -name 'webassets' ! -name 'crystvis' ! -name '.' -type d -exec rm -rf {} +
