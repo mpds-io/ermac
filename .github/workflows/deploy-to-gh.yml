@@ -1,0 +1,34 @@
+name: Build on GitHub
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-then-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup JAVA
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          check-latest: true
+
+      - name: Run per se
+        run: bash deploy/build_js.sh
+        shell: bash
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.7
+        with:
+          branch: gh-pages
+          clean: true
+          clean-exclude: |
+            example_prod.html
+            jquery.min.js
+            favicon.ico
+            webassets/*
+            crystvis/player.html
