@@ -279,7 +279,7 @@ wmgui.aets = {
 'coplanar square 4-vertex': [7394, 68],
 'non-coplanar square 4-vertex': [7464, 69],
 'tetrahedron 4-vertex': [7535, 120],
-'square pyramid central atom outside or base plane 5-vertex': [7657, 81],
+'square pyramid central atom outside of base plane 5-vertex': [7657, 81],
 'coplanar pentagon 5-vertex': [7740, 67],
 'square pyramid 5-vertex': [7809, 125],
 'trigonal bipyramid 5-vertex': [7936, 107],

@@ -308,7 +308,7 @@ li.extd_refine, li.collapse_refine{padding-right:6px;}
 #own_phase{margin-top:4vmin;text-align:center;}
 #own_phase a, #sim_legend a{text-decoration:none;}
 
-div.examples{display:none;width:100%;height:auto;border-top:1px solid #888;margin-top:-1px;}
+div.examples{display:none;width:100%;height:auto;border-top:1px solid #888;margin-top:-1px;padding-bottom:10em;}
 div.examples > ul{margin:0;padding:0;}
 div.examples > ul > li{text-align:center;list-style:none;line-height:1.25em;margin:15px 0;padding-left:4px;}
 div.examples > ul > li > a{text-decoration:none;letter-spacing:-0.5px;}
@@ -401,7 +401,7 @@ label{font-size:0.95em;line-height:30px;cursor:pointer;}
 #ab_data, #ab_promise{background:#f7fbff;}
 #pd3d_data{background:#ffd;}
 #phases_ctx{user-select:none;}
-#phases_ctx span{display:inline-block;background:#f6f6f6;text-align:center;color:#555;font-size:0.95em;line-height:2em;margin:1.5em 0 2em;padding:5px;}
+#phases_ctx span{display:inline-block;background:#ffd;text-align:center;color:#555;font-size:0.95em;line-height:2em;margin:1.5em 0 2em;padding:5px;}
 
 #ss_custom_box{display:none;z-index:198;top:4%;margin-left:-305px;width:560px;height:auto;padding:25px;text-align:center;background:#fff;overflow:visible;}
 div.ss_col, div.sops_col{float:left;}

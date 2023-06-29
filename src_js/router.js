@@ -195,22 +195,21 @@ function url__modal(arg){
         if (wmgui.sid) return window.location.replace('#modal/menu');
         //if (wmgui.sid) return window.location.replace('#start'); // for Matcloud
 
-        // edition-based OAuth login
-        if (wmgui.edition == 1 || wmgui.edition == 6){
-            return window.location.href = 'oauth/asm.html';
-
-        } /* else if (wmgui.edition == 11 || wmgui.edition == 16){
-            return window.location.href = 'oauth/matcloud.html';
-        } */
-
         $.ajax({
             type: 'POST',
             url: wmgui.ip_endpoint,
 
         }).done(function(data){
 
-            if (!data.sid || !data.name || !data.acclogin)
+            if (!data.sid || !data.name || !data.acclogin){
+                // edition-based OAuth login
+                if (wmgui.edition == 1 || wmgui.edition == 6){
+                    return window.location.href = 'oauth/asm.html';
+                } /* else if (wmgui.edition == 11 || wmgui.edition == 16){
+                    return window.location.href = 'oauth/matcloud.html';
+                } */
                 return show_modal(arg);
+            }
 
             user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths, true);
             $('#userbox').trigger('click');
