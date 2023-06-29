@@ -268,7 +268,7 @@ function register_events(){
         return true;
     });
 
-    $('#visualize').click(function(){
+    $('#visualize, #xrpdize').click(function(){
         if (!close_vibox()) launch_iframed_app(this.getAttribute('data-rank'));
     });
 

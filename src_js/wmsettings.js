@@ -142,9 +142,10 @@ wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localho
 wmgui.v_player_addr_tpl = '/crystvis/player.html';
 wmgui.v_player_addr =     wmgui.v_player_addr_tpl + '#' +              wmgui.api_host + '/download/s?fmt=cif&q=';
 wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' +       wmgui.api_host + '/download/c?fmt=png&q=';
-wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?241022#' +    wmgui.api_host + '/download/c?fmt=json&q=';
-wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?241022#' +    wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_vis_addr =        wmgui.static_host + '/visavis/?nobanner&241022';
+wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?290623#' +    wmgui.api_host + '/download/c?fmt=json&q=';
+wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?290623#' +    wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_xrpd_addr =       wmgui.static_host + '/visavis/?290623#' +    wmgui.api_host + '/download/s?fmt=xrpd&q=';
+wmgui.v_vis_addr =        wmgui.static_host + '/visavis/?nobanner&290623';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_pd_3d_addr =      wmgui.static_host + '/labs/pd3d/?';
 

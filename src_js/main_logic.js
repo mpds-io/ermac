@@ -764,7 +764,8 @@ function open_context(el, launch_ext){
 
         $('#ctx_col').show();
         $('#visualize').attr('data-rank', rank);
-        $('#visualize, #absolidize, div.spinoff_pane, li.d_icon').hide();
+        $('#xrpdize').attr('data-rank', 99);
+        $('#visualize, #xrpdize, #absolidize, div.spinoff_pane, li.d_icon').hide();
 
         open_sim_col(entry, entype, rank);
 
@@ -784,7 +785,7 @@ function open_context(el, launch_ext){
             $('#download_bib, #download_json, #visualize').show();
 
         } else if (rank == 5){
-            $('#download_bib, #download_pdf, #visualize, #absolidize, #download_cif, #download_inp, #download_json').show();
+            $('#download_bib, #download_pdf, #visualize, #xrpdize, #absolidize, #download_cif, #download_inp, #download_json').show();
 
         } else if (rank == 6){
             $('#download_bib, #download_pdf, #visualize, #download_png, #download_cdr, #download_json').show();
@@ -944,17 +945,21 @@ function launch_iframed_app(rank){
         iframe_src,
         iframe_height;
 
-    if (entype == 'S')
-        iframe_src = wmgui.v_player_addr + entry, iframe_height = 650;
+    if (entype == 'S'){
+        if (rank == 99) {
+            iframe_src = wmgui.v_xrpd_addr + entry, iframe_height = 600;
 
-    else if (entype == 'P'){
+        } else
+            iframe_src = wmgui.v_player_addr + entry, iframe_height = 650;
+
+    } else if (entype == 'P'){
         if (rank == 10)
             iframe_src = wmgui.v_ab_vis_addr + entry, iframe_height = 600;
         else
             iframe_src = wmgui.v_sd_addr + entry, iframe_height = 550;
 
     } else {
-        if (rank == 12) {
+        if (rank == 12){
             var triple = wmgui.thumbed_display ? $('div.busy_entry > div.gallery_img > p').text() : $('tr.busy_entry > td.c1').text().split(' ')[0];
             iframe_src = wmgui.v_pd_3d_addr + triple, iframe_height = 550;
 
@@ -1437,7 +1442,7 @@ function show_dunit_info(phid, entry){
             if (data.error) return wmgui.notify(data.error);
 
             var html = '<h4>' + data.out.formula_html.split(' ')[0] + ' ' + (data.out.spg || '?') + ' ' + (data.out.pearson || '&mdash;') + '</h4><p>This phase was reported in ' + data.out.articles_count + ' article' + (data.out.articles_count > 1 ? 's' : '')  + '.';
-            if (data.out.sim_count > 1) html += ' There are <a href="#interlinkage/' + phid + '">' + data.out.sim_count + ' structurally similar phases</a> reported elsewhere.';
+            if (data.out.sim_count > 1) html += ' There are <a href="#interlinkage/' + phid + '">' + data.out.sim_count + ' structurally similar phases</a> from other articles.';
             html += '</p>'
             $('#phase_info').html(html);
 
