@@ -943,6 +943,8 @@ function launch_iframed_app(rank){
         entype = entry.substr(0, 1),
         iframe_src,
         iframe_height;
+    
+    var visavis_json_request = null
 
     if (entype == 'S')
         iframe_src = wmgui.v_player_addr + entry, iframe_height = 650;
@@ -959,7 +961,8 @@ function launch_iframed_app(rank){
             iframe_src = wmgui.v_pd_3d_addr + triple, iframe_height = 550;
 
         } else
-            iframe_src = (wmgui.sid ? wmgui.v_pd_addr : wmgui.v_pd_addr_anon) + entry, iframe_height = 600;
+            visavis_json_request = wmgui.api_host + (wmgui.sid ? '/download/p?fmt=json&q=' : '/download/c?fmt=json&q=') + entry;
+            iframe_height = 600;
 
         if (entry.startswith('C3') || entry.startswith('C4'))
             wmgui.notify('This entry is now in preparation');
@@ -973,7 +976,22 @@ function launch_iframed_app(rank){
     if (wmgui.thumbed_display) iframe_html = '<div id="iframe" style="display:block;width:100%;border:1px solid #ddd;margin:10px 0;">' + iframe_html + '</div>';
     else                       iframe_html = '<tr id="iframe"><td colspan="20" style="width:100%;padding:0;border-right:1px solid #eee;border-left:1px solid #eee;">' + iframe_html + '</td></tr>';
 
-    that.after(iframe_html);
+    if (visavis_json_request) {
+        that.after('<mpds-visavis-plot></mpds-visavis-plot>');
+        var visavis_element = document.getElementsByTagName('mpds-visavis-plot')[0]
+        visavis_element.style.height = iframe_height + 'px'
+        visavis_element.style.display = 'block'
+        visavis_element.style.border = '1px solid #ddd'
+        visavis_element.style.margin = '10px 0'
+        visavis_element.view.json_request(visavis_json_request)
+        visavis_element.view.phase_click = ({phase_id}) => {
+            const uri = window.location.protocol + "//" + window.location.host + window.location.pathname  + '#phase_id/' +  phase_id
+            window.open(uri);
+        }
+    } else {
+        that.after(iframe_html);
+    }
+
     $(window).scrollTop(that.position().top - 95);
 }
 
@@ -1003,11 +1021,7 @@ function start_visavis(plot_type){
     wmgui.search_type = 0;
     wmgui.visavis_working = true;
     wmgui.visavis_starting = false;
-
-    var cur_obj = {total_count: 1};
-    $.extend(cur_obj, wmgui.search);
-
-    visavis_plot.json_request(get_mpds_request(cur_obj))
+    visavis_plot.json_request(get_mpds_request())
 }
 
 function manage_visavis(callback_fn, param_a, param_b){
@@ -1025,11 +1039,8 @@ function manage_visavis(callback_fn, param_a, param_b){
 
     rebuild_visavis();
 
-    var cur_obj = {total_count: 1};
-    $.extend(cur_obj, wmgui.search);
-
     visavis_plot.json_cmp_request(null)
-    visavis_plot.json_request(get_mpds_request(cur_obj))
+    visavis_plot.json_request(get_mpds_request())
 
     if (callback_fn) callback_fn(param_a, param_b);
     return true;
@@ -1072,19 +1083,19 @@ function rebuild_visavis(){
         if (z_id.length) z_id.removeClass('ss_z');
         $('#viscube_nump').addClass('embodied');
         $('span.sops').remove();
+        visavis_plot.show_fixel(true)
 
     } else if (wmgui.visavis_curtype == 'graph'){
         $('#ctxpanel_graph > ul > li.embodied').removeClass('embodied');
         $('#visgraph_props').addClass('embodied');
-    }
 
-    if (wmgui.visavis_curtype == 'discovery'){
+    } else  if (wmgui.visavis_curtype == 'discovery'){
         visavis_plot.discovery_elementals_on([...discovery_elementals_on])
+
+    } else  if (wmgui.visavis_curtype == 'qproj'){
+        visavis_plot.show_fixel(false)
     }
 
-    // visavis_plot.fixel_manage(
-    //     {status:wmgui.visavis_curtype == 'cube' && wmgui.search.elements}
-    // )
 }
 
 function stop_visavis(){
@@ -1093,7 +1104,10 @@ function stop_visavis(){
     wmgui.visavis_terminating = false;
 }
 
-function get_mpds_request(request, type){
+function get_mpds_request(type){
+    var request = {total_count: 1};
+    $.extend(request, wmgui.search);
+
     if (wmgui.visavis_curtype == 'pie' && !type)
         return wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request))
     return wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request));

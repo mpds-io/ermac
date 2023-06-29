@@ -755,7 +755,7 @@ function register_html(){
 </div>
 
 <!-- PLOTS EMBED -->
-<div id="visavis"><visavis-plot></visavis-plot></div>
+<div id="visavis"><mpds-visavis-plot></mpds-visavis-plot></div>
 
 <!-- DISCOVERY SETTINGS MODAL -->
 <div id="discovery_custom_box" class="modal user_dialogue">
