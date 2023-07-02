@@ -1873,8 +1873,8 @@ var $;
         static calc(value) {
             return new $mol_style_func('calc', value);
         }
-        static vary(name) {
-            return new $mol_style_func('var', name);
+        static vary(name, defaultValue) {
+            return new $mol_style_func('var', defaultValue ? [name, defaultValue] : name);
         }
         static url(href) {
             return new $mol_style_func('url', JSON.stringify(href));
@@ -1891,13 +1891,61 @@ var $;
         static scale(zoom) {
             return new $mol_style_func('scale', [zoom]);
         }
+        static linear(...breakpoints) {
+            return new $mol_style_func("linear", breakpoints.map((e) => Array.isArray(e)
+                ? String(e[0]) +
+                    " " +
+                    (typeof e[1] === "number" ? e[1] + "%" : e[1].toString())
+                : String(e)));
+        }
         static cubic_bezier(x1, y1, x2, y2) {
             return new $mol_style_func('cubic-bezier', [x1, y1, x2, y2]);
+        }
+        static steps(value, step_position) {
+            return new $mol_style_func('steps', [value, step_position]);
+        }
+        static blur(value) {
+            return new $mol_style_func('blur', value ?? "");
+        }
+        static brightness(value) {
+            return new $mol_style_func('brightness', value ?? "");
+        }
+        static contrast(value) {
+            return new $mol_style_func('contrast', value ?? "");
+        }
+        static drop_shadow(color, x_offset, y_offset, blur_radius) {
+            return new $mol_style_func("drop-shadow", blur_radius
+                ? [color, x_offset, y_offset, blur_radius]
+                : [color, x_offset, y_offset]);
+        }
+        static grayscale(value) {
+            return new $mol_style_func('grayscale', value ?? "");
+        }
+        static hue_rotate(value) {
+            return new $mol_style_func('hue-rotate', value ?? "");
+        }
+        static invert(value) {
+            return new $mol_style_func('invert', value ?? "");
+        }
+        static opacity(value) {
+            return new $mol_style_func('opacity', value ?? "");
+        }
+        static sepia(value) {
+            return new $mol_style_func('sepia', value ?? "");
+        }
+        static saturate(value) {
+            return new $mol_style_func('saturate', value ?? "");
         }
     }
     $.$mol_style_func = $mol_style_func;
 })($ || ($ = {}));
 //mol/style/func/func.ts
+;
+"use strict";
+//mol/type/override/override.ts
+;
+"use strict";
+//mol/style/properties/properties.ts
 ;
 "use strict";
 var $;
@@ -2275,7 +2323,12 @@ var $;
         ensure_visible(view, align = "start") {
             const path = this.view_find(v => v === view).next().value;
             this.force_render(new Set(path));
-            this.dom_final();
+            try {
+                this.dom_final();
+            }
+            catch (err) {
+                $mol_fail_log(err);
+            }
             view.dom_node().scrollIntoView({ block: align });
         }
         bring() {
@@ -3188,12 +3241,6 @@ var $;
 //mpds/visavis/plot/legend/cmp/-view.tree/cmp.view.tree.ts
 ;
 "use strict";
-//mol/type/override/override.ts
-;
-"use strict";
-//mol/style/properties/properties.ts
-;
-"use strict";
 //mol/style/pseudo/class.ts
 ;
 "use strict";
@@ -3627,14 +3674,14 @@ var $;
 var $;
 (function ($) {
     class $mol_scroll extends $mol_view {
-        scroll_top(val) {
-            if (val !== undefined)
-                return val;
+        scroll_top(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
-        scroll_left(val) {
-            if (val !== undefined)
-                return val;
+        scroll_left(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         field() {
@@ -3719,11 +3766,8 @@ var $;
     (function ($$) {
         const { per, rem, px } = $mol_style_unit;
         $mol_style_define($mol_scroll, {
-            overflow: 'auto',
-        });
-        $mol_style_define($mol_scroll, {
             display: 'flex',
-            overflow: 'overlay',
+            overflow: 'auto',
             flex: {
                 direction: 'column',
                 grow: 1,
@@ -3754,12 +3798,6 @@ var $;
             '::-webkit-scrollbar': {
                 width: rem(.25),
                 height: rem(.25),
-            },
-            ':hover': {
-                '::-webkit-scrollbar': {
-                    width: rem(.5),
-                    height: rem(.5),
-                },
             },
             '@media': {
                 'print': {
@@ -3814,7 +3852,7 @@ var $;
     class $mol_check_list extends $mol_view {
         Option(id) {
             const obj = new this.$.$mol_check();
-            obj.checked = (val) => this.option_checked(id, val);
+            obj.checked = (next) => this.option_checked(id, next);
             obj.label = () => this.option_label(id);
             obj.enabled = () => this.option_enabled(id);
             obj.hint = () => this.option_hint(id);
@@ -3830,9 +3868,9 @@ var $;
         sub() {
             return this.items();
         }
-        option_checked(id, val) {
-            if (val !== undefined)
-                return val;
+        option_checked(id, next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         option_title(id) {
@@ -3907,9 +3945,9 @@ var $;
 var $;
 (function ($) {
     class $mol_switch extends $mol_check_list {
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
     }
@@ -6090,7 +6128,7 @@ var $node = $node || {}
 void function( module ) { var exports = module.exports = this; function require( id ) { return $node[ id.replace( /^.\// , "../mpds/visavis/lib/" ) ] }; 
 ;
 /* Custom build of Plotly v1.35.2, Copyright (c) 2018 Plotly, Inc, MIT License */
-try{self}catch{self={}}(function(b){"object"===typeof exports&&"undefined"!==typeof module?module.exports=b():"function"===typeof define&&define.amd?define([],b):("undefined"!==typeof window?window:"undefined"!==typeof global?global:"undefined"!==typeof self?self:this).Plotly=b()})(function(){return function(){function b(p,l,n){function g(d,e){if(!l[d]){if(!p[d]){var h="function"==typeof require&&require;if(!e&&h)return h(d,!0);if(k)return k(d,!0);e=Error("Cannot find module '"+d+"'");throw e.code="MODULE_NOT_FOUND",e;
+try{self}catch{return}(function(b){"object"===typeof exports&&"undefined"!==typeof module?module.exports=b():"function"===typeof define&&define.amd?define([],b):("undefined"!==typeof window?window:"undefined"!==typeof global?global:"undefined"!==typeof self?self:this).Plotly=b()})(function(){return function(){function b(p,l,n){function g(d,e){if(!l[d]){if(!p[d]){var h="function"==typeof require&&require;if(!e&&h)return h(d,!0);if(k)return k(d,!0);e=Error("Cannot find module '"+d+"'");throw e.code="MODULE_NOT_FOUND",e;
 }e=l[d]={exports:{}};p[d][0].call(e.exports,function(e){var h=p[d][1][e];return g(h?h:e)},e,e.exports,b,p,l,n)}return l[d].exports}for(var k="function"==typeof require&&require,d=0;d<n.length;d++)g(n[d]);return g}return b}()({1:[function(b,p,l){l=b("./plotly.js/lib/core");l.register([b("./plotly.js/lib/bar"),b("./plotly.js/lib/pie"),b("./plotly.js/lib/scatter"),b("./plotly.js/lib/scatterternary"),b("./plotly.js/lib/scatter3d"),b("./plotly.js/lib/mesh3d")]);p.exports=l},{"./plotly.js/lib/bar":11,"./plotly.js/lib/core":12,
 "./plotly.js/lib/mesh3d":13,"./plotly.js/lib/pie":14,"./plotly.js/lib/scatter":15,"./plotly.js/lib/scatter3d":16,"./plotly.js/lib/scatterternary":17}],2:[function(b,p,l){function n(d){var e=d.length;if(0<e%4)throw Error("Invalid string. Length must be a multiple of 4");return"="===d[e-2]?2:"="===d[e-1]?1:0}function g(d,h,g){for(var e=[],f=h;f<g;f+=3)h=(d[f]<<16&16711680)+(d[f+1]<<8&65280)+(d[f+2]&255),e.push(k[h>>18&63]+k[h>>12&63]+k[h>>6&63]+k[h&63]);return e.join("")}l.byteLength=function(d){return 3*
 d.length/4-n(d)};l.toByteArray=function(e){var g=e.length;var k=n(e);var b=new h(3*g/4-k);var f=0<k?g-4:g;var c=0;for(g=0;g<f;g+=4){var q=d[e.charCodeAt(g)]<<18|d[e.charCodeAt(g+1)]<<12|d[e.charCodeAt(g+2)]<<6|d[e.charCodeAt(g+3)];b[c++]=q>>16&255;b[c++]=q>>8&255;b[c++]=q&255}2===k?(q=d[e.charCodeAt(g)]<<2|d[e.charCodeAt(g+1)]>>4,b[c++]=q&255):1===k&&(q=d[e.charCodeAt(g)]<<10|d[e.charCodeAt(g+1)]<<4|d[e.charCodeAt(g+2)]>>2,b[c++]=q>>8&255,b[c++]=q&255);return b};l.fromByteArray=function(d){for(var e=
@@ -15776,11 +15814,6 @@ var $;
         class $mpds_visavis_plotly extends $.$mpds_visavis_plotly {
             subscribe_events() {
             }
-            plotly_style() {
-                const style = document.createElement('style');
-                style.innerHTML = '.js-plotly-plot .plotly button,.js-plotly-plot .plotly input,.plotly-notifier{font-family:"Open Sans",verdana,arial,sans-serif}.js-plotly-plot .plotly,.js-plotly-plot .plotly div{direction:ltr;font-family:"Open Sans",verdana,arial,sans-serif;margin:0;padding:0}.js-plotly-plot .plotly button:focus,.js-plotly-plot .plotly input:focus{outline:0}.js-plotly-plot .plotly a,.js-plotly-plot .plotly a:hover{text-decoration:none}.js-plotly-plot .plotly .crisp{shape-rendering:crispEdges}.js-plotly-plot .plotly .user-select-none{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none}.js-plotly-plot .plotly svg{overflow:hidden}.js-plotly-plot .plotly svg a{fill:#447adb}.js-plotly-plot .plotly svg a:hover{fill:#3c6dc5}.js-plotly-plot .plotly .main-svg{position:absolute;top:0;left:0;pointer-events:none}.js-plotly-plot .plotly .main-svg .draglayer{pointer-events:all}.js-plotly-plot .plotly .cursor-default{cursor:default}.js-plotly-plot .plotly .cursor-pointer{cursor:pointer}.js-plotly-plot .plotly .cursor-crosshair{cursor:crosshair}.js-plotly-plot .plotly .cursor-move{cursor:move}.js-plotly-plot .plotly .cursor-col-resize{cursor:col-resize}.js-plotly-plot .plotly .cursor-row-resize{cursor:row-resize}.js-plotly-plot .plotly .cursor-ns-resize{cursor:ns-resize}.js-plotly-plot .plotly .cursor-ew-resize{cursor:ew-resize}.js-plotly-plot .plotly .cursor-sw-resize{cursor:sw-resize}.js-plotly-plot .plotly .cursor-s-resize{cursor:s-resize}.js-plotly-plot .plotly .cursor-se-resize{cursor:se-resize}.js-plotly-plot .plotly .cursor-w-resize{cursor:w-resize}.js-plotly-plot .plotly .cursor-e-resize{cursor:e-resize}.js-plotly-plot .plotly .cursor-nw-resize{cursor:nw-resize}.js-plotly-plot .plotly .cursor-n-resize{cursor:n-resize}.js-plotly-plot .plotly .cursor-ne-resize{cursor:ne-resize}.js-plotly-plot .plotly .cursor-grab{cursor:-webkit-grab;cursor:grab}.js-plotly-plot .plotly .modebar{position:absolute;top:2px;right:2px}.js-plotly-plot .plotly .ease-bg{-webkit-transition:background-color .3s;-moz-transition:background-color .3s;-ms-transition:background-color .3s;-o-transition:background-color .3s;transition:background-color .3s}.js-plotly-plot .plotly .modebar--hover>:not(.watermark){opacity:0;-webkit-transition:opacity .3s;-moz-transition:opacity .3s;-ms-transition:opacity .3s;-o-transition:opacity .3s;transition:opacity .3s}.js-plotly-plot .plotly:hover .modebar--hover .modebar-group{opacity:1}.js-plotly-plot .plotly .modebar-group{float:left;display:inline-block;box-sizing:border-box;padding-left:8px;position:relative;vertical-align:middle;white-space:nowrap}.js-plotly-plot .plotly .modebar-btn{position:relative;font-size:16px;padding:3px 4px;height:22px;cursor:pointer;line-height:normal;box-sizing:border-box}.js-plotly-plot .plotly .modebar-btn svg{position:relative;top:2px}.js-plotly-plot .plotly .modebar.vertical{display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-end;max-height:100%}.js-plotly-plot .plotly .modebar.vertical svg{top:-1px}.js-plotly-plot .plotly .modebar.vertical .modebar-group{display:block;float:none;padding-left:0;padding-bottom:8px}.js-plotly-plot .plotly .modebar.vertical .modebar-group .modebar-btn{display:block;text-align:center}.js-plotly-plot .plotly [data-title]:after,.js-plotly-plot .plotly [data-title]:before{position:absolute;-webkit-transform:translate3d(0,0,0);-moz-transform:translate3d(0,0,0);-ms-transform:translate3d(0,0,0);-o-transform:translate3d(0,0,0);transform:translate3d(0,0,0);display:none;opacity:0;z-index:1001;pointer-events:none;top:110%;right:50%}.js-plotly-plot .plotly [data-title]:hover:after,.js-plotly-plot .plotly [data-title]:hover:before{display:block;opacity:1}.js-plotly-plot .plotly [data-title]:before{content:"";position:absolute;background:0 0;border:6px solid transparent;z-index:1002;margin-top:-12px;border-bottom-color:#69738a;margin-right:-6px}.js-plotly-plot .plotly [data-title]:after{content:attr(data-title);background:#69738a;color:#fff;padding:8px 10px;font-size:12px;line-height:12px;white-space:nowrap;margin-right:-18px;border-radius:2px}.js-plotly-plot .plotly .vertical [data-title]:after,.js-plotly-plot .plotly .vertical [data-title]:before{top:0;right:200%}.js-plotly-plot .plotly .vertical [data-title]:before{border:6px solid transparent;border-left-color:#69738a;margin-top:8px;margin-right:-30px}.plotly-notifier{position:fixed;top:50px;right:20px;z-index:10000;font-size:10pt;max-width:180px}.plotly-notifier p{margin:0}.plotly-notifier .notifier-note{min-width:180px;max-width:250px;border:1px solid #fff;z-index:3000;margin:0;background-color:rgba(140,151,175,.9);color:#fff;padding:10px;overflow-wrap:break-word;word-wrap:break-word;-ms-hyphens:auto;-webkit-hyphens:auto;hyphens:auto}.plotly-notifier .notifier-close{color:#fff;opacity:.8;float:right;padding:0 5px;background:0 0;border:none;font-size:20px;font-weight:700;line-height:20px}.plotly-notifier .notifier-close:hover{color:#444;text-decoration:none;cursor:pointer}';
-                return style;
-            }
             render() {
                 if (!this.view_rect())
                     return;
@@ -15790,7 +15823,7 @@ var $;
                 const promise = $mpds_visavis_lib.plotly().react(plotly_root, this.data(), { ...this.layout(), width, height, font: { family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" } }, this.plot_options());
                 const dom_node = this.dom_node_actual();
                 promise.then((plotly_root) => {
-                    dom_node.replaceChildren(plotly_root, this.plotly_style());
+                    dom_node.replaceChildren(plotly_root);
                     this.subscribe_events();
                 });
             }
@@ -15800,14 +15833,18 @@ var $;
         ], $mpds_visavis_plotly.prototype, "subscribe_events", null);
         __decorate([
             $mol_mem
-        ], $mpds_visavis_plotly.prototype, "plotly_style", null);
-        __decorate([
-            $mol_mem
         ], $mpds_visavis_plotly.prototype, "render", null);
         $$.$mpds_visavis_plotly = $mpds_visavis_plotly;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //mpds/visavis/plotly/plotly.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mpds/visavis/plotly/plotly.view.css", "/* default plotly styles for shadow DOM */\n.js-plotly-plot .plotly button,\n.js-plotly-plot .plotly input,\n.plotly-notifier {\n\tfont-family: \"Open Sans\", verdana, arial, sans-serif\n}\n\n.js-plotly-plot .plotly,\n.js-plotly-plot .plotly div {\n\tdirection: ltr;\n\tfont-family: \"Open Sans\", verdana, arial, sans-serif;\n\tmargin: 0;\n\tpadding: 0\n}\n\n.js-plotly-plot .plotly button:focus,\n.js-plotly-plot .plotly input:focus {\n\toutline: 0\n}\n\n.js-plotly-plot .plotly a,\n.js-plotly-plot .plotly a:hover {\n\ttext-decoration: none\n}\n\n.js-plotly-plot .plotly .crisp {\n\tshape-rendering: crispEdges\n}\n\n.js-plotly-plot .plotly .user-select-none {\n\t-webkit-user-select: none;\n\t-moz-user-select: none;\n\t-ms-user-select: none;\n\t-o-user-select: none;\n\tuser-select: none\n}\n\n.js-plotly-plot .plotly svg {\n\toverflow: hidden\n}\n\n.js-plotly-plot .plotly svg a {\n\tfill: #447adb\n}\n\n.js-plotly-plot .plotly svg a:hover {\n\tfill: #3c6dc5\n}\n\n.js-plotly-plot .plotly .main-svg {\n\tposition: absolute;\n\ttop: 0;\n\tleft: 0;\n\tpointer-events: none\n}\n\n.js-plotly-plot .plotly .main-svg .draglayer {\n\tpointer-events: all\n}\n\n.js-plotly-plot .plotly .cursor-default {\n\tcursor: default\n}\n\n.js-plotly-plot .plotly .cursor-pointer {\n\tcursor: pointer\n}\n\n.js-plotly-plot .plotly .cursor-crosshair {\n\tcursor: crosshair\n}\n\n.js-plotly-plot .plotly .cursor-move {\n\tcursor: move\n}\n\n.js-plotly-plot .plotly .cursor-col-resize {\n\tcursor: col-resize\n}\n\n.js-plotly-plot .plotly .cursor-row-resize {\n\tcursor: row-resize\n}\n\n.js-plotly-plot .plotly .cursor-ns-resize {\n\tcursor: ns-resize\n}\n\n.js-plotly-plot .plotly .cursor-ew-resize {\n\tcursor: ew-resize\n}\n\n.js-plotly-plot .plotly .cursor-sw-resize {\n\tcursor: sw-resize\n}\n\n.js-plotly-plot .plotly .cursor-s-resize {\n\tcursor: s-resize\n}\n\n.js-plotly-plot .plotly .cursor-se-resize {\n\tcursor: se-resize\n}\n\n.js-plotly-plot .plotly .cursor-w-resize {\n\tcursor: w-resize\n}\n\n.js-plotly-plot .plotly .cursor-e-resize {\n\tcursor: e-resize\n}\n\n.js-plotly-plot .plotly .cursor-nw-resize {\n\tcursor: nw-resize\n}\n\n.js-plotly-plot .plotly .cursor-n-resize {\n\tcursor: n-resize\n}\n\n.js-plotly-plot .plotly .cursor-ne-resize {\n\tcursor: ne-resize\n}\n\n.js-plotly-plot .plotly .cursor-grab {\n\tcursor: -webkit-grab;\n\tcursor: grab\n}\n\n.js-plotly-plot .plotly .modebar {\n\tposition: absolute;\n\ttop: 2px;\n\tright: 2px\n}\n\n.js-plotly-plot .plotly .ease-bg {\n\t-webkit-transition: background-color .3s;\n\t-moz-transition: background-color .3s;\n\t-ms-transition: background-color .3s;\n\t-o-transition: background-color .3s;\n\ttransition: background-color .3s\n}\n\n.js-plotly-plot .plotly .modebar--hover>:not(.watermark) {\n\topacity: 0;\n\t-webkit-transition: opacity .3s;\n\t-moz-transition: opacity .3s;\n\t-ms-transition: opacity .3s;\n\t-o-transition: opacity .3s;\n\ttransition: opacity .3s\n}\n\n.js-plotly-plot .plotly:hover .modebar--hover .modebar-group {\n\topacity: 1\n}\n\n.js-plotly-plot .plotly .modebar-group {\n\tfloat: left;\n\tdisplay: inline-block;\n\tbox-sizing: border-box;\n\tpadding-left: 8px;\n\tposition: relative;\n\tvertical-align: middle;\n\twhite-space: nowrap\n}\n\n.js-plotly-plot .plotly .modebar-btn {\n\tposition: relative;\n\tfont-size: 16px;\n\tpadding: 3px 4px;\n\theight: 22px;\n\tcursor: pointer;\n\tline-height: normal;\n\tbox-sizing: border-box\n}\n\n.js-plotly-plot .plotly .modebar-btn svg {\n\tposition: relative;\n\ttop: 2px\n}\n\n.js-plotly-plot .plotly .modebar.vertical {\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-wrap: wrap;\n\talign-content: flex-end;\n\tmax-height: 100%\n}\n\n.js-plotly-plot .plotly .modebar.vertical svg {\n\ttop: -1px\n}\n\n.js-plotly-plot .plotly .modebar.vertical .modebar-group {\n\tdisplay: block;\n\tfloat: none;\n\tpadding-left: 0;\n\tpadding-bottom: 8px\n}\n\n.js-plotly-plot .plotly .modebar.vertical .modebar-group .modebar-btn {\n\tdisplay: block;\n\ttext-align: center\n}\n\n.js-plotly-plot .plotly [data-title]:after,\n.js-plotly-plot .plotly [data-title]:before {\n\tposition: absolute;\n\t-webkit-transform: translate3d(0, 0, 0);\n\t-moz-transform: translate3d(0, 0, 0);\n\t-ms-transform: translate3d(0, 0, 0);\n\t-o-transform: translate3d(0, 0, 0);\n\ttransform: translate3d(0, 0, 0);\n\tdisplay: none;\n\topacity: 0;\n\tz-index: 1001;\n\tpointer-events: none;\n\ttop: 110%;\n\tright: 50%\n}\n\n.js-plotly-plot .plotly [data-title]:hover:after,\n.js-plotly-plot .plotly [data-title]:hover:before {\n\tdisplay: block;\n\topacity: 1\n}\n\n.js-plotly-plot .plotly [data-title]:before {\n\tcontent: \"\";\n\tposition: absolute;\n\tbackground: 0 0;\n\tborder: 6px solid transparent;\n\tz-index: 1002;\n\tmargin-top: -12px;\n\tborder-bottom-color: #69738a;\n\tmargin-right: -6px\n}\n\n.js-plotly-plot .plotly [data-title]:after {\n\tcontent: attr(data-title);\n\tbackground: #69738a;\n\tcolor: #fff;\n\tpadding: 8px 10px;\n\tfont-size: 12px;\n\tline-height: 12px;\n\twhite-space: nowrap;\n\tmargin-right: -18px;\n\tborder-radius: 2px\n}\n\n.js-plotly-plot .plotly .vertical [data-title]:after,\n.js-plotly-plot .plotly .vertical [data-title]:before {\n\ttop: 0;\n\tright: 200%\n}\n\n.js-plotly-plot .plotly .vertical [data-title]:before {\n\tborder: 6px solid transparent;\n\tborder-left-color: #69738a;\n\tmargin-top: 8px;\n\tmargin-right: -30px\n}\n\n.plotly-notifier {\n\tposition: fixed;\n\ttop: 50px;\n\tright: 20px;\n\tz-index: 10000;\n\tfont-size: 10pt;\n\tmax-width: 180px\n}\n\n.plotly-notifier p {\n\tmargin: 0\n}\n\n.plotly-notifier .notifier-note {\n\tmin-width: 180px;\n\tmax-width: 250px;\n\tborder: 1px solid #fff;\n\tz-index: 3000;\n\tmargin: 0;\n\tbackground-color: rgba(140, 151, 175, .9);\n\tcolor: #fff;\n\tpadding: 10px;\n\toverflow-wrap: break-word;\n\tword-wrap: break-word;\n\t-ms-hyphens: auto;\n\t-webkit-hyphens: auto;\n\thyphens: auto\n}\n\n.plotly-notifier .notifier-close {\n\tcolor: #fff;\n\topacity: .8;\n\tfloat: right;\n\tpadding: 0 5px;\n\tbackground: 0 0;\n\tborder: none;\n\tfont-size: 20px;\n\tfont-weight: 700;\n\tline-height: 20px\n}\n\n.plotly-notifier .notifier-close:hover {\n\tcolor: #444;\n\ttext-decoration: none;\n\tcursor: pointer\n}\n");
+})($ || ($ = {}));
+//mpds/visavis/plotly/-css/plotly.view.css.ts
 ;
 "use strict";
 var $;
@@ -15827,9 +15864,9 @@ var $;
 var $;
 (function ($) {
     class $mol_pop extends $mol_view {
-        showed(val) {
-            if (val !== undefined)
-                return val;
+        showed(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         align_vert() {
@@ -16043,7 +16080,7 @@ var $;
             obj.minimal_width = () => 40;
             obj.minimal_height = () => 40;
             obj.enabled = () => this.trigger_enabled();
-            obj.checked = (val) => this.showed(val);
+            obj.checked = (next) => this.showed(next);
             obj.sub = () => this.trigger_content();
             obj.hint = () => this.hint();
             return obj;
@@ -16836,9 +16873,9 @@ var $;
         autocomplete() {
             return false;
         }
-        selection(val) {
-            if (val !== undefined)
-                return val;
+        selection(next) {
+            if (next !== undefined)
+                return next;
             return [
                 0,
                 0
@@ -16887,13 +16924,13 @@ var $;
         disabled() {
             return false;
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
-        value_changed(val) {
-            return this.value(val);
+        value_changed(next) {
+            return this.value(next);
         }
         hint() {
             return "";
@@ -16922,9 +16959,9 @@ var $;
         length_max() {
             return +Infinity;
         }
-        type(val) {
-            if (val !== undefined)
-                return val;
+        type(next) {
+            if (next !== undefined)
+                return next;
             return "text";
         }
         event_change(event) {
@@ -17514,9 +17551,9 @@ var $;
 var $;
 (function ($) {
     class $mol_nav extends $mol_plugin {
-        cycle(val) {
-            if (val !== undefined)
-                return val;
+        cycle(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         mod_ctrl() {
@@ -17528,24 +17565,24 @@ var $;
         mod_alt() {
             return false;
         }
-        keys_x(val) {
-            if (val !== undefined)
-                return val;
+        keys_x(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
-        keys_y(val) {
-            if (val !== undefined)
-                return val;
+        keys_y(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
-        current_x(val) {
-            if (val !== undefined)
-                return val;
+        current_x(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        current_y(val) {
-            if (val !== undefined)
-                return val;
+        current_y(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         event_up(event) {
@@ -17716,17 +17753,17 @@ var $;
 var $;
 (function ($) {
     class $mol_select extends $mol_pick {
-        dictionary(val) {
-            if (val !== undefined)
-                return val;
+        dictionary(next) {
+            if (next !== undefined)
+                return next;
             return {};
         }
         options() {
             return [];
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         option_label_default() {
@@ -17762,7 +17799,7 @@ var $;
         }
         Filter() {
             const obj = new this.$.$mol_string();
-            obj.value = (val) => this.filter_pattern(val);
+            obj.value = (next) => this.filter_pattern(next);
             obj.hint = () => this.$.$mol_locale.text('$mol_select_Filter_hint');
             obj.submit = (event) => this.submit(event);
             obj.enabled = () => this.enabled();
@@ -17780,9 +17817,9 @@ var $;
         option_label(id) {
             return "";
         }
-        filter_pattern(val) {
-            if (val !== undefined)
-                return val;
+        filter_pattern(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Option_label(id) {
@@ -17807,16 +17844,16 @@ var $;
                 return component;
             return null;
         }
-        nav_cycle(val) {
-            if (val !== undefined)
-                return val;
+        nav_cycle(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Nav() {
             const obj = new this.$.$mol_nav();
             obj.keys_y = () => this.nav_components();
             obj.current_y = (component) => this.option_focused(component);
-            obj.cycle = (val) => this.nav_cycle(val);
+            obj.cycle = (next) => this.nav_cycle(next);
             return obj;
         }
         menu_content() {
@@ -19299,7 +19336,7 @@ var $;
         const $mpds_visavis_plot_phase_rect_json = $mol_data_record({
             naxes: $mol_data_number,
             arity: $mol_data_number,
-            diatype: $mol_data_string,
+            diatype: $mol_data_optional($mol_data_string),
             chemical_elements: $mol_data_array($mol_data_string),
             temp: $mol_data_array($mol_data_number),
             labels: $mol_data_array(Label_json),
@@ -19492,7 +19529,7 @@ var $;
                 console.log('is trinagle', this.is_triangle());
                 if (this.is_triangle())
                     this.pd_fix_triangle();
-                if (this.json().diatype && this.json().diatype.indexOf('projection') !== -1)
+                if (this.json().diatype && this.json().diatype?.indexOf('projection') !== -1)
                     return;
                 const json = this.json();
                 const is_triangle = this.is_triangle();
@@ -19597,7 +19634,7 @@ var $;
                 });
                 svg_el.attr("transform", "translate(" + (-centerX * (scaleX - 1)) + ", " + (-centerY * (scaleY - 1)) + ") scale(" + scaleX + ", " + scaleY + ")");
                 d3.select(this.dom_node_actual()).selectAll("[mpds_visavis_plot_phase_root] g.annotation").each(function (d, i) {
-                    d3.select(this.dom_node_actual()).select(this).attr("transform", "translate(" + (-centerX * (scaleX - 1)) + ", " + (-centerY * (scaleY - 1)) + ") scale(" + scaleX + ", " + scaleY + ") translate(" + (-origdims[i] / 1.25) + ", 0) scale(1.75, 1)");
+                    d3.select(this).attr("transform", "translate(" + (-centerX * (scaleX - 1)) + ", " + (-centerY * (scaleY - 1)) + ") scale(" + scaleX + ", " + scaleY + ") translate(" + (-origdims[i] / 1.25) + ", 0) scale(1.75, 1)");
                 });
             }
         }
@@ -21684,9 +21721,6 @@ var $;
                 return false;
             }
             on_fixel_checked(checked) { }
-            static register() {
-                $mol_view_component($mpds_visavis_plot);
-            }
         }
         __decorate([
             $mol_action
@@ -21712,11 +21746,8 @@ var $;
         __decorate([
             $mol_action
         ], $mpds_visavis_plot.prototype, "on_fixel_checked", null);
-        __decorate([
-            $mol_mem
-        ], $mpds_visavis_plot, "register", null);
         $$.$mpds_visavis_plot = $mpds_visavis_plot;
-        $mpds_visavis_plot.register();
+        $mol_view_component($mpds_visavis_plot);
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //mpds/visavis/plot/plot.view.ts
