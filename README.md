@@ -7,7 +7,7 @@ Ermac
 
 Ermac is an embeddable GUI of the [MPDS platform](https://mpds.io). It allows browsing the MPDS scientific data from any website or integrating the MPDS GUI into the existing codebases.
 
-**Ermac is completely free software. Upon compilation it's just a few _static_ web files. Copy them to your web-server in a subfolder and enjoy your _own_ MPDS platform. The data stays at the MPDS server.**
+**Ermac is completely free software. Upon compilation it's just a few _static_ web assets. Copy these files to your web-server in a subfolder and enjoy your _own_ MPDS platform. The data stays at the MPDS server.**
 
 
 ## Usage
