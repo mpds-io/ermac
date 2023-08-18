@@ -1308,6 +1308,7 @@ var $;
             }
         };
         Reflect.defineProperty(descr2.value, 'name', { value: orig.name + ' ' });
+        Reflect.defineProperty(descr2.value, 'length', { value: orig.length });
         Object.assign(descr2.value, { orig });
         Reflect.defineProperty(host, field, descr2);
         return descr2;
@@ -1345,6 +1346,7 @@ var $;
             }
         };
         Reflect.defineProperty(descr2.value, 'name', { value: orig.name + ' ' });
+        Reflect.defineProperty(descr2.value, 'length', { value: orig.length });
         Object.assign(descr2.value, { orig });
         Reflect.defineProperty(host, field, descr2);
         return descr2;
@@ -1772,6 +1774,15 @@ var $;
     let all = [];
     let el = null;
     let timer = null;
+    function $mol_style_attach_force() {
+        if (all.length) {
+            el.innerHTML += '\n' + all.join('\n\n');
+            all = [];
+        }
+        timer = null;
+        return el;
+    }
+    $.$mol_style_attach_force = $mol_style_attach_force;
     function $mol_style_attach(id, text) {
         all.push(`/* ${id} */\n\n${text}`);
         if (timer)
@@ -1782,12 +1793,7 @@ var $;
         el = doc.createElement('style');
         el.id = `$mol_style_attach`;
         doc.head.appendChild(el);
-        timer = new $mol_after_tick(() => {
-            el.innerHTML = '\n' + all.join('\n\n');
-            all = [];
-            el = null;
-            timer = null;
-        });
+        timer = new $mol_after_tick($mol_style_attach_force);
         return el;
     }
     $.$mol_style_attach = $mol_style_attach;
@@ -1950,21 +1956,34 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const { vary } = $mol_style_func;
-    $.$mol_theme = {
-        back: vary('--mol_theme_back'),
-        hover: vary('--mol_theme_hover'),
-        card: vary('--mol_theme_card'),
-        current: vary('--mol_theme_current'),
-        special: vary('--mol_theme_special'),
-        text: vary('--mol_theme_text'),
-        control: vary('--mol_theme_control'),
-        shade: vary('--mol_theme_shade'),
-        line: vary('--mol_theme_line'),
-        focus: vary('--mol_theme_focus'),
-        field: vary('--mol_theme_field'),
-        image: vary('--mol_theme_image'),
-    };
+    function $mol_style_prop(prefix, postfixes) {
+        const record = postfixes.reduce((record_obj, postfix) => {
+            record_obj[postfix] = $mol_style_func.vary(`--${prefix}_${postfix}`);
+            return record_obj;
+        }, {});
+        return record;
+    }
+    $.$mol_style_prop = $mol_style_prop;
+})($ || ($ = {}));
+//mol/style/prop/prop.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_theme = $mol_style_prop('mol_theme', [
+        'back',
+        'hover',
+        'card',
+        'current',
+        'special',
+        'text',
+        'control',
+        'shade',
+        'line',
+        'focus',
+        'field',
+        'image',
+    ]);
 })($ || ($ = {}));
 //mol/theme/theme.ts
 ;
@@ -1978,14 +1997,13 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const { vary } = $mol_style_func;
-    $.$mol_gap = {
-        block: vary('--mol_gap_block'),
-        text: vary('--mol_gap_text'),
-        round: vary('--mol_gap_round'),
-        space: vary('--mol_gap_space'),
-        blur: vary('--mol_gap_blur'),
-    };
+    $.$mol_gap = $mol_style_prop('mol_gap', [
+        'block',
+        'text',
+        'round',
+        'space',
+        'blur',
+    ]);
 })($ || ($ = {}));
 //mol/gap/gap.ts
 ;
@@ -2260,6 +2278,9 @@ var $;
             }
             return names;
         }
+        theme(next = null) {
+            return next;
+        }
         attr_static() {
             let attrs = {};
             for (let name of this.view_names())
@@ -2267,7 +2288,9 @@ var $;
             return attrs;
         }
         attr() {
-            return {};
+            return {
+                mol_theme: this.theme(),
+            };
         }
         style_size() {
             return {
@@ -2384,6 +2407,9 @@ var $;
         $mol_memo.method
     ], $mol_view.prototype, "view_names", null);
     __decorate([
+        $mol_mem
+    ], $mol_view.prototype, "theme", null);
+    __decorate([
         $mol_mem_key
     ], $mol_view, "Root", null);
     __decorate([
@@ -2445,14 +2471,13 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const { vary } = $mol_style_func;
-    $.$mol_layer = {
-        hover: vary('--mol_layer_hover'),
-        focus: vary('--mol_layer_focus'),
-        speck: vary('--mol_layer_speck'),
-        float: vary('--mol_layer_float'),
-        popup: vary('--mol_layer_popup'),
-    };
+    $.$mol_layer = $mol_style_prop('mol_layer', [
+        'hover',
+        'focus',
+        'speck',
+        'float',
+        'popup',
+    ]);
 })($ || ($ = {}));
 //mol/layer/layer.ts
 ;
@@ -2882,6 +2907,87 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //mol/check/check.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_paragraph extends $mol_view {
+        line_height() {
+            return 24;
+        }
+        letter_width() {
+            return 7;
+        }
+        width_limit() {
+            return +Infinity;
+        }
+        row_width() {
+            return 0;
+        }
+        sub() {
+            return [
+                this.title()
+            ];
+        }
+    }
+    $.$mol_paragraph = $mol_paragraph;
+})($ || ($ = {}));
+//mol/paragraph/-view.tree/paragraph.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_paragraph extends $.$mol_paragraph {
+            maximal_width() {
+                let width = 0;
+                const letter = this.letter_width();
+                for (const kid of this.sub()) {
+                    if (!kid)
+                        continue;
+                    if (kid instanceof $mol_view) {
+                        width += kid.maximal_width();
+                    }
+                    else if (typeof kid !== 'object') {
+                        width += String(kid).length * letter;
+                    }
+                }
+                return width;
+            }
+            width_limit() {
+                return this.$.$mol_window.size().width;
+            }
+            minimal_width() {
+                return this.letter_width();
+            }
+            row_width() {
+                return Math.max(Math.min(this.width_limit(), this.maximal_width()), this.letter_width());
+            }
+            minimal_height() {
+                return Math.max(1, Math.ceil(this.maximal_width() / this.row_width())) * this.line_height();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_paragraph.prototype, "maximal_width", null);
+        __decorate([
+            $mol_mem
+        ], $mol_paragraph.prototype, "row_width", null);
+        __decorate([
+            $mol_mem
+        ], $mol_paragraph.prototype, "minimal_height", null);
+        $$.$mol_paragraph = $mol_paragraph;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/paragraph/paragraph.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/paragraph/paragraph.view.css", ":where([mol_paragraph]) {\n\tmargin: 0;\n\tmax-width: 100%;\n}\n");
+})($ || ($ = {}));
+//mol/paragraph/-css/paragraph.view.css.ts
 ;
 "use strict";
 var $;
@@ -4471,7 +4577,8 @@ var $;
             let res = {};
             for (const field in sub) {
                 try {
-                    res[field] = sub[field](val[field]);
+                    res[field] =
+                        sub[field](val[field]);
                 }
                 catch (error) {
                     if (error instanceof Promise)
@@ -15820,7 +15927,7 @@ var $;
                 const { width, height } = this.view_rect();
                 const plotly_root = $mol_wire_sync(document).createElement('div');
                 plotly_root.style.position = 'absolute';
-                const promise = $mpds_visavis_lib.plotly().react(plotly_root, this.data(), { ...this.layout(), width, height, font: { family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" } }, this.plot_options());
+                const promise = $mpds_visavis_lib.plotly().react(plotly_root, this.data(), { ...this.layout(), width, height }, this.plot_options());
                 const dom_node = this.dom_node_actual();
                 promise.then((plotly_root) => {
                     dom_node.replaceChildren(plotly_root);
@@ -16524,7 +16631,7 @@ var $;
         static relative(path) {
             return this.absolute(new URL(path, this.base).toString());
         }
-        static base = $mol_dom_context.document
+        static base = $mol_dom_context.document?.currentScript
             ? new URL('.', $mol_dom_context.document.currentScript['src']).toString()
             : '';
         buffer(next) {
@@ -17089,87 +17196,6 @@ var $;
     $.$mol_icon_dots_vertical = $mol_icon_dots_vertical;
 })($ || ($ = {}));
 //mol/icon/dots/vertical/-view.tree/vertical.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_paragraph extends $mol_view {
-        line_height() {
-            return 24;
-        }
-        letter_width() {
-            return 7;
-        }
-        width_limit() {
-            return +Infinity;
-        }
-        row_width() {
-            return 0;
-        }
-        sub() {
-            return [
-                this.title()
-            ];
-        }
-    }
-    $.$mol_paragraph = $mol_paragraph;
-})($ || ($ = {}));
-//mol/paragraph/-view.tree/paragraph.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_paragraph extends $.$mol_paragraph {
-            maximal_width() {
-                let width = 0;
-                const letter = this.letter_width();
-                for (const kid of this.sub()) {
-                    if (!kid)
-                        continue;
-                    if (kid instanceof $mol_view) {
-                        width += kid.maximal_width();
-                    }
-                    else if (typeof kid !== 'object') {
-                        width += String(kid).length * letter;
-                    }
-                }
-                return width;
-            }
-            width_limit() {
-                return this.$.$mol_window.size().width;
-            }
-            minimal_width() {
-                return this.letter_width();
-            }
-            row_width() {
-                return Math.max(Math.min(this.width_limit(), this.maximal_width()), this.letter_width());
-            }
-            minimal_height() {
-                return Math.max(1, Math.ceil(this.maximal_width() / this.row_width())) * this.line_height();
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $mol_paragraph.prototype, "maximal_width", null);
-        __decorate([
-            $mol_mem
-        ], $mol_paragraph.prototype, "row_width", null);
-        __decorate([
-            $mol_mem
-        ], $mol_paragraph.prototype, "minimal_height", null);
-        $$.$mol_paragraph = $mol_paragraph;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-//mol/paragraph/paragraph.view.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/paragraph/paragraph.view.css", ":where([mol_paragraph]) {\n\tmargin: 0;\n\tmax-width: 100%;\n}\n");
-})($ || ($ = {}));
-//mol/paragraph/-css/paragraph.view.css.ts
 ;
 "use strict";
 var $;
@@ -18613,7 +18639,7 @@ var $;
                         showbackground: true,
                         showticklabels: !this.x_op(),
                         showline: false,
-                        tickfont: { size: 11 },
+                        tickfont: { size: 10 },
                         ticktext: this.order_els(this.x_sort()).slice(0, 95).filter(function (el, idx) { return idx % 2 === 0; }),
                         tickvals: $mpds_visavis_lib.d3().range(1, 96, 2)
                     },
@@ -18626,7 +18652,7 @@ var $;
                         showbackground: true,
                         showticklabels: !this.y_op(),
                         showline: false,
-                        tickfont: { size: 11 },
+                        tickfont: { size: 10 },
                         ticktext: this.order_els(this.y_sort()).slice(0, 95).filter(function (el, idx) { return idx % 2 === 0; }),
                         tickvals: $mpds_visavis_lib.d3().range(1, 96, 2)
                     },
@@ -18639,7 +18665,7 @@ var $;
                         showbackground: true,
                         showticklabels: !this.z_op(),
                         showline: false,
-                        tickfont: { size: 11 },
+                        tickfont: { size: 10 },
                         ticktext: this.order_els(this.z_sort()).slice(0, 95).filter(function (el, idx) { return idx % 2 === 0; }),
                         tickvals: $mpds_visavis_lib.d3().range(1, 96, 2)
                     },
@@ -18659,6 +18685,7 @@ var $;
             }
             layout() {
                 return {
+                    font: {},
                     showlegend: false,
                     scene: this.scene(),
                     margin: {
@@ -18996,11 +19023,12 @@ var $;
                     hovermode: "closest",
                     font: {
                         size: 20,
-                        color: "#333"
+                        color: "#333",
+                        family: "inherit"
                     },
                     ternary: {
                         aaxis: {
-                            title: this.json_title_a(),
+                            title: this.json_title_b(),
                             ticks: "",
                             showline: true,
                             showgrid: false,
@@ -19008,7 +19036,7 @@ var $;
                             linewidth: 1
                         },
                         baxis: {
-                            title: this.json_title_b(),
+                            title: this.json_title_a(),
                             ticks: "",
                             showline: true,
                             showgrid: false,
@@ -19042,11 +19070,11 @@ var $;
             return [
                 {
                     text: this.triangle_annotation_text(),
-                    "x:": -0.25,
-                    "y:": 0.96,
+                    x: -0.25,
+                    y: 0.96,
                     showarrow: false,
-                    xref: "papper",
-                    yref: "papper",
+                    xref: "paper",
+                    yref: "paper",
                     font: {
                         size: 15
                     }
@@ -19075,7 +19103,8 @@ var $;
                     hovermode: "closest",
                     font: {
                         size: 16,
-                        color: "#333"
+                        color: "#333",
+                        family: "inherit"
                     },
                     xaxis: {
                         title: "at. %",
@@ -19110,7 +19139,7 @@ var $;
                         range: this.json_temp(),
                         fixedrange: true,
                         showticks: this.show_ticks(),
-                        showticklabels: this.data_demo(),
+                        showticklabels: this.not_demo(),
                         showline: true,
                         zeroline: false,
                         showgrid: false,
@@ -19124,7 +19153,7 @@ var $;
                         range: this.json_temp(),
                         fixedrange: true,
                         showticks: this.show_ticks(),
-                        showticklabels: this.data_demo(),
+                        showticklabels: this.not_demo(),
                         showline: true,
                         zeroline: false,
                         showgrid: false,
@@ -19147,8 +19176,8 @@ var $;
                     x: -0.03,
                     y: -0.11,
                     showarrow: false,
-                    xref: "papper",
-                    yref: "papper",
+                    xref: "paper",
+                    yref: "paper",
                     font: {
                         size: 20
                     }
@@ -19158,8 +19187,8 @@ var $;
                     x: 1.03,
                     y: -0.11,
                     showarrow: false,
-                    xref: "papper",
-                    yref: "papper",
+                    xref: "paper",
+                    yref: "paper",
                     font: {
                         size: 20
                     }
@@ -19190,10 +19219,10 @@ var $;
                 this.Root()
             ];
         }
-        json_title_a() {
+        json_title_b() {
             return "";
         }
-        json_title_b() {
+        json_title_a() {
             return "";
         }
         json_title_c() {
@@ -19217,7 +19246,7 @@ var $;
         json_temp() {
             return [];
         }
-        data_demo() {
+        not_demo() {
             return false;
         }
         label(next) {
@@ -19478,6 +19507,9 @@ var $;
             data_demo() {
                 return !this.json().comp_a && !this.json().comp_start;
             }
+            not_demo() {
+                return !this.data_demo();
+            }
             show_ticks() {
                 return this.json().labels.length > 0;
             }
@@ -19498,6 +19530,10 @@ var $;
             }
             annotation_textangle(label) {
                 return label[0].replace(/<\/?sub>/g, '').length > 10 ? -65 : 0;
+            }
+            triangle_annotation_text() {
+                const json = this.json();
+                return (json.diatype ? json.diatype + " " : "") + (json.temp[0] ? json.temp[0] + " &deg;C" : "");
             }
             annotations() {
                 const list = this.json().labels.map(label => ({
@@ -19661,7 +19697,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mpds/visavis/plot/phase/phase.view.css", "path{pointer-events:painted;}\ng{pointer-events:painted;}\n");
+    $mol_style_attach("mpds/visavis/plot/phase/phase.view.css", "path{pointer-events:painted;}\ng{pointer-events:painted;}\n\n/* PLOTLY SVG HACKS */\n@media all and (max-aspect-ratio:10/9){g.toplevel.aline, g.toplevel.bline, g.toplevel.cline{display:none;}}\n@media all and (max-aspect-ratio:5/6){\n    g.g-atitle, g.g-btitle, g.g-ctitle{transform:translateY(75px);}\n    g.annotation{display:none;}\n}\ng.aaxis, g.baxis, g.caxis{display:none;}\n");
 })($ || ($ = {}));
 //mpds/visavis/plot/phase/-css/phase.view.css.ts
 ;
@@ -19746,7 +19782,13 @@ var $;
                 const json = this.json();
                 return {
                     showlegend: json.payload2 ? true : false,
-                    legend: { x: 0, y: 1, font: { size: 17 } },
+                    legend: {
+                        x: 0,
+                        y: 1,
+                        font: {
+                            size: 17,
+                        },
+                    },
                     xaxis: {
                         autorange: true,
                         showgrid: false,
@@ -19766,9 +19808,15 @@ var $;
                         ticklen: 0,
                         title: json.payload.ytitle,
                         rangemode: "nonnegative",
-                        type: "log", tickfont: { size: 17 }
+                        type: "log",
+                        tickfont: {
+                            size: 17,
+                        },
                     },
-                    font: { size: 13 }
+                    font: {
+                        family: 'inherit',
+                        size: 13,
+                    }
                 };
             }
             data() {
@@ -20038,6 +20086,9 @@ var $;
             }
             layout() {
                 return {
+                    font: {
+                        family: 'inherit'
+                    },
                     showlegend: false,
                     hovermode: "closest",
                     xaxis: { showgrid: false },
@@ -20060,7 +20111,9 @@ var $;
                             text: '<i>Second Principal Component (a<sub>1</sub>x + b<sub>1</sub>y + c<sub>1</sub>z + ...)</i>',
                             showarrow: false,
                             bgcolor: '#fff',
-                            font: { size: 14 }
+                            font: {
+                                size: 14,
+                            },
                         },
                         {
                             x: 0.97,
@@ -20073,7 +20126,9 @@ var $;
                             showarrow: false,
                             bgcolor: '#fff',
                             textangle: 270,
-                            font: { size: 14 }
+                            font: {
+                                size: 14,
+                            },
                         }
                     ]
                 };
@@ -20315,7 +20370,9 @@ var $;
                         tickmode: 'array',
                         tickvals: $mpds_visavis_lib.d3().range(bands_matrix.kpoints.length),
                         ticktext: x_labels,
-                        tickfont: { size: 20 }
+                        tickfont: {
+                            size: 20,
+                        },
                     };
                 }
                 else {
@@ -20345,7 +20402,10 @@ var $;
                         ticklen: 4,
                         title: y_title
                     },
-                    font: { size: 13 }
+                    font: {
+                        family: 'inherit',
+                        size: 13,
+                    },
                 };
             }
         }
@@ -20498,13 +20558,26 @@ var $;
                 const data = this.data();
                 const tot_count = this.tot_count();
                 const xy_domains = this.xy_domains();
-                const annotations_layout = { showarrow: false, font: { size: 13 }, borderpad: 0, bgcolor: '#fff' };
+                const annotations_layout = {
+                    font: {
+                        size: 13,
+                    },
+                    showarrow: false,
+                    borderpad: 0,
+                    bgcolor: '#fff',
+                };
                 const annotations = data.map((pie, loc_count) => {
                     let label = pie.name + ' distribution';
                     label = 'Fig. ' + (loc_count + 1) + '. ' + label.charAt(0).toUpperCase() + label.slice(1);
                     return Object.assign({ text: label }, locate_label(xy_domains[tot_count][loc_count]), annotations_layout);
                 });
-                return { showlegend: false, annotations };
+                return {
+                    font: {
+                        family: 'inherit',
+                    },
+                    showlegend: false,
+                    annotations,
+                };
             }
             xy_domains() {
                 return [
@@ -20639,10 +20712,18 @@ var $;
             const obj = new this.$.$mpds_visavis_plot_raw();
             return obj;
         }
+        notify(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
     }
     __decorate([
         $mol_mem
     ], $mpds_visavis_plot_scatter.prototype, "plot_raw", null);
+    __decorate([
+        $mol_mem
+    ], $mpds_visavis_plot_scatter.prototype, "notify", null);
     $.$mpds_visavis_plot_scatter = $mpds_visavis_plot_scatter;
 })($ || ($ = {}));
 //mpds/visavis/plot/scatter/-view.tree/scatter.view.tree.ts
@@ -20720,11 +20801,9 @@ var $;
                     return 'pressure';
                 }
                 else if (Math.abs(t_data[0] - t_data_sum / t_data.length) > 0.1 && Math.abs(p_data[0] - p_data_sum / p_data.length) > 0.1) {
-                    return $mol_fail(new $mol_data_error('Sorry, plotting both temperature and pressure is not yet supported'));
+                    this.notify('Sorry, plotting both temperature and pressure is not yet supported');
                 }
-                else {
-                    return 'temperature';
-                }
+                return 'temperature';
             }
             x_data() {
                 switch (this.x_data_type()) {
@@ -20819,7 +20898,13 @@ var $;
                 }
                 return {
                     showlegend: true,
-                    legend: { x: 100, y: 1, font: { size: 14 } },
+                    legend: {
+                        x: 100,
+                        y: 1,
+                        font: {
+                            size: 14,
+                        },
+                    },
                     xaxis: {
                         autorange: true,
                         showgrid: true,
@@ -20838,7 +20923,10 @@ var $;
                         ticklen: 4,
                         title: 'Cell parameters' + y_comment + ', A'
                     },
-                    font: { size: 13 }
+                    font: {
+                        family: 'inherit',
+                        size: 13,
+                    },
                 };
             }
         }
@@ -20922,7 +21010,13 @@ var $;
                 const json = this.json();
                 return {
                     showlegend: true,
-                    legend: { x: 100, y: 1, font: { size: 14 } },
+                    legend: {
+                        x: 100,
+                        y: 1,
+                        font: {
+                            size: 14,
+                        },
+                    },
                     xaxis: {
                         type: json.xlog ? 'log' : '-',
                         autorange: true,
@@ -20947,7 +21041,10 @@ var $;
                         ticklen: 4,
                         title: json.ytitle
                     },
-                    font: { size: 13 },
+                    font: {
+                        family: 'inherit',
+                        size: 13,
+                    },
                     margin: {
                         t: 0,
                         r: 0
@@ -21000,6 +21097,9 @@ var $;
             }
             layout() {
                 return {
+                    font: {
+                        family: 'inherit'
+                    },
                     showlegend: false,
                     hovermode: "closest",
                     xaxis: {
@@ -21088,10 +21188,651 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_vector extends Array {
+        get length() {
+            return super.length;
+        }
+        constructor(...values) { super(...values); }
+        map(convert, self) {
+            return super.map(convert, self);
+        }
+        merged(patches, combine) {
+            return this.map((value, index) => combine(value, patches[index]));
+        }
+        limited(limits) {
+            return this.merged(limits, (value, [min, max]) => (value < min) ? min : (value > max) ? max : value);
+        }
+        added0(diff) {
+            return this.map(value => value + diff);
+        }
+        added1(diff) {
+            return this.merged(diff, (a, b) => a + b);
+        }
+        multed0(mult) {
+            return this.map(value => value * mult);
+        }
+        multed1(mults) {
+            return this.merged(mults, (a, b) => a * b);
+        }
+        powered0(mult) {
+            return this.map(value => value ** mult);
+        }
+        expanded1(point) {
+            return this.merged(point, (range, value) => range.expanded0(value));
+        }
+        expanded2(point) {
+            return this.merged(point, (range1, range2) => {
+                let next = range1;
+                const Range = range1.constructor;
+                if (range1[0] > range2[0])
+                    next = new Range(range2[0], next.max);
+                if (range1[1] < range2[1])
+                    next = new Range(next.min, range2[1]);
+                return next;
+            });
+        }
+        center() {
+            const Result = this[0].constructor;
+            return new Result(...this[0].map((_, i) => this.reduce((sum, point) => sum + point[i], 0) / this.length));
+        }
+        distance() {
+            let distance = 0;
+            for (let i = 1; i < this.length; ++i) {
+                distance += this[i - 1].reduce((sum, min, j) => sum + (min - this[i][j]) ** 2, 0) ** (1 / this[i].length);
+            }
+            return distance;
+        }
+        transponed() {
+            return this[0].map((_, i) => this.map(row => row[i]));
+        }
+        get x() { return this[0]; }
+        set x(next) { this[0] = next; }
+        get y() { return this[1]; }
+        set y(next) { this[1] = next; }
+        get z() { return this[2]; }
+        set z(next) { this[2] = next; }
+    }
+    $.$mol_vector = $mol_vector;
+    class $mol_vector_1d extends $mol_vector {
+    }
+    $.$mol_vector_1d = $mol_vector_1d;
+    class $mol_vector_2d extends $mol_vector {
+    }
+    $.$mol_vector_2d = $mol_vector_2d;
+    class $mol_vector_3d extends $mol_vector {
+    }
+    $.$mol_vector_3d = $mol_vector_3d;
+    class $mol_vector_range extends $mol_vector {
+        0;
+        1;
+        constructor(min, max = min) {
+            super(min, max);
+            this[0] = min;
+            this[1] = max;
+        }
+        get min() { return this[0]; }
+        set min(next) { this[0] = next; }
+        get max() { return this[1]; }
+        set max(next) { this[1] = next; }
+        get inversed() {
+            return new this.constructor(this.max, this.min);
+        }
+        expanded0(value) {
+            const Range = this.constructor;
+            let range = this;
+            if (value > range.max)
+                range = new Range(range.min, value);
+            if (value < range.min)
+                range = new Range(value, range.max);
+            return range;
+        }
+    }
+    $.$mol_vector_range = $mol_vector_range;
+    $.$mol_vector_range_full = new $mol_vector_range(Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY);
+    class $mol_vector_matrix extends $mol_vector {
+        added2(diff) {
+            return this.merged(diff, (a, b) => a.map((a2, index) => a2 + b[index]));
+        }
+        multed2(diff) {
+            return this.merged(diff, (a, b) => a.map((a2, index) => a2 * b[index]));
+        }
+    }
+    $.$mol_vector_matrix = $mol_vector_matrix;
+})($ || ($ = {}));
+//mol/vector/vector.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_touch extends $mol_plugin {
+        start_zoom(next) {
+            if (next !== undefined)
+                return next;
+            return 0;
+        }
+        start_distance(next) {
+            if (next !== undefined)
+                return next;
+            return 0;
+        }
+        zoom(next) {
+            if (next !== undefined)
+                return next;
+            return 1;
+        }
+        allow_draw() {
+            return true;
+        }
+        allow_pan() {
+            return true;
+        }
+        allow_zoom() {
+            return true;
+        }
+        action_type(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        action_point(next) {
+            if (next !== undefined)
+                return next;
+            const obj = new this.$.$mol_vector_2d(NaN, NaN);
+            return obj;
+        }
+        start_pan(next) {
+            if (next !== undefined)
+                return next;
+            return [
+                0,
+                0
+            ];
+        }
+        pan(next) {
+            if (next !== undefined)
+                return next;
+            const obj = new this.$.$mol_vector_2d(0, 0);
+            return obj;
+        }
+        pointer_center() {
+            const obj = new this.$.$mol_vector_2d(NaN, NaN);
+            return obj;
+        }
+        start_pos(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_precision() {
+            return 16;
+        }
+        swipe_right(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_bottom(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_left(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_top(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_from_right(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_from_bottom(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_from_left(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_from_top(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_to_right(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_to_bottom(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_to_left(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        swipe_to_top(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        draw_start(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        draw(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        draw_end(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        style() {
+            return {
+                ...super.style(),
+                "touch-action": "none",
+                "overscroll-behavior": "none"
+            };
+        }
+        event() {
+            return {
+                ...super.event(),
+                pointerdown: (event) => this.event_start(event),
+                pointermove: (event) => this.event_move(event),
+                pointerup: (event) => this.event_end(event),
+                pointerleave: (event) => this.event_leave(event),
+                wheel: (event) => this.event_wheel(event)
+            };
+        }
+        event_start(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        event_move(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        event_end(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        event_leave(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        event_wheel(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "start_zoom", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "start_distance", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "zoom", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "action_type", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "action_point", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "start_pan", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "pan", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "pointer_center", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "start_pos", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_right", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_bottom", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_left", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_top", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_from_right", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_from_bottom", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_from_left", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_from_top", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_to_right", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_to_bottom", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_to_left", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "swipe_to_top", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "draw_start", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "draw", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "draw_end", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "event_start", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "event_move", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "event_end", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "event_leave", null);
+    __decorate([
+        $mol_mem
+    ], $mol_touch.prototype, "event_wheel", null);
+    $.$mol_touch = $mol_touch;
+})($ || ($ = {}));
+//mol/touch/-view.tree/touch.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_touch extends $.$mol_touch {
+            auto() {
+                this.pointer_events();
+                this.start_pan();
+                this.start_pos();
+                this.start_distance();
+                this.start_zoom();
+                this.action_type();
+                this.view_rect();
+            }
+            pointer_events(next = []) {
+                return next;
+            }
+            pointer_coords() {
+                const events = this.pointer_events();
+                const touches = events.filter(e => e.pointerType === 'touch');
+                const pens = events.filter(e => e.pointerType === 'pen');
+                const mouses = events.filter(e => !e.pointerType || e.pointerType === 'mouse');
+                const choosen = touches.length ? touches : pens.length ? pens : mouses;
+                return new $mol_vector(...choosen.map(event => this.event_coords(event)));
+            }
+            pointer_center() {
+                const coords = this.pointer_coords();
+                return coords.length ? coords.center() : new $mol_vector_2d(NaN, NaN);
+            }
+            event_coords(event) {
+                const { left, top } = this.view_rect();
+                return new $mol_vector_2d(Math.round(event.pageX - left), Math.round(event.pageY - top));
+            }
+            action_point() {
+                const coord = this.pointer_center();
+                if (!coord)
+                    return null;
+                const zoom = this.zoom();
+                const pan = this.pan();
+                return new $mol_vector_2d((coord.x - pan.x) / zoom, (coord.y - pan.y) / zoom);
+            }
+            event_eat(event) {
+                if (event instanceof PointerEvent) {
+                    const events = this.pointer_events()
+                        .filter(e => e instanceof PointerEvent)
+                        .filter(e => e.pointerId !== event.pointerId);
+                    if (event.type !== 'pointerup' && event.type !== 'pointerleave')
+                        events.push(event);
+                    this.pointer_events(events);
+                    const touch_count = events.filter(e => e.pointerType === 'touch').length;
+                    if (this.allow_zoom() && touch_count === 2) {
+                        return this.action_type('zoom');
+                    }
+                    if (this.action_type() === 'zoom' && touch_count === 1) {
+                        return this.action_type('zoom');
+                    }
+                    let button;
+                    (function (button) {
+                        button[button["left"] = 1] = "left";
+                        button[button["right"] = 2] = "right";
+                        button[button["middle"] = 4] = "middle";
+                    })(button || (button = {}));
+                    if (events.length > 0) {
+                        if (event.ctrlKey && this.allow_zoom())
+                            return this.action_type('zoom');
+                        if (event.buttons === button.left && this.allow_draw())
+                            return this.action_type('draw');
+                        if (event.buttons && this.allow_pan())
+                            return this.action_type('pan');
+                    }
+                    return this.action_type('');
+                }
+                if (event instanceof WheelEvent) {
+                    this.pointer_events([event]);
+                    if (event.shiftKey)
+                        return this.action_type('pan');
+                    return this.action_type('zoom');
+                }
+                return this.action_type('');
+            }
+            event_start(event) {
+                if (event.defaultPrevented)
+                    return;
+                this.start_pan(this.pan());
+                const action_type = this.event_eat(event);
+                if (!action_type)
+                    return;
+                const coords = this.pointer_coords();
+                this.start_pos(coords.center());
+                if (action_type === 'draw') {
+                    this.draw_start(event);
+                    return;
+                }
+                this.start_distance(coords.distance());
+                this.start_zoom(this.zoom());
+            }
+            event_move(event) {
+                if (event.defaultPrevented)
+                    return;
+                const rect = this.view_rect();
+                if (!rect)
+                    return;
+                const start_pan = this.start_pan();
+                const action_type = this.event_eat(event);
+                const start_pos = this.start_pos();
+                let pos = this.pointer_center();
+                if (!action_type)
+                    return;
+                if (!start_pos)
+                    return;
+                if (action_type === 'draw') {
+                    const distance = new $mol_vector(start_pos, pos).distance();
+                    if (distance >= 4) {
+                        this.draw(event);
+                    }
+                    return;
+                }
+                if (action_type === 'pan') {
+                    this.dom_node().setPointerCapture(event.pointerId);
+                    this.pan(new $mol_vector_2d(start_pan[0] + pos[0] - start_pos[0], start_pan[1] + pos[1] - start_pos[1]));
+                }
+                const precision = this.swipe_precision();
+                if ((this.swipe_right !== $mol_touch.prototype.swipe_right
+                    || this.swipe_from_left !== $mol_touch.prototype.swipe_from_left
+                    || this.swipe_to_right !== $mol_touch.prototype.swipe_to_right)
+                    && pos[0] - start_pos[0] > precision * 2
+                    && Math.abs(pos[1] - start_pos[1]) < precision) {
+                    this.swipe_right(event);
+                }
+                if ((this.swipe_left !== $mol_touch.prototype.swipe_left
+                    || this.swipe_from_right !== $mol_touch.prototype.swipe_from_right
+                    || this.swipe_to_left !== $mol_touch.prototype.swipe_to_left)
+                    && start_pos[0] - pos[0] > precision * 2
+                    && Math.abs(pos[1] - start_pos[1]) < precision) {
+                    this.swipe_left(event);
+                }
+                if ((this.swipe_bottom !== $mol_touch.prototype.swipe_bottom
+                    || this.swipe_from_top !== $mol_touch.prototype.swipe_from_top
+                    || this.swipe_to_bottom !== $mol_touch.prototype.swipe_to_bottom)
+                    && pos[1] - start_pos[1] > precision * 2
+                    && Math.abs(pos[0] - start_pos[0]) < precision) {
+                    this.swipe_bottom(event);
+                }
+                if ((this.swipe_top !== $mol_touch.prototype.swipe_top
+                    || this.swipe_from_bottom !== $mol_touch.prototype.swipe_from_bottom
+                    || this.swipe_to_top !== $mol_touch.prototype.swipe_to_top)
+                    && start_pos[1] - pos[1] > precision * 2
+                    && Math.abs(pos[0] - start_pos[0]) < precision) {
+                    this.swipe_top(event);
+                }
+                if (action_type === 'zoom') {
+                    const coords = this.pointer_coords();
+                    const distance = coords.distance();
+                    const start_distance = this.start_distance();
+                    const center = coords.center();
+                    const start_zoom = this.start_zoom();
+                    let mult = Math.abs(distance - start_distance) < 32 ? 1 : distance / start_distance;
+                    this.zoom(start_zoom * mult);
+                    const pan = new $mol_vector_2d((start_pan[0] - center[0] + pos[0] - start_pos[0]) * mult + center[0], (start_pan[1] - center[1] + pos[1] - start_pos[1]) * mult + center[1]);
+                    this.pan(pan);
+                }
+            }
+            event_end(event) {
+                const action = this.action_type();
+                if (action === 'draw') {
+                    this.draw_end(event);
+                }
+                this.event_leave(event);
+            }
+            event_leave(event) {
+                this.event_eat(event);
+                this.dom_node().releasePointerCapture(event.pointerId);
+                this.start_pos(null);
+            }
+            swipe_left(event) {
+                if (this.view_rect().right - this.start_pos()[0] < this.swipe_precision() * 2)
+                    this.swipe_from_right(event);
+                else
+                    this.swipe_to_left(event);
+                this.event_end(event);
+            }
+            swipe_right(event) {
+                if (this.start_pos()[0] - this.view_rect().left < this.swipe_precision() * 2)
+                    this.swipe_from_left(event);
+                else
+                    this.swipe_to_right(event);
+                this.event_end(event);
+            }
+            swipe_top(event) {
+                if (this.view_rect().bottom - this.start_pos()[1] < this.swipe_precision() * 2)
+                    this.swipe_from_bottom(event);
+                else
+                    this.swipe_to_top(event);
+                this.event_end(event);
+            }
+            swipe_bottom(event) {
+                if (this.start_pos()[1] - this.view_rect().top < this.swipe_precision() * 2)
+                    this.swipe_from_top(event);
+                else
+                    this.swipe_to_bottom(event);
+                this.event_end(event);
+            }
+            event_wheel(event) {
+                if (event.defaultPrevented)
+                    return;
+                if (this.pan === $mol_touch.prototype.pan && this.zoom === $mol_touch.prototype.zoom)
+                    return;
+                if (this.pan !== $mol_touch.prototype.pan) {
+                    event.preventDefault();
+                }
+                const action_type = this.event_eat(event);
+                if (action_type === 'zoom') {
+                    const zoom_prev = this.zoom() || 0.001;
+                    const zoom_next = zoom_prev * (1 - .001 * Math.min(event.deltaY, 100));
+                    const mult = zoom_next / zoom_prev;
+                    this.zoom(zoom_next);
+                    const pan_prev = this.pan();
+                    const center = this.pointer_center();
+                    const pan_next = pan_prev.multed0(mult).added1(center.multed0(1 - mult));
+                    this.pan(pan_next);
+                }
+                if (action_type === 'pan') {
+                    const pan_prev = this.pan();
+                    const pan_next = new $mol_vector_2d(pan_prev.x - event.deltaX, pan_prev.y - event.deltaY);
+                    this.pan(pan_next);
+                }
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_touch.prototype, "pointer_events", null);
+        __decorate([
+            $mol_mem
+        ], $mol_touch.prototype, "pointer_coords", null);
+        __decorate([
+            $mol_mem
+        ], $mol_touch.prototype, "pointer_center", null);
+        __decorate([
+            $mol_mem
+        ], $mol_touch.prototype, "action_point", null);
+        $$.$mol_touch = $mol_touch;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/touch/touch.view.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mpds_visavis_plot_graph extends $mol_view {
         plot_raw() {
             const obj = new this.$.$mpds_visavis_plot_raw();
             return obj;
+        }
+        plugins() {
+            return [
+                this.Touch()
+            ];
         }
         sub() {
             return [
@@ -21108,12 +21849,23 @@ var $;
                 return next;
             return null;
         }
+        pan(next) {
+            return this.Touch().pan(next);
+        }
+        Touch() {
+            const obj = new this.$.$mol_touch();
+            return obj;
+        }
+        view_box() {
+            return "0 0 0 0";
+        }
         draw() {
             return null;
         }
         Root() {
-            const obj = new this.$.$mol_view();
-            obj.render = () => this.draw();
+            const obj = new this.$.$mol_svg_root();
+            obj.view_box = () => this.view_box();
+            obj.auto = () => this.draw();
             return obj;
         }
     }
@@ -21126,6 +21878,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mpds_visavis_plot_graph.prototype, "graph_click", null);
+    __decorate([
+        $mol_mem
+    ], $mpds_visavis_plot_graph.prototype, "Touch", null);
     __decorate([
         $mol_mem
     ], $mpds_visavis_plot_graph.prototype, "Root", null);
@@ -21193,10 +21948,17 @@ var $;
                 });
                 return { nodes, edges, labels, radii, foci, table, circle_cls, text_cls };
             }
+            view_box() {
+                if (!this.view_rect())
+                    return '0 0 0 0';
+                const [x, y] = this.pan();
+                const { width, height } = this.view_rect();
+                return `${-x} ${-y} ${width} ${height}`;
+            }
             draw() {
                 const { nodes, edges, labels, radii, foci, table, circle_cls, text_cls } = this.data();
                 const d3 = $mpds_visavis_lib.d3();
-                const svg_element = $mol_wire_sync(document).createElementNS('http://www.w3.org/2000/svg', 'svg');
+                const svg_element = this.Root().dom_node();
                 const svg = d3.select(svg_element);
                 const force = d3.layout.force()
                     .nodes(d3.values(nodes))
@@ -21257,7 +22019,6 @@ var $;
                 for (var i = 400; i > 0; i--)
                     force.tick();
                 force.stop();
-                this.Root().dom_node_actual().replaceChildren(svg_element);
             }
         }
         __decorate([
@@ -21266,6 +22027,9 @@ var $;
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot_graph.prototype, "data", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot_graph.prototype, "view_box", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot_graph.prototype, "draw", null);
@@ -21290,6 +22054,7 @@ var $;
             Root: {
                 width: '100%',
                 height: '100%',
+                userSelect: 'none',
             },
             flex: {
                 grow: 1,
@@ -21332,10 +22097,25 @@ var $;
         show_setup() {
             return false;
         }
+        notify(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
         Fullscreen() {
             const obj = new this.$.$mol_check();
             obj.Icon = () => this.Expand_icon();
             obj.checked = (next) => this.fullscreen(next);
+            return obj;
+        }
+        show_demo_warn(next) {
+            if (next !== undefined)
+                return next;
+            return true;
+        }
+        Demo_warn() {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => "You are using the limited demo. Buy the full access and support our work.";
             return obj;
         }
         plots() {
@@ -21448,6 +22228,9 @@ var $;
                 return next;
             return null;
         }
+        phase_data_demo() {
+            return this.Phase().data_demo();
+        }
         Phase() {
             const obj = new this.$.$mpds_visavis_plot_phase();
             obj.plot_raw = () => this.plot_raw();
@@ -21500,6 +22283,7 @@ var $;
         Scatter() {
             const obj = new this.$.$mpds_visavis_plot_scatter();
             obj.plot_raw = () => this.plot_raw();
+            obj.notify = (next) => this.notify(next);
             return obj;
         }
         Customscatter() {
@@ -21535,7 +22319,16 @@ var $;
     ], $mpds_visavis_plot.prototype, "json_cmp_request", null);
     __decorate([
         $mol_mem
+    ], $mpds_visavis_plot.prototype, "notify", null);
+    __decorate([
+        $mol_mem
     ], $mpds_visavis_plot.prototype, "Fullscreen", null);
+    __decorate([
+        $mol_mem
+    ], $mpds_visavis_plot.prototype, "show_demo_warn", null);
+    __decorate([
+        $mol_mem
+    ], $mpds_visavis_plot.prototype, "Demo_warn", null);
     __decorate([
         $mol_mem
     ], $mpds_visavis_plot.prototype, "Expand_icon", null);
@@ -21619,7 +22412,7 @@ var $;
         if (typeof HTMLElement !== 'function')
             return;
         class Component extends HTMLElement {
-            static tag = View.name.replace(/\W/g, '').replace(/^(?=\d+)/, '-').replace(/_/g, '-');
+            static tag = $$.$mol_func_name(View).replace(/\W/g, '').replace(/^(?=\d+)/, '-').replace(/_/g, '-');
             static observedAttributes = new Set;
             view = new View;
             root;
@@ -21628,7 +22421,7 @@ var $;
                     this.attachShadow({ mode: 'open' });
                     const node = this.view.dom_node();
                     node.setAttribute('mol_view_root', '');
-                    this.shadowRoot.append(document.getElementById(`$mol_style_attach`).cloneNode(true), node);
+                    this.shadowRoot.append($mol_style_attach_force().cloneNode(true), node);
                 }
                 this.root = $mol_wire_auto();
                 try {
@@ -21663,14 +22456,13 @@ var $;
                 const descr = Reflect.getOwnPropertyDescriptor(proto, field);
                 if (typeof descr.value !== 'function')
                     continue;
-                if (descr.value.length === 0)
-                    continue;
                 Component.observedAttributes.add(field);
             }
             attributes_observe(Reflect.getPrototypeOf(proto));
         }
         attributes_observe(View.prototype);
         customElements.define(Component.tag, Component);
+        return Component;
     }
     $.$mol_view_component = $mol_view_component;
 })($ || ($ = {}));
@@ -21682,7 +22474,7 @@ var $;
     var $$;
     (function ($$) {
         class $mpds_visavis_plot extends $.$mpds_visavis_plot {
-            fetch_plot_json(request) {
+            static fetch_plot_json(request) {
                 if (request == null)
                     return null;
                 const json = $mol_fetch.json(request);
@@ -21693,18 +22485,31 @@ var $;
                 return json;
             }
             json() {
-                return this.fetch_plot_json(this.json_request());
+                return $mpds_visavis_plot.fetch_plot_json(this.json_request());
             }
             json_cmp() {
-                return this.fetch_plot_json(this.json_cmp_request());
+                return $mpds_visavis_plot.fetch_plot_json(this.json_cmp_request());
+            }
+            json_cmp_request(next) {
+                if (next === null && $mol_wire_probe(() => this.json_cmp_request()) === null) {
+                    this.notify('Comparison was reset');
+                }
+                return next ?? null;
             }
             plot_raw() {
                 return this.json() ?
                     $mpds_visavis_plot_raw_from_json(this.json()) : null;
             }
             sub() {
-                return this.plot_raw() ?
-                    [this.Fullscreen(), this.plots()[this.plot_raw().type()]] : [];
+                const phase_data_demo = this.plot_raw()?.type() == 'pd' ? this.phase_data_demo() : false;
+                const show_demo_warn = this.show_demo_warn()
+                    && !['matrix', 'discovery'].includes(this.plot_raw()?.type())
+                    && !phase_data_demo;
+                return this.plot_raw() ? [
+                    ...show_demo_warn ? [this.Demo_warn()] : [],
+                    this.Fullscreen(),
+                    this.plots()[this.plot_raw().type()]
+                ] : [];
             }
             matrix_fixel_checked(next) {
                 if (next !== undefined) {
@@ -21721,16 +22526,19 @@ var $;
                 return false;
             }
             on_fixel_checked(checked) { }
+            notify(msg) {
+                alert(msg);
+            }
         }
-        __decorate([
-            $mol_action
-        ], $mpds_visavis_plot.prototype, "fetch_plot_json", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot.prototype, "json", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot.prototype, "json_cmp", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot.prototype, "json_cmp_request", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot.prototype, "plot_raw", null);
@@ -21746,6 +22554,12 @@ var $;
         __decorate([
             $mol_action
         ], $mpds_visavis_plot.prototype, "on_fixel_checked", null);
+        __decorate([
+            $mol_action
+        ], $mpds_visavis_plot.prototype, "notify", null);
+        __decorate([
+            $mol_action
+        ], $mpds_visavis_plot, "fetch_plot_json", null);
         $$.$mpds_visavis_plot = $mpds_visavis_plot;
         $mol_view_component($mpds_visavis_plot);
     })($$ = $.$$ || ($.$$ = {}));
@@ -21755,7 +22569,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mpds/visavis/plot/plot.view.css", "[mpds_visavis_plot][fullscreen] {\n\tposition: fixed;\n\tz-index: 9999;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n}\n");
+    $mol_style_attach("mpds/visavis/plot/plot.view.css", "[mpds_visavis_plot][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plot_matrix_root][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plot_graph_root][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plotly][mol_view_error]:not([mol_view_error=\"Promise\"]) {\n    background-image: none;\n\tpadding-top: 6rem;\n    align-items: flex-start;\n    justify-content: center;\n}\n\n[mpds_visavis_plot],\n[mpds_visavis_plot] .js-plotly-plot .plotly,\n[mpds_visavis_plot] .js-plotly-plot .plotly div {\n\tfont-family: inherit;\n}\n\n[mpds_visavis_plot][fullscreen] {\n\tposition: fixed;\n\tz-index: 9999;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n}\n");
 })($ || ($ = {}));
 //mpds/visavis/plot/-css/plot.view.css.ts
 ;
@@ -21774,6 +22588,19 @@ var $;
                 },
                 zIndex: 5,
             },
+            Demo_warn: {
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                justify: {
+                    content: 'center'
+                },
+                font: {
+                    size: '.75rem',
+                },
+                zIndex: 1,
+                cursor: 'default',
+            }
         });
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));

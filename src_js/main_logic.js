@@ -943,7 +943,7 @@ function launch_iframed_app(rank){
         entype = entry.substr(0, 1),
         iframe_src,
         iframe_height;
-    
+
     var visavis_json_request = null
 
     if (entype == 'S')
@@ -972,27 +972,24 @@ function launch_iframed_app(rank){
 
     if (wmgui.sid) iframe_src += '&sid=' + wmgui.sid;
 
-    var iframe_html = '<iframe frameborder=0 scrolling="no" width="100%" height="' + iframe_height + '" src="' + iframe_src + '"></iframe>';
-    if (wmgui.thumbed_display) iframe_html = '<div id="iframe" style="display:block;width:100%;border:1px solid #ddd;margin:10px 0;">' + iframe_html + '</div>';
-    else                       iframe_html = '<tr id="iframe"><td colspan="20" style="width:100%;padding:0;border-right:1px solid #eee;border-left:1px solid #eee;">' + iframe_html + '</td></tr>';
+    var inner_html = '<iframe frameborder=0 scrolling="no" width="100%" height="' + iframe_height + '" src="' + iframe_src + '"></iframe>';
+    if (visavis_json_request) inner_html = '<mpds-visavis-plot></mpds-visavis-plot>';
+    var app_html = '<tr id="iframe"><td colspan="20" style="width:100%;padding:0;border-right:1px solid #eee;border-left:1px solid #eee;">' + inner_html + '</td></tr>';
+    if (wmgui.thumbed_display) app_html = '<div id="iframe" style="display:block;width:100%;border:1px solid #ddd;margin:10px 0;">' + inner_html + '</div>';
+
+    that.after(app_html);
+    $(window).scrollTop(that.position().top - 95);
 
     if (visavis_json_request) {
-        that.after('<mpds-visavis-plot></mpds-visavis-plot>');
         var visavis_element = document.getElementsByTagName('mpds-visavis-plot')[0]
-        visavis_element.style.height = iframe_height + 'px'
         visavis_element.style.display = 'block'
-        visavis_element.style.border = '1px solid #ddd'
-        visavis_element.style.margin = '10px 0'
+        visavis_element.style.height = iframe_height + 'px'
         visavis_element.view.json_request(visavis_json_request)
         visavis_element.view.phase_click = ({phase_id}) => {
             const uri = window.location.protocol + "//" + window.location.host + window.location.pathname  + '#phase_id/' +  phase_id
             window.open(uri);
         }
-    } else {
-        that.after(iframe_html);
     }
-
-    $(window).scrollTop(that.position().top - 95);
 }
 
 function start_visavis(plot_type){
@@ -1039,7 +1036,7 @@ function manage_visavis(callback_fn, param_a, param_b){
 
     rebuild_visavis();
 
-    visavis_plot.json_cmp_request(null)
+    if (visavis_plot.json_cmp_request() !== null) visavis_plot.json_cmp_request(null)
     visavis_plot.json_request(get_mpds_request())
 
     if (callback_fn) callback_fn(param_a, param_b);

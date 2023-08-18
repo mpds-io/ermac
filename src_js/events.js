@@ -8,6 +8,8 @@ var discovery_elementals_on = ['nump']
 function register_events(){
     visavis_plot = document.getElementsByTagName('mpds-visavis-plot')[0].view
 
+    visavis_plot.notify = (msg) => wmgui.notify(msg);
+
     visavis_plot.matrix_click = ({cmt}) => {
         var uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/binary%20' + cmt
         window.open(uri);
