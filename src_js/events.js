@@ -2,57 +2,57 @@
 
 var wmgui = window.wmgui || {};
 
-var visavis_plot;
-var discovery_elementals_on = ['nump'];
+var visavis_plot
+var discovery_elementals_on = ['nump']
 
 function register_events(){
-    visavis_plot = document.getElementsByTagName('mpds-visavis-plot')[0].view;
+    visavis_plot = document.getElementsByTagName('mpds-visavis-plot')[0].view
 
     visavis_plot.notify = (msg) => wmgui.notify(msg);
 
     visavis_plot.matrix_click = ({cmt}) => {
-        var uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/binary%20' + cmt;
+        var uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/binary%20' + cmt
         window.open(uri);
     }
 
     visavis_plot.bar_click = ({facet, value}) => {
-        stop_visavis();
-        window.location.hash = wmgui.aug_search_cmd(facet, value);
+        stop_visavis()
+        window.location.hash = wmgui.aug_search_cmd(facet, value)
     }
 
     visavis_plot.pie_click = ({facet, value}) => {
-        stop_visavis();
-        window.location.hash = wmgui.aug_search_cmd(facet, value);
+        stop_visavis()
+        window.location.hash = wmgui.aug_search_cmd(facet, value)
     }
 
     visavis_plot.graph_click = ({facet, label}) => {
-        stop_visavis();
-        let value = label;
+        stop_visavis()
+        let value = label
         if (facet == 'codens') {
         	value = label.split("'")[0]; // FIXME years lost
         } else if (facet == 'formulae') {
         	value = wmutils.termify_formulae(label.split(",")[0]);
         }
-        window.location.hash = wmgui.aug_search_cmd(facet, value);
+        window.location.hash = wmgui.aug_search_cmd(facet, value)
     }
 
     visavis_plot.discovery_click = ({label}) => {
-        var uri = window.location.protocol + "//" + window.location.host + window.location.pathname + window.parent.wmgui.aug_search_cmd("elements", label);
+        var uri = window.location.protocol + "//" + window.location.host + window.location.pathname + window.parent.wmgui.aug_search_cmd("elements", label)
         window.open(uri);
     }
 
     visavis_plot.cube_click = ({label}) => {
-        var uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/' + label;
+        var uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/' + label
         window.open(uri);
     }
 
     visavis_plot.on_fixel_checked = (checked) => {
         if (checked) {
-            visavis_plot.json_request(get_mpds_request() + '&fixel=1');
+            visavis_plot.json_request(get_mpds_request() + '&fixel=1')
         } else {
-            visavis_plot.json_request(get_mpds_request());
+            visavis_plot.json_request(get_mpds_request())
         }
-        rebuild_visavis();
+        rebuild_visavis()
     }
 
     document.querySelector('#ptable_area > ul').addEventListener('click', function(event){
@@ -558,13 +558,13 @@ function register_events(){
             if (y_op) $('<span class="sops" rel="y">' + y_op + '</span>').appendTo('#viscube_' + y_sort);
             if (z_op) $('<span class="sops" rel="z">' + z_op + '</span>').appendTo('#viscube_' + z_sort);
 
-            var fixel = visavis_plot.cube_fixel_checked();
-            fixel? visavis_plot.matrix_x_sort(x_sort) : visavis_plot.x_sort(x_sort);
-            fixel? visavis_plot.matrix_y_sort(y_sort) : visavis_plot.y_sort(y_sort);
-            visavis_plot.z_sort(z_sort);
-            fixel? visavis_plot.matrix_x_op(y_op) : visavis_plot.x_op(y_op);
-            fixel? visavis_plot.matrix_y_op(y_op) : visavis_plot.y_op(y_op);
-            visavis_plot.z_op(z_op);
+            var fixel = visavis_plot.cube_fixel_checked()
+            fixel? visavis_plot.matrix_x_sort(x_sort) : visavis_plot.x_sort(x_sort)
+            fixel? visavis_plot.matrix_y_sort(y_sort) : visavis_plot.y_sort(y_sort)
+            visavis_plot.z_sort(z_sort)
+            fixel? visavis_plot.matrix_x_op(y_op) : visavis_plot.x_op(y_op)
+            fixel? visavis_plot.matrix_y_op(y_op) : visavis_plot.y_op(y_op)
+            visavis_plot.z_op(z_op)
 
         } else {
             if ((x_op && x_sort == 'count') || (y_op && y_sort == 'count')) return wmgui.notify('Sorry, data counts are not supported');
@@ -578,10 +578,10 @@ function register_events(){
             if (x_op) $('<span class="sops" rel="x">' + x_op + '</span>').appendTo('#vismatrix_' + x_sort);
             if (y_op) $('<span class="sops" rel="y">' + y_op + '</span>').appendTo('#vismatrix_' + y_sort);
 
-            visavis_plot.matrix_x_sort(x_sort);
-            visavis_plot.matrix_y_sort(y_sort);
-            visavis_plot.matrix_x_op(x_op);
-            visavis_plot.matrix_y_op(y_op);
+            visavis_plot.matrix_x_sort(x_sort)
+            visavis_plot.matrix_y_sort(y_sort)
+            visavis_plot.matrix_x_op(x_op)
+            visavis_plot.matrix_y_op(y_op)
         }
         $('#ss_custom_box, #overlay').hide();
         $('div.ss_col > ul').empty();
@@ -590,7 +590,7 @@ function register_events(){
     $('#close_dc_dialogue').click(function(){
         $('#discovery_custom_box, #overlay').hide();
         $('#discovery_enabled, #discovery_disabled').empty();
-        visavis_plot.discovery_elementals_on([...discovery_elementals_on]);
+        visavis_plot.discovery_elementals_on([...discovery_elementals_on])
         $('#select_cmp_trigger').val('X');
     });
 
@@ -1186,10 +1186,10 @@ function register_events(){
         that.addClass('embodied');
         $('span.sops').remove();
 
-        visavis_plot.matrix_x_sort(type);
-        visavis_plot.matrix_y_sort(type);
-        visavis_plot.matrix_x_op(null);
-        visavis_plot.matrix_y_op(null);
+        visavis_plot.matrix_x_sort(type)
+        visavis_plot.matrix_y_sort(type)
+        visavis_plot.matrix_x_op(null)
+        visavis_plot.matrix_y_op(null)
     });
     $('#ctxpanel_cube > ul > li').click(function(){
         var that = $(this);
@@ -1203,13 +1203,13 @@ function register_events(){
         that.addClass('embodied');
         $('span.sops').remove();
 
-        var fixel = visavis_plot.plot_raw().type() == 'matrix';
-        fixel? visavis_plot.matrix_x_sort(type) : visavis_plot.x_sort(type);
-        fixel? visavis_plot.matrix_y_sort(type) : visavis_plot.y_sort(type);
-        visavis_plot.z_sort(type);
-        fixel? visavis_plot.matrix_x_op(null) : visavis_plot.x_op(null);
-        fixel? visavis_plot.matrix_y_op(null) : visavis_plot.y_op(null);
-        visavis_plot.z_op(null);
+        var fixel = visavis_plot.plot_raw().type() == 'matrix'
+        fixel? visavis_plot.matrix_x_sort(type) : visavis_plot.x_sort(type)
+        fixel? visavis_plot.matrix_y_sort(type) : visavis_plot.y_sort(type)
+        visavis_plot.z_sort(type)
+        fixel? visavis_plot.matrix_x_op(null) : visavis_plot.x_op(null)
+        fixel? visavis_plot.matrix_y_op(null) : visavis_plot.y_op(null)
+        visavis_plot.z_op(null)
     });
     $('#ctxpanel_graph > ul > li').click(function(){
         var that = $(this);
@@ -1219,7 +1219,7 @@ function register_events(){
         that.addClass('embodied');
 
         var mapping = {'props': 'prel', 'aetypes': 'hrel', 'lattices': 'trel', 'articles': 'arel', 'geos': 'grel'};
-        visavis_plot.graph_rel(mapping[type]);
+        visavis_plot.graph_rel(mapping[type])
     });
     $('#select_cmp_trigger').change(function(){
         var value = $(this).val(),
@@ -1231,7 +1231,7 @@ function register_events(){
         if (value == 'X')
             return;
         else if (value == 'Y'){
-            visavis_plot.json_cmp_request(null);
+            visavis_plot.json_cmp_request(null)
             return;
         }
         else if (value == 'Z'){
@@ -1243,7 +1243,7 @@ function register_events(){
             return;
 
         var url = wmgui.vis_endpoint + '/' + wmgui.visavis_curtype + '?q=' + value;
-        visavis_plot.json_cmp_request(url);
+        visavis_plot.json_cmp_request(url)
     });
     $('li.discovery_custom').click(function(){
         var html_list_on = '',

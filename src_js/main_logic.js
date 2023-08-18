@@ -944,7 +944,7 @@ function launch_iframed_app(rank){
         iframe_src,
         iframe_height;
 
-    var visavis_json_request = null;
+    var visavis_json_request = null
 
     if (entype == 'S')
         iframe_src = wmgui.v_player_addr + entry, iframe_height = 650;
@@ -981,12 +981,12 @@ function launch_iframed_app(rank){
     $(window).scrollTop(that.position().top - 95);
 
     if (visavis_json_request) {
-        var visavis_element = document.getElementsByTagName('mpds-visavis-plot')[0];
-        visavis_element.style.display = 'block';
-        visavis_element.style.height = iframe_height + 'px';
-        visavis_element.view.json_request(visavis_json_request);
+        var visavis_element = document.getElementsByTagName('mpds-visavis-plot')[0]
+        visavis_element.style.display = 'block'
+        visavis_element.style.height = iframe_height + 'px'
+        visavis_element.view.json_request(visavis_json_request)
         visavis_element.view.phase_click = ({phase_id}) => {
-            const uri = window.location.protocol + "//" + window.location.host + window.location.pathname  + '#phase_id/' +  phase_id;
+            const uri = window.location.protocol + "//" + window.location.host + window.location.pathname  + '#phase_id/' +  phase_id
             window.open(uri);
         }
     }
@@ -1018,7 +1018,7 @@ function start_visavis(plot_type){
     wmgui.search_type = 0;
     wmgui.visavis_working = true;
     wmgui.visavis_starting = false;
-    visavis_plot.json_request(get_mpds_request());
+    visavis_plot.json_request(get_mpds_request())
 }
 
 function manage_visavis(callback_fn, param_a, param_b){
@@ -1036,8 +1036,8 @@ function manage_visavis(callback_fn, param_a, param_b){
 
     rebuild_visavis();
 
-    if (visavis_plot.json_cmp_request() !== null) visavis_plot.json_cmp_request(null);
-    visavis_plot.json_request(get_mpds_request());
+    if (visavis_plot.json_cmp_request() !== null) visavis_plot.json_cmp_request(null)
+    visavis_plot.json_request(get_mpds_request())
 
     if (callback_fn) callback_fn(param_a, param_b);
     return true;
@@ -1087,10 +1087,10 @@ function rebuild_visavis(){
         $('#visgraph_props').addClass('embodied');
 
     } else  if (wmgui.visavis_curtype == 'discovery'){
-        visavis_plot.discovery_elementals_on([...discovery_elementals_on]);
+        visavis_plot.discovery_elementals_on([...discovery_elementals_on])
 
     } else  if (wmgui.visavis_curtype == 'qproj'){
-        visavis_plot.show_fixel(false);
+        visavis_plot.show_fixel(false)
     }
 
 }
@@ -1105,10 +1105,8 @@ function get_mpds_request(type){
     var request = {total_count: 1};
     $.extend(request, wmgui.search);
 
-    if (wmgui.visavis_curtype == 'pie' && !type) {
-        return wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
-    }
-
+    if (wmgui.visavis_curtype == 'pie' && !type)
+        return wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request))
     return wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request));
 }
 
