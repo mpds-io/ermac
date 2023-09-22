@@ -30,7 +30,7 @@ jobs:
           ls -al build
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4
+        uses: JamesIves/github-pages-deploy-action@4.4.3
         with:
           branch: gh-pages
           folder: build
