@@ -195,7 +195,7 @@ div.context_msg{display:none;width:70%;margin:0 auto;padding-top:10px;color:#555
 #plt_cube > a{width:70px !important;background:url(plots.gif) -265px 0 no-repeat;}
 
 #apihint{font-weight:normal;color:#000;font-size:1.15em;line-height:1.5em;margin-bottom:50px;padding:20px 5px 45px;background:#f6f6f6;overflow-wrap:break-word;}
-#apihint span{color:#c00;font-weight:bold;}
+#apihint span{color:#c00;}
 #apihint a{text-decoration:none;color:#000;border-bottom:1px solid #000;}
 /*
 #fdwidget{height:175px;text-align:center;letter-spacing:1px;font-size:1em;font-weight:normal;line-height:1.8em;}

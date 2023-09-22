@@ -1,7 +1,9 @@
 name: Build on GitHub
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
   build-then-deploy:
@@ -23,14 +25,13 @@ jobs:
 
       - name: Save files
         run: |
-          mkdir build
-          cp ermac.min.js jquery.min.js build
-          cp -r webassets build
-          cp example_prod.html build/index.html
-          ls -al build
+          mkdir dist
+          cp ermac.min.js jquery.min.js dist
+          cp -r webassets oauth crystvis dist
+          cp example_prod.html dist/index.html
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
           branch: gh-pages
-          folder: build
+          folder: dist
