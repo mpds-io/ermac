@@ -89,7 +89,7 @@ wmgui.journal_converter = {j2c: function(){}, c2j: function(){}};
 wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure', 'electron density of states', 'vibrational spectra']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
 
 wmgui.visavis_curtype = 'pie'; // pie, graph, discovery, matrix, cube, qproj, lit TODO: heuristic plot type detection
-wmgui.visavis_ready = false;
+wmgui.visavis_ready = true;
 wmgui.visavis_working = false;
 wmgui.visavis_terminating = false;
 wmgui.visavis_starting = false;
