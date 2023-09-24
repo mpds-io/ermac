@@ -47,7 +47,7 @@ if (typeof String.prototype.endsWith === 'undefined') {
 	};
 }
 
-function firstLetter(string) {
+function capitalize(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -1305,15 +1305,15 @@ const OptimadeNLP = function () {
 
 		if (len > 10) return false;
 		// this cannot be no-index chemical formula
-		else if (len == 2) {
+		else if (len === 2) {
 			checks = [[chk.substr(0, 1), chk.substr(1, 1)]];
-		} else if (len == 3) {
+		} else if (len === 3) {
 			checks = [
 				[chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1)],
 				[chk.substr(0, 1), chk.substr(1, 2)],
 				[chk.substr(0, 2), chk.substr(2, 1)],
 			];
-		} else if (len == 4) {
+		} else if (len === 4) {
 			checks = [
 				[chk.substr(0, 2), chk.substr(2, 2)],
 				[chk.substr(0, 2), chk.substr(2, 1), chk.substr(3, 1)],
@@ -1321,7 +1321,7 @@ const OptimadeNLP = function () {
 				[chk.substr(0, 1), chk.substr(1, 2), chk.substr(3, 1)],
 				[chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1), chk.substr(3, 1)],
 			];
-		} else if (len == 5) {
+		} else if (len === 5) {
 			checks = [
 				[chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 1)],
 				[chk.substr(0, 1), chk.substr(1, 1), chk.substr(2, 2)],
@@ -1389,7 +1389,7 @@ const OptimadeNLP = function () {
 			for (let j = 0; j < checks[i].length; j++) {
 				if (periodic_elements_cased.includes(checks[i][j])) signals++;
 
-				if (signals == checks[i].length) {
+				if (signals === checks[i].length) {
 					//console.log(checks[i]);
 					return true;
 				}
@@ -1414,15 +1414,15 @@ const OptimadeNLP = function () {
 		const imatches = getMatchAll(escape(term), /%u208(\d)/g);
 		if (imatches && imatches.length && maybe_formula) return ['formulae']; // no props with subscripts
 
-		if (periodic_elements.includes(term)) return ['elements', firstLetter(term)];
+		if (periodic_elements.includes(term)) return ['elements', capitalize(term)];
 		else if (periodic_element_names.includes(term))
-			return [ 'elements', firstLetter(periodic_elements[periodic_element_names.indexOf(term)]) ];
+			return [ 'elements', capitalize(periodic_elements[periodic_element_names.indexOf(term)]) ];
 
 		if (
 			term.includes('-') &&
 			!term.split('-').some((part) => !periodic_elements.includes(part))
 		) {
-			return [ 'elements', term.split('-').map((el) => firstLetter(el)).join('-') ];
+			return [ 'elements', term.split('-').map((el) => capitalize(el)).join('-') ];
 		}
 
 		if (['element', 'elementary'].includes(term)) return ['classes', 'unary'];
@@ -1552,6 +1552,97 @@ const OptimadeNLP = function () {
 	}
 
 	/*
+	 * Get center and ligand information from a string
+	 */
+	function parse_ligand(string, start) {
+
+		const center = string.slice(0, start).toLowerCase();
+
+		if (string.slice(start, start + 1).toLowerCase() === 'x' && string.slice(start, start + 2).toLowerCase() !== 'xe'){
+			if (string.slice(start).length === 1) return [center, 'X'];
+
+			return [center, 'X' + string.slice(start + 1)];
+		}
+
+		if (string.length === start) return [center, 'X'];
+
+		const remainder = string.slice(start);
+
+		if (is_numeric(remainder.slice(0, 1)) && start === 2)
+			return parse_ligand(string, 1);
+
+		return [center, capitalize(remainder)];
+	}
+
+	/*
+	 * Get center and ligand information from a string
+	 */
+	function _parse_aeatoms(string) {
+
+		const pos = string.indexOf('-');
+
+		if (pos !== -1){
+			const center = string.slice(0, pos),
+				ligand = string.slice(pos + 1);
+
+			if (center.length > 2) return false;
+
+			return parse_ligand(center + ligand, center.length);
+		}
+
+		const trials = [2, 1],
+			periodic_elements_xed = ["x"].concat(periodic_elements);
+
+		for (let start = 0; start < 2; start++){
+			if (string.length >= trials[start] && periodic_elements_xed.indexOf(string.slice(0, trials[start]).toLowerCase()) !== -1){
+				return parse_ligand(string, trials[start]);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Get center and ligand information from a string
+	 */
+	function parse_aeatoms(string) {
+
+		const parsed = _parse_aeatoms(string);
+
+		if (!parsed) return ['?', '?'];
+
+		return [
+			capitalize(parsed[0]),
+			formula_to_tags(parsed[1])
+		];
+	}
+
+	/*
+	 * Add HTML tags to a chemical formula as a string
+	 */
+	function formula_to_tags(string) {
+
+		let sub = false,
+			html_formula = '';
+
+		for (let i = 0, len = string.length; i < len; i++){
+			if (is_numeric(string[i]) || string[i] === '.'){
+				if (!sub){
+					html_formula += '<sub>';
+					sub = true;
+				}
+			} else {
+				if (sub){
+					html_formula += '</sub>';
+					sub = false;
+				}
+			}
+			html_formula += string[i];
+		}
+		if (sub) html_formula += '</sub>';
+		return html_formula;
+	}
+
+	/*
 	 * User input processing: main algorithm
 	 */
 	function guess(inputstr) {
@@ -1671,7 +1762,7 @@ const OptimadeNLP = function () {
 				}
 			}
 
-			if (n_toks == tokens.length) {
+			if (n_toks === tokens.length) {
 				// token at the end, terminating
 				if (queue.length && !queue[queue.length - 1].ready)
 					ignored.push(...queue.map((obj) => obj.input));
@@ -1745,6 +1836,7 @@ const OptimadeNLP = function () {
 		to_optimade,
 
 		is_formula_anonymous,
+		parse_aeatoms,
 		termify_formulae,
 		is_numeric,
 
