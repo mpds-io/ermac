@@ -1,11 +1,4 @@
-<!--
-OAuth email validation tool,
-coupled with the respective MPDS API endpoint,
-to finish the OAuth dance and to check the missing email.
-Author: Evgeny Blokhin /
-Tilde Materials Informatics
-eb@tilde.pro
--->
+<!-- OAuth client's email validation screen -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,6 +53,10 @@ input[type=submit]{font-size:2vmin;padding:5px;}
 
 <script type="text/javascript">
 "use strict";
+
+window.store_try_email_key = 'wm_try_email';
+window.store_oauth_email_key = 'wm_u_email'; // TODO align with ermac
+
 document.getElementById('form').action = (window.location.host.indexOf('localhost')==-1) ? 'https://api.mpds.io/v0/oauth/email' : 'http://localhost:7070/oauth/email';
 
 var a = window.location.search.replace('?a=', '');
@@ -79,10 +76,10 @@ else {
         document.getElementById('err_b').style.display = 'block';
 
     // for OAuth linking redirect only
-    var u_email = window.localStorage.getItem('wm_try_email') || false;
+    var u_email = window.localStorage.getItem(window.store_try_email_key) || false;
     if (u_email){
         document.getElementById('actual_email').value = u_email;
-        window.localStorage.removeItem('wm_try_email');
+        window.localStorage.removeItem(window.store_try_email_key);
     }
 }
 
@@ -92,7 +89,7 @@ document.getElementById('form').onsubmit = function(){
     document.getElementById('trigger').value = 'In progress...';
 
     var u_email = document.getElementById('actual_email').value;
-    window.localStorage.setItem('wm_try_email', u_email);
+    window.localStorage.setItem(window.store_try_email_key, u_email);
     //return confirm('Your actual email address is:\r\n\r\n' + u_email + '\r\n\r\nConfirm?');
     return true;
 }
@@ -105,7 +102,7 @@ document.getElementById('act_a').onclick = function(){
 }
 
 document.getElementById('act_b').onclick = function(){
-    window.localStorage.setItem('wm_u_email', document.getElementById('actual_email').value);
+    window.localStorage.setItem(window.store_oauth_email_key, document.getElementById('actual_email').value);
     window.location = '/#modal/login';
 }
 </script>
