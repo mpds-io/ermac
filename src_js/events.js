@@ -140,7 +140,7 @@ function register_events(){
 
         destroy_numericbox();
         delete wmgui.search.numeric;
-        // TODO delete wmgui.search?
+        // TODO? delete wmgui.search
     });
 
     $('#advsearch_init_trigger').click(function(){
@@ -203,7 +203,7 @@ function register_events(){
             bid = that.attr('rel');
         $('a.resolve_ref[rel=' + bid + ']').addClass('visited'); // :visited
         wmgui.bid_history.push(parseInt(bid));
-        window.localStorage.setItem(wmgui.storage_bids_key, JSON.stringify(wmgui.bid_history));
+        window.localStorage.setItem(wmgui.store_bids_key, JSON.stringify(wmgui.bid_history));
         return true;
     });
 
@@ -269,6 +269,7 @@ function register_events(){
     });
 
     $('#visualize, #xrpdize').click(function(){
+        // TODO what if opened already?
         if (!close_vibox()) launch_iframed_app(this.getAttribute('data-rank'));
     });
 
@@ -277,6 +278,7 @@ function register_events(){
         if (!$(this).hasClass('wmbutton')) return false;
 
         if (!wmgui.sid){
+            window.localStorage.setItem(window.store_redir_key, '/' + window.location.hash);
             return window.location.replace('#modal/login');
         }
 
@@ -295,7 +297,7 @@ function register_events(){
             if (data.error) return wmgui.notify(data.error);
 
             wmgui.mydata_history.push(entry);
-            window.localStorage.setItem(wmgui.storage_mydata_key, JSON.stringify(wmgui.mydata_history));
+            window.localStorage.setItem(wmgui.store_mydata_key, JSON.stringify(wmgui.mydata_history));
             $('#absolidize').removeClass('wmbutton');
 
         }).fail(function(xhr, textStatus, errorThrown){
@@ -433,7 +435,7 @@ function register_events(){
             window.location.hash = '#entry/S' + sod;
 
         } else if (act == 'my'){
-            var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
+            var locals = JSON.parse(window.localStorage.getItem(wmgui.store_user_key) || '{}');
             if (locals.ipbased){
                 window.location.hash = '#inquiry/orgs=' + locals.name;
 
@@ -576,7 +578,7 @@ function register_events(){
     });
 
     $('#hy_box').on('click', 'a.dynprop', function(){
-        // FIXME cannot process with optimade NLP parser
+        // FIXME cannot process with the optimade NLP parser
         //if (wmgui.view_mode == 1)
         //    return true;
 
@@ -794,17 +796,17 @@ function register_events(){
                 $('#usr_api_key').html(data.msg);
                 if (data.revokable)      $('#revoke_usr_api_key_holder').show();
                 else if (data.creatable) $('#create_usr_api_key_holder').show();
-                else return wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                else return wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
 
             }).fail(function(xhr, textStatus, errorThrown){
                 if (textStatus != 'abort')
-                    wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                    wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
             });
 
         } else if (desttab == 'usr_tab_perms'){
             $('#hintsbox_msg').html(wmgui.get_random_term(wmgui.welcome_msgs));
 
-            var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
+            var locals = JSON.parse(window.localStorage.getItem(wmgui.store_user_key) || '{}');
 
             wmgui.active_ajax = $.ajax({
                 type: 'POST',
@@ -814,12 +816,12 @@ function register_events(){
 
             }).always(wmgui.hide_preloader).done(function(data){
                 if (data.error) return wmgui.notify(data.error);
-                if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api')) return wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                if (!data.hasOwnProperty('gui') || !data.hasOwnProperty('api')) return wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
                 $('#perms_view').html(describe_perms(data));
 
             }).fail(function(xhr, textStatus, errorThrown){
                 if (textStatus != 'abort')
-                    wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                    wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
             });
 
         } else if (desttab == 'usr_tab_ctrl'){ // redirect to an external app
@@ -867,7 +869,7 @@ function register_events(){
 
         }).fail(function(xhr, textStatus, errorThrown){
             if (textStatus != 'abort')
-                wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
         });
     });
     $('#revoke_usr_api_key').click(function(){
@@ -887,7 +889,7 @@ function register_events(){
 
         }).fail(function(xhr, textStatus, errorThrown){
             if (textStatus != 'abort')
-                wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
         });
     });
 
@@ -917,6 +919,40 @@ function register_events(){
 
         }).fail(function(xhr, textStatus, errorThrown){
             wmgui.notify("Login unsuccessful");
+        });
+    });
+
+    $('#factor_trigger').click(function(){
+        if ($(this).data('busy')) return;
+        $(this).data('busy', true);
+        $(this).text('Sending...');
+
+        try { wmgui.active_ajax.abort() } catch(e){}
+
+        wmgui.active_ajax = $.ajax({
+            type: 'POST',
+            url: wmgui.factor_endpoint,
+            data: {login: $('#factor_by_email').val().trim()},
+            beforeSend: wmgui.show_preloader
+
+        }).always(function(){
+            $('#factor_trigger').data('busy', false);
+            $('#factor_trigger').text('Send code');
+            wmgui.hide_preloader();
+
+        }).done(function(data){
+            if (data.error) return wmgui.notify(data.error);
+            wmgui.notify('Please, check your inbox (and spam)');
+
+            // handle factor log in step two...
+            document.getElementById('factor_trigger').style.display = 'none';
+            document.getElementById('factor_form_step_one').style.display = 'none';
+            document.getElementById('factor_form_step_two').style.display = 'block';
+            document.getElementById('factor_form_resp_0').focus();
+
+        }).fail(function(xhr, textStatus, errorThrown){
+            if (textStatus != 'abort')
+                wmgui.notify('Sorry, a network error occured. Please, try again');
         });
     });
 
@@ -987,7 +1023,7 @@ function register_events(){
 
         }).fail(function(xhr, textStatus, errorThrown){
             if (textStatus != 'abort')
-                wmgui.notify('Session ended: please, <span class="href relogin">re-login</span>');
+                wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
         });
     });
 
@@ -1005,6 +1041,43 @@ function register_events(){
         $('#userbox').trigger('click');
     });
     $('#notifybox').on('click', 'span.relogin', force_relogin);
+
+    var resps = document.getElementsByClassName('factor_form_resp');
+    for (var i = 0; i < resps.length; i++) {
+
+        resps[i].addEventListener('keyup', function(evt) {
+
+            // back, left arrow
+            if (evt.keyCode == 8 || evt.keyCode == 37) {
+                var prev = this.previousElementSibling;
+                if (prev) {
+                    prev.focus();
+                    prev.select();
+                }
+
+            } else if (evt.keyCode > 47 && evt.keyCode < 58) {
+
+                submit_factor_form_resp();
+
+                var next = this.nextElementSibling;
+                if (next) {
+                    next.focus();
+                    next.select();
+                }
+            }
+        });
+
+        resps[i].addEventListener('paste', function(evt) {
+            var pasted = (evt.clipboardData || window.clipboardData).getData("text");
+            if (!pasted || !pasted.length)
+                return false;
+
+            for (var i = 0; i < 6; i++) {
+                document.getElementById('factor_form_resp_' + i).value = pasted.charAt(i);
+            }
+            submit_factor_form_resp();
+        });
+    }
 
     $('#search_holder').keydown(function(e){
         var key = window.event ? e.keyCode : e.which;
@@ -1389,8 +1462,9 @@ function register_events(){
 
     $(window).bind('storage', function(ev){
         // This is to execute the command in all the active GUI windows (except the current) e.g. setting a new state
-        if (ev.originalEvent.key != 'wm_reload')
+        if (ev.originalEvent.key != wmgui.store_comm_exec_key)
             return;
+
         var runnable_name = ev.originalEvent.newValue;
         if (runnable_name && window[runnable_name]) window[runnable_name]();
     });

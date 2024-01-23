@@ -28,7 +28,7 @@ Number.prototype.count_decimals = function(){
 }
 
 /**
- * Auxiliary methods relevant for DOM (based on jQuery)
+ * Auxiliary methods relevant for DOM, based on jQuery
  */
 
 wmgui.clean = function(str){
@@ -307,7 +307,7 @@ wmgui.to_formula = function(input){
 }
 
 /**
- * Display processing results in HTML (based on jQuery)
+ * Display processing results in HTML, based on jQuery
  */
 
 wmgui.get_interpretation = function(search, facet_names, num_database){

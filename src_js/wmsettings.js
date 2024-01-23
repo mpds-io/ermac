@@ -73,14 +73,14 @@ wmgui.cliffhangers = [
     "binary frank-kasper type"
 ];
 wmgui.welcome_msgs = [
-    "The <b>distinct phases</b> is the central concept at the MPDS. Thanks to that, the crystal structures are linked to the phase diagrams and physical properties. Any distinct phase is uniquely determined by the chemical formula, space group, and Pearson symbol <i>e.g.</i> <a href='/phase/CuAl2/140/tI12'>CuAl2 140 tI12</a>.",
-    "Our data are used in such products as Springer Materials&trade;, ICDD PDF-4&trade;, ASM Alloy Phase Diagrams&trade;, Pearson's Crystal Data, MedeA Materials Design&trade;, and AtomWork Advanced.",
+    "The distinct phases is the central concept at the MPDS. Thanks to that, the crystal structures are linked to the phase diagrams and physical properties. Any distinct phase is uniquely determined by the chemical formula, space group, and Pearson symbol <i>e.g.</i> <a href='/#phase/CuAl2/140/tI12'>CuAl2 140 tI12</a>.",
+    "Our data back up such products as Springer Materials&trade;, ICDD PDF-4&trade;, ASM Alloy Phase Diagrams&trade;, Pearson's Crystal Data, MedeA Materials Design&trade;, and AtomWork Advanced.",
     "Each peer-reviewed crystal structure, phase diagram, or physical property at the MPDS originates from a particular publication.",
-    "There are two search modes, <b>simple</b> and <b>advanced</b>. The simple presents one \"smart\" input field, the advanced offers many various search fields.",
+    "There are two search modes, simple and advanced. The simple presents one \"smart\" input field, the advanced offers many various search fields.",
     "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never online.",
     "A unique feature of the MPDS is the support of the <a href='/#polyhedra'>polyhedral type searches</a>, taking into account the atomic environments."
 ];
-// used also in Ermac detection:
+// NB used also in Ermac detection
 wmgui.api_msg = 'Try <i>e.g.</i> the following command in a terminal. As finished, do not forget to revoke your API key. See the <a href="https://developer.mpds.io">manual</a> and the <a href="/#formal/api">license</a> for open data listing.<pre style="overflow-x:scroll;margin:1em 0;">curl -H Key:YOUR_API_KEY \'https://api.mpds.io/v0/download/facet?q=&bsol;{"elements":"Ag-K"&bsol;}\'</pre><div class="wmbutton" style="background:#999;border-color:#999;width:150px;margin:0 auto;font-size:0.9em;">Copy to clipboard</div>';
 
 wmgui.bid_history = [];
@@ -88,7 +88,7 @@ wmgui.mydata_history = [];
 wmgui.journal_converter = {j2c: function(){}, c2j: function(){}};
 wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure', 'electron density of states', 'vibrational spectra']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
 
-wmgui.visavis_curtype = 'pie'; // pie, graph, discovery, matrix, cube, qproj, lit TODO: heuristic plot type detection
+wmgui.visavis_curtype = 'pie'; // pie, graph, discovery, matrix, cube, qproj, lit, TODO heuristic plot type detection
 wmgui.visavis_ready = false;
 wmgui.visavis_working = false;
 wmgui.visavis_terminating = false;
@@ -114,6 +114,8 @@ wmgui.static_host =       'https://mpds.io';
 // below are the main MPDS API endpoints
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';
 wmgui.logout_endpoint =   wmgui.api_host + '/users/logout';
+wmgui.factor_endpoint =   wmgui.api_host + '/users/factor';
+wmgui.factor_v_endpoint = wmgui.api_host + '/users/factor_v';
 wmgui.restore_endpoint =  wmgui.api_host + '/users/lost_password';
 wmgui.password_endpoint = wmgui.api_host + '/users/new_password';
 wmgui.access_endpoint =   wmgui.api_host + '/users/access';
@@ -150,37 +152,87 @@ wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api
 wmgui.v_pd_3d_addr =      wmgui.static_host + '/labs/pd3d/?';
 
 // below are remote files commonly used
-wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?040521';
+wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?220923';
 wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
 
-wmgui.edition = null; // NB edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
+wmgui.edition = null; // NB the edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
 
 wmgui.editions = {
-    0: {'name': 'Materials Platform for Data Science', 'prod_url': 'https://mpds.io', 'dev_url': 'http://localhost:8070', 'css': wmgui.static_host + '/editions/wm/style.css?300422', 'actions': function(){
-        $('#logo_l').text('MPDS');
-        $('.only_asm').hide();
-        $('.only_mpds').css('display', 'inline-block');
-    }},
-    1: {'name': 'ASM International Materials Platform', 'prod_url': 'https://asm.mpds.io', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?300422', 'actions': function(){
-        $('.only_mpds').hide();
-        $('.only_asm').css('display', 'inline-block');
-        // custom favicon
-        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'shortcut icon';
-        link.href = wmgui.static_host + '/editions/asm/asm.ico';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }},
-    6: {'name': 'ASM International Materials Platform', 'prod_url': 'https://mpds.asminternational.org', 'dev_url': 'http://localhost:8075', 'css': wmgui.static_host + '/editions/asm/style.css?300422', 'actions': function(){
-        $('.only_mpds').hide();
-        $('.only_asm').css('display', 'inline-block');
-        // custom favicon
-        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'shortcut icon';
-        link.href = wmgui.static_host + '/editions/asm/asm.ico';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }}
+    0: {
+        'name': 'Materials Platform for Data Science',
+        'prod_url': 'https://mpds.io',
+        'dev_url': 'http://localhost:8070',
+        'css': wmgui.static_host + '/editions/wm/style.css?220923',
+        'actions': function(){
+            $('#logo_l').text('MPDS');
+            $('.only_asm').hide();
+            $('.only_mpds').css('display', 'inline-block');
+        }
+    },
+    1: {
+        'name': 'ASM International Materials Platform',
+        'prod_url': 'https://asm.mpds.io',
+        'dev_url': 'http://localhost:8075',
+        'css': wmgui.static_host + '/editions/asm/style.css?220923',
+        'actions': function(){
+            $('.only_mpds').hide();
+            $('.only_asm').css('display', 'inline-block');
+            // custom favicon
+            var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+            link.type = 'image/x-icon';
+            link.rel = 'shortcut icon';
+            link.href = wmgui.static_host + '/editions/asm/asm.ico';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    },
+    6: {
+        'name': 'ASM International Materials Platform',
+        'prod_url': 'https://mpds.asminternational.org',
+        'dev_url': 'http://localhost:8075',
+        'css': wmgui.static_host + '/editions/asm/style.css?220923',
+        'actions': function(){
+            $('.only_mpds').hide();
+            $('.only_asm').css('display', 'inline-block');
+            // custom favicon
+            var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+            link.type = 'image/x-icon';
+            link.rel = 'shortcut icon';
+            link.href = wmgui.static_host + '/editions/asm/asm.ico';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    },
+    10: {
+        'name': 'Ermac on MPDS',
+        'prod_url': 'https://ermac.mpds.io',
+        'dev_url': 'http://localhost:5555',
+        'actions': function(){
+            $('.only_mpds').hide();
+        }
+    },
+    11: {
+        'name': 'Ermac on Tilde',
+        'prod_url': 'https://ermac.tilde.pro',
+        'dev_url': 'http://localhost:5556',
+        'actions': function(){
+            $('.only_mpds').hide();
+        }
+    },
+    15: {
+        'name': 'Ermac on Ab Solidix',
+        'prod_url': 'https://ermac.absolidix.com',
+        'dev_url': 'http://localhost:5560',
+        'actions': function(){
+            $('.only_mpds').hide();
+        }
+    },
+    16: {
+        'name': 'Ermac on MatCloud+',
+        'prod_url': 'https://ermac.matcloudplus.com',
+        'dev_url': 'http://localhost:5561',
+        'actions': function(){
+            $('.only_mpds').hide();
+        }
+    }
 };
 // NB all URLs are above
 
@@ -313,18 +365,20 @@ wmgui.aets = {
 //wmgui.contact_html = '<textarea id="fdwidget_msg" placeholder="Please tell us why, anonymously"></textarea><select id="fdwidget_msgtype"><option value="No reason" selected>Please select reason...</option><option value="Data missing">Data missing</option><option value="Error in data">Error in data</option><option value="Other">Other</option></select><div id="fdwidget_trigger" class="wmbutton">Send</div>';
 
 wmgui.s_examples = [251737, 261485, 301194, 458778, 525194, 533193, 1005414, 1030546, 1122968, 1215422, 1232477, 1321212, 1406036, 1613664, 1638591, 1640622, 1707997, 1711681, 1722027, 1819191, 1928624, 1933647, 1940797];
-wmgui.mockyear = '2022'; // used for the in-house generated data, TODO switch to 2023
+wmgui.mockyear = '2022'; // used for the in-house generated data, TODO switch to 2024
 
-wmgui.storage_history_key = 'wm_search_log_v5';
-wmgui.storage_user_key = 'wm';
-wmgui.storage_bids_key = 'bid_history'; // TODO rename to wm_bid_history
-//wmgui.storage_redir_key = 'wm_redir';
-wmgui.storage_mydata_key = 'absolidix_v1';
+wmgui.store_history_key = 'wm_search_log_v5';
+wmgui.store_user_key = 'wm';
+wmgui.store_bids_key = 'bid_history'; // TODO rename to wm_bid_history
+wmgui.store_mydata_key = 'absolidix_v1';
+wmgui.store_oauth_email_key = 'wm_u_email';
+wmgui.store_comm_exec_key = 'wm_reload_v1';
+wmgui.store_redir_key = 'wm_redir_v1';
 
 wmgui.tooltips = {
     //'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="userbox">Next</span>'},
     //'hierarchy': {el: 'advsearch_init_trigger', oleft: -50, otop: 60, view_mode: 1, text: 'Use the <i>&mu;</i> button to select physical properties from the curated hierarchy.<br /><span rel="userbox">Next</span>'},
-    'userbox': {el: 'userbox', oleft: -105, otop: 60, view_mode: 1, text: 'Log in here and enjoy the full data access.<br /><span rel="close_tooltip">OK</span>'},
+    'userbox': {el: 'userbox', oleft: -105, otop: 60, view_mode: 1, text: 'Enjoy full data access<br />with your account here.<br /><span rel="close_tooltip">OK</span>'},
     'interpretation': {el: 'right_col', oleft: -70, otop: 99, view_mode: 2, text: 'The entries are grouped in the phases.<br /><span rel="databrowser">Next</span>'},
     'databrowser': {el: 'databrowser', oleft: 0, otop: 200, view_mode: 2, text: 'Click the particular entry to get more info. Opened lock means open access.<br /><span rel="close_tooltip">OK</span>'},
     //'plots': {el: 'databrowser', oleft: 0, otop: 500, view_mode: 2, text: 'Use the graph chart buttons in the footer (at the very bottom of the page).<br /><span rel="close_tooltip">OK</span>'},

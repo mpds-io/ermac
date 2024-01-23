@@ -206,7 +206,7 @@ function render_left(data){
     if (data.error)
         return wmgui.notify(data.error);
 
-    const header = '<h4>Reported phases of ' + wmgui.ptable.query.elements + (wmgui.ptable.query.elements.indexOf('-') == -1 ? '' : ' system') + '</h4>';
+    const header = '<h4>Reported phases of ' + wmgui.ptable.query.classes + ' ' + wmgui.ptable.query.elements + (wmgui.ptable.query.elements.indexOf('-') == -1 ? '' : ' system') + '</h4>';
 
     const parent = document.getElementById('ptable_previews');
     parent.className = "";

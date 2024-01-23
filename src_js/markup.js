@@ -1,4 +1,3 @@
-
 "use strict";
 
 var wmgui = window.wmgui || {};
@@ -327,10 +326,10 @@ function register_html(){
     <div class="col_title">Entry <span id="entryno"></span> <div class="cross _close_ctx" style="margin:12px 2px 0 0;"></div></div>
 
     <div id="ml_data" class="spinoff_pane">
-        <p>In-house machine-learning predictions</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">These data are open and freely available under the CC BY 4.0 license. Cite as: Blokhin, Villars. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="/materials-design">materials design</a> app and the <a target="_blank" href="/ml">properties prediction</a> app online.<br /><br /></span>
+        <p>In-house machine-learning predictions</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">These data are open and freely available under the CC BY 4.0 license. Cite as: Blokhin, Villars. MPDS: Materials Platform for Data Science, <i>mpds.io</i>, in preparation.<br />See the <a target="_blank" href="/materials-design">materials design</a> app and the <a target="_blank" href="/ml">properties prediction</a> app online.<br /><br /></span>
     </div>
     <div id="ab_data" class="spinoff_pane">
-        <p>In-house <i>ab initio</i> calculations</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">These data are open and freely available under the CC BY 4.0 license. Cite as: Sobolev, Civalleri, Maschio, Erba, Dovesi, Villars, Blokhin. MPDS: Materials Platform for Data Science, <i>www.mpds.io</i>, in preparation.<br />See the <a target="_blank" href="https://mpds.io/labs/dtypes-cmp">data types comparison</a>.<br /><br /></span>
+        <p>In-house <i>ab initio</i> calculations</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">These data are open and freely available under the CC BY 4.0 license. Cite as: Sobolev, Civalleri, Maschio, Erba, Dovesi, Villars, Blokhin. MPDS: Materials Platform for Data Science, <i>mpds.io</i>, in preparation.<br />See the <a target="_blank" href="https://mpds.io/labs/dtypes-cmp">data types comparison</a>.<br /><br /></span>
     </div>
     <div id="ab_promise" class="spinoff_pane">
         <p>In-house <i>ab initio</i> calculations</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">This calculation is in progress. Upon completion it will be freely available under the CC BY 4.0 license. Support our work purchasing <a target="_blank" href="https://mpds.io/products" style="text-decoration:none;color:#000;border-bottom:1px solid #000;">our products</a>.<br /><br /></span>
@@ -445,7 +444,7 @@ function register_html(){
 
 <!-- RIGHT MAIN COLUMN -->
 <div id="right_col" class="side_cols">
-    <div class="col_title">Display</div>
+    <div class="col_title">View</div>
 
     <div class="controlswitch">
         <div id="control_a">entries</div><div id="control_b">phases</div><div id="control_f">articles</div>
@@ -630,7 +629,32 @@ function register_html(){
     <div style="width:150px;margin:25px auto;">
         <div id="login_trigger" class="wmbutton def_submittable">Log in</div>
     </div>
-    <div class="notice">or email <span class="href" rel="#modal/restore">an access link</span><br />or log in via <a href="oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
+    <div class="notice">or email <span class="href" rel="#modal/factor">an access code</span><br />or log in with <a href="oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
+</div>
+
+<!-- FACTOR MODAL -->
+<div id="factorbox" class="modal user_dialogue">
+    <div class="cross close_user_dialogue"></div>
+    <br />
+
+    <div id="factor_form_step_one" style="display:block;">
+    <div><label for="factor_by_email">Email:</label></div>
+    <input type="email" id="factor_by_email" class="submitter" maxlength="100" autocomplete="off" />
+    </div>
+
+    <div id="factor_form_step_two" style="display:none;">
+        <input class="factor_form_resp" id="factor_form_resp_0" type="text" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_1" type="text" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_2" type="text" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_3" type="text" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_4" type="text" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_5" type="text" maxlength="1" />
+    </div>
+
+    <div style="width:150px;margin:25px auto;">
+        <div id="factor_trigger" class="wmbutton def_submittable">Send code</div>
+    </div>
+    <div class="notice">or log in with <span class="href" rel="#modal/login">password</span><br />or with <a href="oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
 </div>
 
 <!-- RESTORE MODAL -->
@@ -644,7 +668,7 @@ function register_html(){
     <div style="width:150px;margin:25px auto;">
         <div id="restore_trigger" class="wmbutton def_submittable">Send link</div>
     </div>
-    <div class="notice">or log in with <span class="href" rel="#modal/login">password</span><br />or via <a href="oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
+    <div class="notice">or log in with <span class="href" rel="#modal/login">password</span><br />or with <a href="oauth/github.html" rel="nofollow noopener noreferrer">GitHub</a> or <a href="oauth/orcid.html" rel="nofollow noopener noreferrer">ORCID</a> or <a href="oauth/linkedin.html" rel="nofollow noopener noreferrer">LinkedIn</a></div>
 </div>
 
 <!-- USER MENU MODAL -->
@@ -667,7 +691,7 @@ function register_html(){
         <div id="account_holder_accpass">Password: <span id="accpass_trigger"></span></div>
 
         <div id="account_pass_change" style="display:none;">
-            <div id="account_pass_hint">MPDS password is optional.<br />If not set, other ways to log in can be used.</div>
+            <div id="account_pass_hint">MPDS password is optional.<br />If none, other ways to log in can be used.</div>
 
             <div><label for="new_password_1">New password:</label></div>
             <div><input type="password" id="new_password_1" class="submitter" maxlength="100" /></div>

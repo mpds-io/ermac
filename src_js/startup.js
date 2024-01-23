@@ -10,11 +10,11 @@ function satisfy_requirements(){
 
     wmgui.ptable.els_data = read_ptable_html();
 
-    local_user_login();
+    init_user_login();
 
     // building history box
     var history_html = '';
-    $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_history_key) || '[]'), function(n, past){
+    $.each(JSON.parse(window.localStorage.getItem(wmgui.store_history_key) || '[]'), function(n, past){
         wmgui.tooltip_counter++;
 
         if (n > 7)
@@ -32,11 +32,11 @@ function satisfy_requirements(){
     });
     $('#history ul').append(history_html);
 
-    $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_bids_key) || '[]'), function(n, item){
+    $.each(JSON.parse(window.localStorage.getItem(wmgui.store_bids_key) || '[]'), function(n, item){
         wmgui.bid_history.push(parseInt(item));
     });
 
-    $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_mydata_key) || '[]'), function(n, item){
+    $.each(JSON.parse(window.localStorage.getItem(wmgui.store_mydata_key) || '[]'), function(n, item){
         wmgui.mydata_history.push(item);
     });
 

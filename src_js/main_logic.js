@@ -187,7 +187,7 @@ wmgui._selectize_display = function($this, facet, term){
 }
 
 function show_interpretation(search){
-    // FIXME only allow fixed props
+    // FIXME only allow pre-defined props
     $('#interpret').html(
         wmgui.clean(wmgui.get_interpretation(search, wmgui.facet_names, wmgui.numerics))
     );
@@ -230,7 +230,7 @@ function request_search(search, caption, without_history){
         caption = caption.replaceAll('%2F', '/');
 
         if (!data.out.length)
-            return wmgui.notify('No results for <b>' + caption + '</b>');
+            return wmgui.notify('No results for ' + caption);
 
         wmgui.fuzzyout = false;
         if (data.fuzzy_notice){
@@ -329,6 +329,7 @@ function request_search(search, caption, without_history){
             }
 
             if (search.entry && (search.entry.substr(0, 1) == 'S' || search.entry.substr(0, 1) == 'C') && search.entry.indexOf('-') == -1){
+                // TODO add also 'P' for plottable entries
                 var that = $('#e__' + search.entry);
                 if (that.length && that.attr('data-rank') != 0){ // NB "!=", not "!=="
                     that.removeClass('busy_entry');
@@ -377,7 +378,7 @@ function rebuild_history_box(search, caption){
     for (var prop in orepr){ title.push(orepr[prop].toLowerCase()) }
     title.sort();
     var fingerprint = title.join(" "),
-        search_log = JSON.parse(window.localStorage.getItem(wmgui.storage_history_key) || '[]'),
+        search_log = JSON.parse(window.localStorage.getItem(wmgui.store_history_key) || '[]'),
         chk_searches = [];
     if (search_log.length > 8) search_log = search_log.slice(0, 7);
     $.each(search_log, function(n, item){
@@ -393,7 +394,7 @@ function rebuild_history_box(search, caption){
 
         $('#history ul').prepend('<li>' + wmgui.clean(item) + '</li>');
         search_log.unshift(orepr);
-        window.localStorage.setItem(wmgui.storage_history_key, JSON.stringify(search_log));
+        window.localStorage.setItem(wmgui.store_history_key, JSON.stringify(search_log));
         if ($('#history ul li').length > 8) $('#history ul li:last').remove();
     }
     wmgui.tooltip_counter++;
@@ -947,7 +948,7 @@ function launch_iframed_app(rank){
 
     if (entype == 'S'){
         if (rank == 99) {
-            iframe_src = wmgui.v_xrpd_addr + entry, iframe_height = 600;
+            iframe_src = wmgui.v_xrpd_addr + entry, iframe_height = 550;
 
         } else
             iframe_src = wmgui.v_player_addr + entry, iframe_height = 650;
@@ -1073,7 +1074,7 @@ function rebuild_visavis(){
         $('#ctxpanel_matrix > ul > li.embodied').removeClass('embodied');
         var y_id = $('#ctxpanel_matrix > ul > li.ss_y');
         if (y_id.length) y_id.removeClass('ss_y');
-        $('#vismatrix_nump').addClass('embodied'); // set the default sort order (also in Visavis: TODO)
+        $('#vismatrix_nump').addClass('embodied'); // set the default sort order, also in Visavis: TODO
         $('span.sops').remove();
 
     } else if (wmgui.visavis_curtype == 'cube'){
@@ -1246,7 +1247,7 @@ function show_modal(which){
 
     if (which == 'login'){
 
-        if ($("#restore_by_email").val()) $("#login_email").val($("#restore_by_email").val());
+        if ($("#factor_by_email").val()) $("#login_email").val($("#factor_by_email").val());
         else $("#login_email").val('');
 
         $("#login_password").val('');
@@ -1254,12 +1255,21 @@ function show_modal(which){
         $("#login_email").focus();
 
         // for OAuth linking redirect only
-        // see *wm_u_email* in email_chain.html
-        var u_email = window.localStorage.getItem('wm_u_email') || false;
+        // see email_chain.html
+        var u_email = window.localStorage.getItem(wmgui.store_oauth_email_key) || false;
         if (u_email){
             $("#login_email").val(u_email);
-            window.localStorage.removeItem('wm_u_email');
+            window.localStorage.removeItem(wmgui.store_oauth_email_key);
         }
+
+    } else if (which == 'factor'){
+
+        if ($("#login_email").val()) $("#factor_by_email").val($("#login_email").val());
+        else $("#factor_by_email").val('');
+
+        $('#factorbox').show();
+        $("#factor_by_email").focus();
+
     } else if (which == 'restore'){
 
         if ($("#login_email").val()) $("#restore_by_email").val($("#login_email").val());
@@ -1270,10 +1280,23 @@ function show_modal(which){
     }
 }
 
+function init_user_login(){
+
+    // to prevent re-execution
+    var locals = JSON.parse(window.localStorage.getItem(wmgui.store_user_key) || '{}');
+    if (locals.sid === wmgui.sid)
+        return;
+
+    if (locals.sid && locals.name && locals.acclogin){
+        user_login(locals.sid, locals.name, locals.acclogin, locals.admin, locals.oauths, locals.ipbased);
+    }
+}
+
 function user_login(sid, name, acclogin, admin, oauths, ipbased){
+
     var corner_name = (name.length > 40) ? name.substr(0, 37) + '&hellip;' : name;
     $('#auth_user').html(corner_name);
-    $('#account_holder_name').html('Hello, ' + name + ' &#x1f44d;');
+    $('#account_holder_name').html('Hello ' + name + ' &#x1f44d;');
     $('#account_holder_acclogin > span').html(ipbased ? 'location-based' : '<a href="mailto:' + acclogin + '">' + acclogin + '</a>');
 
     wmgui.sid = sid;
@@ -1283,7 +1306,7 @@ function user_login(sid, name, acclogin, admin, oauths, ipbased){
     $('div.logged_in').show();
     $('#account_pass_change').hide();
 
-    window.localStorage.setItem(wmgui.storage_user_key, JSON.stringify({
+    window.localStorage.setItem(wmgui.store_user_key, JSON.stringify({
         sid: sid,
         name: name,
         acclogin: acclogin,
@@ -1291,7 +1314,7 @@ function user_login(sid, name, acclogin, admin, oauths, ipbased){
         ipbased: ipbased
     })); // TODO? oauths: oauths
 
-    admin ? $('li.admin').show() : $('li.admin').hide();
+    (admin && (wmgui.edition === 0 || wmgui.edition === 1 || wmgui.edition === 6)) ? $('li.admin').show() : $('li.admin').hide();
 
     if (ipbased){
         $('.only_regular').hide();
@@ -1309,22 +1332,26 @@ function user_login(sid, name, acclogin, admin, oauths, ipbased){
     } catch (e){
         console.error('No iframe access');
     }
-    communicate_windows('local_user_login');
+    communicate_windows('tab_user_login');
 
     wmgui.notify('Logged in as ' + name);
+
+    // One-off redirection
+    var redir = window.localStorage.getItem(wmgui.store_redir_key);
+    if (redir){
+        window.localStorage.removeItem(wmgui.store_redir_key);
+        return window.location.replace(redir); // FIXME? replace vs. href
+    }
 }
 
-function local_user_login(){ // FIXME window.location.reload();
-    //if (wmgui.sid)
-    //    return;
+function tab_user_login(){
 
-    var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
-    if (locals.sid == wmgui.sid)
+    // to prevent re-execution
+    var locals = JSON.parse(window.localStorage.getItem(wmgui.store_user_key) || '{}');
+    if (locals.sid === wmgui.sid)
         return;
 
-    if (locals.sid && locals.name && locals.acclogin){
-        user_login(locals.sid, locals.name, locals.acclogin, locals.admin, locals.oauths, locals.ipbased);
-    }
+    window.location.reload();
 }
 
 function user_logout(silent){
@@ -1337,7 +1364,7 @@ function user_logout(silent){
     $('div.logged_in').hide();
     $('div.logged_out').show();
 
-    window.localStorage.removeItem(wmgui.storage_user_key);
+    window.localStorage.removeItem(wmgui.store_user_key);
 
     try {
         document.getElementById('visavis_iframe').contentWindow.location.reload();
@@ -1363,8 +1390,47 @@ function force_relogin(show_msg){
 
 function communicate_windows(runnable_name){
     // NB the active window doesn't receive a storage event
-    window.localStorage.setItem('wm_reload_tmp', runnable_name);
-    window.localStorage.removeItem('wm_reload_tmp');
+    window.localStorage.setItem(wmgui.store_comm_exec_key, runnable_name);
+    window.localStorage.removeItem(wmgui.store_comm_exec_key);
+}
+
+function reset_factor_form() {
+    document.getElementById('factor_trigger').style.display = 'block';
+    document.getElementById('factor_form_step_one').style.display = 'block';
+    document.getElementById('factor_form_step_two').style.display = 'none';
+    var resps = document.getElementsByClassName('factor_form_resp');
+    for (var i = 0; i < resps.length; i++) {
+        resps[i].value = "";
+    }
+}
+
+function submit_factor_form_resp() {
+    var result = "";
+    var resps = document.getElementsByClassName('factor_form_resp');
+    for (var i = 0; i < resps.length; i++) {
+        result += resps[i].value;
+    }
+    if (result.length !== 6 || !Number.isInteger(parseInt(result))) return false;
+
+    $.ajax({
+        type: 'POST',
+        url: wmgui.factor_v_endpoint,
+        data: {a: result, ed: wmgui.edition}
+
+    }).done(function(data){
+
+        if (data.error) return wmgui.notify(data.error);
+        if (!data.sid || !data.name || !data.acclogin){
+            window.location.replace('#start');
+            return wmgui.notify('Connection to server is lost, please try to <a href=javascript:location.reload()>reload</a>');
+        }
+        user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths);
+
+        reset_factor_form();
+
+        $('#userbox').trigger('click');
+
+    }).fail(function(xhr, textStatus, errorThrown){});
 }
 
 function update_dc(){
@@ -1381,7 +1447,7 @@ function update_dc(){
         cur_str = JSON.stringify(orepr),
         cmp_html = '<option value="X" selected>Last search...</option>';
 
-    $.each(JSON.parse(window.localStorage.getItem(wmgui.storage_history_key) || '[]'), function(n, past){
+    $.each(JSON.parse(window.localStorage.getItem(wmgui.store_history_key) || '[]'), function(n, past){
         if (count > 5) return false;
 
         var title = [],

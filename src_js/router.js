@@ -202,11 +202,12 @@ function url__modal(arg){
         }).done(function(data){
 
             if (!data.sid || !data.name || !data.acclogin){
-                // edition-based OAuth login
+
+                // edition-based OAuth login (mpdsgui only)
                 if (wmgui.edition == 1 || wmgui.edition == 6){
-                    return window.location.href = 'oauth/asm.html';
+                    return window.location.replace('oauth/asm.html');
                 } /* else if (wmgui.edition == 11 || wmgui.edition == 16){
-                    return window.location.href = 'oauth/matcloud.html';
+                    return window.location.replace('oauth/matcloud.html');
                 } */
                 return show_modal(arg);
             }
@@ -218,7 +219,7 @@ function url__modal(arg){
             return show_modal(arg);
         });
 
-    } else if (arg == "restore"){
+    } else if (arg == "restore" || arg == "factor"){
         if (wmgui.sid) return window.location.replace('#modal/menu');
         show_modal(arg);
 
@@ -292,8 +293,8 @@ function url__ratify(arg){
  */
 function url__interlinkage(arg){
     wmgui.search_type = 1;
-    request_search({'interlinkage': arg}, 'linked phases for ' + arg, true);
-    wmgui.search = {'numeric': true}; // mockup FIXME?
+    request_search({interlinkage: arg}, 'linked phases for ' + arg, true);
+    wmgui.search = {numeric: true}; // mockup FIXME?
     //$('#search_field-selectized').val('');
     //wmgui.multiselects['main'].clear();
     show_interpretation();
@@ -317,7 +318,7 @@ function url__junction(arg){
     if (!wmgui.sid)
         return window.location.replace('#products');
 
-    var locals = JSON.parse(window.localStorage.getItem(wmgui.storage_user_key) || '{}');
+    var locals = JSON.parse(window.localStorage.getItem(wmgui.store_user_key) || '{}');
 
     wmgui.active_ajax = $.ajax({
         type: 'POST',
@@ -344,4 +345,11 @@ function url__junction(arg){
         if (textStatus != 'abort')
             return force_relogin('Please, re-login');
     });
+}
+
+/**
+ * Products stub
+ */
+function url__products(arg){
+    window.location.href = wmgui.static_host + '/#products';
 }
