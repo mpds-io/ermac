@@ -1,0 +1,89 @@
+<!-- OAuth provider's response screen -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>One more step...</title>
+<meta charset="utf-8" />
+</head>
+<body>
+
+<form id="post_auth" method="post" action="" style="display:none;">
+    <input type="hidden" name="a" id="a" />
+    <input type="hidden" name="sid" id="sid" />
+    <input type="submit" />
+</form>
+
+<script type="text/javascript">
+"use strict";
+
+window.store_user_key = 'wm';
+window.store_redir_key = 'wm_redir_v1';
+window.store_idp_skip_tpl = 'wm_skip_idp_confirm_';
+
+window.is_prod = (window.location.host.indexOf('localhost') == -1);
+window.login_url = '/#modal/login';
+window.check_endpoint = window.is_prod ? 'https://api.mpds.io/v0/users/perms' : 'http://localhost:7070/users/perms';
+window.post_endpoint = window.is_prod ? 'https://api.mpds.io/v0/idp/post_authorize' : 'http://localhost:7070/idp/post_authorize';
+
+const url_params = new URLSearchParams(window.location.search);
+window.temp_token = url_params.get('a');
+window.consumer_id = url_params.get('cid') || 'common';
+window.skip_idp_confirm = window.localStorage.getItem(window.store_idp_skip_tpl + window.consumer_id) || false;
+//console.log('Will skip redirection confirmation for ' + window.consumer_id + ': ' + window.skip_idp_confirm);
+
+const saved_redir_url = '/oauth/idp_auth.html?a=' + window.temp_token + '&cid=' + window.consumer_id;
+
+function check_user(session_id){
+    const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState == 4){
+            if (xmlhttp.status == 200){
+                //const answer = JSON.parse(xmlhttp.responseText);
+                //console.log(answer);
+                if (window.skip_idp_confirm)
+                    return post_auth(session_id);
+
+                const confirmation = confirm('Log in at the external service?');
+                if (confirmation){
+                    window.localStorage.setItem(window.store_idp_skip_tpl + window.consumer_id, true);
+                    post_auth(session_id);
+
+                } else {
+                    console.log('Redirecting a user to login...');
+                    window.localStorage.setItem(window.store_redir_key, saved_redir_url);
+                    window.location.href = window.login_url;
+                }
+            } else {
+                console.log("Error: HTTP " + xmlhttp.status + " status received from server");
+                console.log('Redirecting a user to login...');
+                window.localStorage.removeItem(window.store_user_key);
+                window.localStorage.setItem(window.store_redir_key, saved_redir_url);
+                window.location.href = window.login_url;
+            }
+        }
+    }
+    xmlhttp.open('POST', window.check_endpoint, true);
+    xmlhttp.withCredentials = false; // NB important for CORS
+    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xmlhttp.send('sid=' + session_id);
+}
+
+function post_auth(session_id){
+    document.getElementById('post_auth').action = window.post_endpoint;
+    document.getElementById('a').value = window.temp_token;
+    document.getElementById('sid').value = session_id;
+    document.getElementById('post_auth').submit();
+}
+
+const locals = JSON.parse(window.localStorage.getItem(window.store_user_key) || '{}');
+if (!locals.sid){
+    console.log('Redirecting a user to login...');
+    window.localStorage.setItem(window.store_redir_key, saved_redir_url);
+    window.location.href = window.login_url;
+
+} else {
+    check_user(locals.sid);
+}
+</script>
+</body>
+</html>
