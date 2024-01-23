@@ -1,7 +1,7 @@
 "use strict";
 
 if (!OptimadeNLP){
-    throw new Error("Failed to load OptimadeNLP (due to maintenance works?)");
+    throw new Error("Failed to load OptimadeNLP");
 }
 
 var wmutils = OptimadeNLP();
@@ -160,8 +160,6 @@ wmgui.loadCSS = function(href, before, media, attributes){
  * Domain subject definitions
  */
 
-wmgui.periodic_elements_xed = ["x"].concat(wmutils.periodic_elements);
-
 wmgui.most_frequent_els = ['O', 'Si', 'Al', 'Fe', 'Ca', 'Na', 'Mg', 'K', 'Ti',    'H', 'Cl', 'S', 'Br', 'C'];
 
 // just less probable than the *most_frequent_els*
@@ -309,96 +307,6 @@ wmgui.to_formula = function(input){
 }
 
 /**
- * Add HTML tags to a chemical formula as a string
- */
-
-wmgui.formula_to_tags = function(string){
-
-    var sub = false,
-        html_formula = '';
-
-    for (var i = 0, len = string.length; i < len; i++){
-        if (wmutils.is_numeric(string[i]) || string[i] == '.'){
-            if (!sub){
-                html_formula += '<sub>';
-                sub = true;
-            }
-        } else {
-            if (sub){
-                html_formula += '</sub>';
-                sub = false;
-            }
-        }
-        html_formula += string[i];
-    }
-    if (sub) html_formula += '</sub>';
-    return html_formula;
-}
-
-/**
- * Get center and ligand information from a string
- */
-
-wmgui.parse_ligand = function(string, start){
-
-    var center = string.slice(0, start).toLowerCase();
-
-    if (string.slice(start, start + 1).toLowerCase() == 'x' && string.slice(start, start + 2).toLowerCase() != 'xe'){
-        if (string.slice(start).length == 1) return [center, 'X'];
-
-        return [center, 'X' + string.slice(start + 1)];
-    }
-
-    if (string.length == start) return [center, 'X'];
-
-    var remainder = string.slice(start);
-
-    if (wmutils.is_numeric(remainder.slice(0, 1)) && start == 2)
-        return wmgui.parse_ligand(string, 1);
-
-    return [center, remainder.charAt(0).toUpperCase() + remainder.slice(1)];
-}
-
-/**
- * Get center and ligand information from a string
- */
-
-wmgui._parse_aeatoms = function(string){
-
-    var pos = string.indexOf('-');
-
-    if (pos !== -1){
-        var center = string.slice(0, pos),
-            ligand = string.slice(pos + 1);
-
-        if (center.length > 2) return false;
-
-        return wmgui.parse_ligand(center + ligand, center.length);
-    }
-
-    var trials = [2, 1];
-
-    for (var start = 0; start < 2; start++){
-        if (string.length >= trials[start] && wmgui.periodic_elements_xed.indexOf(string.slice(0, trials[start]).toLowerCase()) !== -1){
-            return wmgui.parse_ligand(string, trials[start]);
-        }
-    }
-    return false;
-}
-
-/**
- * Get center and ligand information from a string
- */
-
-wmgui.parse_aeatoms = function(string){
-
-    var parsed = wmgui._parse_aeatoms(string);
-
-    if (!parsed) return ['?', '?'];
-    return [parsed[0].charAt(0).toUpperCase() + parsed[0].slice(1), wmgui.formula_to_tags(parsed[1])];
-}
-
-/**
  * Display processing results in HTML (based on jQuery)
  */
 
@@ -431,8 +339,8 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
             }).join(', ');
 
         } else if (k == 'aeatoms'){
-            val = wmgui.parse_aeatoms(val);
-            val = val[0] + '&nbsp;center and ' + val[1] + '&nbsp;ligands';
+            val = wmutils.parse_aeatoms(val);
+            val = val[0] + '&nbsp;center and ' + val[1] + '&nbsp;as ligands';
 
         } else if (k == 'aetypes'){
             val = val.split(',').map(function(x){
