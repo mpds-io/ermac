@@ -149,7 +149,7 @@ wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?290623#' +    wmgui.api
 wmgui.v_xrpd_addr =       wmgui.static_host + '/visavis/?290623#' +    wmgui.api_host + '/download/s?fmt=xrpd&q=';
 wmgui.v_vis_addr =        wmgui.static_host + '/visavis/?nobanner&290623';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_pd_3d_addr =      wmgui.static_host + '/labs/pd3d/?';
+wmgui.v_pd_3d_addr =      wmgui.gui_host + '/labs/pd3d/?'; // FIXME will not work for pure Ermac
 
 // below are remote files commonly used
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?220923';

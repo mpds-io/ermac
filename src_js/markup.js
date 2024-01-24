@@ -736,11 +736,11 @@ function register_html(){
     </div>
 
     <div id="usr_tab_absolidix" class="menu_tabs" style="display:none;">
-        <br /><br /><br /><br /><br />
+        <br /><br /><br /><br />Redirecting...<br /><br /><br /><br />
     </div>
 
     <div id="usr_tab_ctrl" class="menu_tabs" style="display:none;">
-        <br /><br /><br /><br /><br />
+        <br /><br /><br /><br />Redirecting...<br /><br /><br /><br />
     </div>
 </div>
 
