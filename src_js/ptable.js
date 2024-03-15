@@ -35,7 +35,7 @@ wmgui.ptable.activate = function(){
     wmgui.ptable.activated = true;
     document.getElementById('ermac_logo').classList.add('resulted');
     document.getElementById('ptable_holder').classList.add('resulted');
-    document.getElementById('ptable_dtypes_box').classList.add('resulted');
+    if (window.scrollY <= 40) document.getElementById('ptable_dtypes_box').classList.add('resulted');
     wmgui.mpdsgui.ptable_activate();
 };
 
