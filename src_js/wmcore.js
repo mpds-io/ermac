@@ -408,3 +408,23 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
 
     return interpret_html;
 }
+
+/**
+ * Parse MPDS BIBTEX
+ */
+
+wmgui.parse_bib = function(string){
+    try {
+        var title = string.split('title={')[1].split('},')[0].trim(),
+            authors = string.split('author={')[1].split('},')[0].trim(),
+            journal = string.split('journal={')[1].split('},')[0].trim(),
+            pubyear = string.split('year={')[1].split('},')[0].trim();
+    } catch (error){
+        console.error('Misformatted BIB, terminating...');
+        var title = '',
+            authors = '',
+            journal = '',
+            pubyear = '';
+    }
+    return [authors, title, journal, pubyear];
+}

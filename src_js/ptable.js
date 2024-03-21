@@ -380,7 +380,7 @@ function build_thumbs_ph(json){ // FIXME duplicates another function *build_thum
     json.forEach(function(row){
         result_html += '<div class="gallery_item">';
         result_html += '  <div class="gallery_img" rel="' + row[0] + '" style="background-image:url(https://mpds.io/phid_thumbs/' + row[0] + '.png);"><span><p>' + row[1] + '<br />space group ' + row[2] + '</p></span></div>';
-        result_html += '  <div class="gallery_label"><a class="launch_ph" href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div>';
+        result_html += '  <div class="gallery_label"><a class="launch_id" href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div>';
         result_html += '</div>';
     });
     return result_html;
@@ -402,7 +402,7 @@ function build_thumbs_pd(json){ // FIXME duplicates another function *build_thum
 
         result_html += '<div class="gallery_item' + (row[4] ? ' opened' : '') + '">';
         result_html += '  <div class="gallery_img" rel="' + row[0] + '" data-path="entry">' + content + '</div>';
-        result_html += '  <div class="gallery_label"><a class="launch_ph" href="#entry/' + row[0] + '">' + row[0] + '</a>' + '<br />[' + row[5] + '&rsquo;' + row[6].toString().substr(2, 2) + ']' + '</div>';
+        result_html += '  <div class="gallery_label"><a class="launch_id" href="#entry/' + row[0] + '">' + row[0] + '</a>' + '<br />[' + row[5] + '&rsquo;' + row[6].toString().substr(2, 2) + ']' + '</div>';
         result_html += '</div>';
     });
     return result_html;

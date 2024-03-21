@@ -69,8 +69,8 @@ function register_html(){
                 <th class="a1">Authors</th>
                 <th class="a2">Title</th>
                 <th class="a5">J. name</th>
-                <th class="cj">J. code</th>
                 <th class="c4">Year</th>
+                <th class="a6"></th>
             </tr></thead>
         </table>
     </div>
@@ -488,7 +488,7 @@ function register_html(){
     <a id="sim_trigger" href="#" class="wmbutton sim_col_ctx" rel="nofollow">Show more</a>
 
     <div id="pd_legend" class="sim_col_ctx">
-        <div class="col_title">Area colors</div>
+        <div class="col_title">Color legend</div>
         <ul>
             <li>liquid or gas <span style="color:#fff;background:#9cf;padding:2px;">blue or violet</span></li>
             <li>1-phase <span style="color:#fff;background:#d1cde6;padding:2px;">violet</span></li>

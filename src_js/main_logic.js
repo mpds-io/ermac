@@ -260,7 +260,7 @@ function request_search(search, caption, without_history){
             if (wmgui.search_type == 2){
                 $db.addClass('tablesorter').tablesorter({ sortMultiSortKey: 'ctrlKey', headers: {
                     0: {sorter: 'doi'},
-                    6: {sorter: 'digit'}
+                    5: {sorter: false}
                 }, selectorHeaders: '#dataheader_articles > thead > tr > th', selectorHeaderParent: 'dataheader_articles' });
                 $('#header_articles').show();
 
@@ -305,11 +305,11 @@ function request_search(search, caption, without_history){
         // switchers
         if (wmgui.visavis_terminating) stop_visavis();
 
-        if (wmgui.search_type || search.phid || search.entry || search.interlinkage || search.doi || search.numeric){
+        if (wmgui.search_type || search.phid || search.bid || search.entry || search.interlinkage || search.doi || search.numeric){
 
-            if (search.phid || search.entry){
+            if (search.phid || search.bid || search.entry){
                 switch_control_mode(9, 11, 'a', 'c');
-                show_dunit_info(search.phid, search.entry);
+                show_dunit_info(search.phid, search.bid, search.entry);
 
             } else if (search.interlinkage){
                 switch_control_mode(9, 11, 'a', 'c');
@@ -534,13 +534,13 @@ function build_cells(json, header, footer){
         $.each(json, function(k, row){
             row[0] = parseInt(row[0]);
             if (row[0] == 999999) row[4] = wmgui.mockyear; // special *ref_id*, only handled in GUI
-            result_html += '<tr id="e__B' + row[0] + '" class="tcell" data-type="B"><td class=c55>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[0] + '</a>]</td><td class=a1>' + row[1] + '</td><td class=a2 title="' + row[2] + '">' + row[2] + '</td><td class=a5>' + row[5] + '</td><td class=cj>' + row[3] + '</td><td class=c4>' + row[4] + '</td></tr>';
+            result_html += '<tr id="e__B' + row[0] + '" class="tcell" data-type="B"><td class=c55>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[0] + '</a>]</td><td class=a1>' + row[1] + '</td><td class=a2 title="' + row[2] + '">' + row[2] + '</td><td class=a5>' + row[5] + '</td><td class=c4>' + row[4] + '</td><td class=a6><a class="launch_id" href="#article/' + row[0] + '">Show</a></td></tr>';
         });
     } else if (wmgui.search_type == 1){
         if (json[0].length != 5){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
 
         $.each(json, function(k, row){
-            result_html += '<tr id="e__Z' + row[0] + '" class="tcell" data-type="Z"><td class=p1>' + row[1] + '</td><td class=p2>' + row[2] + '</td><td class=p3>' + row[3] + '</td><td class=p4>' + row[4] + '</td><td class=p5><a class="launch_ph" href="#phase_id/' + row[0] + '">Show entries</a></td></tr>';
+            result_html += '<tr id="e__Z' + row[0] + '" class="tcell" data-type="Z"><td class=p1>' + row[1] + '</td><td class=p2>' + row[2] + '</td><td class=p3>' + row[3] + '</td><td class=p4>' + row[4] + '</td><td class=p5><a class="launch_id" href="#phase_id/' + row[0] + '">Show entries</a></td></tr>';
         });
     } else {
         if (json[0].length != 8){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -576,7 +576,7 @@ function build_thumbs(json){
             if (row[0] == 999999) row[4] = wmgui.mockyear; // special *ref_id*, only handled in GUI
             if (full_display) title_html = (row[1].length > 60 ? row[1].substr(0, 60) + '&hellip;' : row[1]) + ', <span>' + (row[2].length > 80 ? row[2].substr(0, 80) + '&hellip;' : row[2]) + '</span>';
             else title_html = '<br /><br />&#x1f4d6;'; // book icon
-            result_html += '<div class="gallery_item" id="e__B' + row[0] + '" data-type="B"><div class="gallery_img"><div class="articled">' + title_html + '</div></div><div class="gallery_label"><i>' + row[5] + '</i><br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[3] + '&rsquo;' + row[4].toString().substr(2, 2) + '</a>]</div></div>';
+            result_html += '<div class="gallery_item" id="e__B' + row[0] + '" data-type="B"><div class="gallery_img"><div class="articled">' + title_html + '</div></div><div class="gallery_label"><a class="launch_id" href="#article/' + row[0] + '">Show entries</a><br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[3] + '&rsquo;' + row[4].toString().substr(2, 2) + '</a>]</div></div>';
         });
     } else if (wmgui.search_type == 1){
         if (json[0].length != 5){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -585,7 +585,7 @@ function build_thumbs(json){
             return a[1] > b[1] ? 1 : a[1] < b[1] ? -1 : 0;
         });
         $.each(json, function(k, row){
-            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img" rel="' + row[0] + '"><div class="phased">' + row[1] + '<br /><br />space group ' + row[2] + '</div></div><div class="gallery_label"><a class="launch_ph" href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
+            result_html += '<div class="gallery_item" id="e__Z' + row[0] + '" data-type="Z"><div class="gallery_img" rel="' + row[0] + '"><div class="phased">' + row[1] + '<br /><br />space group ' + row[2] + '</div></div><div class="gallery_label"><a class="launch_id" href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div></div>';
         });
     } else {
         if (json[0].length != 8){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -1489,10 +1489,20 @@ function render_all_polyhedra(){
     $('#all_polyhedra_content').html(aetypes_html);
 }
 
-function show_dunit_info(phid, entry){
-    $('#ind_title').html( phid ? 'Phase ' + phid : 'Entry ' + entry );
-    $('#ind_link').attr('href', 'https://mpds.io/' + (phid ? 'phase_id' : 'entry') + '/' + (phid || entry));
-    $('#ind_link').html('www.mpds.io/' + (phid ? 'phase_id' : 'entry') + '/' + (phid || entry));
+function show_dunit_info(phid, bid, entry){
+    if (phid){
+        $('#ind_title').html('Phase ' + phid);
+        $('#ind_link').attr('href', 'https://mpds.io/phase_id/' + phid).html('www.mpds.io/phase_id/' + phid);
+
+    } else if (bid){
+        $('#ind_title').html('Publication B' + bid);
+        $('#ind_link').attr('href', 'https://mpds.io/article/' + bid).html('www.mpds.io/article/' + bid);
+
+    } else if (entry){
+        $('#ind_title').html('Entry ' + entry);
+        $('#ind_link').attr('href', 'https://mpds.io/entry/' + entry).html('www.mpds.io/entry/' + entry);
+    }
+
     $('#refine_col, #ctx_col').hide();
     $('#phase_info, #ind_col > span').empty();
 
@@ -1516,6 +1526,45 @@ function show_dunit_info(phid, entry){
             if (textStatus != 'abort')
                 wmgui.notify('Sorry, a network error occured. Please, try again');
         });
+
+    } else if (bid){
+        $('#ind_col > span').html('<strong>&#x1f4d6;</strong>'); // book icon
+        $('#phase_info').html('<h4>Ref. ' + bid + '</h4><p>Please make sure you are<br /><a target="_blank" href="#modal/menu">logged in</a> to see all the details.</p>');
+
+        wmgui.active_ajax = $.ajax({
+            type: 'GET',
+            url: wmgui.refs_endpoint + '?noredir=1&fmt=bib&ref_id=' + bid + '&sid=' + wmgui.sid
+
+        }).done(function(data){
+            var citation = wmgui.parse_bib(data),
+                citation_html = '',
+                main_author = '',
+                links_html = '';
+
+            if (citation[0].length){
+                citation[0].split(',').forEach(function(item, index){
+                    var author_name = item.trim().split('.')[0];
+                    author_name = author_name.substr(0, author_name.length - 2).replace("'", "");
+                    if (index === 0) main_author = author_name;
+                    links_html += '<a href="#inquiry/authors=' + author_name + '" style="color:#777;border-bottom-color:#777;">' + author_name + '</a> or ';
+                });
+                links_html = links_html.substr(0, links_html.length - 4); // " or "
+                if (citation[0].indexOf(',') !== -1) main_author += ' et al.';
+                citation_html += '<a href="' + wmgui.refs_endpoint + '?fmt=bib&ref_id=' + bid + '&sid=' + wmgui.sid + '">' + main_author + ', ' + citation[1] + '. <i>' + citation[2] + '</i> <b>(' + citation[3] + ')</b></a>';
+            }
+
+            if (bid == 999999){
+                $('#phase_info').html('<h4>In-house data</h4><p>These data were generated automatically on the MPDS platform based on the original peer-reviewed Pauling File data. Please cite as ' + citation_html + '.</p>');
+
+            } else {
+                var n_entries = wmgui.thumbed_display ? $('div.gallery_item').length : $('tr.tcell').length;
+                $('#phase_info').html('<h4>Ref. ' + bid + '</h4><p>We have ' + (n_entries == 1 ? 'one entry' : n_entries + ' entries') + ' from this reference ' + citation_html + '.</p><p>In addition, search all data co-authored by ' + links_html + '.</p>');
+            }
+
+        }).fail(function(xhr, textStatus, errorThrown){});
+
+    } else {
+        $('#ind_col > span').html('<strong>&#x1f52c;</strong>'); // microscope icon
     }
 
     $('#ind_col').show();

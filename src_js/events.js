@@ -64,7 +64,7 @@ function register_events(){
         var urlstr = $.param(query);
         if (window.location.hash == '#inquiry/' + urlstr){
             // hash-hack FIXME?
-            if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length-1);
+            if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
             else                         urlstr += '=';
         }
         window.location.hash = '#inquiry/' + urlstr;
@@ -218,7 +218,7 @@ function register_events(){
         open_context(parent_row, true);
     });
 
-    $('#databrowser').on('click', 'a.launch_ph', function(e){
+    $('#databrowser').on('click', 'a.launch_id', function(e){
         wmgui.cancel_event(e);
         var phid_link = $(this).attr('href');
         if (window.location.hash == phid_link){
@@ -1108,7 +1108,7 @@ function register_events(){
             var urlstr = $.param(orepr);
             if (window.location.hash == '#inquiry/' + urlstr){
                 // hash-hack FIXME?
-                if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length-1);
+                if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
                 else                         urlstr += '=';
             }
             window.location.hash = '#inquiry/' + urlstr;
@@ -1128,7 +1128,7 @@ function register_events(){
             var urlstr = $.param(orepr);
             if (window.location.hash == '#inquiry/' + urlstr){
                 // hash-hack FIXME?
-                if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length-1);
+                if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
                 else                         urlstr += '=';
             }
             window.location.hash = '#inquiry/' + urlstr;

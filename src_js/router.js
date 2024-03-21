@@ -174,6 +174,18 @@ function url__phase(arg){
 }
 
 /**
+ * The individual B-entry display /#article/integer
+ */
+function url__article(arg){
+    wmgui.search_type = 0;
+    show_interpretation();
+    var bentry = parseInt(arg);
+    wmgui.search = {'bid': bentry};
+    wmgui.search.search_type = wmgui.search_type;
+    request_search({'bid': bentry}, 'B' + bentry, true);
+}
+
+/**
  * The display of menu with all the physical props
  */
 function url__hierarchy(){
