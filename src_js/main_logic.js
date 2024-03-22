@@ -1209,7 +1209,7 @@ function show_hints(disabled){
 
     //$('#fdwidget').html('Were you satisfied with the data quality? Did everything work as expected? <span id="fdwidget_yes">Yes</span><span id="fdwidget_no">No</span>').show();
 
-    if (disabled || wmgui.search.numeric || wmgui.search.doi || wmgui.search.phid || wmgui.fuzzyout || wmgui.search_type == 2)
+    if (disabled || wmgui.search.numeric || wmgui.search.doi || wmgui.search.phid || wmgui.search.bid || wmgui.fuzzyout || wmgui.search_type == 2)
         return;
 
     var cur_obj = {};
@@ -1220,7 +1220,7 @@ function show_hints(disabled){
     var hint = JSON.stringify(cur_obj).replaceAll(' ', '+').replace('\{', '\\{').replace('\}', '\\}');
     $('#apihint span').html(hint).parent().show();
 
-    if (!wmgui.search.search_type){
+    if (wmgui.search.search_type === 0){
         $('a.plthint_links').each(function(){
             var that = $(this),
                 plot_type = that.attr('rev');
@@ -1550,7 +1550,7 @@ function show_dunit_info(phid, bid, entry){
                 });
                 links_html = links_html.substr(0, links_html.length - 4); // " or "
                 if (citation[0].indexOf(',') !== -1) main_author += ' et al.';
-                citation_html += '<a href="' + wmgui.refs_endpoint + '?fmt=bib&ref_id=' + bid + '&sid=' + wmgui.sid + '">' + main_author + ', ' + citation[1] + '. <i>' + citation[2] + '</i> <b>(' + citation[3] + ')</b></a>';
+                citation_html += ' <a href="' + wmgui.refs_endpoint + '?fmt=bib&ref_id=' + bid + '&sid=' + wmgui.sid + '">' + main_author + ', ' + citation[1] + '. <i>' + citation[2] + '</i> <b>(' + citation[3] + ')</b></a>';
             }
 
             if (bid == 999999){
@@ -1558,7 +1558,8 @@ function show_dunit_info(phid, bid, entry){
 
             } else {
                 var n_entries = wmgui.thumbed_display ? $('div.gallery_item').length : $('tr.tcell').length;
-                $('#phase_info').html('<h4>Ref. ' + bid + '</h4><p>We have ' + (n_entries == 1 ? 'one entry' : n_entries + ' entries') + ' from this reference ' + citation_html + '.</p><p>In addition, search all data co-authored by ' + links_html + '.</p>');
+                if (n_entries == 1000) n_entries = 'more than ' + n_entries;
+                $('#phase_info').html('<h4>Ref. ' + bid + '</h4><p>We have ' + (n_entries == 1 ? 'one entry' : n_entries + ' entries') + ' from this reference' + citation_html + '.</p>' + (links_html.length ? '<p>In addition, search all data co-authored by ' + links_html + '.</p>' : ''));
             }
 
         }).fail(function(xhr, textStatus, errorThrown){});

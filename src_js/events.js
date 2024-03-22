@@ -269,8 +269,8 @@ function register_events(){
     });
 
     $('#visualize, #xrpdize').click(function(){
-        // TODO what if opened already?
-        if (!close_vibox()) launch_iframed_app(this.getAttribute('data-rank'));
+        close_vibox();
+        launch_iframed_app(this.getAttribute('data-rank'));
     });
 
     $('#absolidize').click(function(){
