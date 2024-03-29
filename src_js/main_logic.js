@@ -765,7 +765,7 @@ function open_context(el, launch_ext){
 
         $('#ctx_col').show();
         $('#visualize').attr('data-rank', rank);
-        $('#xrpdize').attr('data-rank', 99);
+        $('#xrpdize').attr('data-rank', 99); // FIXME no meaning
         $('#visualize, #xrpdize, #absolidize, div.spinoff_pane, li.d_icon').hide();
 
         open_sim_col(entry, entype, rank);
@@ -820,7 +820,7 @@ function open_context(el, launch_ext){
 
         (wmgui.mydata_history.indexOf(entry) == -1) ? $('#absolidize').addClass('wmbutton') : $('#absolidize').removeClass('wmbutton');
 
-        if (launch_ext) launch_iframed_app(rank);
+        if (launch_ext) launch_db_iframed(rank);
     }
 }
 
@@ -937,17 +937,18 @@ function close_vibox(){
     return false;
 }
 
-function launch_iframed_app(rank){
+function launch_db_iframed(rank){
     var that = $('.busy_entry');
     if (!that.length) return;
 
     var entry = that.attr('id').substr(3),
         entype = entry.substr(0, 1),
         iframe_src,
-        iframe_height;
+        iframe_height,
+        visavis_json_request;
 
     if (entype == 'S'){
-        if (rank == 99) {
+        if (rank == 99){
             iframe_src = wmgui.v_xrpd_addr + entry, iframe_height = 550;
 
         } else
@@ -964,23 +965,43 @@ function launch_iframed_app(rank){
             var triple = wmgui.thumbed_display ? $('div.busy_entry > div.gallery_img > p').text() : $('tr.busy_entry > td.c1').text().split(' ')[0];
             iframe_src = wmgui.v_pd_3d_addr + triple, iframe_height = 550;
 
-        } else
-            iframe_src = (wmgui.sid ? wmgui.v_pd_addr : wmgui.v_pd_addr_anon) + entry, iframe_height = 600;
+        } else {
+            if (wmgui.sid)
+                iframe_src = wmgui.v_pd_addr + entry;
+            else
+                visavis_json_request = wmgui.api_host + '/download/c?fmt=json&q=' + entry;
+
+            iframe_height = 600;
+        }
 
         if (entry.startswith('C3') || entry.startswith('C4'))
             wmgui.notify('This entry is now in preparation');
+
         else if (wmgui.entries_messages[entry])
             wmgui.notify(wmgui.entries_messages[entry]);
     }
 
     if (wmgui.sid) iframe_src += '&sid=' + wmgui.sid;
 
-    var iframe_html = '<iframe frameborder=0 scrolling="no" width="100%" height="' + iframe_height + '" src="' + iframe_src + '"></iframe>';
-    if (wmgui.thumbed_display) iframe_html = '<div id="iframe" style="display:block;width:100%;border:1px solid #ddd;margin:10px 0;">' + iframe_html + '</div>';
-    else                       iframe_html = '<tr id="iframe"><td colspan="20" style="width:100%;padding:0;border-right:1px solid #eee;border-left:1px solid #eee;">' + iframe_html + '</td></tr>';
+    var inner_html = '<iframe frameborder=0 scrolling="no" width="100%" height="' + iframe_height + '" src="' + iframe_src + '"></iframe>';
+    if (visavis_json_request) inner_html = '<mpds-visavis-plot></mpds-visavis-plot>';
 
-    that.after(iframe_html);
+    var app_html = '<tr id="iframe"><td colspan="20" style="width:100%;padding:0;border-right:1px solid #eee;border-left:1px solid #eee;">' + inner_html + '</td></tr>';
+    if (wmgui.thumbed_display) app_html = '<div id="iframe" style="display:block;width:100%;border:1px solid #ddd;margin:10px 0;">' + inner_html + '</div>';
+
+    that.after(app_html);
     $(window).scrollTop(that.position().top - 95);
+
+    if (visavis_json_request) {
+        var visavis_element = document.getElementsByTagName('mpds-visavis-plot')[0];
+        visavis_element.style.display = 'block';
+        visavis_element.style.height = iframe_height + 'px';
+        visavis_element.view.json_request(visavis_json_request);
+        visavis_element.view.phase_click = ({phase_id}) => {
+            const uri = window.location.protocol + "//" + window.location.host + window.location.pathname  + '#phase_id/' +  phase_id;
+            window.open(uri);
+        }
+    }
 }
 
 function start_visavis(plot_type){
@@ -1010,14 +1031,7 @@ function start_visavis(plot_type){
     wmgui.visavis_working = true;
     wmgui.visavis_starting = false;
 
-    var cur_obj = {total_count: 1};
-    $.extend(cur_obj, wmgui.search);
-
-    try {
-        document.getElementById('visavis_iframe').contentWindow.location.replace(get_visavis_url(cur_obj));
-    } catch (e){
-        console.error('No iframe access');
-    }
+    visavis_plot.json_request(get_mpds_request());
 }
 
 function manage_visavis(callback_fn, param_a, param_b){
@@ -1035,14 +1049,8 @@ function manage_visavis(callback_fn, param_a, param_b){
 
     rebuild_visavis();
 
-    var cur_obj = {total_count: 1};
-    $.extend(cur_obj, wmgui.search);
-
-    try {
-        document.getElementById('visavis_iframe').contentWindow.location.replace(get_visavis_url(cur_obj));
-    } catch (e){
-        console.error('No iframe access');
-    }
+    if (visavis_plot.json_cmp_request() !== null) visavis_plot.json_cmp_request(null);
+    visavis_plot.json_request(get_mpds_request());
 
     if (callback_fn) callback_fn(param_a, param_b);
     return true;
@@ -1085,17 +1093,24 @@ function rebuild_visavis(){
         if (z_id.length) z_id.removeClass('ss_z');
         $('#viscube_nump').addClass('embodied');
         $('span.sops').remove();
+        visavis_plot.show_fixel(true);
 
     } else if (wmgui.visavis_curtype == 'graph'){
         $('#ctxpanel_graph > ul > li.embodied').removeClass('embodied');
         $('#visgraph_props').addClass('embodied');
+
+    } else if (wmgui.visavis_curtype == 'discovery'){
+        visavis_plot.discovery_elementals_on([...discovery_elementals_on]);
+
+    } else if (wmgui.visavis_curtype == 'qproj'){
+        visavis_plot.show_fixel(false);
     }
 
-    try {
+    /*try {
         document.getElementById('visavis_iframe').contentWindow.fixel_manage(wmgui.visavis_curtype == 'cube' && wmgui.search.elements);
     } catch (e){
         console.error('No iframe access');
-    }
+    }*/
 }
 
 function stop_visavis(){
@@ -1111,6 +1126,17 @@ function get_visavis_url(request, type, height){
     var height_str = height ? ('&visavis_height=' + height) : '';
 
     return wmgui.v_vis_addr + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
+}
+
+function get_mpds_request(type){
+    var request = {total_count: 1};
+    $.extend(request, wmgui.search);
+
+    if (wmgui.visavis_curtype == 'pie' && !type) {
+        return wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
+    }
+
+    return wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request));
 }
 
 function describe_perms(perms){
