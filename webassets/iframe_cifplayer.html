@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta charset="utf-8" />
+<style type="text/css">
+html, body{width:100%;height:100%;overflow:hidden;}
+mpds-cifplayer-player{width:100%;height:100%;}
+</style>
+<script type="text/javascript" src="../src_js/third_party/cifplayer.js"></script>
+<script type="text/javascript">
+"use strict";
+
+function accept_data(item){
+    document.body.innerHTML = '<mpds-cifplayer-player></mpds-cifplayer-player>';
+    const player = document.getElementsByTagName('mpds-cifplayer-player')[0].view;
+    //console.log(item);
+    player.data(item);
+}
+
+function ajax_download(url, callback){
+    const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState == 4){
+            if (xmlhttp.status == 200)
+                callback(xmlhttp.responseText);
+            else
+                throw new Error("HTTP " + xmlhttp.status + " status received from server");
+        }
+    }
+    xmlhttp.open("GET", url);
+    xmlhttp.send(1);
+}
+
+function url_redraw_react(){
+    const url = window.location.hash.substr(1);
+    ajax_download(url, accept_data);
+}
+
+(function(){
+    url_redraw_react();
+    window.addEventListener('hashchange', url_redraw_react);
+})();
+</script>
+</head>
+<body>
+</body>
+</html>
