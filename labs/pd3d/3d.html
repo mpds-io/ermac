@@ -1,0 +1,296 @@
+<!-- MPDS 3d phase diagrams renderer core -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>MPDS 3d phase diagrams</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<style type="text/css">
+body {margin:0;overscroll-behavior:none;cursor:move;}
+#thumbs {position:fixed;top:20px;left:0;width:100%;height:70px;text-align:right;overflow:hidden;}
+#thumbs > a {display:inline-block;height:60px;width:80px;margin:0 3px;cursor:pointer;user-select:none;text-decoration:none;border-bottom:solid 10px #333;background-color:#fff;background-size:contain;background-repeat:no-repeat;color:#000;}
+#thumbs > a:hover {border-bottom:solid 10px #c00;}
+#thumbs > a.bin {vertical-align:middle;line-height:60px;font-size:18px;letter-spacing:1px;text-align:center;}
+#thumbs > a.ter {vertical-align:top;line-height:18px;font-size:14px;letter-spacing:0.5px;}
+#thumbs > a:last-child {margin-right:9vmin;}
+#legend {position:fixed;top:95px;right:7vmin;color:#c00;font-size:12px;letter-spacing:1px;}
+#cross{display:none;position:fixed;top:6px;right:6px;width:24px;height:24px;z-index:10;cursor:pointer;background:url(data:image/gif;base64,R0lGODlhEAAQAJEAAAAAAP///1VVVf///yH5BAEAAAMALAAAAAAQABAAAAIjnI+py6L+BDRy0gqxHVqvLjGcJ3Yl+IEhQpLX+m7wMYv2PRQAOw==) center center no-repeat;}
+</style>
+</head>
+<body>
+
+<div id="thumbs"></div>
+<div id="legend">Known crystalline structures are in red.</div>
+
+<!-- POSSIBILITY TO CLOSE FROM IFRAME -->
+<div id="cross" title="Close" class="uielem"></div>
+
+<script type="module">
+import * as THREE from './three.module.js';
+import { OrbitControls } from './OrbitControls.js';
+import { VRMLLoader } from './VRMLLoader.js';
+
+/**
+ *
+ * main config and constants
+ *
+ */
+let camera,
+    scene,
+    renderer,
+    controls,
+    loader,
+    load_url,
+    vertices,
+    mpds_embedded = false,
+
+    n_els, // prism or tetrahedron
+    t_min = 0,
+    t_max = 800,
+    x_shift = -0.5,
+    y_shift = -0.5,
+    z_shift = -0.25, // not changed for tetrahedron
+    t_shift = 0;
+
+const local_model_load = false, // only for VRML tests
+    debug = false, //(window.location.host.indexOf('localhost') !== -1),
+    target = document.location.search ? document.location.search.substr(1) : 'Cr-Fe-Mn',
+    model_url = (debug ? 'http://localhost:8522' : 'https://labs.mpds.io/services') + '/model?els=' + target,
+    meta_url = (debug ? 'http://localhost:8522' : 'https://labs.mpds.io/services') + '/modelmeta?els=' + target,
+    scale_ratio = 340;
+
+/**
+ *
+ * functions defs
+ *
+ */
+function draw_3d_line(start_arr, finish_arr, color){
+    if (!color) color = 0xdddddd;
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( start_arr.concat(finish_arr), 3 ) );
+    const material = new THREE.MeshBasicMaterial({color: color});
+    scene.add(new THREE.Line(geometry, material));
+}
+
+function create_sprite(text){
+    const canvas = document.createElement('canvas'),
+        context = canvas.getContext('2d'),
+        metrics = context.measureText(text),
+        w = metrics.width * 3;
+
+    canvas.width = w;
+    canvas.height = 20;
+    context.font = "normal " + canvas.height + "px Palatino";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillStyle = "#333";
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    const texture = new THREE.Texture(canvas);
+    texture.needsUpdate = true;
+    const material = new THREE.SpriteMaterial({map: texture, depthTest: false});
+    const sprite = new THREE.Sprite(material);
+    sprite.renderOrder = 1;
+    const txt = new THREE.Object3D();
+    sprite.scale.set(w / 300, 0.075, 1);
+    txt.add(sprite);
+    txt.name = "label";
+    return txt;
+}
+
+function download(url, callback){
+    const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState == 4){
+            if (xmlhttp.status == 200) callback(xmlhttp.responseText);
+            else {
+                console.error("Error: HTTP " + xmlhttp.status + " received while retrieval " + url);
+            }
+        }
+    }
+    xmlhttp.open("GET", url);
+    xmlhttp.send(1);
+}
+
+function init(){
+
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight);
+
+    if (n_els == 3){ // prism
+        camera.position.set( 2, -2, 5 );
+
+    } else if (n_els == 4) { // tetrahedron
+        camera.position.set( 3, 0, 1.5 );
+
+    } else { // VRML tests
+        camera.position.set( 2, 0, 0 );
+    }
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+    scene.add(camera);
+
+    // light
+    const AmbientLight = new THREE.AmbientLight(0xdddddd);
+    scene.add(AmbientLight);
+
+    // object
+    loader = new VRMLLoader();
+    loader.load(load_url, function(object){
+
+        object.position.set(x_shift, y_shift, z_shift);
+        scene.add(object);
+        prerender();
+
+    }, function(){}, function(error){
+        throw new Error(error);
+    });
+}
+
+function prerender(){
+
+    // renderer
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+
+    // controls
+    controls = new OrbitControls( camera, renderer.domElement );
+    controls.minDistance = 1;
+    controls.maxDistance = 10;
+    controls.screenSpacePanning = true;
+    controls.reset();
+
+    //const axesHelper = new THREE.AxesHelper(2);
+    //scene.add( axesHelper );
+
+    if (n_els == 3){ // prism
+
+        const arrowHelper = new THREE.ArrowHelper(
+            new THREE.Vector3(0, 0, 1),
+            new THREE.Vector3(-0.01 + x_shift, -0.01 + y_shift, 0 - t_shift / 2),
+            0.6, 0x555555
+        );
+        scene.add(arrowHelper);
+
+        let label = create_sprite(vertices[0]);
+        label.position.set(-0.15 + x_shift, -0.2 + y_shift, 0 - t_shift / 2); // bottom-left triangle corner
+        scene.add(label);
+
+        label = create_sprite(vertices[1]);
+        label.position.set(0.5 + x_shift, 1 + y_shift, 0 - t_shift / 2); // top triangle corner
+        scene.add(label);
+
+        label = create_sprite(vertices[2]);
+        label.position.set(1.15 + x_shift, -0.2 + y_shift, 0 - t_shift / 2); // bottom-right triangle corner
+        scene.add(label);
+
+        label = create_sprite('T,°C');
+        label.position.set(-0.1 + x_shift, -0.1 + y_shift, 0.33 - t_shift / 2); // T designation
+        scene.add(label);
+
+        label = create_sprite(t_min + '°C');
+        label.position.set(-0.1 + x_shift, -0.1 + y_shift, 0.05 - t_shift / 2); // min T
+        scene.add(label);
+
+        label = create_sprite(t_max + '°C');
+        label.position.set(-0.1 + x_shift, -0.1 + y_shift, t_shift + 0.1 - t_shift / 2); // max T
+        scene.add(label);
+
+    } else if (n_els == 4) { // tetrahedron
+
+        let label = create_sprite(vertices[0]);
+        label.position.set(-0.15 + x_shift, -0.2 + y_shift, 0 + z_shift); // A
+        scene.add(label);
+
+        label = create_sprite(vertices[1]);
+        label.position.set(0.5 + x_shift, 1 + y_shift, 0 + z_shift); // B
+        scene.add(label);
+
+        label = create_sprite(vertices[2]);
+        label.position.set(1.15 + x_shift, -0.2 + y_shift, 0 + z_shift); // C
+        scene.add(label);
+
+        label = create_sprite(vertices[3]);
+        label.position.set(0.5 + x_shift, 0.35 + y_shift, 0.95 + z_shift); // D
+        scene.add(label);
+    }
+
+    window.addEventListener( 'resize', onWindowResize );
+    animate();
+}
+
+function onWindowResize(){
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+function animate(){
+    requestAnimationFrame( animate );
+    controls.update();
+    renderer.render( scene, camera );
+}
+
+/**
+ *
+ * what to do
+ *
+ */
+if (local_model_load){
+    // onload testing
+    load_url = './data/' + target;
+    if (!load_url.endsWith('.vrml')) load_url += '.vrml';
+
+    t_min = 500;
+    t_max = 1500;
+    t_shift = (t_max - t_min) / scale_ratio;
+    z_shift = -t_min / scale_ratio - t_shift / 2;
+
+    init();
+
+} else {
+    // onload production
+    load_url = model_url;
+
+    download(meta_url, function(meta){
+        meta = JSON.parse(meta);
+        //console.log(meta);
+
+        n_els = meta.n_els || 3; // default is for legacy fmt
+        vertices = meta.vertices || ['', '', '', ''];
+
+        // globals depend on the variables taken from the object
+        if (n_els == 3){
+            t_min = meta.temp[0];
+            t_max = meta.temp[1];
+            t_shift = (t_max - t_min) / scale_ratio;
+            z_shift = -t_min / scale_ratio - t_shift / 2;
+        }
+
+        let html = '';
+
+        meta.edges.forEach(function(item, i){
+            html += '<a href="' + window.location.protocol + '//' + window.location.host + '/entry/' + item + '" target="_blank" class="' + (n_els == 3 ? 'bin' : 'ter') + '" style="background-image:url(https://mpds.io/pd_thumbs/' + item + '.png);">' + meta.els_edges[i].join('-') + (n_els == 4 ? ('<br />' + meta.temp_edges[i] + '&deg;C') : '') + '</a>';
+        });
+        if (n_els == 3){
+            meta.bases.forEach(function(item, i){
+                html += '<a href="' + window.location.protocol + '//' + window.location.host + '/entry/' + item + '" target="_blank" class="ter" style="background-image:url(https://mpds.io/pd_thumbs/' + item + '.png);">' + meta.temp_bases[i] + '&deg;C</a>';
+            });
+        }
+        document.getElementById('thumbs').innerHTML = html;
+        init();
+    });
+}
+
+try {
+    mpds_embedded = !!(window.parent && window.parent.wmgui && window.parent.wmgui.view_mode == 2);
+    document.getElementById('cross').onclick = function(){
+        window.parent.close_vibox();
+    }
+} catch (e){}
+if (mpds_embedded) document.getElementById('cross').style.display = 'block';
+</script>
+</body>
+</html>
