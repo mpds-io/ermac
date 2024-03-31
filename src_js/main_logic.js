@@ -328,9 +328,9 @@ function request_search(search, caption, without_history){
                 show_examples('#examples', true, true);
             }
 
-            if (search.entry && (search.entry.substr(0, 1) == 'S' || search.entry.substr(0, 1) == 'C') && search.entry.indexOf('-') == -1){
-                // TODO add also 'P' for plottable entries
+            if (search.entry){
                 var that = $('#e__' + search.entry);
+                if (search.entry.indexOf('-') == -1 && !that.length) that = $('#e__' + search.entry + '-1');
                 if (that.length && that.attr('data-rank') != 0){ // NB "!=", not "!=="
                     that.removeClass('busy_entry');
                     open_context(that, true);
@@ -765,7 +765,7 @@ function open_context(el, launch_ext){
 
         $('#ctx_col').show();
         $('#visualize').attr('data-rank', rank);
-        $('#xrpdize').attr('data-rank', 99);
+        $('#xrpdize').attr('data-rank', 99); // FIXME hack
         $('#visualize, #xrpdize, #absolidize, div.spinoff_pane, li.d_icon').hide();
 
         open_sim_col(entry, entype, rank);
@@ -820,7 +820,7 @@ function open_context(el, launch_ext){
 
         (wmgui.mydata_history.indexOf(entry) == -1) ? $('#absolidize').addClass('wmbutton') : $('#absolidize').removeClass('wmbutton');
 
-        if (launch_ext) launch_iframed_app(rank);
+        if (launch_ext) launch_db_iframed(rank);
     }
 }
 
@@ -937,7 +937,7 @@ function close_vibox(){
     return false;
 }
 
-function launch_iframed_app(rank){
+function launch_db_iframed(rank){
     var that = $('.busy_entry');
     if (!that.length) return;
 
@@ -947,28 +947,34 @@ function launch_iframed_app(rank){
         iframe_height;
 
     if (entype == 'S'){
-        if (rank == 99) {
-            iframe_src = wmgui.v_xrpd_addr + entry, iframe_height = 550;
+        if (rank == 99){
+            iframe_src = wmgui.engines_addrs[wmgui.engines]['visavis'] + wmgui.path_s_xrpd + entry, iframe_height = 550;
 
         } else
-            iframe_src = wmgui.v_player_addr + entry, iframe_height = 650;
+            iframe_src = wmgui.engines_addrs[wmgui.engines]['cifplayer'] + wmgui.path_s_entry + entry, iframe_height = 650;
 
     } else if (entype == 'P'){
-        if (rank == 10)
+        if (rank == 4 || rank == 9)
+            iframe_src = wmgui.engines_addrs[wmgui.engines]['visavis'] + wmgui.path_sd_plot + entry, iframe_height = 550;
+
+        else if (rank == 10)
             iframe_src = wmgui.v_ab_vis_addr + entry, iframe_height = 600;
-        else
-            iframe_src = wmgui.v_sd_addr + entry, iframe_height = 550;
+
+        else return;
 
     } else {
         if (rank == 12){
             var triple = wmgui.thumbed_display ? $('div.busy_entry > div.gallery_img > p').text() : $('tr.busy_entry > td.c1').text().split(' ')[0];
             iframe_src = wmgui.v_pd_3d_addr + triple, iframe_height = 550;
 
-        } else
-            iframe_src = (wmgui.sid ? wmgui.v_pd_addr : wmgui.v_pd_addr_anon) + entry, iframe_height = 600;
+        } else if (rank == 6)
+            iframe_src = (wmgui.sid ? wmgui.v_pd_user_addr : wmgui.engines_addrs[wmgui.engines]['visavis'] + wmgui.path_c_entry) + entry, iframe_height = 600;
+
+        else return;
 
         if (entry.startswith('C3') || entry.startswith('C4'))
             wmgui.notify('This entry is now in preparation');
+
         else if (wmgui.entries_messages[entry])
             wmgui.notify(wmgui.entries_messages[entry]);
     }
@@ -1008,7 +1014,6 @@ function start_visavis(plot_type){
 
     wmgui.search_type = 0;
     wmgui.visavis_working = true;
-    wmgui.visavis_starting = false;
 
     var cur_obj = {total_count: 1};
     $.extend(cur_obj, wmgui.search);
@@ -1106,11 +1111,11 @@ function stop_visavis(){
 
 function get_visavis_url(request, type, height){
     if (wmgui.visavis_curtype == 'pie' && !type)
-        return wmgui.v_vis_addr + '#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
+        return wmgui.engines_addrs[wmgui.engines]['visavis'] + '#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
 
     var height_str = height ? ('&visavis_height=' + height) : '';
 
-    return wmgui.v_vis_addr + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
+    return wmgui.engines_addrs[wmgui.engines]['visavis'] + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
 }
 
 function describe_perms(perms){
@@ -1445,10 +1450,10 @@ function update_dc(){
 
     var count = 0,
         cur_str = JSON.stringify(orepr),
-        cmp_html = '<option value="X" selected>Last search...</option>';
+        cmp_html = '<option value="X" selected>To last searches...</option>';
 
     $.each(JSON.parse(window.localStorage.getItem(wmgui.store_history_key) || '[]'), function(n, past){
-        if (count > 5) return false;
+        if (count > 6) return false;
 
         var title = [],
             past_str = JSON.stringify(past);
@@ -1459,7 +1464,8 @@ function update_dc(){
         cmp_html += '<option value="' + escape(past_str) + '">' + title + '</option>';
         count++;
     });
-    cmp_html += '<option value="Y">No comparison</option><option value="Z">Multiple comparison</option>';
+    cmp_html += '<option value="Y">No comparison</option>';
+    if (wmgui.engines == 'a') cmp_html += '<option value="Z">Multiple comparison</option>';
     $('#select_cmp_trigger').empty().append(cmp_html);
 }
 
@@ -1519,7 +1525,7 @@ function show_dunit_info(phid, bid, entry){
 
             var html = '<h4>' + data.out.formula_html.split(' ')[0] + ' ' + (data.out.spg || '?') + ' ' + (data.out.pearson || '&mdash;') + '</h4><p>This phase was reported in ' + data.out.articles_count + ' article' + (data.out.articles_count > 1 ? 's' : '')  + '.';
             if (data.out.sim_count > 1) html += ' There are <a href="#interlinkage/' + phid + '">' + data.out.sim_count + ' structurally similar phases</a> from other articles.';
-            html += '</p>'
+            html += '</p>';
             $('#phase_info').html(html);
 
         }).fail(function(xhr, textStatus, errorThrown){

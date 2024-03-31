@@ -92,7 +92,7 @@ wmgui.visavis_curtype = 'pie'; // pie, graph, discovery, matrix, cube, qproj, li
 wmgui.visavis_ready = false;
 wmgui.visavis_working = false;
 wmgui.visavis_terminating = false;
-wmgui.visavis_starting = false;
+wmgui.visavis_starting = false; // only used by an old engine, to delete TODO
 
 wmgui.numerics = {
     // first 8 are *pseudo_numerics*, client_prop_id > 5000
@@ -140,16 +140,26 @@ wmgui.mydata_endpoint =   wmgui.api_host + '/extension/mydata';
 wmgui.dd_addr_tpl =       wmgui.api_host + '/download';
 wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localhost:5000';
 
-// below are resources used in the *iframe*
-wmgui.v_player_addr_tpl = '/crystvis/player.html';
-wmgui.v_player_addr =     wmgui.v_player_addr_tpl + '#' +              wmgui.api_host + '/download/s?fmt=cif&q=';
-wmgui.v_pd_addr =         wmgui.static_host + '/pd_stub.html#' +       wmgui.api_host + '/download/c?fmt=png&q=';
-wmgui.v_pd_addr_anon =    wmgui.static_host + '/visavis/?290623#' +    wmgui.api_host + '/download/c?fmt=json&q=';
-wmgui.v_sd_addr =         wmgui.static_host + '/visavis/?290623#' +    wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_xrpd_addr =       wmgui.static_host + '/visavis/?290623#' +    wmgui.api_host + '/download/s?fmt=xrpd&q=';
-wmgui.v_vis_addr =        wmgui.static_host + '/visavis/?nobanner&290623';
+wmgui.path_c_entry = '#' + wmgui.api_host + '/download/c?fmt=json&q='
+wmgui.path_s_entry = '#' + wmgui.api_host + '/download/s?fmt=cif&q=';
+wmgui.path_s_xrpd = '#' + wmgui.api_host + '/download/s?fmt=xrpd&q=';
+wmgui.path_sd_plot = '#' + wmgui.api_host + '/download/p?fmt=json&q=';
+
+wmgui.engines = 'a'; // a or b
+wmgui.engines_addrs = {
+    'a': {
+        'cifplayer': '/crystvis/player.html',
+        'visavis': '/visavis/?nobanner'
+    },
+    'b': {
+        'cifplayer': 'webassets/iframe_cifplayer.html',
+        'visavis': 'webassets/iframe_visavis.html'
+    }
+}
+
+wmgui.v_pd_user_addr =    wmgui.static_host + '/pd_stub.html#' + wmgui.api_host + '/download/c?fmt=png&q=';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_pd_3d_addr =      wmgui.gui_host + '/labs/pd3d/?'; // FIXME will not work for pure Ermac
+wmgui.v_pd_3d_addr =      'labs/pd3d/?';
 
 // below are remote files commonly used
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?220923';
@@ -374,6 +384,7 @@ wmgui.store_mydata_key = 'absolidix_v1';
 wmgui.store_oauth_email_key = 'wm_u_email';
 wmgui.store_comm_exec_key = 'wm_reload_v1';
 wmgui.store_redir_key = 'wm_redir_v1';
+wmgui.store_engines_key = 'wm_engines_v0';
 
 wmgui.tooltips = {
     //'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="userbox">Next</span>'},

@@ -130,11 +130,11 @@ function refresh_ptable_results(elA, elB, elC){
         if (els.length == 1){
 
             if (wmgui.ptable.dtypes == 2){
-                iframe_addr = wmgui.v_player_addr_tpl;
+                iframe_addr = wmgui.engines_addrs[wmgui.engines]['cifplayer'];
                 wmgui.ptable.vis_fixed = true;
 
             } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = wmgui.v_vis_addr;
+                iframe_addr = wmgui.engines_addrs[wmgui.engines]['visavis'];
                 wmgui.ptable.vis_fixed = true;
 
             } else
@@ -148,11 +148,11 @@ function refresh_ptable_results(elA, elB, elC){
                 ajax_download(null, wmgui.search_endpoint + '?q=' + JSON.stringify(query_pds), render_right);
 
             } else if (wmgui.ptable.dtypes == 2){
-                iframe_addr = wmgui.v_player_addr_tpl;
+                iframe_addr = wmgui.engines_addrs[wmgui.engines]['cifplayer'];
                 wmgui.ptable.vis_fixed = true;
 
             } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = wmgui.v_vis_addr;
+                iframe_addr = wmgui.engines_addrs[wmgui.engines]['visavis'];
                 wmgui.ptable.vis_fixed = true;
 
             } else
@@ -167,10 +167,10 @@ function refresh_ptable_results(elA, elB, elC){
                 iframe_addr = wmgui.v_pd_3d_addr + els.join('-');
 
             } else if (wmgui.ptable.dtypes == 2){
-                iframe_addr = wmgui.v_player_addr_tpl;
+                iframe_addr = wmgui.engines_addrs[wmgui.engines]['cifplayer'];
 
             } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = wmgui.v_vis_addr;
+                iframe_addr = wmgui.engines_addrs[wmgui.engines]['visavis'];
 
             } else
                 document.getElementById('ptable_vis').innerHTML = '';
@@ -216,7 +216,7 @@ function render_left(data){
     if (data.out.length < 10) wmgui.ptable.vis_fixed = false; // prevent screen jumping
 
     if (wmgui.ptable.dtypes == 2){
-        const els = document.querySelectorAll('#ptable_results div.gallery_img');
+        const els = document.querySelectorAll('#ptable_results div.gallery_img.renderable');
         if (els.length){
             const rnd_i = Math.floor(Math.random() * els.length);
             els[rnd_i].parentNode.classList.add('active');
@@ -225,12 +225,12 @@ function render_left(data){
                 target_addr = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1';
 
             if (target) target.contentWindow.location.hash = target_addr;
-            else document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="850" src="' + wmgui.v_player_addr_tpl + target_addr + '"></iframe>';
+            else document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="850" src="' + wmgui.engines_addrs[wmgui.engines]['cifplayer'] + target_addr + '"></iframe>';
 
         } else document.getElementById('ptable_vis').innerHTML = '';
 
     } else if (wmgui.ptable.dtypes == 3){
-        const els = document.querySelectorAll('#ptable_results div.gallery_img');
+        const els = document.querySelectorAll('#ptable_results div.gallery_img.renderable');
         if (els.length){
             const rnd_i = Math.floor(Math.random() * els.length);
             els[rnd_i].parentNode.classList.add('active');
@@ -379,7 +379,7 @@ function build_thumbs_ph(json){ // FIXME duplicates another function *build_thum
 
     json.forEach(function(row){
         result_html += '<div class="gallery_item">';
-        result_html += '  <div class="gallery_img" rel="' + row[0] + '" style="background-image:url(https://mpds.io/phid_thumbs/' + row[0] + '.png);"><span><p>' + row[1] + '<br />space group ' + row[2] + '</p></span></div>';
+        result_html += '  <div class="gallery_img' + (row[2] !== '&mdash;' ? ' renderable' : '') + '" rel="' + row[0] + '" style="background-image:url(https://mpds.io/phid_thumbs/' + row[0] + '.png);"><span><p>' + row[1] + '<br />space group ' + row[2] + '</p></span></div>';
         result_html += '  <div class="gallery_label"><a class="launch_id" href="#phase_id/' + row[0] + '">Show ' + row[3] + (row[3] == 1 ? ' entry' : ' entries') + '</a><br />Publications: ' + row[4] + '</div>';
         result_html += '</div>';
     });

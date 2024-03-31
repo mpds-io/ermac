@@ -414,12 +414,14 @@ label{font-size:0.95em;line-height:30px;cursor:pointer;}
 
 #ss_custom_box{display:none;z-index:198;top:4%;margin-left:-305px;width:560px;height:auto;padding:25px;text-align:center;background:#fff;overflow:visible;}
 div.ss_col, div.sops_col{float:left;}
+div.ss_col > ul, div.sops_col > ul{margin:0;padding:0;}
 div.ss_col > ul > li, div.sops_col > ul > li{display:block;list-style:none;user-select:none;text-align:center;color:#fff;background:#bfbfbf;line-height:27px;border-radius:4px;cursor:pointer;margin:8px 4px;}
 div.ss_col > ul > li.ss_x, div.sops_col > ul > li.sops_x, #ss_x > ul > li:hover, #sops_x > ul > li:hover{background:#FE9A2E;}
 div.ss_col > ul > li.ss_y, div.sops_col > ul > li.sops_y, #ss_y > ul > li:hover, #sops_y > ul > li:hover{background:#E36868;}
 div.ss_col > ul > li.ss_z, div.sops_col > ul > li.sops_z, #ss_z > ul > li:hover, #sops_z > ul > li:hover{background:#3e3f95;}
 div.sops_col{letter-spacing:1px;}
 #all_polyhedra_box{display:none;position:absolute !important;z-index:103;top:4%;margin-left:-49%;margin-bottom:100px;width:98%;height:auto;background:#fff url(wm_logo_opt.png) 28% 3em no-repeat;background-size:3%;}
+#engines_box{display:none;z-index:198;top:30%;margin-left:-250px;width:450px;height:auto;padding:25px;text-align:center;background:#fff;padding-bottom:3em;}
 
 #tooltip{display:none;position:fixed;z-index:202;width:200px;height:auto;text-align:center;background:#ebffd6;padding:15px 10px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;}
 #tooltip > div{position:relative;width:100%;height:100%;font-size:1em;line-height:2em;}

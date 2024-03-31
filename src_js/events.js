@@ -270,7 +270,7 @@ function register_events(){
 
     $('#visualize, #xrpdize').click(function(){
         close_vibox();
-        launch_iframed_app(this.getAttribute('data-rank'));
+        launch_db_iframed(this.getAttribute('data-rank'));
     });
 
     $('#absolidize').click(function(){
@@ -482,6 +482,14 @@ function register_events(){
 
     $('#close_inquiry_dialogue').click(function(){
         $('#inquirybox').hide();
+    });
+
+    $('#close_tr_dialogue').click(function(){
+        var value = $("input[name=engines]:checked").val();
+        wmgui.engines = (value == 'a') ? value : 'b';
+        window.localStorage.setItem(wmgui.store_engines_key, wmgui.engines);
+        if (wmgui.visavis_working) start_visavis(wmgui.visavis_curtype);
+        $('#engines_box, #overlay').hide();
     });
 
     $('#close_ss_dialogue').click(function(){
@@ -1289,6 +1297,9 @@ function register_events(){
             $('#dc_' + prop).show();
         }
         that.remove();
+    });
+    $('#toggle_engines').click(function(){
+        $('#engines_box, #overlay').show();
     });
     $('#ss_gear_matrix, #ss_gear_cube').click(function(){
         var domain = $(this).attr('id').substr(8); // ss_gear_

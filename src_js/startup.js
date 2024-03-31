@@ -17,7 +17,7 @@ function satisfy_requirements(){
     $.each(JSON.parse(window.localStorage.getItem(wmgui.store_history_key) || '[]'), function(n, past){
         wmgui.tooltip_counter++;
 
-        if (n > 7)
+        if (n > 5)
             return false;
 
         var title = [],
@@ -377,6 +377,10 @@ function satisfy_requirements(){
     wmgui.multiselects['main'].display = function(facet, term){
         wmgui._selectize_display(wmgui.multiselects['main'], facet, term);
     }
+
+    wmgui.engines = window.localStorage.getItem(wmgui.store_engines_key) || 'a';
+    $('#engines_a').prop('checked', wmgui.engines == 'a');
+    $('#engines_b').prop('checked', wmgui.engines == 'b');
 
     //create_floating_slider('density', 42, 'Mg/m<sup>3</sup>', 10, 900, 10);
     // EOF satisfy_requirements

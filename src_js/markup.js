@@ -293,10 +293,10 @@ function register_html(){
 <div id="ptable_dtypes_box">
     <span><span>&#9432;</span> Show chemical elements as: </span>
     <div>
-        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_1" value="1" checked><label for="ptable_dtypes_1"> phase diagrams</label><br />
-        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_2" value="2"><label for="ptable_dtypes_2"> crystal structure counts</label><br />
-        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_3" value="3"><label for="ptable_dtypes_3"> physical property counts</label><br />
-        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_0" value="0"><label for="ptable_dtypes_0"> empty table</label>
+        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_1" value="1" checked /><label for="ptable_dtypes_1"> phase diagrams</label><br />
+        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_2" value="2" /><label for="ptable_dtypes_2"> crystal structure counts</label><br />
+        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_3" value="3" /><label for="ptable_dtypes_3"> physical property counts</label><br />
+        <input type="radio" name="ptable_dtypes" id="ptable_dtypes_0" value="0" /><label for="ptable_dtypes_0"> empty table</label>
     </div>
 </div>
 
@@ -444,7 +444,7 @@ function register_html(){
 
 <!-- RIGHT MAIN COLUMN -->
 <div id="right_col" class="side_cols">
-    <div class="col_title">View</div>
+    <div class="col_title">View <div id="toggle_engines" class="gear"></div></div>
 
     <div class="controlswitch">
         <div id="control_a">entries</div><div id="control_b">phases</div><div id="control_f">articles</div>
@@ -780,7 +780,7 @@ function register_html(){
 </div>
 
 <!-- PLOTS EMBED -->
-<div id="visavis"><iframe id="visavis_iframe" frameborder=0 scrolling="no" width="100%" height="100%" src="/visavis/"></iframe></div><!-- NB relative URL -->
+<div id="visavis"><iframe id="visavis_iframe" frameborder=0 scrolling="no" width="100%" height="100%"></iframe></div>
 
 <!-- DISCOVERY SETTINGS MODAL -->
 <div id="discovery_custom_box" class="modal user_dialogue">
@@ -812,6 +812,15 @@ function register_html(){
     <div id="sops_x" class="sops_col"><ul><li>none</li><li>sum</li><li>diff</li><li>product</li><li>ratio</li><li>max</li><li>min</li></ul></div>
     <div id="sops_y" class="sops_col"><ul><li>none</li><li>sum</li><li>diff</li><li>product</li><li>ratio</li><li>max</li><li>min</li></ul></div>
     <div id="sops_z" class="sops_col"><ul><li>none</li><li>sum</li><li>diff</li><li>product</li><li>ratio</li><li>max</li><li>min</li></ul></div>
+</div>
+
+<!-- RENDERING SETTINGS MODAL -->
+<div id="engines_box" class="modal user_dialogue">
+    <div id="close_tr_dialogue" class="cross"></div>
+    <div style="clear:both;width:100%;"></div>
+    <h3>Plotting and visualization engines</h3>
+    <input type="radio" name="engines" id="engines_a" value="a" style="height:16px;width:16px;" checked /><label for="engines_a"> use old</label>&nbsp;
+    <input type="radio" name="engines" id="engines_b" value="b" style="height:16px;width:16px;" /><label for="engines_b"> use new experimental</label>
 </div>
 
 <!-- HELP BOXES -->

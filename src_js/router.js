@@ -106,11 +106,9 @@ function url__plot(arg){
     //if (wmgui.view_mode == 1)
     switch_view_mode(2);
 
-    if (wmgui.visavis_ready)
+    setTimeout(function(){
         start_visavis(plot_type);
-
-    else
-        wmgui.visavis_starting = true;
+    }, 0);
 
     if (wmgui.tooltip_counter < 2 && (plot_type == 'matrix' || plot_type == 'cube')){
         setTimeout(function(){ show_tooltip(wmgui.tooltips['ss_axes'], true) }, 4000);
