@@ -5505,7 +5505,7 @@ var $;
                 case 'OPTIMADE': return this.$.$mpds_cifplayer_matinfio_optimade_to_obj(this.source.data);
                 case 'OPTIMADE_str': return this.$.$mpds_cifplayer_matinfio_optimade_str_to_obj(this.source.data);
             }
-            return this.$.$mol_fail(new $mol_data_error('Error: file format not recognized'));
+            return this.$.$mol_fail(new $mol_data_error('No structure found'));
         }
         player() {
             return this.$.$mpds_cifplayer_matinfio_player_from_obj(this.internal_obj());

@@ -43,14 +43,13 @@ function check_user(session_id){
                 if (window.skip_idp_confirm)
                     return post_auth(session_id);
 
-                const confirmation = confirm('Log in at the external service?');
-                if (confirmation){
+                if (confirm('Log in at the external service?')){
                     window.localStorage.setItem(window.store_idp_skip_tpl + window.consumer_id, true);
                     post_auth(session_id);
 
                 } else {
                     console.log('Redirecting a user to login...');
-                    window.localStorage.setItem(window.store_redir_key, saved_redir_url);
+                    window.localStorage.removeItem(window.store_redir_key);
                     window.location.href = window.login_url;
                 }
             } else {
