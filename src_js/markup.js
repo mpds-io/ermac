@@ -490,12 +490,12 @@ function register_html(){
     <div id="pd_legend" class="sim_col_ctx">
         <div class="col_title">Color legend</div>
         <ul>
-            <li>liquid or gas <span style="color:#fff;background:#9cf;padding:2px;">blue or violet</span></li>
-            <li>1-phase <span style="color:#fff;background:#d1cde6;padding:2px;">violet</span></li>
-            <li>2-phase <span style="color:#fff;background:#ddd;padding:2px;">gray or white</span></li>
-            <li>3-phase <span style="color:#fff;background:#fc6;padding:2px;">yellow</span></li>
-            <li>4-phase <span style="color:#fff;background:#FCD3C2;padding:2px;">red</span></li>
-            <li>5-phase <span style="color:#fff;background:#CCE7D4;padding:2px;">green</span></li>
+            <li><span style="background:#9cf;">liquid or gas</span></li>
+            <li><span style="background:#d1cde6;">1-phase</span></li>
+            <li><span style="background:#ddd;">2-phase</span></li>
+            <li><span style="background:#fc6;">3-phase</span></li>
+            <li><span style="background:#FCD3C2;">4-phase</span></li>
+            <li><span style="background:#CCE7D4;">5-phase</span></li>
         </ul>
     </div>
 </div>
@@ -837,6 +837,10 @@ function register_html(){
     </div>
 </div>
 
-<div id="footer">Editor-in-Chief: Pierre Villars. Section editors: Karin Cenzual, Ihor Savysyuk, Riccarda Caputo. <a href="https://github.com/mpds-io">Open-source</a> development by <a href="https://tilde.pro" target="_blank">Tilde MI</a>.</div>
+<div id="footer">Editor-in-Chief: P. Villars. Section editors: K. Cenzual, I. Savysyuk, R. Caputo. <a href="https://github.com/mpds-io">Open-source</a> development by <a href="https://tilde.pro" target="_blank">Tilde MI</a>. Dark mode is <span id="darkmode_trigger" style="border-bottom:1px solid #555;cursor:pointer;"></span>.</div>
+
+<!-- CROSS-SITE COMMS -->
+<iframe id="comms" src="https://absolidix.com/comms.html" style="width:0;height:0;border:none;position:absolute;"></iframe>
+<!-- iframe id="comms" src="http://localhost:5000/comms.html" style="width:0;height:0;border:none;position:absolute;"></iframe -->
 `);
 }

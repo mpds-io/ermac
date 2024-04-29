@@ -47,6 +47,7 @@ wmgui.cliff_counter = null;
 wmgui.sid = null;
 wmgui.oauths = null;
 wmgui.prod = true; // (window.location.host.indexOf('localhost') == -1);
+wmgui.darkmode = null;
 
 wmgui.cliffhangers = [
     "binary compounds with negative thermal expansion",
