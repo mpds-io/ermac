@@ -1450,7 +1450,7 @@ function register_events(){
         return false;
     });*/
 
-    // Keys press
+    // keys press
     $(document).keydown(function(e){
         var key = window.event ? e.keyCode : e.which;
         if (key == 13){ // ENTER: input must trigger submit button via two parent divs!
@@ -1471,8 +1471,8 @@ function register_events(){
 
     $(window).bind('hashchange', url_redraw_react);
 
+    // execute a command in all the active GUI windows (except the current) e.g. setting a new state
     $(window).bind('storage', function(ev){
-        // This is to execute the command in all the active GUI windows (except the current) e.g. setting a new state
         if (ev.originalEvent.key != wmgui.store_comm_exec_key)
             return;
 
@@ -1503,4 +1503,28 @@ function register_events(){
             wmgui.ptable.subphases_set(state);
         }
     });
+
+    // theme switcher
+    document.getElementById('darkmode_trigger').onclick = function(){
+        wmgui.darkmode.toggle();
+        document.getElementById('darkmode_trigger').innerHTML = wmgui.darkmode.isActivated() ? 'enabled' : 'disabled';
+        document.getElementById('comms').contentWindow.postMessage(JSON.stringify({darkmode: wmgui.darkmode.isActivated() ? 1 : 2}), '*');
+    }
+
+    // cross-site comms
+    window.addEventListener('message', function(message){
+        //if (message.origin === 'https://trusted.com') {
+        var received;
+        try {
+            received = JSON.parse(message.data);
+        } catch (ignore){}
+        var darkmode = received.darkmode;
+        if (darkmode !== undefined){
+            darkmode = (darkmode === 1);
+            if (darkmode !== wmgui.darkmode.isActivated()) wmgui.darkmode.toggle();
+            document.getElementById('darkmode_trigger').innerHTML = wmgui.darkmode.isActivated() ? 'enabled' : 'disabled';
+        }
+        //}
+    });
+    // EOF register_events
 }

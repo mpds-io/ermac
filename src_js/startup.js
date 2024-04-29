@@ -382,6 +382,9 @@ function satisfy_requirements(){
     $('#engines_a').prop('checked', wmgui.engines == 'a');
     $('#engines_b').prop('checked', wmgui.engines == 'b');
 
+    wmgui.darkmode = new Darkmode({saveInCookies: false});
+    document.getElementById('darkmode_trigger').innerHTML = wmgui.darkmode.isActivated() ? 'enabled' : 'disabled';
+
     //create_floating_slider('density', 42, 'Mg/m<sup>3</sup>', 10, 900, 10);
     // EOF satisfy_requirements
 }
