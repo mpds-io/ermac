@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta charset="utf-8" />
+<style type="text/css">
+html, body{width:100%;height:100%;overflow:hidden;}
+mpds-visavis-plot{width:100%;height:100%;}
+</style>
+<script type="text/javascript" src="../src_js/third_party/visavis.js"></script>
+<script type="text/javascript">
+"use strict";
+
+window.plot = null;
+window.cmp_urls = [];
+
+window.visavis = {};
+window.visavis.elementals_on = ['nump'];
+
+function matrix_order(x_sort, y_sort, x_op, y_op){
+
+    if (!y_sort) y_sort = x_sort;
+
+    window.plot.matrix_x_sort(x_sort);
+    window.plot.matrix_y_sort(y_sort);
+    window.plot.matrix_x_op(x_op);
+    window.plot.matrix_y_op(y_op);
+}
+
+function cube_order(x_sort, y_sort, z_sort, x_op, y_op, z_op){
+    const fixel = window.plot.plot_raw().type() == 'matrix';
+    fixel? window.plot.matrix_x_sort(x_sort) : window.plot.x_sort(x_sort);
+    fixel? window.plot.matrix_y_sort(y_sort) : window.plot.y_sort(y_sort);
+    window.plot.z_sort(z_sort);
+    fixel? window.plot.matrix_x_op(x_op) : window.plot.x_op(x_op);
+    fixel? window.plot.matrix_y_op(y_op) : window.plot.y_op(y_op);
+    window.plot.z_op(z_op);
+}
+
+function discovery_rerun(){
+    window.plot.discovery_elementals_on([...window.visavis.elementals_on]);
+}
+
+function graph_rebuild(type){
+    const mapping = {'props': 'prel', 'aetypes': 'hrel', 'lattices': 'trel', 'articles': 'arel', 'geos': 'grel'};
+
+    // FIXME we need reset() method
+    url_redraw_react();
+
+    window.plot.graph_rel(mapping[type]);
+}
+
+function cmp_discard(){
+    const ref = window.cmp_urls[0];
+    url_redraw_react();
+    window.plot.json_request(ref);
+}
+
+function cmp_download(url, type){
+
+    if (type == 'discovery')
+        window.plot.json_cmp_request(url);
+
+    else {
+        window.cmp_urls.push(url);
+        url_redraw_react(true);
+
+        window.plot.multi_requests(window.cmp_urls);
+    }
+}
+
+function fixel_manage(flag){
+    window.plot.show_fixel(flag);
+}
+
+function url_redraw_react(keep_state){
+    let url = window.location.hash.substr(1);
+    url = url.replace('%22total_count%22%3A1%2C', '');
+
+    document.body.innerHTML = '<mpds-visavis-plot></mpds-visavis-plot>';
+    window.plot = document.getElementsByTagName('mpds-visavis-plot')[0].view;
+    window.plot.notify = (msg) => window.parent.wmgui.notify(msg);
+
+    if (!keep_state){
+        window.plot.json_request(url);
+        window.cmp_urls = [url];
+    }
+}
+
+(function(){
+    setTimeout(url_redraw_react, 0);
+    window.addEventListener('hashchange', function(){
+        url_redraw_react();
+    });
+})();
+</script>
+</head>
+<body>
+</body>
+</html>
