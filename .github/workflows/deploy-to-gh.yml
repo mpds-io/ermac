@@ -26,12 +26,12 @@ jobs:
       - name: Save files
         run: |
           mkdir dist
-          cp ermac.min.js jquery.min.js dist
+          cp ermac.min.js src_js/third_party/jquery.min.js dist
           cp -r webassets oauth crystvis dist
           cp example_prod.html dist/index.html
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.1.7
+        uses: JamesIves/github-pages-deploy-action@4.6.0
         with:
           branch: gh-pages
           folder: dist
