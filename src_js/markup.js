@@ -81,8 +81,9 @@ function register_html(){
     <div id="results"><table id="databrowser"></table></div>
 
     <div id="loadscroll" class="context_msg">Getting the rest of data...</div>
-    <div id="toomuch" class="context_msg">There are <span></span> results not shown &mdash; please, refine the search or use the MPDS API.</div>
+    <div id="toomuch" class="context_msg">There are <span></span> results not shown &mdash; please, refine the search &mdash; or use the API.</div>
     <div id="plthint" class="context_msg">
+        <span>Try to visualize these entire results as:</span>
         <div id="plt_pie"><a class="plthint_links" title="Plot pie charts (overview)" rel="nofollow" href="/" rev="pie"></a></div>
         <div id="plt_lit"><a class="plthint_links" title="Plot bar charts (literature)" rel="nofollow" href="/" rev="lit"></a></div>
         <div id="plt_discovery"><a class="plthint_links" title="Search for patterns (PCA)" rel="nofollow" href="/" rev="discovery"></a></div>
@@ -341,7 +342,7 @@ function register_html(){
     <ul>
         <li id="visualize" class="wmbutton">Visualize</li>
         <li id="xrpdize" class="wmbutton">Get XRPD</li>
-        <li id="absolidize" class="wmbutton"><span class="active">Simulate</span><span class="disabled"><i>&#x2714;</i> in <span class="href">my data</span></span></li>
+        <li id="absolidize" class="wmbutton"><span class="active">Simulate</span><span class="disabled">Added to <span class="href">my data</span>.</span></li>
         <li id="download_pdf" class="d_icon"><a rel="pdf" href="#" target="_blank" title="Get HTML / PDF document" rel="nofollow"></a></li>
         <li id="download_json" class="d_icon"><a rel="json" href="#" target="_blank" title="Get machine-readable JSON file" rel="nofollow"></a></li>
         <li id="download_png" class="d_icon"><a rel="png" href="#" target="_blank" title="Get PNG raster image" rel="nofollow"></a></li>
@@ -351,6 +352,8 @@ function register_html(){
         <li id="download_bib" class="d_icon"><a rel="bib" href="#" target="_blank" title="Get original citation" rel="nofollow"></a></li>
         <li id="download_raw" class="d_icon"><a rel="raw" href="#" target="_blank" title="Get raw calculation data" rel="nofollow"></a></li>
     </ul>
+
+    <br /><br />
 </div>
 
 <!-- LEFT INDIVIDUAL ID COLUMN -->
@@ -529,7 +532,7 @@ function register_html(){
         <div class="advs advs_classes" style="margin-bottom:3vmin;">
             <div class="advs_capt">Materials class</div>
             <select id="advs_fct_classes" autocomplete="false"></select><!-- multiselect autocomplete -->
-            <div class="advs_legend" data-multiselects="classes"><i>e.g.</i> <a href="#" tabindex="-1">hydride, nonmetal</a> or <a href="#" tabindex="-1">machine learning</a></div>
+            <div class="advs_legend" data-multiselects="classes"><i>e.g.</i> <a href="#" tabindex="-1">hydride, nonmetal</a> or <a href="#" tabindex="-1">olivine, ternary</a></div>
         </div>
     </div>
 

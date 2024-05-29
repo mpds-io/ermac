@@ -809,6 +809,7 @@ function register_events(){
             }).fail(function(xhr, textStatus, errorThrown){
                 if (textStatus != 'abort')
                     wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
+                $('#usr_api_key').html('authentication error');
             });
 
         } else if (desttab == 'usr_tab_perms'){
@@ -830,6 +831,7 @@ function register_events(){
             }).fail(function(xhr, textStatus, errorThrown){
                 if (textStatus != 'abort')
                     wmgui.notify('Your session ended: please, <span class="href relogin">log in again</span>');
+                $('#perms_view').html('authentication error');
             });
 
         } else if (desttab == 'usr_tab_ctrl'){ // redirect to an external app

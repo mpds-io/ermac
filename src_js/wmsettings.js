@@ -46,7 +46,7 @@ wmgui.notify_counter = null;
 wmgui.cliff_counter = null;
 wmgui.sid = null;
 wmgui.oauths = null;
-wmgui.prod = true; // (window.location.host.indexOf('localhost') == -1);
+wmgui.prod = (window.location.host.indexOf('localhost') === -1);
 wmgui.darkmode = null;
 
 wmgui.cliffhangers = [
@@ -153,8 +153,8 @@ wmgui.engines_addrs = {
         'visavis': '/visavis/?nobanner'
     },
     'b': {
-        'cifplayer': 'webassets/iframe_cifplayer.html',
-        'visavis': 'webassets/iframe_visavis.html'
+        'cifplayer': '/ermac/webassets/iframe_cifplayer.html',
+        'visavis': '/ermac/webassets/iframe_visavis.html'
     }
 }
 
@@ -390,7 +390,7 @@ wmgui.store_engines_key = 'wm_engines_v0';
 wmgui.tooltips = {
     //'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="userbox">Next</span>'},
     //'hierarchy': {el: 'advsearch_init_trigger', oleft: -50, otop: 60, view_mode: 1, text: 'Use the <i>&mu;</i> button to select physical properties from the curated hierarchy.<br /><span rel="userbox">Next</span>'},
-    'userbox': {el: 'userbox', oleft: -105, otop: 60, view_mode: 1, text: 'Enjoy full data access<br />with your account here.<br /><span rel="close_tooltip">OK</span>'},
+    'userbox': {el: 'userbox', oleft: -105, otop: 60, view_mode: 1, text: 'Check your full access<br />with your account here.<br /><span rel="close_tooltip">OK</span>'},
     'interpretation': {el: 'right_col', oleft: -70, otop: 99, view_mode: 2, text: 'The entries are grouped in the phases.<br /><span rel="databrowser">Next</span>'},
     'databrowser': {el: 'databrowser', oleft: 0, otop: 200, view_mode: 2, text: 'Click the particular entry to get more info. Opened lock means open access.<br /><span rel="close_tooltip">OK</span>'},
     //'plots': {el: 'databrowser', oleft: 0, otop: 500, view_mode: 2, text: 'Use the graph chart buttons in the footer (at the very bottom of the page).<br /><span rel="close_tooltip">OK</span>'},

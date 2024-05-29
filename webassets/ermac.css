@@ -182,9 +182,10 @@ th.a5.header, th.a5.headerSortUp, th.a5.headerSortDown{background-position:80% c
 td.a5{font-size:0.9em;letter-spacing:-1px;font-style:italic;}
 
 div.context_msg{display:none;width:70%;margin:0 auto;padding-top:10px;color:#555;font-size:1.25em;text-align:center;}
-#toomuch{margin-bottom:80px;}
+#toomuch{margin-bottom:25px;}
 #loadscroll{margin-bottom:100px;}
-#plthint{margin:65px auto 120px;}
+#plthint{margin:0 auto 120px;}
+#plthint > span{display:block;width:100%;margin-bottom:45px;}
 #plthint > div{display:inline-block;width:61px;height:60px;margin:0 3%;}
 #plthint > div:hover{transform:scale(1.25);}
 #plthint > div > a{display:block;width:100%;height:100%;background-size:cover;margin:0 auto;opacity:0.8;}
@@ -196,7 +197,7 @@ div.context_msg{display:none;width:70%;margin:0 auto;padding-top:10px;color:#555
 #plt_matrix > a{background:url(plots.gif) -205px 0 no-repeat;}
 #plt_cube > a{width:70px !important;background:url(plots.gif) -265px 0 no-repeat;}
 
-#apihint{font-weight:normal;color:#000;font-size:1.15em;line-height:1.5em;margin-bottom:50px;padding:20px 5px 45px;background:#f6f6f6;overflow-wrap:break-word;}
+#apihint{font-weight:normal;color:#555;font-size:1.15em;line-height:1.5em;margin-bottom:50px;padding:20px 5px 45px;background:#f6f6f6;overflow-wrap:break-word;}
 #apihint span{color:#c00;}
 #apihint a{text-decoration:none;color:#000;border-bottom:1px solid #000;}
 /*
@@ -424,7 +425,7 @@ div.ss_col > ul > li.ss_x, div.sops_col > ul > li.sops_x, #ss_x > ul > li:hover,
 div.ss_col > ul > li.ss_y, div.sops_col > ul > li.sops_y, #ss_y > ul > li:hover, #sops_y > ul > li:hover{background:#E36868;}
 div.ss_col > ul > li.ss_z, div.sops_col > ul > li.sops_z, #ss_z > ul > li:hover, #sops_z > ul > li:hover{background:#3e3f95;}
 div.sops_col{letter-spacing:1px;}
-#all_polyhedra_box{display:none;position:absolute !important;z-index:103;top:4%;margin-left:-49%;margin-bottom:100px;width:98%;height:auto;background:#fff url(wm_logo_opt.png) 28% 3em no-repeat;background-size:3%;}
+#all_polyhedra_box{display:none;position:absolute !important;z-index:103;top:3%;margin-left:-49%;margin-bottom:100px;width:98%;height:auto;background:#fff url(wm_logo_opt.png) 28% 3em no-repeat;background-size:3%;}
 #engines_box{display:none;z-index:198;top:30%;margin-left:-250px;width:450px;height:auto;padding:25px;text-align:center;background:#fff;padding-bottom:3em;}
 
 #tooltip{display:none;position:fixed;z-index:202;width:200px;height:auto;text-align:center;background:#ebffd6;padding:15px 10px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;}

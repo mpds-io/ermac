@@ -293,13 +293,13 @@ function request_search(search, caption, without_history){
         } else {
             if (data.estimated_count > wmgui.quick_page_size + wmgui.fetch_page_size){
                 $('#toomuch span').html('nearly ' + (data.estimated_count - wmgui.quick_page_size)).parent().show();
-                show_hints(search.entry);
+                show_hints(search.entry, data.estimated_count);
 
             } else if (data.estimated_count > wmgui.quick_page_size){
                 $('#loadscroll').show();
                 wmgui.unfinished_page = true;
 
-            } else show_hints(search.entry);
+            } else show_hints(search.entry, data.estimated_count);
         }
 
         // switchers
@@ -414,6 +414,9 @@ function show_examples(box, more_examples, fix_rfn_header){
         wmgui.cliff_counter += 1;
         if (wmgui.cliff_counter > wmgui.cliffhangers.length-1) wmgui.cliff_counter = 0;
         html += '<li><a href="#search/' + wmutils.termify_formulae(wmgui.cliffhangers[wmgui.cliff_counter]) + '">' + wmgui.cliffhangers[wmgui.cliff_counter].charAt(0).toUpperCase() + wmgui.cliffhangers[wmgui.cliff_counter].slice(1) + '</a></li>';
+
+        var legend = wmgui.get_interesting()['text'];
+        html += '<li><a href="#search/' + escape(legend) + '">' + legend.charAt(0).toUpperCase() + legend.slice(1).replace(/\d/g, "&#x208$&;") + '</a></li>';
     }
     $(box + ' > ul').empty().append(html);
     $(box).show();
@@ -908,13 +911,16 @@ function open_sim_col(entry, entype, rank){
                 $('#sim_legend').addClass('apparent').html('<br /><a href="#entry/' + entry.split('-')[0] + '"><img alt="C-entry" src="' + wmgui.static_host + '/pd_thumbs/' + entry.split('-')[0] + '.png" /><br /><span>Full phase diagram</span></a>' + html_3d);
 
             } else if (entype == 'C' && rank == 5)
-                $('#sim_legend').addClass('apparent').text('No links to other phases found');
+                $('#sim_legend').addClass('apparent').text('No links to other phases found.');
+
+            else if (entype == 'C' && rank == 12)
+                $('#sim_legend').addClass('apparent').text('Hover the binary or ternary diagrams for more data.');
 
             else if (entype == 'S')
-                $('#sim_legend').addClass('apparent').text('No other structures for this prototype found');
+                $('#sim_legend').addClass('apparent').text('No other structures for this prototype found.');
 
             else
-                $('#sim_legend').addClass('apparent').text('No similar values found');
+                $('#sim_legend').addClass('apparent').text('No similar values found.');
         }
 
         if (data.out.own.length && !wmgui.search.phid)
@@ -1210,7 +1216,7 @@ function show_advsbox(){
     }
 }
 
-function show_hints(disabled){
+function show_hints(disabled, res_count){
 
     //$('#fdwidget').html('Were you satisfied with the data quality? Did everything work as expected? <span id="fdwidget_yes">Yes</span><span id="fdwidget_no">No</span>').show();
 
@@ -1225,7 +1231,7 @@ function show_hints(disabled){
     var hint = JSON.stringify(cur_obj).replaceAll(' ', '+').replace('\{', '\\{').replace('\}', '\\}');
     $('#apihint span').html(hint).parent().show();
 
-    if (wmgui.search.search_type === 0){
+    if (wmgui.search.search_type === 0 && (res_count > 3 || res_count === undefined)){
         $('a.plthint_links').each(function(){
             var that = $(this),
                 plot_type = that.attr('rev');
