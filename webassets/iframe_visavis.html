@@ -94,7 +94,7 @@ function url_redraw_react(keep_state){
 
     window.plot.on_fixel_checked = (checked) => {
         const link = window.plot.json_request();
-        visavis_plot.json_request( checked ? `${link}&fixel=1` : link.replace('&fixel=1', '') );
+        window.plot.json_request( checked ? `${link}&fixel=1` : link.replace('&fixel=1', '') );
     }
 
 })();
