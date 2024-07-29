@@ -76,7 +76,7 @@ function url_redraw_react(keep_state){
     let url = window.location.hash.substr(1);
     url = url.replace('%22total_count%22%3A1%2C', '');
 
-    document.body.innerHTML = '<mpds-visavis-plot></mpds-visavis-plot>';
+    document.body.innerHTML = '<mpds-visavis-plot fullscreen="true"></mpds-visavis-plot>';
     window.plot = document.getElementsByTagName('mpds-visavis-plot')[0].view;
     window.plot.notify = (msg) => window.parent.wmgui.notify(msg);
 

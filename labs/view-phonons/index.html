@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Phonon visualization</title>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<script type="text/javascript" src="/src_js/third_party/cifplayer.js"></script>
+<style type="text/css">
+*{margin:0;padding:0;}
+:root{--textcolor:#000;}
+html, body{font-family:Courier;color:var(--textcolor);}
+body{background:#fff;}
+#left{width:36%;z-index:2;position:fixed;margin-left:0.3em;height:600px;overflow-y:auto;}
+#main{width:100%;z-index:1;}
+
+optimade-cifplayer-player{display:block;height:700px;}
+
+table{width:100%;text-align:center;margin-bottom:0.5em;border-collapse:collapse;}
+thead{font-size:0.8em;line-height:2em;vertical-align:bottom;}
+td.irrep{font-style:italic;font-family:Courier;}
+
+span.bzpoint{letter-spacing:2px;font-family:Courier;line-height:1.75em;}
+span.vibrate{font-size:0.9em;color:#f00;cursor:pointer;}
+span.vibrate:after{content:"animate"}
+span.vibrate.active:after{content:"stop"}
+</style>
+</head>
+<body>
+
+<div id="left" class="content">
+    <table id="phonons">
+        <thead><tr>
+            <td>Irrep</td>
+            <td>Frequency, cm<sup>-1</sup></td>
+            <td>&nbsp;</td>
+            <td>Raman-active</td>
+            <td>IR-active</td>
+        </tr></thead>
+    </table>
+</div>
+
+<div id="main" class="content">
+</div>
+
+<script type="text/javascript">
+"use strict";
+
+try {
+    window.mpds_embedded = window.parent && window.parent.wmgui;
+} catch (e){
+    window.mpds_embedded = false;
+}
+
+window.ref_endpoint = 'https://api.mpds.io/v0/download/s?fmt=optimade&q='; // (window.location.host.indexOf('localhost')==-1)
+window.example_data = 'https://api.mpds.io/v0/download/p?q=P50018989-7&fmt=json'; // SrTiO3/221/cP5 phonons
+window.player = null; // web-component
+
+function close_vibox(){
+    // this is a mock-up for player.html
+    window.mpds_embedded && window.parent.close_vibox();
+}
+
+function notify(msg){
+    window.mpds_embedded ? window.parent.wmgui.notify(msg) : alert(msg);
+}
+
+function ajax_download(url, callback){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState == 4){
+            if (xmlhttp.status == 200) callback(xmlhttp.responseText);
+            else {
+                notify("Error: HTTP " + xmlhttp.status + " status received during retrieving data from the server");
+            }
+        }
+    }
+    xmlhttp.open("GET", url);
+    xmlhttp.send(1);
+}
+
+function accept_data(str){
+
+    try {
+        var data = JSON.parse(str),
+            ref_entry = data['sample']['material']['entry'].replace('P', 'S').split('-')[0],
+            source = data['sample']['measurement'][0]['property']['matrix'];
+        //window.n_atoms = source['modes_freqs']['0 0 0'].length / 3;
+
+    } catch(err){
+        throw new Error(err);
+    }
+
+    if (!source || !source.modes_freqs) return notify('Unexpected data received');
+
+    var result_html = '<tbody>';
+    for (var bzpoint in source.modes_freqs){
+
+        result_html += '<tr><td colspan="5" style="font-style:italic;border-top:1px solid var(--textcolor);border-bottom:1px solid var(--textcolor);"><span class="bzpoint">BZ point ' + bzpoint + '</span></td></tr>';
+
+        for (var i = 0; i < source.modes_freqs[bzpoint].length; i++){
+
+            var raman_place = '',
+                ir_place = '';
+
+            if (bzpoint == '0 0 0'){
+                raman_place = source.raman_active[i] ? 'yes' : 'no';
+                ir_place = source.ir_active[i] ? 'yes' : 'no';
+            }
+
+            result_html += '<tr><td class="irrep">' + source.irreducible_representations[bzpoint][i] + '</td><td>' + Math.round(source.modes_freqs[bzpoint][i]) + '</td><td><span class="vibrate" data-phonon="' + source.eigenvectors[bzpoint][i] + '"></span></td><td>' + raman_place + '</td><td>' + ir_place + '</td></tr>';
+        }
+    }
+    result_html += '</tbody>';
+
+    document.getElementById('phonons').insertAdjacentHTML('beforeend', result_html);
+    //document.getElementById('main').innerHTML = '<iframe id="player" frameborder=0 scrolling="no" width="100%" height="700" src="' + window.player_src + '#' + window.ref_endpoint + ref_entry + '"></iframe>';
+
+    ajax_download(window.ref_endpoint + ref_entry, function(item){
+        document.getElementById('main').innerHTML = '<optimade-cifplayer-player externals={"skip_panel":true,"theme":""}></optimade-cifplayer-player>';
+        window.player = document.getElementsByTagName('optimade-cifplayer-player')[0].view;
+        //console.log(item);
+        window.player.data(item);
+    });
+}
+
+function url_redraw_react(){
+    var url = window.location.hash.substr(1);
+    if (url.indexOf('://') == -1){
+        return notify('Error: not a valid url');
+    }
+    ajax_download(url, accept_data);
+}
+
+function display_landing(){
+    window.location.href += '#' + window.example_data;
+    window.location.reload();
+}
+
+(function(){
+
+    document.querySelector('table').addEventListener('click', function(event){
+        var that = event.target;
+        if (that.classList.contains('vibrate')){
+
+            if (that.classList.contains('active')){
+                that.classList.remove('active');
+                window.player.unvibrate();
+
+            } else {
+                var items = document.getElementsByClassName('vibrate');
+                for (var i = 0; i < items.length; i++){
+                    items[i].classList.remove('active');
+                }
+                that.classList.add('active');
+
+                var flatten = that.getAttribute('data-phonon').split(',').map(Number),
+                    phonon = [];
+                while (flatten.length) phonon.push(flatten.splice(0, 3));
+
+                //console.log(phonon);
+                window.player.vibrate(phonon);
+            }
+        }
+    });
+
+    if (window.location.hash.length) url_redraw_react();
+    else display_landing();
+
+})();
+</script>
+</body>
+</html>
