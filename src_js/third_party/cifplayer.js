@@ -7256,10 +7256,7 @@ var $;
         const phonon_amp = 6;
         class $optimade_cifplayer_player extends $.$optimade_cifplayer_player {
             external_theme_auto() {
-                const external = this.externals()?.theme;
-                if (!external)
-                    return;
-                this.$.$mol_lights(external == 'light' ? true : false);
+                this.$.$mol_lights(true);
             }
             available_overlays() {
                 try {
