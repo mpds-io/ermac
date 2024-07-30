@@ -147,9 +147,7 @@ wmgui.path_s_xrpd = '#' + wmgui.api_host + '/download/s?fmt=xrpd&q=';
 wmgui.path_sd_plot = '#' + wmgui.api_host + '/download/p?fmt=json&q=';
 
 wmgui.engines_addrs = {
-    //'cifplayer': '/ermac/webassets/iframe_cifplayer.html',
     'cifplayer': '/ermac/webassets/iframe_cifplayer.html',
-    //'visavis': '/ermac/webassets/iframe_visavis.html'
     'visavis': '/ermac/webassets/iframe_visavis.html'
 }
 
