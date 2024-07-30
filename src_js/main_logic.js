@@ -954,14 +954,17 @@ function launch_db_iframed(rank){
 
     if (entype == 'S'){
         if (rank == 99){
-            iframe_src = wmgui.engines_addrs[wmgui.engines]['visavis'] + wmgui.path_s_xrpd + entry, iframe_height = 550;
+            iframe_src = wmgui.engines_addrs['visavis'] + wmgui.path_s_xrpd + entry, iframe_height = 550;
 
         } else
-            iframe_src = wmgui.engines_addrs[wmgui.engines]['cifplayer'] + wmgui.path_s_entry + entry, iframe_height = 650;
+            iframe_src = wmgui.engines_addrs['cifplayer'] + wmgui.path_s_entry + entry, iframe_height = 650;
 
     } else if (entype == 'P'){
-        if (rank == 4 || rank == 9)
-            iframe_src = wmgui.engines_addrs[wmgui.engines]['visavis'] + wmgui.path_sd_plot + entry, iframe_height = 550;
+        if (rank == 4)
+            iframe_src = wmgui.engines_addrs['visavis'] + wmgui.path_sd_plot + entry, iframe_height = 550;
+
+        else if (rank == 9)
+            iframe_src = wmgui.v_pd_user_addr + wmgui.api_host + '/download/p?fmt=png&q=' + entry, iframe_height = 600;
 
         else if (rank == 10)
             iframe_src = wmgui.v_ab_vis_addr + entry, iframe_height = 600;
@@ -974,7 +977,7 @@ function launch_db_iframed(rank){
             iframe_src = wmgui.v_pd_3d_addr + triple, iframe_height = 550;
 
         } else if (rank == 6)
-            iframe_src = (wmgui.sid ? wmgui.v_pd_user_addr : wmgui.engines_addrs[wmgui.engines]['visavis'] + wmgui.path_c_entry) + entry, iframe_height = 600;
+            iframe_src = (wmgui.sid ? wmgui.v_pd_user_addr + wmgui.api_host + '/download/c?fmt=png&q=' : wmgui.engines_addrs['visavis'] + wmgui.path_c_entry) + entry, iframe_height = 600;
 
         else return;
 
@@ -1117,11 +1120,11 @@ function stop_visavis(){
 
 function get_visavis_url(request, type, height){
     if (wmgui.visavis_curtype == 'pie' && !type)
-        return wmgui.engines_addrs[wmgui.engines]['visavis'] + '#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
+        return wmgui.engines_addrs['visavis'] + '#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
 
     var height_str = height ? ('&visavis_height=' + height) : '';
 
-    return wmgui.engines_addrs[wmgui.engines]['visavis'] + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
+    return wmgui.engines_addrs['visavis'] + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
 }
 
 function describe_perms(perms){
@@ -1471,7 +1474,6 @@ function update_dc(){
         count++;
     });
     cmp_html += '<option value="Y">No comparison</option>';
-    if (wmgui.engines == 'a') cmp_html += '<option value="Z">Multiple comparison</option>';
     $('#select_cmp_trigger').empty().append(cmp_html);
 }
 

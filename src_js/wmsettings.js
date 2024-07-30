@@ -146,19 +146,14 @@ wmgui.path_s_entry = '#' + wmgui.api_host + '/download/s?fmt=cif&q=';
 wmgui.path_s_xrpd = '#' + wmgui.api_host + '/download/s?fmt=xrpd&q=';
 wmgui.path_sd_plot = '#' + wmgui.api_host + '/download/p?fmt=json&q=';
 
-wmgui.engines = 'a'; // a or b
 wmgui.engines_addrs = {
-    'a': {
-        'cifplayer': '/crystvis/player.html',
-        'visavis': '/visavis/?nobanner'
-    },
-    'b': {
-        'cifplayer': '/ermac/webassets/iframe_cifplayer.html',
-        'visavis': '/ermac/webassets/iframe_visavis.html'
-    }
+    //'cifplayer': '/ermac/webassets/iframe_cifplayer.html',
+    'cifplayer': '/ermac/webassets/iframe_cifplayer.html',
+    //'visavis': '/ermac/webassets/iframe_visavis.html'
+    'visavis': '/ermac/webassets/iframe_visavis.html'
 }
 
-wmgui.v_pd_user_addr =    wmgui.static_host + '/pd_stub.html#' + wmgui.api_host + '/download/c?fmt=png&q=';
+wmgui.v_pd_user_addr =    wmgui.static_host + '/pd_stub.html#';
 wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_pd_3d_addr =      'labs/pd3d/?';
 
@@ -385,7 +380,6 @@ wmgui.store_mydata_key = 'absolidix_v1';
 wmgui.store_oauth_email_key = 'wm_u_email';
 wmgui.store_comm_exec_key = 'wm_reload_v1';
 wmgui.store_redir_key = 'wm_redir_v1';
-wmgui.store_engines_key = 'wm_engines_v0';
 
 wmgui.tooltips = {
     //'advsearch': {el: 'advsearch_init_trigger', oleft: -90, otop: 60, view_mode: 1, text: 'Use the &#9776; button for the detailed search by 15+ categories.<br /><span rel="userbox">Next</span>'},

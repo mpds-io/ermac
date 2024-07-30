@@ -484,14 +484,6 @@ function register_events(){
         $('#inquirybox').hide();
     });
 
-    $('#close_tr_dialogue').click(function(){
-        var value = $("input[name=engines]:checked").val();
-        wmgui.engines = (value == 'a') ? value : 'b';
-        window.localStorage.setItem(wmgui.store_engines_key, wmgui.engines);
-        if (wmgui.visavis_working) start_visavis(wmgui.visavis_curtype);
-        $('#engines_box, #overlay').hide();
-    });
-
     $('#close_ss_dialogue').click(function(){
         var x_sort = $('#ss_x > ul > li.ss_x').attr('rel').split('_')[1],
             y_sort = $('#ss_y > ul > li.ss_y').attr('rel').split('_')[1],
@@ -1253,10 +1245,6 @@ function register_events(){
             document.getElementById('visavis_iframe').contentWindow.cmp_discard(wmgui.visavis_curtype);
             return;
         }
-        else if (value == 'Z'){
-            window.location.href = '/labs/multi-cmp';
-            return;
-        }
 
         if (['matrix', 'cube', 'discovery'].indexOf(wmgui.visavis_curtype) == -1)
             return;
@@ -1299,9 +1287,6 @@ function register_events(){
             $('#dc_' + prop).show();
         }
         that.remove();
-    });
-    $('#toggle_engines').click(function(){
-        $('#engines_box, #overlay').show();
     });
     $('#ss_gear_matrix, #ss_gear_cube').click(function(){
         var domain = $(this).attr('id').substr(8); // ss_gear_
@@ -1516,7 +1501,7 @@ function register_events(){
     // cross-site comms
     window.addEventListener('message', function(message){
         //if (message.origin === 'https://trusted.com') {
-        var received;
+        var received = {};
         try {
             received = JSON.parse(message.data);
         } catch (ignore){}

@@ -378,10 +378,6 @@ function satisfy_requirements(){
         wmgui._selectize_display(wmgui.multiselects['main'], facet, term);
     }
 
-    wmgui.engines = window.localStorage.getItem(wmgui.store_engines_key) || 'a';
-    $('#engines_a').prop('checked', wmgui.engines == 'a');
-    $('#engines_b').prop('checked', wmgui.engines == 'b');
-
     wmgui.darkmode = new Darkmode({saveInCookies: false});
     document.getElementById('darkmode_trigger').innerHTML = wmgui.darkmode.isActivated() ? 'enabled' : 'disabled';
 
