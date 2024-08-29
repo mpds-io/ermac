@@ -147,15 +147,15 @@ wmgui.path_s_xrpd = '#' + wmgui.api_host + '/download/s?fmt=xrpd&q=';
 wmgui.path_sd_plot = '#' + wmgui.api_host + '/download/p?fmt=json&q=';
 
 wmgui.engines_addrs = {
-    'cifplayer': '/ermac/webassets/iframe_cifplayer.html',
-    'visavis': '/ermac/webassets/iframe_visavis.html'
+    'cifplayer': '/ermac/webassets/iframe_cifplayer.html', // FIXME
+    'visavis': '/ermac/webassets/iframe_visavis.html' // FIXME
 }
 
 wmgui.v_pd_user_addr =    wmgui.static_host + '/pd_stub.html#';
-wmgui.v_ab_vis_addr =     wmgui.static_host + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_pd_3d_addr =      'labs/pd3d/?';
+wmgui.v_ab_vis_addr =     '/ermac/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q='; // FIXME
+wmgui.v_pd_3d_addr =      '/ermac/labs/pd3d/?'; // FIXME
 
-// below are remote files commonly used
+// remote files commonly used
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?220923';
 wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
 
@@ -189,34 +189,10 @@ wmgui.editions = {
             document.getElementsByTagName('head')[0].appendChild(link);
         }
     },
-    6: {
-        'name': 'ASM International Materials Platform',
-        'prod_url': 'https://mpds.asminternational.org',
-        'dev_url': 'http://localhost:8075',
-        'css': wmgui.static_host + '/editions/asm/style.css?220923',
-        'actions': function(){
-            $('.only_mpds').hide();
-            $('.only_asm').css('display', 'inline-block');
-            // custom favicon
-            var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-            link.type = 'image/x-icon';
-            link.rel = 'shortcut icon';
-            link.href = wmgui.static_host + '/editions/asm/asm.ico';
-            document.getElementsByTagName('head')[0].appendChild(link);
-        }
-    },
     10: {
         'name': 'Ermac on MPDS',
         'prod_url': 'https://ermac.mpds.io',
         'dev_url': 'http://localhost:5555',
-        'actions': function(){
-            $('.only_mpds').hide();
-        }
-    },
-    11: {
-        'name': 'Ermac on Tilde',
-        'prod_url': 'https://ermac.tilde.pro',
-        'dev_url': 'http://localhost:5556',
         'actions': function(){
             $('.only_mpds').hide();
         }
