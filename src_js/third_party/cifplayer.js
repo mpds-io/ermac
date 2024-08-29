@@ -5924,6 +5924,10 @@ var $;
 			if(next !== undefined) return next;
 			return true;
 		}
+		skip_panel(next){
+			if(next !== undefined) return next;
+			return false;
+		}
 		atom_radius_scale(){
 			return 0.6;
 		}
@@ -5973,6 +5977,9 @@ var $;
 		}
 		overlay_box(id){
 			return null;
+		}
+		minimal_heigth(){
+			return 300;
 		}
 		sub(){
 			return [
@@ -6067,6 +6074,7 @@ var $;
 	($mol_mem(($.$optimade_cifplayer_player.prototype), "data"));
 	($mol_mem(($.$optimade_cifplayer_player.prototype), "externals"));
 	($mol_mem(($.$optimade_cifplayer_player.prototype), "fullscreen"));
+	($mol_mem(($.$optimade_cifplayer_player.prototype), "skip_panel"));
 	($mol_mem(($.$optimade_cifplayer_player.prototype), "vibrate"));
 	($mol_mem(($.$optimade_cifplayer_player.prototype), "phonon"));
 
@@ -7117,6 +7125,7 @@ var $;
                 color: $mol_theme.back,
             },
             position: 'relative',
+            height: '100%',
             '@': {
                 fullscreen: {
                     'true': {
@@ -7628,7 +7637,7 @@ var $;
                 this.vibration_active(true);
             }
             left_panel() {
-                if (this.externals()?.skip_panel)
+                if (this.skip_panel())
                     return [];
                 try {
                     this.structure_3d_data();
