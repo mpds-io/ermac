@@ -15,7 +15,7 @@ mpds-visavis-plot{width:100%;height:100%;}
 <div id="main"></div>
 <div id="switcher" title="Show interactive plot (experimental feature)"></div>
 
-<script type="text/javascript" src="../src_js/third_party/visavis.js"></script>
+<script type="text/javascript" src="../src_js/third_party/visavis.js?090924"></script>
 <script type="text/javascript">
 "use strict";
 
@@ -104,10 +104,6 @@ function url_redraw_react(keep_state){
     document.getElementById('main').innerHTML = '<mpds-visavis-plot fullscreen="true"></mpds-visavis-plot>';
     window.plot = document.getElementsByTagName('mpds-visavis-plot')[0].view;
     window.plot.notify = (msg) => window.parent.wmgui.notify(msg);
-    window.plot.on_fixel_checked = (checked) => {
-        const link = window.plot.json_request();
-        window.plot.json_request( checked ? `${link}&fixel=1` : link.replace('&fixel=1', '') );
-    }
 
     if (!keep_state){
         window.plot.json_request(url);
