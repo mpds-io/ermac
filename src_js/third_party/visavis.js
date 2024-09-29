@@ -595,21 +595,28 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_after_timeout extends $mol_object2 {
-        delay;
+    class $mol_after_tick extends $mol_object2 {
         task;
-        id;
-        constructor(delay, task) {
+        static promise = null;
+        cancelled = false;
+        constructor(task) {
             super();
-            this.delay = delay;
             this.task = task;
-            this.id = setTimeout(task, delay);
+            if (!$mol_after_tick.promise)
+                $mol_after_tick.promise = Promise.resolve().then(() => {
+                    $mol_after_tick.promise = null;
+                });
+            $mol_after_tick.promise.then(() => {
+                if (this.cancelled)
+                    return;
+                task();
+            });
         }
         destructor() {
-            clearTimeout(this.id);
+            this.cancelled = true;
         }
     }
-    $.$mol_after_timeout = $mol_after_timeout;
+    $.$mol_after_tick = $mol_after_tick;
 })($ || ($ = {}));
 
 ;
@@ -642,7 +649,7 @@ var $;
         static plan() {
             if (this.plan_task)
                 return;
-            this.plan_task = new $mol_after_timeout(0, () => {
+            this.plan_task = new $mol_after_tick(() => {
                 try {
                     this.sync();
                 }
@@ -996,9 +1003,10 @@ var $;
                 return right_cache;
         }
         else {
-            left_cache = new WeakMap([[right, true]]);
+            left_cache = new WeakMap();
             $.$mol_compare_deep_cache.set(left, left_cache);
         }
+        left_cache.set(right, true);
         let result;
         try {
             if (!left_proto)
@@ -1533,30 +1541,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_after_tick extends $mol_object2 {
-        task;
-        promise;
-        cancelled = false;
-        constructor(task) {
-            super();
-            this.task = task;
-            this.promise = Promise.resolve().then(() => {
-                if (this.cancelled)
-                    return;
-                task();
-            });
-        }
-        destructor() {
-            this.cancelled = true;
-        }
-    }
-    $.$mol_after_tick = $mol_after_tick;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
     class $mol_view_selection extends $mol_object {
         static focused(next, notify) {
             const parents = [];
@@ -1749,7 +1733,7 @@ var $;
             if (val === undefined) {
                 continue;
             }
-            if (val === null || val === false) {
+            else if (val === null || val === false) {
                 if (!el.hasAttribute(name))
                     continue;
                 el.removeAttribute(name);
@@ -2491,10 +2475,7 @@ var $;
             const win = this.$.$mol_dom_context;
             if (win.parent !== win.self && !win.document.hasFocus())
                 return;
-            new this.$.$mol_after_frame(() => {
-                this.dom_node().scrollIntoView({ block: 'start', inline: 'nearest' });
-                this.focused(true);
-            });
+            this.focused(true);
         }
         destructor() {
             const node = $mol_wire_probe(() => this.dom_node());
@@ -2575,7 +2556,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/view/view/view.css", "[mol_view] {\n\ttransition-property: height, width, min-height, min-width, max-width, max-height, transform;\n\ttransition-duration: .2s;\n\ttransition-timing-function: ease-out;\n\t-webkit-appearance: none;\n\tbox-sizing: border-box;\n\tdisplay: flex;\n\tflex-shrink: 0;\n\tcontain: style;\n\tscrollbar-color: var(--mol_theme_line) transparent;\n\tscrollbar-width: thin;\n}\t\n\n[mol_view]::selection {\n\tbackground: var(--mol_theme_line);\n}\t\n\n[mol_view]::-webkit-scrollbar {\n\twidth: .25rem;\n\theight: .25rem;\n}\n\n[mol_view]::-webkit-scrollbar-corner {\n\tbackground-color: var(--mol_theme_line);\n}\n\n[mol_view]::-webkit-scrollbar-track {\n\tbackground-color: transparent;\n}\n\n[mol_view]::-webkit-scrollbar-thumb {\n\tbackground-color: var(--mol_theme_line);\n\tborder-radius: var(--mol_gap_round);\n}\n\n[mol_view] > * {\n\tword-break: inherit;\n}\n\n[mol_view_root] {\n\tmargin: 0;\n\tpadding: 0;\n\twidth: 100%;\n\theight: 100%;\n\tbox-sizing: border-box;\n\tfont-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n\tfont-size: 1rem;\n\tline-height: 1.5rem;\n\tbackground: var(--mol_theme_back);\n\tcolor: var(--mol_theme_text);\n\tcontain: unset; /** Fixes bg ignoring when applied to body on Chrome */\n\ttab-size: 4;\n\toverscroll-behavior: contain; /** Disable navigation gestures **/\n}\n\n@media print {\n\t[mol_view_root] {\n\t\theight: auto;\n\t}\n}\n\n[mol_view][mol_view_error]:not([mol_view_error=\"Promise\"]) {\n\tbackground-image: repeating-linear-gradient(\n\t\t-45deg,\n\t\t#f92323,\n\t\t#f92323 .5rem,\n\t\t#ff3d3d .5rem,\n\t\t#ff3d3d 1.5rem\n\t);\n\tcolor: black;\n\talign-items: center;\n\tjustify-content: center;\n}\n\n@keyframes mol_view_wait {\n\tfrom {\n\t\topacity: .25;\n\t}\n\t20% {\n\t\topacity: .75;\n\t}\n\tto {\n\t\topacity: .25;\n\t}\n}\n\n:where([mol_view][mol_view_error=\"Promise\"]) {\n\tbackground: var(--mol_theme_hover);\n}\n\n[mol_view][mol_view_error=\"Promise\"] {\n\tanimation: mol_view_wait 1s steps( 20, end ) infinite;\n}\n");
+    $mol_style_attach("mol/view/view/view.css", "[mol_view] {\n\ttransition-property: height, width, min-height, min-width, max-width, max-height, transform;\n\ttransition-duration: .2s;\n\ttransition-timing-function: ease-out;\n\t-webkit-appearance: none;\n\tbox-sizing: border-box;\n\tdisplay: flex;\n\tflex-shrink: 0;\n\tcontain: style;\n\tscrollbar-color: var(--mol_theme_line) transparent;\n\tscrollbar-width: thin;\n}\t\n\n[mol_view]::selection {\n\tbackground: var(--mol_theme_line);\n}\t\n\n[mol_view]::-webkit-scrollbar {\n\twidth: .25rem;\n\theight: .25rem;\n}\n\n[mol_view]::-webkit-scrollbar-corner {\n\tbackground-color: var(--mol_theme_line);\n}\n\n[mol_view]::-webkit-scrollbar-track {\n\tbackground-color: transparent;\n}\n\n[mol_view]::-webkit-scrollbar-thumb {\n\tbackground-color: var(--mol_theme_line);\n\tborder-radius: var(--mol_gap_round);\n}\n\n[mol_view] > * {\n\tword-break: inherit;\n}\n\n[mol_view_root] {\n\tmargin: 0;\n\tpadding: 0;\n\twidth: 100%;\n\theight: 100%;\n\tbox-sizing: border-box;\n\tfont-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n\tfont-size: 1rem;\n\tline-height: 1.5rem;\n\tbackground: var(--mol_theme_back);\n\tcolor: var(--mol_theme_text);\n\tcontain: unset; /** Fixes bg ignoring when applied to body on Chrome */\n\ttab-size: 4;\n\toverscroll-behavior: contain; /** Disable navigation gestures **/\n}\n\n@media print {\n\t[mol_view_root] {\n\t\theight: auto;\n\t}\n}\n\n[mol_view][mol_view_error]:not([mol_view_error=\"Promise\"]) {\n\tbackground-image: repeating-linear-gradient(\n\t\t-45deg,\n\t\t#f92323,\n\t\t#f92323 .5rem,\n\t\t#ff3d3d .5rem,\n\t\t#ff3d3d 1.5rem\n\t);\n\tcolor: black;\n\talign-items: center;\n\tjustify-content: center;\n}\n\n@keyframes mol_view_wait {\n\tfrom {\n\t\topacity: .25;\n\t}\n\t20% {\n\t\topacity: .75;\n\t}\n\tto {\n\t\topacity: .25;\n\t}\n}\n\n:where([mol_view][mol_view_error=\"Promise\"]) {\n\tbackground: var(--mol_theme_hover);\n}\n\n[mol_view][mol_view_error=\"Promise\"] {\n\tanimation: mol_view_wait 1s steps(20,end) infinite;\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -3184,7 +3165,6 @@ var $;
             contain: 'content',
             '>': {
                 $mol_view: {
-                    transform: 'translateZ(0)',
                     gridArea: '1/1',
                 },
             },
@@ -3655,6 +3635,27 @@ var $;
 		}
 	};
 
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_after_timeout extends $mol_object2 {
+        delay;
+        task;
+        id;
+        constructor(delay, task) {
+            super();
+            this.delay = delay;
+            this.task = task;
+            this.id = setTimeout(task, delay);
+        }
+        destructor() {
+            clearTimeout(this.id);
+        }
+    }
+    $.$mol_after_timeout = $mol_after_timeout;
+})($ || ($ = {}));
 
 ;
 "use strict";
@@ -6488,9 +6489,12 @@ var $;
 			(obj.colorset) = () => ((this.colorset()));
 			return obj;
 		}
+		value_min(){
+			return 0;
+		}
 		Heatmap_min(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.links_value_min())]);
+			(obj.sub) = () => ([(this.value_min())]);
 			return obj;
 		}
 		heatmap_color(id){
@@ -6501,9 +6505,12 @@ var $;
 			(obj.style) = () => ({"background": (this.heatmap_color(id))});
 			return obj;
 		}
+		value_max(){
+			return 0;
+		}
 		Heatmap_max(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.links_value_max())]);
+			(obj.sub) = () => ([(this.value_max())]);
 			return obj;
 		}
 		heatmap_color_list(){
@@ -6696,16 +6703,7 @@ var $;
 			if(next !== undefined) return next;
 			return 0;
 		}
-		links_value_min(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		links_value_max(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		heatmap(next){
-			if(next !== undefined) return next;
+		heatmap(){
 			return false;
 		}
 		matrix(){
@@ -6804,9 +6802,6 @@ var $;
 	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "plot_raw"));
 	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "multi_jsons"));
 	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "size"));
-	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "links_value_min"));
-	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "links_value_max"));
-	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "heatmap"));
 	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "x_sort"));
 	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "y_sort"));
 	($mol_mem(($.$mpds_visavis_plot_matrix.prototype), "x_op"));
@@ -15290,7 +15285,8 @@ var $;
             setup() {
                 return [
                     ...this.json().payload.fixel ? [this.Fixel()] : [],
-                    this.multi_jsons() ? this.Intersection_on() : this.Nonformers(),
+                    ...this.multi_jsons() ? [this.Intersection_on()] : [],
+                    this.Nonformers(),
                     ...this.show_setup() ? this.sorting() : [],
                 ];
             }
@@ -15339,33 +15335,79 @@ var $;
                 return this.json_master().payload.nodes;
             }
             links() {
-                return this.json_master().payload.links.slice().sort((a, b) => a.value - b.value);
+                return this.json_master().payload.links;
+            }
+            links_traversed() {
+                const links_map = new Map();
+                const cells_map = new Map();
+                const heatmap_datasets = new Set;
+                let value_min = Infinity;
+                let value_max = -Infinity;
+                const intersected_cells = [];
+                this.links().forEach(l => {
+                    links_map.get(l.cmt)?.push(l) ?? links_map.set(l.cmt, [l]);
+                    const intersection = links_map.get(l.cmt)?.length ?? 0;
+                    if (intersection > 1) {
+                        const cell = cells_map.get(l.cmt);
+                        cell.z += l.value;
+                        cell.intersection = intersection;
+                        intersected_cells.push(cell);
+                    }
+                    else {
+                        cells_map.set(l.cmt, {
+                            y: l.source, x: l.target, cmt: l.cmt, cmp: l.cmp || 0, z: l.value, nonformer: false,
+                        });
+                    }
+                    if (Math.floor(l.value) !== l.value)
+                        heatmap_datasets.add(l.cmp || 0);
+                    value_min = Math.min(value_min, l.value);
+                    value_max = Math.max(value_max, l.value);
+                });
+                let intersect_value_min = Infinity;
+                let intersect_value_max = -Infinity;
+                if (heatmap_datasets.size == 2) {
+                    intersected_cells.forEach(cell => {
+                        const links = links_map.get(cell.cmt);
+                        cell.z = Math.abs(links[0].value - links[1].value);
+                        intersect_value_min = Math.min(intersect_value_min, cell.z);
+                        intersect_value_max = Math.max(intersect_value_max, cell.z);
+                    });
+                }
+                return { map: links_map, cells_map, heatmap_datasets, value_min, value_max, intersect_value_min, intersect_value_max };
             }
             links_map() {
-                const map = new Map();
-                this.links().forEach(l => {
-                    map.get(l.cmt)?.push(l) ?? map.set(l.cmt, [l]);
-                });
-                return map;
+                return this.links_traversed().map;
             }
-            intersection_label(cmt) {
-                const quantity = this.links_map().get(cmt)?.length;
-                return quantity > 1 ? String(quantity) : '';
+            heatmap_datasets() {
+                return this.links_traversed().heatmap_datasets;
             }
-            links_value_min() {
-                return this.links()[0].value;
+            value_min() {
+                if (this.intersection_only())
+                    return this.links_traversed().intersect_value_min;
+                return this.links_traversed().value_min;
             }
-            links_value_max() {
-                return this.links().slice(-1)[0].value;
+            value_max() {
+                if (this.intersection_only())
+                    return this.links_traversed().intersect_value_max;
+                return this.links_traversed().value_max;
+            }
+            datasets_type() {
+                const heatmap_datasets = this.heatmap_datasets();
+                if (heatmap_datasets.size == 0) {
+                    return 'entries';
+                }
+                const datesets_quantity = this.multi_jsons()?.length || 1;
+                if (datesets_quantity == heatmap_datasets.size && heatmap_datasets.size <= 2) {
+                    return 'heatmap';
+                }
+                return 'mix';
             }
             heatmap() {
-                return this.links().reduce((heatmap, link) => {
-                    if (!heatmap && Math.floor(link.value) !== link.value)
-                        return true;
-                    else if (link.cmp)
-                        return false;
-                    return heatmap;
-                }, false);
+                if (this.datasets_type() != 'heatmap')
+                    return false;
+                if (this.heatmap_datasets().size == 2)
+                    return this.intersection_only() ? true : false;
+                return true;
             }
             order_by_prop(prop) {
                 return d3.range(95).sort((a, b) => {
@@ -15377,16 +15419,12 @@ var $;
             }
             matrix() {
                 const matrix = this.nodes().map((node, i) => {
-                    return d3.range(95).map((j) => ({ x: j, y: i, z: 0, cmt: '', cmp: 0, nonformer: false }));
+                    return d3.range(95).map((j) => ({ x: j, y: i, z: 0, cmt: '', nonformer: false }));
                 });
-                for (const link of this.links()) {
-                    matrix[link.source][link.target].z += link.value;
-                    matrix[link.target][link.source].z += link.value;
-                    matrix[link.source][link.target].cmt = link.cmt;
-                    matrix[link.target][link.source].cmt = link.cmt;
-                    matrix[link.source][link.target].cmp = link.cmp || 0;
-                    matrix[link.target][link.source].cmp = link.cmp || 0;
-                }
+                this.links_traversed().cells_map.forEach(cell => {
+                    matrix[cell.y][cell.x] = { ...cell };
+                    matrix[cell.x][cell.y] = { ...cell, x: cell.y, y: cell.x };
+                });
                 if (this.nonformers_checked()) {
                     for (const item of $mpds_visavis_elements_nonformer.pd_bin()) {
                         matrix[item[0]][item[1]].z = 1;
@@ -15406,9 +15444,11 @@ var $;
                 return this.size(size);
             }
             opacity_scale() {
-                return d3.scale.linear().domain([this.links_value_min(), this.links_value_max()]).range([0.2, 1]).clamp(true);
+                return d3.scale.linear().domain([this.value_min(), this.value_max()]).range([0.2, 1]).clamp(true);
             }
             opacity(index) {
+                if (this.datasets_type() == 'mix')
+                    return 1;
                 return this.heatmap() ? 1 : this.opacity_scale()(index);
             }
             color_heatmap() {
@@ -15425,11 +15465,11 @@ var $;
                 ];
             }
             color_heatmap_scale() {
-                return d3.scale.linear().domain([this.links_value_min(), this.links_value_max()]).range([0, 1]);
+                return d3.scale.linear().domain([this.value_min(), this.value_max()]).range([0, 1]);
             }
             color(index, cmp) {
                 if (this.heatmap())
-                    return cmp ? this.colorset()[1] : this.color_heatmap()(this.color_heatmap_scale()(index));
+                    return this.color_heatmap()(this.color_heatmap_scale()(index));
                 return this.colorset()[cmp] || '#ccc';
             }
             range() {
@@ -15438,35 +15478,50 @@ var $;
             svg_title_text(cell) {
                 if (!cell.cmt)
                     return '';
+                if (this.datasets_type() == 'mix')
+                    return cell.cmt;
                 const text = `${cell.cmt}: ${cell.z}`;
-                if (this.heatmap())
+                if (this.heatmap_datasets().has(Number(cell.cmt) || 0))
                     return text;
-                const links = this.links_map().get(cell.cmt);
                 const title = `${text} ${cell.z === 1 ? 'entry' : 'entries'}`;
-                if (links?.length == 1)
+                const links = this.links_map().get(cell.cmt);
+                if (links?.length == 1) {
                     return title;
+                }
                 return `${title} (${links?.map(l => this.cmp_labels()[l.cmp ?? 0]).join('; ')})`;
             }
-            draw_cells(row_node, cells, intersection_only) {
+            draw_row_cells(row_node, cells_data, intersection_only) {
                 const that = this;
                 const range = this.range();
                 const rangeBand = range.rangeBand();
                 const enters = d3.select(row_node)
                     .selectAll('.cell')
-                    .data(cells.filter(d => d.z && (!intersection_only || that.intersection_label(d.cmt))))
+                    .data(cells_data.filter(d => {
+                    if (intersection_only)
+                        return d.intersection ? true : false;
+                    if (d.z !== 0 || d.intersection)
+                        return true;
+                    return false;
+                }))
                     .enter();
-                const rects = enters.append('rect');
-                rects.attr('class', (d) => d.nonformer ? 'nonformer cell' : 'cell')
+                const cells = enters.append('g');
+                cells.attr('class', 'cell');
+                const rects = cells.append('rect');
+                rects.attr('class', (d) => d.nonformer ? 'nonformer' : '')
                     .attr('id', (d) => 'c_' + this.nodes()[d.x].num.toString() + '_' + this.nodes()[d.y].num.toString())
                     .attr('x', (d) => range(d.x))
                     .attr('width', rangeBand)
                     .attr('height', rangeBand)
                     .style('fill-opacity', (d) => this.opacity(d.z))
-                    .style('fill', (d) => that.intersection_label(d.cmt) ? 'gray' : this.color(d.z, d.cmp))
+                    .style('fill', (d) => {
+                    if (d.intersection && !that.heatmap())
+                        return 'gray';
+                    return this.color(d.z ?? 1, d.cmp);
+                })
                     .on('mouseover', function (event) {
                     const cell_data = d3.select(this).data()[0];
-                    d3.select(that.dom_node_actual()).selectAll(".row text").classed("active", (d, i) => { return i == cell_data.y; });
-                    d3.select(that.dom_node_actual()).selectAll(".column text").classed("active", (d, i) => { return i == cell_data.x; });
+                    d3.select(that.dom_node_actual()).selectAll(".row .element").classed("active", (d, i) => i == cell_data.y);
+                    d3.select(that.dom_node_actual()).selectAll(".column .element").classed("active", (d, i) => i == cell_data.x);
                 })
                     .on('mouseout', function (event) {
                     d3.select(that.dom_node_actual()).selectAll(".row text").classed("active", null);
@@ -15481,8 +15536,8 @@ var $;
                     that.matrix_click({ cmt: cell_data.cmt });
                 });
                 rects.append('svg:title').text((cell) => this.svg_title_text(cell));
-                enters.append('text')
-                    .text((cell) => that.intersection_label(cell.cmt))
+                cells.append('text')
+                    .text((cell) => cell.intersection || '')
                     .attr('x', (d) => range(d.x) + rangeBand / 2)
                     .attr('dy', '.85em')
                     .attr('text-anchor', 'middle')
@@ -15507,17 +15562,18 @@ var $;
                     .attr('class', 'bgmatrix')
                     .attr('width', size)
                     .attr('height', size);
-                const draw_cells = (node, row) => this.draw_cells(node, row, this.intersection_only());
+                const that = this;
                 const row = group.selectAll('.row')
                     .data(this.matrix())
                     .enter().append('g')
                     .attr('class', 'row')
                     .attr('transform', (d, i) => 'translate(0,' + this.range()(i) + ')')
-                    .each(function (cells) { draw_cells(this, cells); });
+                    .each(function (cells) { that.draw_row_cells(this, cells, that.intersection_only()); });
                 row.append('line')
                     .attr('x2', size);
                 if (!this.y_op()) {
                     row.append('text')
+                        .attr('class', 'element')
                         .attr('x', -6)
                         .attr('y', rangeBand / 2)
                         .attr('dy', '.32em')
@@ -15533,6 +15589,7 @@ var $;
                     .attr('x1', -size);
                 if (!this.x_op()) {
                     column.append('text')
+                        .attr('class', 'element')
                         .attr('x', 6)
                         .attr('y', rangeBand / 2)
                         .attr('dy', '.32em')
@@ -15540,6 +15597,7 @@ var $;
                         .text((d, i) => this.nodes()[i].name);
                 }
                 this.Root().dom_node_actual().replaceChildren(svg_element);
+                this.reorder(0);
             }
             get_bin_domain(args) {
                 const { sort, op } = args;
@@ -15601,7 +15659,13 @@ var $;
                 return this.y_op(next);
             }
             auto_reorder() {
-                this.nonformers_checked();
+                this.x_sort();
+                this.y_sort();
+                this.x_op();
+                this.y_op();
+                this.reorder(600);
+            }
+            reorder(duration) {
                 const x_sort = this.x_sort();
                 const y_sort = this.y_sort() || x_sort;
                 const x_op = this.x_op();
@@ -15643,7 +15707,7 @@ var $;
                 d3.selectAll("g.column text").classed("hidden", x_op);
                 d3.selectAll("g.row text").classed("hidden", y_op);
                 d3.select("rect.bgmatrix").classed("hidden", (x_op || y_op));
-                var t = svg.transition().duration(600);
+                var t = svg.transition().duration(duration);
                 if (y_op) {
                     t.selectAll(".row")
                         .attr("transform", null)
@@ -15693,10 +15757,22 @@ var $;
         ], $mpds_visavis_plot_matrix.prototype, "links", null);
         __decorate([
             $mol_mem
+        ], $mpds_visavis_plot_matrix.prototype, "links_traversed", null);
+        __decorate([
+            $mol_mem
         ], $mpds_visavis_plot_matrix.prototype, "links_map", null);
         __decorate([
-            $mol_mem_key
-        ], $mpds_visavis_plot_matrix.prototype, "intersection_label", null);
+            $mol_mem
+        ], $mpds_visavis_plot_matrix.prototype, "heatmap_datasets", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot_matrix.prototype, "value_min", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot_matrix.prototype, "value_max", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot_matrix.prototype, "datasets_type", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot_matrix.prototype, "heatmap", null);
@@ -15726,7 +15802,7 @@ var $;
         ], $mpds_visavis_plot_matrix.prototype, "range", null);
         __decorate([
             $mol_action
-        ], $mpds_visavis_plot_matrix.prototype, "draw_cells", null);
+        ], $mpds_visavis_plot_matrix.prototype, "draw_row_cells", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot_matrix.prototype, "draw", null);
@@ -15748,6 +15824,9 @@ var $;
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot_matrix.prototype, "auto_reorder", null);
+        __decorate([
+            $mol_action
+        ], $mpds_visavis_plot_matrix.prototype, "reorder", null);
         $$.$mpds_visavis_plot_matrix = $mpds_visavis_plot_matrix;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -16301,7 +16380,8 @@ var $;
             setup() {
                 return [
                     ...this.show_fixel() ? [this.Fixel()] : [],
-                    this.multi_jsons() ? this.Intersection_on() : this.Nonformers(),
+                    ...this.multi_jsons() ? [this.Intersection_on()] : [],
+                    this.Nonformers(),
                     ...this.show_setup() ? [this.X_order(), this.Y_order(), this.Z_order()] : [],
                 ];
             }
@@ -16315,14 +16395,15 @@ var $;
             json() {
                 return $mpds_visavis_plot_cube_json(this.plot_raw().json());
             }
-            value_list() {
-                return this.json().payload.points.v.slice().sort((a, b) => a - b);
-            }
             value_min() {
-                return this.value_list()[0];
+                if (this.heatmap_diif())
+                    return this.points_traversed().diff_value_min;
+                return this.points_traversed().value_min;
             }
             value_max() {
-                return this.value_list().slice(-1)[0];
+                if (this.heatmap_diif())
+                    return this.points_traversed().diff_value_max;
+                return this.points_traversed().value_max;
             }
             sort_dict() {
                 return $mpds_visavis_elements_list.prop_names();
@@ -16330,8 +16411,21 @@ var $;
             order(order) {
                 return d3.range(95).sort((a, b) => $mpds_visavis_elements_list.element_by_num(a + 1)[order] - $mpds_visavis_elements_list.element_by_num(b + 1)[order]);
             }
+            heatmap_diif() {
+                const jsons = this.multi_jsons();
+                if (jsons?.length == 2) {
+                    return jsons.every(json => json.payload.points.v.some(val => Math.floor(val) !== val));
+                }
+                return false;
+            }
             heatmap() {
-                return this.json().payload.points.v.some(val => Math.floor(val) !== val);
+                if (this.heatmap_diif())
+                    return this.intersection_only();
+                const jsons = this.multi_jsons();
+                let json = this.json();
+                if (jsons?.length == 1)
+                    json = jsons[0];
+                return json.payload.points.v.some(val => Math.floor(val) !== val);
             }
             heatmap_color(index) {
                 return this.heatmap_colors()[index];
@@ -16343,10 +16437,20 @@ var $;
                     this.Heatmap_max(),
                 ];
             }
-            marker(color_id) {
+            marker_heatmap(values) {
                 return {
-                    color: this.heatmap() ? this.json().payload.points.v : this.colorset()[color_id],
-                    ...this.heatmap() ? { colorscale: 'Rainbow' } : {},
+                    color: values,
+                    colorscale: 'Rainbow',
+                    size: 4,
+                    opacity: 0.9
+                };
+            }
+            marker(color_id) {
+                if (this.heatmap()) {
+                    return this.marker_heatmap(this.json().payload.points.v);
+                }
+                return {
+                    color: this.colorset()[color_id],
                     size: 4,
                     opacity: 0.9
                 };
@@ -16376,18 +16480,23 @@ var $;
                     ...this.convert_to_axes(this.json().payload.points.x, this.json().payload.points.y, this.json().payload.points.z, this.x_sort(), this.y_sort(), this.z_sort())
                 };
             }
-            scatters() {
-                const values = new Map();
-                const entries = new Map();
+            points_traversed() {
+                const jsons = this.multi_jsons() ?? [this.json()];
+                const values_by_label = Object.fromEntries(jsons.map((j, i) => [i, new Map]));
+                let value_min = Infinity;
+                let value_max = -Infinity;
+                const indexes_by_label = new Map();
                 const labels = new Set();
                 let points_x = [];
                 let points_y = [];
                 let points_z = [];
-                this.multi_jsons().map((json, index) => {
+                jsons.map((json, index) => {
                     const points = $mpds_visavis_plot_cube_json(json).payload.points;
                     points.labels.forEach((label, i) => {
-                        entries.get(label)?.push(index) ?? entries.set(label, [index]);
-                        values.set([label, index], points.v[i]);
+                        indexes_by_label.get(label)?.push(index) ?? indexes_by_label.set(label, [index]);
+                        values_by_label[index].set(label, points.v[i]);
+                        value_min = Math.min(value_min, points.v[i]);
+                        value_max = Math.max(value_max, points.v[i]);
                         if (!labels.has(label)) {
                             labels.add(label);
                             points_x.push(points.x[i]);
@@ -16403,10 +16512,10 @@ var $;
                     y: converted.y[i],
                     z: converted.z[i],
                 }));
-                const new_scatter = (index) => {
+                const new_scatter = (marker) => {
                     return {
                         ...this.scatter3d_common(),
-                        marker: index == 'intersection' ? { color: "#303030", size: 5, opacity: 0.9 } : this.marker(index),
+                        marker,
                         x: [],
                         y: [],
                         z: [],
@@ -16414,32 +16523,52 @@ var $;
                         text: [],
                     };
                 };
-                const scatters_once = new Map();
-                const intersects = new_scatter('intersection');
-                entries.forEach((entry, label) => {
+                const no_intersects = new Map();
+                const intersects = new_scatter({ color: "#303030", size: 5, opacity: 0.9 });
+                const heatmap_diif = this.heatmap_diif();
+                let diff_value_min = Infinity;
+                let diff_value_max = -Infinity;
+                indexes_by_label.forEach((indexes, label) => {
                     const point = points.get(label);
                     let scatter = intersects;
-                    if (entry.length == 1) {
-                        const index = entry[0];
-                        scatter = scatters_once.get(index) ?? new_scatter(index);
-                        scatters_once.set(index, scatter);
-                        scatter.v.push(values.get([label, index]));
+                    if (indexes.length == 1) {
+                        const index = indexes[0];
+                        scatter = no_intersects.get(index) ?? new_scatter(this.marker(index));
+                        no_intersects.set(index, scatter);
+                        scatter.v.push(values_by_label[index].get(label));
+                    }
+                    else if (heatmap_diif) {
+                        const v1 = values_by_label[indexes[0]].get(label);
+                        const v2 = values_by_label[indexes[1]].get(label);
+                        const diff = Math.abs(v1 - v2);
+                        scatter.v.push(diff);
+                        diff_value_min = Math.min(diff_value_min, diff);
+                        diff_value_max = Math.max(diff_value_max, diff);
                     }
                     scatter.text.push(label);
                     scatter.x.push(point.x);
                     scatter.y.push(point.y);
                     scatter.z.push(point.z);
                 });
-                return { intersects, scatters_once };
+                return { intersects, no_intersects, value_min, value_max, diff_value_min, diff_value_max };
+            }
+            scatters_no_intersect() {
+                return this.points_traversed().no_intersects;
+            }
+            intersects_colored() {
+                const intersects = this.points_traversed().intersects;
+                const marker = this.heatmap()
+                    ? this.marker_heatmap(intersects.v)
+                    : { color: "#303030", size: 5, opacity: 0.9 };
+                return { ...intersects, marker };
             }
             multi_dataset() {
                 if (!this.multi_jsons())
                     return null;
                 this.nonformers_checked(false);
-                const { intersects, scatters_once } = this.scatters();
                 return [
-                    intersects,
-                    ...this.intersection_only() ? [] : scatters_once.values()
+                    this.intersects_colored(),
+                    ...this.intersection_only() ? [] : this.scatters_no_intersect().values()
                 ];
             }
             cmp_labels() {
@@ -16596,7 +16725,10 @@ var $;
         ], $mpds_visavis_plot_cube.prototype, "plot_body", null);
         __decorate([
             $mol_mem
-        ], $mpds_visavis_plot_cube.prototype, "value_list", null);
+        ], $mpds_visavis_plot_cube.prototype, "value_min", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot_cube.prototype, "value_max", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot_cube.prototype, "sort_dict", null);
@@ -16605,7 +16737,13 @@ var $;
         ], $mpds_visavis_plot_cube.prototype, "order", null);
         __decorate([
             $mol_mem
+        ], $mpds_visavis_plot_cube.prototype, "heatmap_diif", null);
+        __decorate([
+            $mol_mem
         ], $mpds_visavis_plot_cube.prototype, "heatmap", null);
+        __decorate([
+            $mol_action
+        ], $mpds_visavis_plot_cube.prototype, "marker_heatmap", null);
         __decorate([
             $mol_mem_key
         ], $mpds_visavis_plot_cube.prototype, "marker", null);
@@ -16620,7 +16758,13 @@ var $;
         ], $mpds_visavis_plot_cube.prototype, "data", null);
         __decorate([
             $mol_mem
-        ], $mpds_visavis_plot_cube.prototype, "scatters", null);
+        ], $mpds_visavis_plot_cube.prototype, "points_traversed", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot_cube.prototype, "scatters_no_intersect", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot_cube.prototype, "intersects_colored", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot_cube.prototype, "multi_dataset", null);
@@ -16752,7 +16896,8 @@ var $;
                 return this.pages()[0]?.title() || this.title();
             }
             sub() {
-                const next = [...this.pages(), this.Placeholder()];
+                const placeholder = this.Placeholder();
+                const next = [...this.pages(), placeholder];
                 const prev = $mol_mem_cached(() => this.sub()) ?? [];
                 for (let i = 1; i++;) {
                     const p = prev[prev.length - i];
@@ -16761,7 +16906,17 @@ var $;
                         break;
                     if (p === n)
                         continue;
-                    n.bring();
+                    if (n === placeholder)
+                        continue;
+                    new this.$.$mol_after_tick(() => {
+                        const b = this.dom_node();
+                        const p = n.dom_node();
+                        b.scroll({
+                            left: p.offsetLeft + p.offsetWidth - b.offsetWidth,
+                            behavior: 'smooth',
+                        });
+                        new this.$.$mol_after_timeout(1000, () => n.bring());
+                    });
                     break;
                 }
                 return next;
@@ -16785,7 +16940,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/book2/book2.view.css", "[mol_book2] {\n\tdisplay: flex;\n\tflex-flow: row nowrap;\n\talign-items: stretch;\n\tflex: 1 1 auto;\n\talign-self: stretch;\n\tmargin: 0;\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_line); */\n\t/* transform: translateZ(0); */\n\ttransition: none;\n\toverflow: overlay;\n\tscroll-snap-type: x mandatory;\n\t/* padding: 0 1px;\n\tscroll-padding: 0 1px;\n\tgap: 1px; */\n}\n\n[mol_book2] > * {\n/* \tflex: none; */\n\tscroll-snap-stop: always;\n\tscroll-snap-align: end;\n\tposition: relative;\n\tmin-height: 100%;\n\tmax-height: 100%;\n\tmax-width: 100%;\n\tflex-shrink: 0;\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_field);\n}\n\n[mol_book2] > *:not(:first-of-type):before,\n[mol_book2] > *:not(:last-of-type)::after {\n\tcontent: '';\n\tposition: absolute;\n\ttop: 1.5rem;\n\twidth: 2px;\n\theight: 1rem;\n\tbackground: linear-gradient(\n\t\tto bottom,\n\t\tvar(--mol_theme_focus) 0%,\n\t\tvar(--mol_theme_focus) 14%,\n\t\ttransparent 15%,\n\t\ttransparent 42%,\n\t\tvar(--mol_theme_focus) 43%,\n\t\tvar(--mol_theme_focus) 57%,\n\t\ttransparent 58%,\n\t\ttransparent 85%,\n\t\tvar(--mol_theme_focus) 86%,\n\t\tvar(--mol_theme_focus) 100%\n\t);\n\topacity: .5;\n\tz-index: var(--mol_layer_speck);\n}\n[mol_book2] > *:not(:first-of-type):before {\n\tleft: -1px;\n}\n[mol_book2] > *:not(:last-of-type)::after {\n\tright: -1px;\n}\n\n:where([mol_book2]) > * {\n\tbackground-color: var(--mol_theme_card);\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_back); */\n}\n\n[mol_book2] > [mol_book2] {\n\tdisplay: contents;\n}\n\n[mol_book2] > *:first-child {\n\tscroll-snap-align: start;\n}\n\n[mol_book2] > [mol_view] {\n\ttransform: none; /* prevent content clipping */\n}\n\n[mol_book2_placeholder] {\n\tflex: 1 1 0;\n\tbackground: none;\n}\n\n[mol_book2_gap] {\n\tbackground: none;\n\tflex-grow: 1;\n\tscroll-snap-align: none;\n\tmargin-right: -1px;\n\tbox-shadow: none;\n}\n\n[mol_book2_gap]::before,\n[mol_book2_gap]::after {\n\tdisplay: none;\n}\n");
+    $mol_style_attach("mol/book2/book2.view.css", "[mol_book2] {\n\tdisplay: flex;\n\tflex-flow: row nowrap;\n\talign-items: stretch;\n\tflex: 1 1 auto;\n\talign-self: stretch;\n\tmargin: 0;\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_line); */\n\t/* transform: translateZ(0); */\n\ttransition: none;\n\toverflow: overlay;\n\tscroll-snap-type: x mandatory;\n\t/* padding: 0 1px;\n\tscroll-padding: 0 1px;\n\tgap: 1px; */\n}\n\n[mol_book2] > * {\n/* \tflex: none; */\n\tscroll-snap-stop: always;\n\tscroll-snap-align: end;\n\tposition: relative;\n\tmin-height: 100%;\n\tmax-height: 100%;\n\tmax-width: 100%;\n\tflex-shrink: 0;\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_field);\n}\n\n[mol_book2] > *:not(:first-of-type):before,\n[mol_book2] > *:not(:last-of-type)::after {\n\tcontent: '';\n\tposition: absolute;\n\ttop: 1.5rem;\n\twidth: 3px;\n\theight: 1rem;\n\tbackground: linear-gradient(\n\t\tto bottom,\n\t\tvar(--mol_theme_focus) 0%,\n\t\tvar(--mol_theme_focus) 14%,\n\t\ttransparent 15%,\n\t\ttransparent 42%,\n\t\tvar(--mol_theme_focus) 43%,\n\t\tvar(--mol_theme_focus) 57%,\n\t\ttransparent 58%,\n\t\ttransparent 85%,\n\t\tvar(--mol_theme_focus) 86%,\n\t\tvar(--mol_theme_focus) 100%\n\t);\n\topacity: .5;\n\tz-index: var(--mol_layer_speck);\n}\n[mol_book2] > *:not(:first-of-type):before {\n\tleft: -1px;\n}\n[mol_book2] > *:not(:last-of-type)::after {\n\tright: -1px;\n}\n\n:where([mol_book2]) > * {\n\tbackground-color: var(--mol_theme_card);\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_back); */\n}\n\n[mol_book2] > [mol_book2] {\n\tdisplay: contents;\n}\n\n[mol_book2] > *:first-child {\n\tscroll-snap-align: start;\n}\n\n[mol_book2] > [mol_view] {\n\ttransform: none; /* prevent content clipping */\n}\n\n[mol_book2_placeholder] {\n\tflex: 1 1 0;\n\tbackground: none;\n}\n\n[mol_book2_gap] {\n\tbackground: none;\n\tflex-grow: 1;\n\tscroll-snap-align: none;\n\tmargin-right: -1px;\n\tbox-shadow: none;\n}\n\n[mol_book2_gap]::before,\n[mol_book2_gap]::after {\n\tdisplay: none;\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -19996,7 +20151,7 @@ var $;
 		}
 		nonformers_checked(next){
 			if(next !== undefined) return next;
-			return false;
+			return true;
 		}
 		matrix_fixel_checked(next){
 			if(next !== undefined) return next;
@@ -20355,16 +20510,25 @@ var $;
                     return $mol_fail(new $mol_data_error('Error: unknown data format'));
                 return json;
             }
+            json_fetched(request) {
+                return $mpds_visavis_plot.fetch_plot_json(request);
+            }
             json() {
-                return $mpds_visavis_plot.fetch_plot_json(this.json_request());
+                return this.json_fetched(this.json_request());
             }
             json_cmp() {
-                return $mpds_visavis_plot.fetch_plot_json(this.json_cmp_request());
+                return this.multi_jsons()?.[1] ?? null;
+            }
+            multi_requests(next) {
+                if (next !== undefined)
+                    return next;
+                if (this.json_cmp_request())
+                    return [this.json_request(), this.json_cmp_request()];
+                return super.multi_requests();
             }
             multi_jsons() {
-                return this.multi_requests().length > 0
-                    ? this.multi_requests().map(req => $mpds_visavis_plot.fetch_plot_json(req))
-                    : this.json_cmp() ? [this.json(), this.json_cmp()] : null;
+                let requests = this.multi_requests();
+                return requests.length > 0 ? requests.map(req => this.json_fetched(req)) : null;
             }
             json_cmp_request(next) {
                 if (next === null && $mol_wire_probe(() => this.json_cmp_request()) === null) {
@@ -20372,7 +20536,15 @@ var $;
                 }
                 return next ?? null;
             }
+            inconsistent_projection() {
+                const fixels = new Set;
+                this.multi_jsons()?.forEach(json => fixels.add(json.payload?.fixel));
+                return fixels.size > 1;
+            }
             plot_raw() {
+                if (this.inconsistent_projection()) {
+                    this.notify('Error: inconsistent datasets projection');
+                }
                 return this.multi_jsons()
                     ? $mpds_visavis_plot_raw_from_json(this.multi_jsons()[0])
                     : this.json()
@@ -20404,11 +20576,28 @@ var $;
                 }
                 return false;
             }
-            on_fixel_checked(checked) { }
+            on_fixel_checked(checked) {
+                let requests = this.multi_requests();
+                if (requests.length == 0) {
+                    const url = this.json_request();
+                    this.json_request(checked ? this.url_fixel(url) : this.url_unfixel(url));
+                    return;
+                }
+                this.multi_requests(requests.map(url => checked ? this.url_fixel(url) : this.url_unfixel(url)));
+            }
+            url_unfixel(url) {
+                return url.replace('&fixel=1', '');
+            }
+            url_fixel(url) {
+                return url + '&fixel=1';
+            }
             notify(msg) {
                 alert(msg);
             }
         }
+        __decorate([
+            $mol_mem_key
+        ], $mpds_visavis_plot.prototype, "json_fetched", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot.prototype, "json", null);
@@ -20417,10 +20606,16 @@ var $;
         ], $mpds_visavis_plot.prototype, "json_cmp", null);
         __decorate([
             $mol_mem
+        ], $mpds_visavis_plot.prototype, "multi_requests", null);
+        __decorate([
+            $mol_mem
         ], $mpds_visavis_plot.prototype, "multi_jsons", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot.prototype, "json_cmp_request", null);
+        __decorate([
+            $mol_mem
+        ], $mpds_visavis_plot.prototype, "inconsistent_projection", null);
         __decorate([
             $mol_mem
         ], $mpds_visavis_plot.prototype, "plot_raw", null);
@@ -20438,6 +20633,12 @@ var $;
         ], $mpds_visavis_plot.prototype, "on_fixel_checked", null);
         __decorate([
             $mol_action
+        ], $mpds_visavis_plot.prototype, "url_unfixel", null);
+        __decorate([
+            $mol_action
+        ], $mpds_visavis_plot.prototype, "url_fixel", null);
+        __decorate([
+            $mol_action
         ], $mpds_visavis_plot.prototype, "notify", null);
         __decorate([
             $mol_action
@@ -20451,7 +20652,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mpds/visavis/plot/plot.view.css", "[mpds_visavis_plot][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plot_matrix_plot][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plot_matrix_root][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plot_graph_root][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_lib_plotly_view][mol_view_error]:not([mol_view_error=\"Promise\"]) {\n\tbackground-image: none;\n\tpadding-top: 6rem;\n\talign-items: flex-start;\n\tjustify-content: center;\n}\n\n[mpds_visavis_plot],\n[mpds_visavis_plot] .js-plotly-plot .plotly,\n[mpds_visavis_plot] .js-plotly-plot .plotly div {\n\tfont-family: inherit;\n}\n\n[mpds_visavis_plot][fullscreen] {\n\tposition: fixed;\n\tz-index: 9999;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n}\n\n[mol_theme=\"$mol_theme_light\"] {\n\t--mol_theme_back: white;\n}\n");
+    $mol_style_attach("mpds/visavis/plot/plot.view.css", "*{font-family:Exo2,Arial;}\n\n[mpds_visavis_plot][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plot_matrix_plot][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plot_matrix_root][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_plot_graph_root][mol_view_error]:not([mol_view_error=\"Promise\"]),\n[mpds_visavis_lib_plotly_view][mol_view_error]:not([mol_view_error=\"Promise\"]) {\n\tbackground-image: none;\n\tpadding-top: 6rem;\n\talign-items: flex-start;\n\tjustify-content: center;\n}\n\n[mpds_visavis_plot],\n[mpds_visavis_plot] .js-plotly-plot .plotly,\n[mpds_visavis_plot] .js-plotly-plot .plotly div {\n\tfont-family: inherit;\n}\n\n[mpds_visavis_plot][fullscreen] {\n\tposition: fixed;\n\tz-index: 9999;\n\ttop: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n}\n\n[mol_theme=\"$mol_theme_light\"] {\n\t--mol_theme_back: white;\n}\n\n@font-face {\nfont-family:Exo2;src:local('Exo 2 Regular'),local('Exo2-Regular'),url('data:font/woff;charset=utf-8;base64,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') format('woff');\n}\n");
 })($ || ($ = {}));
 
 ;
