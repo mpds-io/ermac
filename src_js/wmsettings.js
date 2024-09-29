@@ -74,10 +74,10 @@ wmgui.cliffhangers = [
     "binary frank-kasper type"
 ];
 wmgui.welcome_msgs = [
-    "The distinct phases is the central concept at the MPDS. Thanks to that, the crystal structures are linked to the phase diagrams and physical properties. Any distinct phase is uniquely determined by the chemical formula, space group, and Pearson symbol <i>e.g.</i> <a href='/#phase/CuAl2/140/tI12'>CuAl2 140 tI12</a>.",
-    "Our data back up such products as Springer Materials&trade;, ICDD PDF-4&trade;, ASM Alloy Phase Diagrams&trade;, Pearson's Crystal Data, MedeA Materials Design&trade;, and AtomWork Advanced.",
+    "The distinct phases is the central concept at the MPDS. Thanks to it, the crystal structures are linked to the phase diagrams and physical properties. Any distinct phase is uniquely determined by its chemical formula, space group, and Pearson symbol <i>e.g.</i> <a href='/#phase/CuAl2/140/tI12'>CuAl2 140 tI12</a>.",
+    "Our data back up such products as Springer Materials, ICDD PDF-5+, ASM Alloy Phase Diagrams, Pearson's Crystal Data, MedeA Materials Design, and AtomWork Advanced.",
     "Each peer-reviewed crystal structure, phase diagram, or physical property at the MPDS originates from a particular publication.",
-    "There are two search modes, simple and advanced. The simple presents one \"smart\" input field, the advanced offers many various search fields.",
+    "There are two search modes, simple and advanced. The simple one presents one \"smart\" input field, the advanced one offers many various search fields.",
     "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never online.",
     "A unique feature of the MPDS is the support of the <a href='/#polyhedra'>polyhedral type searches</a>, taking into account the atomic environments."
 ];
