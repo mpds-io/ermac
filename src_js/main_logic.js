@@ -1157,7 +1157,7 @@ function describe_perms(perms){
 
     if (perms.api){
         if (perms.api.root) out_api += '<li>complete access</li>';
-        else if (perms.api.disabled) out_api += '<li>disabled; please check on the other device</li>';
+        else if (perms.api.disabled) out_api += '<li>disabled &mdash; please check on the other device</li>';
         else {
             if (!$.isArray(perms.api)) perms.api = [perms.api];
             $.each(perms.api, function(m, ruleset){
@@ -1301,8 +1301,19 @@ function init_user_login(){
     if (locals.sid === wmgui.sid)
         return;
 
-    if (locals.sid && locals.name && locals.acclogin){
-        user_login(locals.sid, locals.name, locals.acclogin, locals.admin, locals.oauths, locals.ipbased);
+    if (!locals.ipbased && locals.sid && locals.name && locals.acclogin){
+        user_login(locals.sid, locals.name, locals.acclogin, locals.admin, locals.oauths, false);
+
+    } else {
+        // attempt IP-based login
+        $.ajax({
+            type: 'POST',
+            url: wmgui.ip_endpoint,
+
+        }).done(function(data){
+            if (data.sid && data.name && data.acclogin)
+                user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths, true);
+        });
     }
 }
 
@@ -1328,7 +1339,7 @@ function user_login(sid, name, acclogin, admin, oauths, ipbased){
         ipbased: ipbased
     })); // TODO? oauths: oauths
 
-    (admin && (wmgui.edition === 0 || wmgui.edition === 1 || wmgui.edition === 6)) ? $('li.admin').show() : $('li.admin').hide();
+    (admin && (wmgui.edition == 0 || wmgui.edition == 1)) ? $('li.admin').show() : $('li.admin').hide();
 
     if (ipbased){
         $('.only_regular').hide();
@@ -1405,7 +1416,9 @@ function force_relogin(show_msg){
 function communicate_windows(runnable_name){
     // NB the active window doesn't receive a storage event
     window.localStorage.setItem(wmgui.store_comm_exec_key, runnable_name);
-    window.localStorage.removeItem(wmgui.store_comm_exec_key);
+    setTimeout(function(){
+        window.localStorage.removeItem(wmgui.store_comm_exec_key)
+    }, 0);
 }
 
 function reset_factor_form() {

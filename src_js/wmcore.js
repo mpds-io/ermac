@@ -201,7 +201,7 @@ wmgui.get_random_term = function(sequence){
  * Generate random sequences
  */
 
-wmgui.get_realistic = function(facet, cur_arity){
+wmgui.get_realistic = function(facet, cur_nlen){
 
     var term;
 
@@ -209,9 +209,9 @@ wmgui.get_realistic = function(facet, cur_arity){
         var i = 0,
             els = [],
             prob_arity = [2, 3], // 4 is improbable
-            cur_arity = cur_arity || wmgui.get_random_term(prob_arity);
+            cur_nlen = cur_nlen || wmgui.get_random_term(prob_arity);
 
-        while (i < cur_arity){
+        while (i < cur_nlen){
             var el;
             if (i < 2)
                 el = wmgui.get_random_term(wmgui.probable_els);
@@ -314,7 +314,7 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
     if (!search) search = {};
 
     var interpret_html = '',
-        cur_arity = false;
+        cur_nlen = 0;
 
     $.each(search, function(k, val){
         if (!facet_names[k] || !val) return true;
@@ -325,7 +325,7 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
 
         else if (k == 'elements'){
             var els = val.split('-');
-            cur_arity = els.length; // els.length < 5
+            cur_nlen = els.length;
             val = els.map(function(i){ return i.charAt(0).toUpperCase() + i.slice(1).toLowerCase() }).join(', ');
 
         } else if (k == 'classes'){
@@ -383,23 +383,19 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
                 return false;
             }
 
-            if (cur_arity && (cur_arity - 1) > num)
+            if (cur_nlen - 1 > num)
                 return true;
 
-            if (num > 3)
-                return true;
-
-            else if (num == 5)
+            if ((cur_nlen < 4 && num > 3) || num > 4)
                 return false;
 
-            var addr;
             if (window.location.hash.indexOf('inquiry') > -1){
                 if (window.location.hash.indexOf('classes=') > -1)
-                    addr = window.location.hash.replace('classes=', 'classes=' + value + ',');
+                    var addr = window.location.hash.replace('classes=', 'classes=' + value + ',');
                 else
-                    addr = window.location.hash.replace('inquiry/', 'inquiry/classes=' + value + '&');
+                    var addr = window.location.hash.replace('inquiry/', 'inquiry/classes=' + value + '&');
 
-            } else addr = window.location.hash + ' ' + value;
+            } else var addr = window.location.hash + ' ' + value;
 
             arity_helper_html += '<li class="fct_classes" rel="' + addr + '" style="letter-spacing:0.5px;">Show only ' + value.substr(0, value.length - 1) + 'ies</li>';
         });

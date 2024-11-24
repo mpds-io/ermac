@@ -1425,8 +1425,9 @@ const OptimadeNLP = function () {
 			return [ 'elements', term.split('-').map((el) => capitalize(el)).join('-') ];
 		}
 
-		if (['element', 'elementary'].includes(term)) return ['classes', 'unary'];
+		if (['element', 'elementary', 'unitary'].includes(term)) return ['classes', 'unary'];
 		else if (
+			term === 'quintenary' ||
 			term === 'quinternary' ||
 			term === 'quinternaries' ||
 			term === 'quinaries' ||

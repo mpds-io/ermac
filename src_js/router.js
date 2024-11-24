@@ -205,29 +205,14 @@ function url__modal(arg){
         if (wmgui.sid) return window.location.replace('#modal/menu');
         //if (wmgui.sid) return window.location.replace('#start'); // for Matcloud
 
-        $.ajax({
-            type: 'POST',
-            url: wmgui.ip_endpoint,
+        // edition-based OAuth login (mpdsgui only)
+        if (wmgui.edition == 1){
+            return window.location.replace('oauth/asm.html');
 
-        }).done(function(data){
-
-            if (!data.sid || !data.name || !data.acclogin){
-
-                // edition-based OAuth login (mpdsgui only)
-                if (wmgui.edition == 1 || wmgui.edition == 6){
-                    return window.location.replace('oauth/asm.html');
-                } /* else if (wmgui.edition == 11 || wmgui.edition == 16){
-                    return window.location.replace('oauth/matcloud.html');
-                } */
-                return show_modal(arg);
-            }
-
-            user_login(data.sid, data.name, data.acclogin, data.admin, data.oauths, true);
-            $('#userbox').trigger('click');
-
-        }).fail(function(xhr, textStatus, errorThrown){
-            return show_modal(arg);
-        });
+        } /* else if (wmgui.edition == 16){
+            return window.location.replace('oauth/matcloud.html');
+        } */
+        show_modal(arg);
 
     } else if (arg == "restore" || arg == "factor"){
         if (wmgui.sid) return window.location.replace('#modal/menu');
