@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<style>
+*{margin:0;padding:0;}
+html, body{height:100%;user-select:none;}
+body{background-size:contain;background-repeat:no-repeat;background-position:center center;}
+
+#switcher{position:fixed;top:10px;left:10px;width:40px;height:40px;z-index:10;cursor:pointer;background:url(data:image/gif;base64,R0lGODlhHgAXAIABAAAAAP///yH5BAEKAAEALAAAAAAeABcAAAJVjA0Jx63bzkuRTegorXapjHHiJ23iaAbkya1qyFamG0ckXXcQniNb2su8do/TxHdJhpTMpvMJhbaS06LsByxZbViYdvtFeovgssv61DG/F67SzWOHCgA7) center center no-repeat;border:2px solid #ff8400;border-radius:25px;}
+#switcher:hover{transform:rotate(180deg);}
+</style>
+</head>
+<body>
+
+<div id="cross" title="Close"></div>
+<div id="switcher" title="Show interactive plot (experimental feature)"></div>
+
+<script type="text/javascript">
+if (document.location.hash.length){
+    var pic_url = document.location.hash.substr(1);
+    document.body.style.backgroundImage = "url('" + pic_url + "')";
+
+    document.getElementById('switcher').onclick = function(){
+        window.location = '/webassets/iframe_visavis.html#' + pic_url.replace('fmt=png', 'fmt=json');
+    }
+}
+</script>
+</body>
+</html>
