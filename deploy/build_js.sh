@@ -4,7 +4,7 @@ ROOT=$(dirname $0)/../
 JSCOMP=$ROOT/third_party/jscomp/compiler.jar
 JSTARGET=$ROOT/ermac.min.js
 
-cat $ROOT/src_js/third_party/jquery.min.js >> $JSTARGET
+cat $ROOT/src_js/third_party/jquery.min.js > $JSTARGET
 
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/third_party/jquery.tablesorter.js --compilation_level WHITESPACE_ONLY >> $JSTARGET
 java -jar $JSCOMP --jscomp_off checkTypes --language_in ECMASCRIPT5_STRICT --js $ROOT/src_js/third_party/wNumb.js >> $JSTARGET

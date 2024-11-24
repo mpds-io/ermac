@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir dist
           cp ermac.min.js src_js/third_party/jquery.min.js dist
-          cp -r webassets oauth crystvis dist
+          cp -r webassets oauth crystvis labs dist
           cp example_prod.html dist/index.html
 
       - name: Deploy

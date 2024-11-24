@@ -130,11 +130,11 @@ function refresh_ptable_results(elA, elB, elC){
         if (els.length == 1){
 
             if (wmgui.ptable.dtypes == 2){
-                iframe_addr = wmgui.engines_addrs[wmgui.engines]['cifplayer'];
+                iframe_addr = wmgui.engines_addrs['cifplayer'];
                 wmgui.ptable.vis_fixed = true;
 
             } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = wmgui.engines_addrs[wmgui.engines]['visavis'];
+                iframe_addr = wmgui.engines_addrs['visavis'];
                 wmgui.ptable.vis_fixed = true;
 
             } else
@@ -148,11 +148,11 @@ function refresh_ptable_results(elA, elB, elC){
                 ajax_download(null, wmgui.search_endpoint + '?q=' + JSON.stringify(query_pds), render_right);
 
             } else if (wmgui.ptable.dtypes == 2){
-                iframe_addr = wmgui.engines_addrs[wmgui.engines]['cifplayer'];
+                iframe_addr = wmgui.engines_addrs['cifplayer'];
                 wmgui.ptable.vis_fixed = true;
 
             } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = wmgui.engines_addrs[wmgui.engines]['visavis'];
+                iframe_addr = wmgui.engines_addrs['visavis'];
                 wmgui.ptable.vis_fixed = true;
 
             } else
@@ -167,10 +167,10 @@ function refresh_ptable_results(elA, elB, elC){
                 iframe_addr = wmgui.v_pd_3d_addr + els.join('-');
 
             } else if (wmgui.ptable.dtypes == 2){
-                iframe_addr = wmgui.engines_addrs[wmgui.engines]['cifplayer'];
+                iframe_addr = wmgui.engines_addrs['cifplayer'];
 
             } else if (wmgui.ptable.dtypes == 3){
-                iframe_addr = wmgui.engines_addrs[wmgui.engines]['visavis'];
+                iframe_addr = wmgui.engines_addrs['visavis'];
 
             } else
                 document.getElementById('ptable_vis').innerHTML = '';
@@ -225,7 +225,7 @@ function render_left(data){
                 target_addr = '#' + wmgui.phase_endpoint + '?phid=' + phid + '&struct=1';
 
             if (target) target.contentWindow.location.hash = target_addr;
-            else document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="850" src="' + wmgui.engines_addrs[wmgui.engines]['cifplayer'] + target_addr + '"></iframe>';
+            else document.getElementById('ptable_vis').innerHTML = '<iframe frameborder=0 scrolling="no" width="100%" height="850" src="' + wmgui.engines_addrs['cifplayer'] + target_addr + '"></iframe>';
 
         } else document.getElementById('ptable_vis').innerHTML = '';
 
