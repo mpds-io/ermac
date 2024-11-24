@@ -7,7 +7,7 @@ sup, sub{font-size:12px;}
 .sky{background:#fff;}
 #overlay{position:fixed;left:0;top:0;width:100%;height:100%;text-align:center;z-index:100;overflow:hidden;background:#fff;opacity:0.9;}
 #visavis{display:none;z-index:50;position:fixed;top:56px;left:50%;margin-left:-36%;width:72%;height:99%;background:#fff;}
-.wmbutton{cursor:pointer;user-select:none;font-size:1.3em;text-align:center;border:1px solid #999;background:#999;color:#fff;line-height:1.4em;border-radius:2px;text-decoration:none;box-shadow:inset 0 2px 2px rgba(255,255,255,0.3), inset 0 -2px 2px rgba(0,0,0,0.3), inset 0 20px 10px rgba(255,255,255,0.3), 0 0 2px 1px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.3);}
+.wmbutton{cursor:pointer;user-select:none;font-size:1.25em;text-align:center;border:1px solid #999;background:#999;color:#fff;line-height:1.4em;border-radius:2px;text-decoration:none;box-shadow:inset 0 2px 2px rgba(255,255,255,0.3), inset 0 -2px 2px rgba(0,0,0,0.3), inset 0 20px 10px rgba(255,255,255,0.3), 0 0 2px 1px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.3);}
 .wmbutton:hover{box-shadow:inset 0 2px 2px rgba(255,255,255,0.2), inset 0 -2px 2px rgba(0,0,0,0.2), inset 0 20px 10px rgba(255,255,255,0.2), 0 0 2px 1px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.2);}
 .wmbutton:active{transform:translateY(1px);}
 .wmbutton.disabled{cursor:not-allowed;box-shadow:none;background:#eee !important;border-color:#eee !important;}
@@ -232,13 +232,12 @@ div.col_title a{text-decoration:none;color:#000;border-bottom:1px solid #000;}
 #ctx_col > ul{margin:0;padding:0;}
 #ctx_col > ul > li{list-style:none;width:80px;height:96px;margin:0 auto;display:block;}
 #ctx_col > ul > li > a{display:block;width:100%;height:100%;}
-#visualize{width:110px !important;height:30px !important;text-align:center;line-height:30px;margin:14px auto !important;}
-#xrpdize{width:110px !important;height:30px !important;text-align:center;line-height:30px;margin:14px auto !important;border:1px solid #acc2b3;background:#acc2b3;}
-#absolidize{width:140px !important;height:30px !important;text-align:center;line-height:30px;margin:14px auto !important;}
+#visualize{width:138px !important;height:30px !important;text-align:center;line-height:30px;margin:14px auto !important;}
+#xrpdize{width:138px !important;height:30px !important;text-align:center;line-height:30px;margin:14px auto !important;border:1px solid #acc2b3;background:#acc2b3;}
+#absolidize{width:138px !important;height:30px !important;text-align:center;line-height:30px;margin:14px auto !important;}
 #absolidize > span.active{display:none;}
 #absolidize > span.disabled{display:block;}
 #absolidize > span.disabled > i{color:green;font-size:30px;}
-#absolidize.wmbutton{color:#fff;border:1px solid #555;background:#555;}
 #absolidize.wmbutton > span.active{display:block;}
 #absolidize.wmbutton > span.disabled{display:none;}
 #download_cif{background:url(icons.png) 0 5px no-repeat;}

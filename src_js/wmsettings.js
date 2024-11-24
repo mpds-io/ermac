@@ -147,13 +147,13 @@ wmgui.path_s_xrpd = '#' + wmgui.api_host + '/download/s?fmt=xrpd&q=';
 wmgui.path_sd_plot = '#' + wmgui.api_host + '/download/p?fmt=json&q=';
 
 wmgui.engines_addrs = {
-    'cifplayer': '/ermac/webassets/iframe_cifplayer.html', // FIXME
-    'visavis': '/ermac/webassets/iframe_visavis.html' // FIXME
+    'cifplayer': '/webassets/iframe_cifplayer.html',
+    'visavis': '/webassets/iframe_visavis.html'
 }
 
-wmgui.v_pd_user_addr =    wmgui.static_host + '/pd_stub.html#';
-wmgui.v_ab_vis_addr =     '/ermac/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q='; // FIXME
-wmgui.v_pd_3d_addr =      '/ermac/labs/pd3d/?'; // FIXME
+wmgui.v_pd_user_addr = '/webassets/pd_stub.html#';
+wmgui.v_ab_vis_addr =  '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_pd_3d_addr =   '/labs/pd3d/?';
 
 // remote files commonly used
 wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?220923';

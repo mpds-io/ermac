@@ -341,7 +341,7 @@ function register_html(){
 
     <ul>
         <li id="visualize" class="wmbutton">Visualize</li>
-        <li id="xrpdize" class="wmbutton">Get XRPD</li>
+        <li id="xrpdize" class="wmbutton">Show XRPD</li>
         <li id="absolidize" class="wmbutton"><span class="active">Simulate</span><span class="disabled">Added to <span class="href">my data</span>.</span></li>
         <li id="download_pdf" class="d_icon"><a rel="pdf" href="#" target="_blank" title="Get HTML / PDF document" rel="nofollow"></a></li>
         <li id="download_json" class="d_icon"><a rel="json" href="#" target="_blank" title="Get machine-readable JSON file" rel="nofollow"></a></li>
