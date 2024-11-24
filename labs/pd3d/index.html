@@ -14,7 +14,6 @@ html, body{font-family:Exo2,Arial;color:#444;}
 #main{width:90%;margin:0 auto;}
 #overlay{display:block;position:fixed;left:0;top:0;width:100%;height:100%;text-align:center;z-index:300;overflow:hidden;background:#fff;}
 #notifybox{display:block;position:fixed;left:50%;top:7%;margin-left:-250px;width:500px;text-align:center;z-index:301;background:#eee;border-radius:10px;font-size:1.1em;line-height:2.15em;}
-#cross{display:none;position:fixed;top:6px;right:6px;width:24px;height:24px;z-index:302;cursor:pointer;background:url(data:image/gif;base64,R0lGODlhEAAQAJEAAAAAAP///1VVVf///yH5BAEAAAMALAAAAAAQABAAAAIjnI+py6L+BDRy0gqxHVqvLjGcJ3Yl+IEhQpLX+m7wMYv2PRQAOw==) center center no-repeat;}
 
 h1{text-align:center;font-weight:normal;font-size:4vmin;margin:2vmin auto;}
 #tool{padding-top:25%;width:400px;margin:0 auto;}
@@ -48,9 +47,6 @@ input[type=text], input[type=email], input[type=password], textarea, div.selecti
 <div id="overlay"></div>
 <div id="spinner"><div id="logo"></div></div>
 <div id="notifybox"></div>
-
-<!-- POSSIBILITY TO CLOSE FROM IFRAME -->
-<div id="cross" title="Close" class="uielem"></div>
 
 <script type="text/javascript">
 "use strict";
@@ -93,9 +89,9 @@ function launch(system){
             if (window.xhr.status == 200 || window.xhr.status == 400)
                 handle_resp(JSON.parse(window.xhr.responseText));
             else if (window.xhr.status)
-                notify('Error: HTTP error ' + window.xhr.status + ' received during retrieving data from the server');
+                window.notify('Error: HTTP error ' + window.xhr.status + ' received during retrieving data from the server');
             else
-                notify('Error: no response received');
+                window.notify('Error: no response received');
         }
     }
     show_preloader();
@@ -162,17 +158,10 @@ if (target){
 }
 
 try {
-    window.mpds_embedded = !!(window.parent && window.parent.wmgui && window.parent.wmgui.view_mode == 2);
+    window.mpds_embedded = window.parent && window.parent.wmgui;
 } catch (e){}
 
 if (window.mpds_embedded){
-
-    document.getElementById('cross').style.display = 'block';
-
-    document.getElementById('cross').onclick = function(){
-        window.parent.close_vibox();
-    }
-
     window.notify = function(msg){
         document.getElementById('notifybox').innerHTML = msg;
         document.getElementById('notifybox').style.display = 'block';
