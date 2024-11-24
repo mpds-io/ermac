@@ -1,0 +1,184 @@
+<!-- MPDS 3d phase diagrams renderer UI -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>MPDS 3d phase diagrams</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<style type="text/css">
+/* MAIN LAYOUT */
+
+*{margin:0;padding:0;}
+html, body{font-family:Exo2,Arial;color:#444;}
+
+#main{width:90%;margin:0 auto;}
+#overlay{display:block;position:fixed;left:0;top:0;width:100%;height:100%;text-align:center;z-index:300;overflow:hidden;background:#fff;}
+#notifybox{display:block;position:fixed;left:50%;top:7%;margin-left:-250px;width:500px;text-align:center;z-index:301;background:#eee;border-radius:10px;font-size:1.1em;line-height:2.15em;}
+#cross{display:none;position:fixed;top:6px;right:6px;width:24px;height:24px;z-index:302;cursor:pointer;background:url(data:image/gif;base64,R0lGODlhEAAQAJEAAAAAAP///1VVVf///yH5BAEAAAMALAAAAAAQABAAAAIjnI+py6L+BDRy0gqxHVqvLjGcJ3Yl+IEhQpLX+m7wMYv2PRQAOw==) center center no-repeat;}
+
+h1{text-align:center;font-weight:normal;font-size:4vmin;margin:2vmin auto;}
+#tool{padding-top:25%;width:400px;margin:0 auto;}
+#search_field{display:block;float:left;width:355px;font-size:1.15em;letter-spacing:0.5px;height:29px;line-height:29px;text-align:center;}
+#search_trigger{display:block;float:right;width:35px;height:29px;line-height:29px;margin-left:4px;}
+
+input[type=text], input[type=email], input[type=password], textarea, div.selectize-input{outline:none;border-radius:2px;box-shadow:inset 0 2px 2px rgba(0,0,0,0.15);font-family:Exo2,Arial;}
+
+.wmbutton{cursor:pointer;user-select:none;font-size:1.3em;text-align:center;border:1px solid #3e3f95;background:#3e3f95;color:#fff;line-height:1.4em;border-radius:2px;text-decoration:none;box-shadow:inset 0 2px 2px rgba(255,255,255,0.3), inset 0 -2px 2px rgba(0,0,0,0.3), inset 0 20px 10px rgba(255,255,255,0.3), 0 0 2px 1px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.3);}
+.wmbutton:hover{box-shadow:inset 0 2px 2px rgba(255,255,255,0.2), inset 0 -2px 2px rgba(0,0,0,0.2), inset 0 20px 10px rgba(255,255,255,0.2), 0 0 2px 1px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.2);}
+
+/* Spinner */
+
+#spinner{display:none;position:fixed;left:0;top:0;width:100%;height:100%;text-align:center;z-index:400;overflow:hidden;background-color:rgba(255,255,255,0.4);}
+#logo{position:absolute;float:none;top:50%;left:50%;width:60px;height:60px;margin:-30px 0 0 -30px;background-size:100%;-webkit-animation:spin 2s ease infinite;-moz-animation:spin 2s ease infinite;animation:spin 2s ease infinite;}
+@keyframes spin { 100% { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- MAIN LAYOUT -->
+<div id="main">
+    <h1>Dynamically compile 3d phase diagrams</h1>
+
+    <div id="tool">
+        <input type="text" id="search_field" placeholder="Input elements" maxlength="100" spellcheck="false" />
+        <a href="#" id="search_trigger" class="wmbutton" title="Search">&#x23ce;</a>
+    </div>
+</div>
+
+<div id="overlay"></div>
+<div id="spinner"><div id="logo"></div></div>
+<div id="notifybox"></div>
+
+<!-- POSSIBILITY TO CLOSE FROM IFRAME -->
+<div id="cross" title="Close" class="uielem"></div>
+
+<script type="text/javascript">
+"use strict";
+
+window.xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+window.debug = false; // (window.location.host.indexOf('localhost') !== -1);
+window.mpds_embedded = false;
+window.app_endpoint = window.debug ? 'http://localhost:8522/summon' : 'https://labs.mpds.io/services/summon';
+// curl -XPOST https://labs.mpds.io/services/summon -d "els=Al-Be-Cu"
+
+if (['/', '#'].indexOf(document.location.pathname.toString().substr(-1)) == -1){
+    window.location.replace(window.location.href + '/');
+}
+
+window.notify = alert.bind(window);
+
+function show_preloader(){
+    document.getElementById('spinner').style.display = 'block';
+}
+
+function hide_preloader(){
+    document.getElementById('spinner').style.display = 'none';
+}
+
+function show_overlay(){
+    document.getElementById('overlay').style.display = 'block';
+}
+
+function hide_overlay(){
+    document.getElementById('overlay').style.display = 'none';
+}
+
+function launch(system){
+    //window.xhr.abort();
+    window.xhr.onreadystatechange = function(){
+        if (window.xhr.readyState == 4){
+            hide_preloader();
+            hide_overlay();
+
+            if (window.xhr.status == 200 || window.xhr.status == 400)
+                handle_resp(JSON.parse(window.xhr.responseText));
+            else if (window.xhr.status)
+                notify('Error: HTTP error ' + window.xhr.status + ' received during retrieving data from the server');
+            else
+                notify('Error: no response received');
+        }
+    }
+    show_preloader();
+    show_overlay();
+    window.xhr.open('POST', window.app_endpoint, true);
+    window.xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    window.xhr.send('els=' + system);
+}
+
+function handle_resp(data){
+    //console.log(data);
+    if (data.error){
+        window.notify(data.error);
+        return;
+    }
+    window.location.href = '3d.html?' + data.result;
+}
+
+function getRandomTriple(){
+
+    const suitableEls = ['H',
+'Li', 'Be',                                                                                                                                                 'B',  'C',  'N',  'O',  'F',
+'Na', 'Mg',                                                                                                                                                 'Al', 'Si', 'P',  'S',  'Cl',
+'K',  'Ca',                                                                                     'Sc', 'Ti', 'V',  'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br',
+'Rb', 'Sr',                                                                                     'Y',  'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I',
+'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta', 'W',  'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl', 'Pb', 'Bi',
+      'Ra', 'Ac', 'Th', 'Pa', 'U',  'Np', 'Pu'];
+
+    let result = [];
+
+    for (let i = 0; i < 3; i++){
+        result.push( suitableEls[ Math.floor(Math.random() * suitableEls.length) ] );
+    }
+    if (Array.from(new Set(result)).length !== result.length) return getRandomTriple();
+
+    result.sort();
+    return result;
+}
+
+// handler
+document.getElementById('search_trigger').onclick = function(){
+    launch(document.getElementById('search_field').value);
+}
+
+// handler
+document.body.onkeydown = function(event){
+    if (event.key === "Enter")
+        document.getElementById('search_trigger').click();
+}
+
+document.getElementById('search_field').value = getRandomTriple().join('-');
+
+const target = document.location.search ? document.location.search.substr(1) : false;
+if (target){
+    launch(target);
+
+} else {
+    setInterval(function(){
+        const that = document.getElementById('search_field');
+        if (that != document.activeElement)
+            that.value = getRandomTriple().join('-');
+    }, 2250);
+    hide_overlay();
+}
+
+try {
+    window.mpds_embedded = !!(window.parent && window.parent.wmgui && window.parent.wmgui.view_mode == 2);
+} catch (e){}
+
+if (window.mpds_embedded){
+
+    document.getElementById('cross').style.display = 'block';
+
+    document.getElementById('cross').onclick = function(){
+        window.parent.close_vibox();
+    }
+
+    window.notify = function(msg){
+        document.getElementById('notifybox').innerHTML = msg;
+        document.getElementById('notifybox').style.display = 'block';
+        show_overlay();
+    }
+}
+</script>
+</body>
+</html>
