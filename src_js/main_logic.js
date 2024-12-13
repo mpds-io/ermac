@@ -551,7 +551,7 @@ function build_cells(json, header, footer){
         $.each(json, function(k, row){
             row[7] = parseInt(row[7]);
             var dtype = row[0].substr(0, 1),
-                preview = (row[3] == 4 || row[3] == 5 || row[3] == 6 || row[3] == 9 || row[3] == 10 || row[3] == 12) ? '<span class=launch_v>Show</span>' : ' ',
+                preview = (row[3] == 4 || row[3] == 5 || row[3] == 6 || row[3] == 9 || row[3] == 10 || row[3] == 12) ? '<span class=launch_v>Show</span>' : ' ', // FIXME? w.r.t. open_context
                 biblio_html = (row[7] == 999999) ? '<td class=cj>&mdash;</td><td class=c4>' + wmgui.mockyear + '</td><td class=c5>&mdash;</td>' :
                 '<td class=cj>' + row[5] + '</td><td class=c4>' + row[6] + '</td><td class=c5>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[7]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[7] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[7] + '" target="_blank" rel="noopener noreferrer">' + row[7] + '</a>]</td>'; // special *ref_id*, only handled in GUI
 
@@ -777,7 +777,7 @@ function open_context(el, launch_ext){
             $('#download_bib').show();
 
         } else if (rank == 1){
-            $('#download_bib, #download_pdf').show();
+            $('#download_bib, #download_pdf, #visualize, #download_png').show();
 
         } else if (rank == 2){
             $('#download_bib, #download_pdf, #download_json').show();
@@ -960,7 +960,10 @@ function launch_db_iframed(rank){
             iframe_src = wmgui.engines_addrs['cifplayer'] + wmgui.path_s_entry + entry, iframe_height = 650;
 
     } else if (entype == 'P'){
-        if (rank == 4)
+        if (rank == 1)
+            iframe_src = wmgui.engines_addrs['visavis'] + wmgui.path_pp_plot + entry, iframe_height = 550;
+
+        else if (rank == 4)
             iframe_src = wmgui.engines_addrs['visavis'] + wmgui.path_sd_plot + entry, iframe_height = 550;
 
         else if (rank == 9)

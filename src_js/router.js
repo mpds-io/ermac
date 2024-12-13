@@ -335,6 +335,9 @@ function url__junction(arg){
         $('div.menu_tabs').hide();
         $('#usr_tab_perms').show();
         $('#perms_view').html(describe_perms(data));
+        setTimeout(function(){
+            wmgui.notify('Please, check your data access.');
+        }, 1500);
 
     }).fail(function(xhr, textStatus, errorThrown){
         if (textStatus != 'abort')
