@@ -146,6 +146,7 @@ wmgui.path_s_entry = '#' + wmgui.api_host + '/download/s?fmt=cif&q=';
 wmgui.path_s_xrpd = '#' + wmgui.api_host + '/download/s?fmt=xrpd&q=';
 wmgui.path_sd_plot = '#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.path_pp_plot = '#https://data.mpds.io/export?fmt=json&q='; // TODO
+wmgui.path_pp_ping = wmgui.prod ? 'https://data.mpds.io/ping?q=' : 'http://localhost:8080/ping?q=';
 
 wmgui.engines_addrs = {
     'cifplayer': '/webassets/iframe_cifplayer.html',

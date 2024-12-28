@@ -777,7 +777,13 @@ function open_context(el, launch_ext){
             $('#download_bib').show();
 
         } else if (rank == 1){
-            $('#download_bib, #download_pdf, #visualize, #download_png').show();
+            $('#download_bib, #download_pdf').show();
+            $.ajax({
+                type: 'GET',
+                url: wmgui.path_pp_ping + entry,
+            }).done(function(data){
+                $('#visualize, #download_png').show();
+            }).fail(function(xhr, textStatus, errorThrown){});
 
         } else if (rank == 2){
             $('#download_bib, #download_pdf, #download_json').show();
