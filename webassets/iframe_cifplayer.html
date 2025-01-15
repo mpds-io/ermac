@@ -28,6 +28,7 @@ function ajax_download(url, callback){
         }
     }
     xmlhttp.open("GET", url);
+    xmlhttp.withCredentials = true;
     xmlhttp.send(1);
 }
 

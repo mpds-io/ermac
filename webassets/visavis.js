@@ -20503,7 +20503,7 @@ var $;
             static fetch_plot_json(request) {
                 if (request == null)
                     return null;
-                const json = $mol_fetch.json(request);
+                const json = $mol_fetch.json(request, { credentials: 'include' });
                 if (json && json.error)
                     return $mol_fail(new $mol_data_error(json.error));
                 if (!json || !json.use_visavis_type)
