@@ -97,6 +97,7 @@ function launch(system){
     show_preloader();
     show_overlay();
     window.xhr.open('POST', window.app_endpoint, true);
+    window.xhr.withCredentials = true;
     window.xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     window.xhr.send('els=' + system);
 }
