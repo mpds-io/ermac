@@ -120,8 +120,8 @@ function create_sprite(text){
     return txt;
 }
 
-function download(url, callback){
-    const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+function ajax_download(url, callback){
+    const xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function(){
         if (xmlhttp.readyState == 4){
             if (xmlhttp.status == 200) callback(xmlhttp.responseText);
@@ -159,6 +159,7 @@ function init(){
 
     // object
     loader = new VRMLLoader();
+    loader.setWithCredentials(true);
     loader.load(load_url, function(object){
 
         object.position.set(x_shift, y_shift, z_shift);
@@ -257,6 +258,7 @@ function animate(){
 }
 
 function load_sim_legend(){
+    // TODO refactor wrt ajax_download
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function(){
         if (xhr.readyState == 4){
@@ -276,7 +278,8 @@ function load_sim_legend(){
         }
     }
     xhr.open('GET', data_server + JSON.stringify({elements: target, classes: n_els == 4 ? 'tetrahedron' : 'prism'}));
-    xhr.send(null);
+    xhr.withCredentials = true;
+    xhr.send(1);
 }
 
 function render_sim(dataset, pos){ // dataset can be false or []
@@ -374,7 +377,7 @@ if (local_model_load){
     // onload production
     load_url = model_url;
 
-    download(meta_url, function(meta){
+    ajax_download(meta_url, function(meta){
         meta = JSON.parse(meta);
         //console.log(meta);
 
