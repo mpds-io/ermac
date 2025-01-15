@@ -198,6 +198,7 @@ function ajax_download(api, url, callback){
         }
     }
     xmlhttp.open("GET", url);
+    xmlhttp.withCredentials = true;
     xmlhttp.send(1);
 }
 

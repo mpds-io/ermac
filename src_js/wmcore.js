@@ -9,6 +9,14 @@ var wmutils = OptimadeNLP();
 var wmgui = window.wmgui || {};
 
 /**
+ * Support proxies
+ */
+
+$.ajaxSetup({
+	xhrFields: {withCredentials: true}
+});
+
+/**
  * Extending base types with the utilities
  */
 
