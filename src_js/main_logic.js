@@ -818,7 +818,7 @@ function open_context(el, launch_ext){
         } else if (rank == 12){
             $('#pd3d_data, #visualize').show();
         }
-        $('#ctx_col > ul > li.d_icon:visible > a').each(function(){
+        $('#ctx_col > ul > li.d_icon > a').each(function(){
             var fmt = $(this).attr('rel'),
                 link_add = (entype == 'S') ? '&export=1' : '',
                 link_sid = (fmt == 'raw') ? 'null' : wmgui.sid,
