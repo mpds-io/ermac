@@ -207,7 +207,7 @@ function url__modal(arg){
 
         // edition-based OAuth login (mpdsgui only)
         if (wmgui.edition == 1){
-            return window.location.replace('oauth/asm.html');
+            return window.location.replace('oauth/asm.html'); // NB history replacement
 
         } /* else if (wmgui.edition == 16){
             return window.location.replace('oauth/matcloud.html');

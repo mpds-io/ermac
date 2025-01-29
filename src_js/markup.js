@@ -831,7 +831,7 @@ function register_html(){
     </div>
 </div>
 
-<div id="footer">Editor-in-Chief: P. Villars. Section editors: K. Cenzual, I. Savysyuk, R. Caputo. <a href="https://github.com/mpds-io">Open-source</a> development by <a href="https://tilde.pro" target="_blank">Tilde MI</a>. Dark mode is <span id="darkmode_trigger" style="border-bottom:1px solid #555;cursor:pointer;"></span>.</div>
+<div id="footer">Editor-in-Chief: R. Caputo. Section editors: K. Cenzual, I. Savysyuk, R. Caputo. <a href="https://github.com/mpds-io">Open-source</a> development by <a href="https://tilde.pro" target="_blank">Tilde MI</a>. Dark mode is <span id="darkmode_trigger" style="border-bottom:1px solid #555;cursor:pointer;"></span>.</div>
 
 <!-- CROSS-SITE COMMS -->
 <iframe id="comms" src="https://absolidix.com/comms.html" style="width:0;height:0;border:none;position:absolute;"></iframe>
