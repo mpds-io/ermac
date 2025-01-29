@@ -680,6 +680,7 @@ function register_html(){
         <li rev="usr_tab_account" class="working">account</li>
         <li rev="usr_tab_perms">data access</li>
         <li rev="usr_tab_api_key" class="only_regular">API key</li>
+        <li rev="usr_tab_columns">tables</li>
         <li rev="usr_tab_absolidix" class="only_regular only_mpds">my data</li>
         <li rev="usr_tab_ctrl" style="display:none;" class="admin">management</li>
     </ul>
@@ -736,6 +737,24 @@ function register_html(){
         <div id="create_usr_api_key_holder" style="display:none;width:150px;margin:30px auto 10px;">
             <div id="create_usr_api_key" class="wmbutton">Create</div>
         </div>
+    </div>
+
+    <div id="usr_tab_columns" class="menu_tabs" style="display:none;">
+        <div class="cross close_user_dialogue" style="margin-top:25px;"></div>
+        <div style="clear:both;"></div>
+        <div class="divider"></div>
+
+        <div class="columns"><input type="checkbox" checked />&nbsp;<label>Formula</label></div>
+        <div class="columns"><input type="checkbox" />&nbsp;<label>Anonymous formula</label></div>
+        <div class="columns"><input type="checkbox" />&nbsp;<label>Prototype</label></div>
+        <div class="columns"><input type="checkbox" />&nbsp;<label>Distinct phase</label></div>
+        <div class="columns"><input type="checkbox" checked />&nbsp;<label>Property</label></div>
+        <div class="columns"><input type="checkbox" />&nbsp;<label>Temperature</label></div>
+        <div class="columns"><input type="checkbox" />&nbsp;<label>Space group</label></div>
+        <div class="columns"><input type="checkbox" />&nbsp;<label>Conditions</label></div>
+        <div class="columns"><input type="checkbox" checked />&nbsp;<label>J. code</label></div>
+        <div class="columns"><input type="checkbox" checked />&nbsp;<label>Year</label></div>
+        <div class="columns"><input type="checkbox" checked />&nbsp;<label>Ref.</label></div>
     </div>
 
     <div id="usr_tab_absolidix" class="menu_tabs" style="display:none;">
