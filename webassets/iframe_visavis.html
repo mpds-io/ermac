@@ -104,7 +104,7 @@ function url_redraw_react(keep_state){
     document.getElementById('main').innerHTML = '<mpds-visavis-plot fullscreen="true"></mpds-visavis-plot>';
     window.plot = document.getElementsByTagName('mpds-visavis-plot')[0].view;
     window.plot.notify = (msg) => window.parent.wmgui.notify(msg);
-	window.plot.matrix_click = ({cmt}) => {
+    window.plot.matrix_click = ({cmt}) => {
         const uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '#search/binary%20' + cmt;
         window.open(uri);
     }
@@ -117,9 +117,9 @@ function url_redraw_react(keep_state){
     window.plot.graph_click = ({facet, label}) => {
         let value = label;
         if (facet == 'codens') {
-        	value = label.split("'")[0]; // FIXME years lost
+            value = label.split("'")[0]; // FIXME years lost
         } else if (facet == 'formulae') {
-        	value = window.parent.wmgui.termify_formulae(label.split(",")[0]);
+            value = window.parent.wmgui.termify_formulae(label.split(",")[0]);
         }
         window.location.hash = window.parent.wmgui.aug_search_cmd(facet, value);
     }
