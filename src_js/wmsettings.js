@@ -111,6 +111,7 @@ wmgui.numerics = {
 wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
 wmgui.static_host =       'https://mpds.io';
+//wmgui.static_host =       'http://localhost:8070';
 
 // below are the main MPDS API endpoints
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';

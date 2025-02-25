@@ -292,7 +292,7 @@ function register_html(){
 
 <!-- PERIODIC TABLE DATATYPES CONTROL -->
 <div id="ptable_dtypes_box">
-    <span><span>&#9432;</span> Show chemical elements as: </span>
+    <span>Show periodic table as: </span>
     <div>
         <input type="radio" name="ptable_dtypes" id="ptable_dtypes_1" value="1" checked /><label for="ptable_dtypes_1"> phase diagrams</label><br />
         <input type="radio" name="ptable_dtypes" id="ptable_dtypes_2" value="2" /><label for="ptable_dtypes_2"> crystal structure counts</label><br />
@@ -680,7 +680,7 @@ function register_html(){
         <li rev="usr_tab_account" class="working">account</li>
         <li rev="usr_tab_perms">data access</li>
         <li rev="usr_tab_api_key" class="only_regular">API key</li>
-        <li rev="usr_tab_columns">tables</li>
+        <!-- li rev="usr_tab_clmns">entries table</li -->
         <li rev="usr_tab_absolidix" class="only_regular only_mpds">my data</li>
         <li rev="usr_tab_ctrl" style="display:none;" class="admin">management</li>
     </ul>
@@ -739,23 +739,26 @@ function register_html(){
         </div>
     </div>
 
-    <div id="usr_tab_columns" class="menu_tabs" style="display:none;">
+    <!-- div id="usr_tab_clmns" class="menu_tabs" style="display:none;">
         <div class="cross close_user_dialogue" style="margin-top:25px;"></div>
         <div style="clear:both;"></div>
         <div class="divider"></div>
 
-        <div class="columns"><input type="checkbox" checked />&nbsp;<label>Formula</label></div>
-        <div class="columns"><input type="checkbox" />&nbsp;<label>Anonymous formula</label></div>
-        <div class="columns"><input type="checkbox" />&nbsp;<label>Prototype</label></div>
-        <div class="columns"><input type="checkbox" />&nbsp;<label>Distinct phase</label></div>
-        <div class="columns"><input type="checkbox" checked />&nbsp;<label>Property</label></div>
-        <div class="columns"><input type="checkbox" />&nbsp;<label>Temperature</label></div>
-        <div class="columns"><input type="checkbox" />&nbsp;<label>Space group</label></div>
-        <div class="columns"><input type="checkbox" />&nbsp;<label>Conditions</label></div>
-        <div class="columns"><input type="checkbox" checked />&nbsp;<label>J. code</label></div>
-        <div class="columns"><input type="checkbox" checked />&nbsp;<label>Year</label></div>
-        <div class="columns"><input type="checkbox" checked />&nbsp;<label>Ref.</label></div>
-    </div>
+        <div class="clmns"><input type="checkbox" id="clmns_entry" />&nbsp;<label for="clmns_entry">ID</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_formula" />&nbsp;<label for="clmns_formula">Formula</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_anon" />&nbsp;<label for="clmns_anon">Anonymous formula</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_proto" />&nbsp;<label for="clmns_proto">Prototype</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_phase" />&nbsp;<label for="clmns_phase">Distinct phase</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_prop" />&nbsp;<label for="clmns_prop">Property</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_value" />&nbsp;<label for="clmns_value">Value</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_t" />&nbsp;<label for="clmns_t">Temperature</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_spg" />&nbsp;<label for="clmns_spg">Space group</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_cond" />&nbsp;<label for="clmns_cond">Conditions</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_rank" />&nbsp;<label for="clmns_rank">Entry rank</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_coden" />&nbsp;<label for="clmns_coden">J. code</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_year" />&nbsp;<label for="clmns_year">Year</label></div>
+        <div class="clmns"><input type="checkbox" id="clmns_bid" />&nbsp;<label for="clmns_bid">Ref.</label></div>
+    </div -->
 
     <div id="usr_tab_absolidix" class="menu_tabs" style="display:none;">
         <br /><br /><br /><br />Redirecting...<br /><br /><br /><br />

@@ -1,5 +1,7 @@
 "use strict";
 
+var wmgui = window.wmgui || {};
+
 wmgui.ptable = {};
 wmgui.ptable.update_selectize = false;
 wmgui.ptable.active_ajax = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
