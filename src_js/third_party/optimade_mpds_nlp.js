@@ -24,33 +24,9 @@ function getMatchAll(inputstr, regexp) {
 	return matches.length ? matches : null;
 }
 
-/*
- * Shim
- */
-if (typeof String.prototype.replaceAll === 'undefined') {
-	String.prototype.replaceAll = function (search, replacement) {
-		return this.replace(new RegExp(search, 'g'), replacement);
-	};
-}
-
-/*
- * Shim
- */
-if (typeof String.prototype.endsWith === 'undefined') {
-	String.prototype.endsWith = function (searchString, position) {
-		const subjectString = this.toString();
-		if (position === undefined || position > subjectString.length)
-			position = subjectString.length;
-		position -= searchString.length;
-		const lastIndex = subjectString.indexOf(searchString, position);
-		return lastIndex !== -1 && lastIndex === position;
-	};
-}
-
 function capitalize(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
 }
-
 
 const OptimadeNLP = function () {
 	/*
@@ -370,7 +346,7 @@ const OptimadeNLP = function () {
 	]; /* exact */
 
 	const periodic_elements_cased = periodic_elements.map(function (x) {
-		return x[0].toUpperCase() + x.slice(1).toLowerCase();
+		return capitalize(x);
 	});
 
 	const periodic_element_names = [

@@ -17,6 +17,10 @@ wmgui.ptable.subphases_button = '';
 wmgui.ptable.vis_fixed = false;
 wmgui.ptable.elements = ['X'].concat(wmutils.periodic_elements_cased);
 
+// patch display keyword unary to elementary
+wmgui.ptable.arity_keys = wmutils.arity_keys.slice();
+wmgui.ptable.arity_keys[1] = 'elementary';
+
 wmgui.ptable.show = function(){
     if (wmgui.ptable.visible)
         return;
@@ -207,7 +211,7 @@ function render_left(data){
     if (data.error)
         return wmgui.notify(data.error);
 
-    const header = '<h4>Reported phases of ' + wmgui.ptable.query.classes + ' ' + wmgui.ptable.query.elements + (wmgui.ptable.query.elements.indexOf('-') == -1 ? '' : ' system') + '</h4>';
+    const header = '<h4>Reported phases of ' + wmgui.ptable.arity_keys[wmutils.arity_keys.indexOf(wmgui.ptable.query.classes)] + ' ' + wmgui.ptable.query.elements + (wmgui.ptable.query.elements.indexOf('-') == -1 ? '' : ' system') + '</h4>';
 
     const parent = document.getElementById('ptable_previews');
     parent.className = "";
