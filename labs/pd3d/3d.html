@@ -38,7 +38,7 @@ font-family:Exo2;src:local('Exo 2 Regular'),local('Exo2-Regular'),url('data:font
 <div id="thumbs"></div>
 <div id="sim_thumbs"></div>
 <div id="legend">Known crystal structures are in red.</div>
-<div id="sim_legend">Hover the binary diagrams for more data or <a target="_parent" id="expander">expand view</a>.</div>
+<div id="sim_legend">Hover the binary diagrams for more data or <a target="_blank" id="expander">expand view</a>.</div>
 
 <!-- POSSIBILITY TO CLOSE FROM IFRAME -->
 <div id="cross" title="Close" class="uielem"></div>
@@ -77,7 +77,7 @@ const local_model_load = false, // only for VRML tests
     model_url = (debug ? 'http://localhost:8522' : 'https://labs.mpds.io/services') + '/model?els=' + target,
     meta_url = (debug ? 'http://localhost:8522' : 'https://labs.mpds.io/services') + '/modelmeta?els=' + target,
     data_server = (window.location.host.indexOf('localhost') === -1) ? 'https://api.mpds.io/v0/search/facet?q=' : 'http://localhost:7070/search/facet?q=',
-    gui_server = (window.location.host.indexOf('localhost') === -1) ? 'https://mpds.io/#entry/' : 'http://localhost:8070/#entry/',
+    //gui_server = (window.location.host.indexOf('localhost') === -1) ? 'https://mpds.io/#entry/' : 'http://localhost:8070/#entry/',
     req_cache = {}, // [els] => answer array
     scale_ratio = 340;
 
@@ -270,7 +270,7 @@ function load_sim_legend(){
                 } catch (err){}
                 if (cur_entry){
                     document.getElementById('sim_legend').style.display = 'block';
-                    document.getElementById('expander').setAttribute('href', gui_server + cur_entry);
+                    document.getElementById('expander').setAttribute('href', '/#entry/' + cur_entry);
                 }
             }
             else if (xhr.status) console.error('HTTP error ' + xhr.status + ' received during retrieving data from the server');
