@@ -182,10 +182,10 @@ th.a5.header, th.a5.headerSortUp, th.a5.headerSortDown{background-position:80% c
 td.a5{font-size:0.9em;letter-spacing:-1px;font-style:italic;}
 
 div.context_msg{display:none;width:70%;margin:0 auto;padding-top:10px;color:#555;font-size:1.25em;text-align:center;}
-#toomuch{margin-bottom:35px;}
+#toomuch{margin-bottom:40px;}
 #loadscroll{margin-bottom:100px;}
 #plthint{margin:0 auto 120px;}
-#plthint > span{display:block;width:100%;margin-bottom:45px;}
+#plthint > span{display:block;width:100%;margin-bottom:45px;font-size:1.15em;}
 #plthint > div{display:inline-block;width:61px;height:60px;margin:0 3%;}
 #plthint > div:hover{transform:scale(1.25);}
 #plthint > div > a{display:block;width:100%;height:100%;background-size:cover;margin:0 auto;opacity:0.8;}
@@ -221,6 +221,7 @@ td.p5 > a.launch_id, td.a6 > a.launch_id{display:inline-block;text-decoration:no
 td.p5 > a.launch_id:hover, td.a6 > a.launch_id:hover{background:#E36868;color:#fff;}
 
 tr.opened td.c1{background-image:url(unlock.png);background-repeat:no-repeat;background-position:98% 50%;}
+tr.deactivated td.c1:after{content:" deactivated";color:#f00;font-style:italic;}
 div.opened div.gallery_img:after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background-image:url(unlock.png);background-repeat:no-repeat;background-position:95% 95%;}
 
 /* COLUMNS */
@@ -411,11 +412,12 @@ body.darkmode--activated #hintsbox_logo{filter:invert(100%);}
 #discovery_enabled, #discovery_disabled{text-align:left;width:90%;margin:0 auto;}
 #discovery_custom_box div.rearrange{user-select:none;display:inline-block;text-align:center;width:46%;color:#fff;background:#bfbfbf;line-height:28px;border:1px solid #bfbfbf;border-radius:4px;cursor:pointer;margin:4px;}
 #discovery_custom_box div.rearrange:hover{background:#FE9A2E;border-color:#FE9A2E;}
-#ml_data, #ab_data, #ab_promise, #pd3d_data{display:none;text-align:center;margin:0 0 15px 3px;color:#555;font-weight:normal;font-size:1.15em;line-height:2em;padding:6px 3px;}
-#ml_data span, #ab_data span, #ab_promise span, #pd3d_data span{display:block;font-size:0.8em;line-height:1.75em;margin-top:2em;}
+div.spinoff_pane{display:none;text-align:center;margin:0 0 15px 3px;color:#555;font-weight:normal;font-size:1.15em;line-height:2em;padding:6px 3px;}
+div.spinoff_pane span{display:block;font-size:0.8em;line-height:1.75em;margin-top:2em;}
 #ml_data{background:#f8f7ff;}
 #ab_data, #ab_promise{background:#f7fbff;}
 #pd3d_data{background:#ffd;}
+#deactivated_data{background:#ffe0e0;}
 #phases_ctx{user-select:none;}
 #phases_ctx span{display:inline-block;background:#ffd;text-align:center;color:#555;font-size:0.95em;line-height:2em;margin:1.5em 0 2em;padding:5px;}
 

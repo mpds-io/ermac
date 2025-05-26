@@ -338,6 +338,9 @@ function register_html(){
     <div id="pd3d_data" class="spinoff_pane">
         <p>Automatically combined phase diagrams</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">The 3d <a href="#search/phase%20diagram%20prism">prisms</a> and <a href="#search/phase%20diagram%20tetrahedron">tetrahedra</a> were automatically combined and rendered by the platform from the suitable <a href="#search/binary%20phase%20diagram">binary</a> and (or) <a href="#search/ternary%20phase%20diagram">ternary</a> phase diagrams.<br /><br /></span>
     </div>
+    <div id="deactivated_data" class="spinoff_pane">
+        <p>This entry was deactivated due to the quality issues detected.</p>
+    </div>
 
     <ul>
         <li id="visualize" class="wmbutton">Visualize</li>

@@ -527,7 +527,7 @@ function switch_control_mode(mode, next_mode, active_abf, active_cde){ // NB (0,
 }
 
 function build_cells(json, header, footer){
-    var cls_map = {7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data'},
+    var cls_map = {7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data', 13: 'deactivated'},
         result_html = '';
     if (header) result_html += header;
 
@@ -563,7 +563,7 @@ function build_cells(json, header, footer){
 }
 
 function build_thumbs(json){
-    var cls_map = {6: 'pd_full', 7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data'},
+    var cls_map = {6: 'pd_full', 7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data', 13: 'deactivated'},
         result_html = '';
 
     if (wmgui.search_type == 2){
@@ -745,6 +745,7 @@ function request_refinement(query_obj, is_heavy){
  * 10 - ab initio entry (P-array) phonon spectra
  * 11 - ab initio data in progress (unproc)
  * 12 - 3d combination of C-diagrams
+ * 13 - deactivated entries
  */
 function open_context(el, launch_ext){
     close_vibox();
@@ -817,6 +818,9 @@ function open_context(el, launch_ext){
 
         } else if (rank == 12){
             $('#pd3d_data, #visualize').show();
+
+        } else if (rank == 13){
+            $('#deactivated_data, #download_bib').show();
         }
         $('#ctx_col > ul > li.d_icon > a').each(function(){
             var fmt = $(this).attr('rel'),
@@ -1553,7 +1557,10 @@ function show_dunit_info(phid, bid, entry){
         }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
 
-            var html = '<h4>' + data.out.formula_html.split(' ')[0] + ' ' + (data.out.spg || '?') + ' ' + (data.out.pearson || '&mdash;') + '</h4><p>This phase was reported in ' + data.out.articles_count + ' article' + (data.out.articles_count > 1 ? 's' : '')  + '.';
+            var mp_data = '';
+            if (data.out.mpid) mp_data = '<h4 style="background:#ddd;margin-top:-7px;">Materials Project <a target="_blank" href="https://materialsproject.org/materials/mp-' + data.out.mpid + '">mp-' + data.out.mpid + '</a></h4>';
+
+            var html = '<h4>' + data.out.formula_html.split(' ')[0] + ' ' + (data.out.spg || '?') + ' ' + (data.out.pearson || '&mdash;') + '</h4>' + mp_data + '<p>This phase was reported in ' + data.out.articles_count + ' article' + (data.out.articles_count > 1 ? 's' : '')  + '.';
             if (data.out.sim_count > 1) html += ' There are <a href="#interlinkage/' + phid + '">' + data.out.sim_count + ' structurally similar phases</a> from other articles.';
             html += '</p>';
             $('#phase_info').html(html);
