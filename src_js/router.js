@@ -124,8 +124,8 @@ function url__entry(arg){
     request_search({'entry': arg}, 'entry ' + arg, true);
     wmgui.search = {}; // mockup to reset previous properties
     wmgui.passive_sim_col = true;
-    //$('#search_field-selectized').val('');
-    //wmgui.multiselects['main'].clear();
+    $('#search_field-selectized').val('');
+    wmgui.multiselects['main'].clear();
     show_interpretation();
 }
 
@@ -134,8 +134,10 @@ function url__entry(arg){
  */
 function url__phase_id(arg){
     wmgui.search_type = 0;
-    //$('#search_field-selectized').val('');
-    //wmgui.multiselects['main'].clear();
+    if (!wmgui.ptable.visible){
+        $('#search_field-selectized').val('');
+        wmgui.multiselects['main'].clear();
+    }
     show_interpretation();
     var phid = parseInt(arg);
     wmgui.search = {'phid': phid};
@@ -176,6 +178,8 @@ function url__phase(arg){
  */
 function url__article(arg){
     wmgui.search_type = 0;
+    $('#search_field-selectized').val('');
+    wmgui.multiselects['main'].clear();
     show_interpretation();
     var bentry = parseInt(arg);
     wmgui.search = {'bid': bentry};

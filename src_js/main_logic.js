@@ -203,7 +203,7 @@ function re_view_request(search_type){
 
     wmgui.search_type = search_type;
     wmgui.search.search_type = search_type;
-    request_search(wmgui.search, pseudo_input.join(" "), true);
+    request_search(wmgui.search, pseudo_input.join(" ").replaceAll(",", " "), true);
 }
 
 function request_search(search, caption, without_history){
@@ -529,15 +529,24 @@ function switch_control_mode(mode, next_mode, active_abf, active_cde){ // NB (0,
 function build_cells(json, header, footer){
     var cls_map = {7: 'ml_data', 8: 'ab_data', 9: 'ab_data', 10: 'ab_data', 11: 'ab_data', 13: 'deactivated'},
         result_html = '';
+
     if (header) result_html += header;
 
     if (wmgui.search_type == 2){
         if (json[0].length != 6){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
 
+        var act_link = '';
+
         $.each(json, function(k, row){
+
+            act_link = '<a class="launch_id" href="#article/' + row[0] + '">Show</a>';
+
             row[0] = parseInt(row[0]);
-            if (row[0] == 999999) row[4] = wmgui.mockyear; // special *ref_id*, only handled in GUI
-            result_html += '<tr id="e__B' + row[0] + '" class="tcell" data-type="B"><td class=c55>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[0] + '</a>]</td><td class=a1>' + row[1] + '</td><td class=a2 title="' + row[2] + '">' + row[2] + '</td><td class=a5>' + row[5] + '</td><td class=c4>' + row[4] + '</td><td class=a6><a class="launch_id" href="#article/' + row[0] + '">Show</a></td></tr>';
+            if (row[0] == 999999){
+                row[4] = wmgui.mockyear; // special *ref_id*, only handled in GUI
+                act_link = '&nbsp;';
+            }
+            result_html += '<tr id="e__B' + row[0] + '" class="tcell" data-type="B"><td class=c55>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[0] + '</a>]</td><td class=a1>' + row[1] + '</td><td class=a2 title="' + row[2] + '">' + row[2] + '</td><td class=a5>' + row[5] + '</td><td class=c4>' + row[4] + '</td><td class=a6>' + act_link + '</td></tr>';
         });
     } else if (wmgui.search_type == 1){
         if (json[0].length != 5){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -572,14 +581,24 @@ function build_thumbs(json){
         json.sort(function(a, b){
             return a[4] > b[4] ? 1 : a[4] < b[4] ? -1 : 0; // pubyear
         });
+
         var title_html = '',
-            full_display = !!wmgui.sid;
+            full_display = !!wmgui.sid,
+            act_link = '';
+
         $.each(json, function(k, row){
+
+            act_link = '<a class="launch_id" href="#article/' + row[0] + '">Show entries</a>';
+
             row[0] = parseInt(row[0]);
-            if (row[0] == 999999) row[4] = wmgui.mockyear; // special *ref_id*, only handled in GUI
+            if (row[0] == 999999){
+                row[4] = wmgui.mockyear; // special *ref_id*, only handled in GUI
+                act_link = 'Too many to show...';
+            }
             if (full_display) title_html = (row[1].length > 60 ? row[1].substr(0, 60) + '&hellip;' : row[1]) + ', <span>' + (row[2].length > 80 ? row[2].substr(0, 80) + '&hellip;' : row[2]) + '</span>';
             else title_html = '<br /><br />&#x1f4d6;'; // book icon
-            result_html += '<div class="gallery_item" id="e__B' + row[0] + '" data-type="B"><div class="gallery_img"><div class="articled">' + title_html + '</div></div><div class="gallery_label"><a class="launch_id" href="#article/' + row[0] + '">Show entries</a><br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[3] + '&rsquo;' + row[4].toString().substr(2, 2) + '</a>]</div></div>';
+
+            result_html += '<div class="gallery_item" id="e__B' + row[0] + '" data-type="B"><div class="gallery_img"><div class="articled">' + title_html + '</div></div><div class="gallery_label">' + act_link + '<br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[3] + '&rsquo;' + row[4].toString().substr(2, 2) + '</a>]</div></div>';
         });
     } else if (wmgui.search_type == 1){
         if (json[0].length != 5){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -1557,12 +1576,15 @@ function show_dunit_info(phid, bid, entry){
         }).done(function(data){
             if (data.error) return wmgui.notify(data.error);
 
-            var mp_data = '';
-            if (data.out.mpid) mp_data = '<h4 style="background:#ddd;margin-top:-7px;">Materials Project <a target="_blank" href="https://materialsproject.org/materials/mp-' + data.out.mpid + '">mp-' + data.out.mpid + '</a></h4>';
+            var html = '<h4>' + data.out.formula_html.split(' ')[0] + ' ' + (data.out.spg || '?') + ' ' + (data.out.pearson || '&mdash;') + '</h4>';
 
-            var html = '<h4>' + data.out.formula_html.split(' ')[0] + ' ' + (data.out.spg || '?') + ' ' + (data.out.pearson || '&mdash;') + '</h4>' + mp_data + '<p>This phase was reported in ' + data.out.articles_count + ' article' + (data.out.articles_count > 1 ? 's' : '')  + '.';
+            if (data.out.mpid) html += '<h4 style="background:#ddd;margin-top:-7px;">Materials Project <a target="_blank" href="https://materialsproject.org/materials/mp-' + data.out.mpid + '">mp-' + data.out.mpid + '</a></h4>';
+
+            html += '<p>';
+            if (data.out.articles_count) html += 'This phase was reported in ' + data.out.articles_count + ' article' + (data.out.articles_count > 1 ? 's' : '')  + '.';
             if (data.out.sim_count > 1) html += ' There are <a href="#interlinkage/' + phid + '">' + data.out.sim_count + ' structurally similar phases</a> from other articles.';
             html += '</p>';
+
             $('#phase_info').html(html);
 
         }).fail(function(xhr, textStatus, errorThrown){
@@ -1593,7 +1615,7 @@ function show_dunit_info(phid, bid, entry){
                 });
                 links_html = links_html.substr(0, links_html.length - 4); // " or "
                 if (citation[0].indexOf(',') !== -1) main_author += ' et al.';
-                citation_html += ' <a href="' + wmgui.refs_endpoint + '?fmt=bib&ref_id=' + bid + '&sid=' + wmgui.sid + '">' + main_author + ', ' + citation[1] + '. <i>' + citation[2] + '</i> <b>(' + citation[3] + ')</b></a>';
+                citation_html += ' <a href="' + wmgui.refs_endpoint + '?fmt=bib&ref_id=' + bid + '&sid=' + wmgui.sid + '">' + main_author + ', ' + citation[1] + '. ' + citation[2] + ' <i>(' + citation[3] + ')</i></a>';
             }
 
             if (bid == 999999){

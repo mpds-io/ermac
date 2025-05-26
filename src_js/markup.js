@@ -55,7 +55,7 @@ function register_html(){
             <thead><tr>
                 <th class="p1">Phase</th>
                 <th class="p2">Space group num.</th>
-                <th class="p3">Exp. entries</th>
+                <th class="p3">Entries</th>
                 <th class="p4">Publications</th>
                 <th class="p5"></th>
             </tr></thead>
@@ -310,7 +310,7 @@ function register_html(){
     <div id="phases_ctx">
         <div class="col_title">Distinct phases</div>
         <br />
-        &nbsp;<input type="checkbox" id="ctx_strict_phases_trigger" checked />&nbsp;<label for="ctx_strict_phases_trigger">other elements and impurities</label>
+        <div style="text-align:center;"><input type="checkbox" id="ctx_strict_phases_trigger" checked />&nbsp;<label for="ctx_strict_phases_trigger">include admixed phases</label></div>
         <!-- br />
         &nbsp;<input type="checkbox" id="ctx_subphases_trigger" />&nbsp;<label for="ctx_subphases_trigger">constituent phases</label -->
         <span>See the <a target="_blank" href="https://github.com/mpds-io/mpds-distinct-phases">public dumps</a> of the distinct phases appeared at least once in the literature.</span>
@@ -345,7 +345,7 @@ function register_html(){
     <ul>
         <li id="visualize" class="wmbutton">Visualize</li>
         <li id="xrpdize" class="wmbutton">Show XRPD</li>
-        <li id="absolidize" class="wmbutton"><span class="active">Simulate</span><span class="disabled">Added to <span class="href">my data</span>.</span></li>
+        <!-- li id="absolidize" class="wmbutton"><span class="active">Simulate</span><span class="disabled">Added to <span class="href">my data</span>.</span></li -->
         <li id="download_pdf" class="d_icon"><a rel="pdf" href="#" target="_blank" title="Get HTML / PDF document" rel="nofollow"></a></li>
         <li id="download_json" class="d_icon"><a rel="json" href="#" target="_blank" title="Get machine-readable JSON file" rel="nofollow"></a></li>
         <li id="download_png" class="d_icon"><a rel="png" href="#" target="_blank" title="Get PNG raster image" rel="nofollow"></a></li>
@@ -684,7 +684,7 @@ function register_html(){
         <li rev="usr_tab_perms">data access</li>
         <li rev="usr_tab_api_key" class="only_regular">API key</li>
         <!-- li rev="usr_tab_clmns">entries table</li -->
-        <li rev="usr_tab_absolidix" class="only_regular only_mpds">my data</li>
+        <!-- li rev="usr_tab_absolidix" class="only_regular only_mpds">my data</li -->
         <li rev="usr_tab_ctrl" style="display:none;" class="admin">management</li>
     </ul>
 

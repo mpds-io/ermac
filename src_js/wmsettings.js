@@ -201,7 +201,7 @@ wmgui.editions = {
         }
     },
     15: {
-        'name': 'Ermac on Ab Solidix',
+        'name': 'Ermac on Absolidix',
         'prod_url': 'https://ermac.absolidix.com',
         'dev_url': 'http://localhost:5560',
         'actions': function(){
