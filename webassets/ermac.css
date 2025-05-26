@@ -182,7 +182,7 @@ th.a5.header, th.a5.headerSortUp, th.a5.headerSortDown{background-position:80% c
 td.a5{font-size:0.9em;letter-spacing:-1px;font-style:italic;}
 
 div.context_msg{display:none;width:70%;margin:0 auto;padding-top:10px;color:#555;font-size:1.25em;text-align:center;}
-#toomuch{margin-bottom:40px;}
+#toomuch{margin-bottom:50px;}
 #loadscroll{margin-bottom:100px;}
 #plthint{margin:0 auto 120px;}
 #plthint > span{display:block;width:100%;margin-bottom:45px;font-size:1.15em;}
