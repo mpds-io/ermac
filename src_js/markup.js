@@ -310,7 +310,7 @@ function register_html(){
     <div id="phases_ctx">
         <div class="col_title">Distinct phases</div>
         <br />
-        <div style="text-align:center;"><input type="checkbox" id="ctx_strict_phases_trigger" checked />&nbsp;<label for="ctx_strict_phases_trigger">include admixed phases</label></div>
+        <div style="text-align:center;"><input type="checkbox" id="ctx_strict_phases_trigger" checked />&nbsp;<label for="ctx_strict_phases_trigger">include phases commonly reported together</label></div>
         <!-- br />
         &nbsp;<input type="checkbox" id="ctx_subphases_trigger" />&nbsp;<label for="ctx_subphases_trigger">constituent phases</label -->
         <span>See the <a target="_blank" href="https://github.com/mpds-io/mpds-distinct-phases">public dumps</a> of the distinct phases appeared at least once in the literature.</span>
@@ -344,7 +344,7 @@ function register_html(){
 
     <ul>
         <li id="visualize" class="wmbutton">Visualize</li>
-        <li id="xrpdize" class="wmbutton">Show XRPD</li>
+        <!-- li id="xrpdize" class="wmbutton">Show XRPD</li -->
         <!-- li id="absolidize" class="wmbutton"><span class="active">Simulate</span><span class="disabled">Added to <span class="href">my data</span>.</span></li -->
         <li id="download_pdf" class="d_icon"><a rel="pdf" href="#" target="_blank" title="Get HTML / PDF document" rel="nofollow"></a></li>
         <li id="download_json" class="d_icon"><a rel="json" href="#" target="_blank" title="Get machine-readable JSON file" rel="nofollow"></a></li>
@@ -469,8 +469,20 @@ function register_html(){
             <li class="fct_props dtypes_props" data-facet="props" data-term="phase diagram">phase diagrams</li>
             <li class="fct_props dtypes_props" data-facet="props" data-term="physical properties">physical properties</li>
             <li class="fct_classes dtypes_classes" data-facet="classes" data-term="peer-reviewed" style="margin-top:15px;">peer-reviewed experimental</li>
-            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="machine-learning">machine-learning</li>
+            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="machine-learning">machine learning</li>
             <li class="fct_classes dtypes_classes" data-facet="classes" data-term="ab initio calculations">ab initio modeling</li>
+        </ul>
+    </div>
+
+    <div id="dtypes_phid" style="display:none;">
+        <div class="col_title">This phase</div>
+        <ul>
+            <li class="fct_props dtypes_props" data-rankfilter="5">crystal structures</li>
+            <li class="fct_props dtypes_props" data-rankfilter="3">phase diagrams</li>
+            <li class="fct_props dtypes_props" data-rankfilter="0,1,2,4,7,8,9,10">physical properties</li>
+            <li class="fct_classes dtypes_classes" data-rankfilter="0,1,2,3,4,5" style="margin-top:15px;">peer-reviewed experimental</li>
+            <li class="fct_classes dtypes_classes" data-rankfilter="7">machine learning</li>
+            <li class="fct_classes dtypes_classes" data-rankfilter="8,9,10">ab initio modeling</li>
         </ul>
     </div>
 
@@ -649,12 +661,12 @@ function register_html(){
     </div>
 
     <div id="factor_form_step_two" style="display:none;">
-        <input class="factor_form_resp" id="factor_form_resp_0" type="text" maxlength="1" />
-        <input class="factor_form_resp" id="factor_form_resp_1" type="text" maxlength="1" />
-        <input class="factor_form_resp" id="factor_form_resp_2" type="text" maxlength="1" />
-        <input class="factor_form_resp" id="factor_form_resp_3" type="text" maxlength="1" />
-        <input class="factor_form_resp" id="factor_form_resp_4" type="text" maxlength="1" />
-        <input class="factor_form_resp" id="factor_form_resp_5" type="text" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_0" type="text" maxlength="1" inputmode="numeric" />
+        <input class="factor_form_resp" id="factor_form_resp_1" type="text" maxlength="1" inputmode="numeric" />
+        <input class="factor_form_resp" id="factor_form_resp_2" type="text" maxlength="1" inputmode="numeric" />
+        <input class="factor_form_resp" id="factor_form_resp_3" type="text" maxlength="1" inputmode="numeric" />
+        <input class="factor_form_resp" id="factor_form_resp_4" type="text" maxlength="1" inputmode="numeric" />
+        <input class="factor_form_resp" id="factor_form_resp_5" type="text" maxlength="1" inputmode="numeric" />
     </div>
 
     <div style="width:150px;margin:25px auto;">

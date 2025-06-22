@@ -486,9 +486,6 @@ function register_events(){
 
     $('#close_ss_dialogue').click(function(){
 
-        $('#ss_custom_box, #overlay').hide();
-        $('div.ss_col > ul').empty();
-
         var x_sort = $('#ss_x > ul > li.ss_x').attr('rel').split('_')[1],
             y_sort = $('#ss_y > ul > li.ss_y').attr('rel').split('_')[1],
             x_op = $('#sops_x > ul > li.sops_x').text(),
@@ -532,6 +529,9 @@ function register_events(){
 
             document.getElementById('visavis_iframe').contentWindow.matrix_order(x_sort, y_sort, x_op, y_op);
         }
+
+        $('#ss_custom_box, #overlay').hide();
+        $('div.ss_col > ul').empty();
     });
 
     $('#close_dc_dialogue').click(function(){
@@ -641,6 +641,16 @@ function register_events(){
             //});
         }
         window.location.hash = wmgui.aug_search_cmd(facet, term);
+    });
+
+    $('#dtypes_phid > ul > li').click(function(){
+        var that = $(this),
+            rankfilter = that.data('rankfilter'),
+            active = that.hasClass('active'),
+            legend = that.text();
+        request_search({'phid': wmgui.search.phid, 'rankfilter': active ? null : rankfilter}, legend + ' of phase ' + wmgui.search.phid, true);
+        $('#dtypes_phid > ul > li').removeClass('active');
+        active ? this.classList.remove('active') : this.classList.add('active');
     });
 
     $(window).scroll(wmgui.debounce(function(){

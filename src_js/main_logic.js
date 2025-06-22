@@ -204,6 +204,7 @@ function re_view_request(search_type){
     wmgui.search_type = search_type;
     wmgui.search.search_type = search_type;
     request_search(wmgui.search, pseudo_input.join(" ").replaceAll(",", " "), true);
+    $('#dtypes_phid > ul > li').removeClass('active');
 }
 
 function request_search(search, caption, without_history){
@@ -230,7 +231,7 @@ function request_search(search, caption, without_history){
         caption = caption.replaceAll('%2F', '/');
 
         if (!data.out.length)
-            return wmgui.notify('No results for ' + caption);
+            return wmgui.notify('No hits for ' + caption);
 
         wmgui.fuzzyout = false;
         if (data.fuzzy_notice){
@@ -1280,11 +1281,11 @@ function show_tooltip(info, forced){
     if (info.view_mode != wmgui.view_mode || (wmgui.visavis_working && !forced) || $('div.modal').is(':visible'))
         return;
 
-    var tooltip_o = $('#' + info.el).position(),
+    var ref = $('#' + info.el).position(),
         tooltip_el = document.getElementById('tooltip');
 
-    tooltip_el.style.left = (tooltip_o.left + info.oleft) + 'px';
-    tooltip_el.style.top = (tooltip_o.top + info.otop) + 'px';
+    tooltip_el.style.left = (ref.left + info.oleft) + 'px';
+    tooltip_el.style.top = (ref.top + info.otop) + 'px';
     tooltip_el.firstChild.innerHTML = info.text;
     document.getElementById('tooltip').style.display = 'block';
 }
@@ -1586,6 +1587,7 @@ function show_dunit_info(phid, bid, entry){
             html += '</p>';
 
             $('#phase_info').html(html);
+            $('#dtypes_phid').show();
 
         }).fail(function(xhr, textStatus, errorThrown){
             if (textStatus != 'abort')

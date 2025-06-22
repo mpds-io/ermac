@@ -6,7 +6,9 @@ function url_redraw_react(){
     var anchors = window.location.hash.substr(1).split('/');
 
     if (!anchors.length) return;
-    $('#overlay, #aetmap, div.modal, div.menu_collateral').hide();
+    $('#overlay, #aetmap, #dtypes_phid, div.modal, div.menu_collateral').hide();
+    $('#dtypes_phid > ul > li').removeClass('active');
+
     try { wmgui.active_ajax.abort() } catch(e){}
     try { wmgui.quick_ajax.abort() } catch(e){}
 
@@ -111,7 +113,7 @@ function url__plot(arg){
     }, 0);
 
     if (wmgui.tooltip_counter < 2 && (plot_type == 'matrix' || plot_type == 'cube')){
-        setTimeout(function(){ show_tooltip(wmgui.tooltips['ss_axes'], true) }, 4000);
+        setTimeout(function(){ show_tooltip(wmgui.tooltips['ss_axes'], true) }, 3000);
     }
 }
 

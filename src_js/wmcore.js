@@ -13,7 +13,7 @@ var wmgui = window.wmgui || {};
  */
 
 $.ajaxSetup({
-	xhrFields: {withCredentials: true}
+    xhrFields: {withCredentials: true}
 });
 
 /**
