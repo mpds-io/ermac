@@ -661,12 +661,12 @@ function register_html(){
     </div>
 
     <div id="factor_form_step_two" style="display:none;">
-        <input class="factor_form_resp" id="factor_form_resp_0" type="text" maxlength="1" inputmode="numeric" />
-        <input class="factor_form_resp" id="factor_form_resp_1" type="text" maxlength="1" inputmode="numeric" />
-        <input class="factor_form_resp" id="factor_form_resp_2" type="text" maxlength="1" inputmode="numeric" />
-        <input class="factor_form_resp" id="factor_form_resp_3" type="text" maxlength="1" inputmode="numeric" />
-        <input class="factor_form_resp" id="factor_form_resp_4" type="text" maxlength="1" inputmode="numeric" />
-        <input class="factor_form_resp" id="factor_form_resp_5" type="text" maxlength="1" inputmode="numeric" />
+        <input class="factor_form_resp" id="factor_form_resp_0" type="number" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_1" type="number" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_2" type="number" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_3" type="number" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_4" type="number" maxlength="1" />
+        <input class="factor_form_resp" id="factor_form_resp_5" type="number" maxlength="1" />
     </div>
 
     <div style="width:150px;margin:25px auto;">
