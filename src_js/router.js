@@ -25,10 +25,10 @@ function url__start(arg){
 }
 
 /**
- * The free-form NLP-based search /#search/arg
+ * A free-form fuzzy search /#search/arg
  * given by the OptimadeNLP wmutils
  */
-function url__search(arg, no_retrieve){
+function url__search(arg, no_sync){
     var query = unescape(arg),
         parsed = wmutils.guess(query);
     //console.log(parsed);
@@ -45,13 +45,13 @@ function url__search(arg, no_retrieve){
     wmgui.search = parsed;
     parsed.search_type = wmgui.search_type;
 
-    if (!no_retrieve) request_search(parsed, query, wmgui.search_type);
+    if (!no_sync) request_search(parsed, query, wmgui.search_type);
 }
 
 /**
- * The parameters-based search /#inquiry/arg
+ * The parameters-based exact search /#inquiry/arg
  */
-function url__inquiry(arg, no_retrieve){
+function url__inquiry(arg, no_sync){
     var inquiry = arg.split("&").map( function(n){ return n = n.split("="), this[n[0]] = n[1], this }.bind({}) )[0];
 
     wmgui.facets.forEach(function(item){
@@ -69,8 +69,8 @@ function url__inquiry(arg, no_retrieve){
     show_interpretation(inquiry);
     delete inquiry.ignored;
 
-    var pseudo_input = [];
-    $.each(inquiry, function(k, v){ pseudo_input.push(v) });
+    var caption_items = [];
+    $.each(inquiry, function(k, v){ caption_items.push(v) });
 
     $('#search_field-selectized').val('');
     wmgui.multiselects['main'].clear();
@@ -79,7 +79,23 @@ function url__inquiry(arg, no_retrieve){
     wmgui.search = inquiry;
     inquiry.search_type = wmgui.search_type;
 
-    if (!no_retrieve) request_search(inquiry, pseudo_input.join(" ").replaceAll(",", " "), wmgui.search_type);
+    if (!no_sync) request_search(inquiry, caption_items.join(" ").replaceAll(",", " "), wmgui.search_type);
+}
+
+/**
+ * The 3 brothers routing exact search into the search_type (TODO?)
+ */
+function url__inquiry_entries(arg){
+    wmgui.search_type = 0;
+    return url__inquiry(arg);
+}
+function url__inquiry_phases(arg){
+    wmgui.search_type = 1;
+    return url__inquiry(arg);
+}
+function url__inquiry_articles(arg){
+    wmgui.search_type = 2;
+    return url__inquiry(arg);
 }
 
 /**

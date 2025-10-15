@@ -24,7 +24,7 @@ wmgui.aug_search_cmd = function(new_fct, new_val){
         if (wmgui.search[checks[i][0]] && new_fct == checks[i][1]){ delete wmgui.search[checks[i][0]]; break; }
     }
 
-    var inquiry_mode = true;
+    var inquiry_mode = true; // a special mode to handle selectized input items
 
     /*$.each(wmgui.inquiries, function(n, fct){
         if (wmgui.search[fct] || fct == new_fct){
@@ -35,23 +35,23 @@ wmgui.aug_search_cmd = function(new_fct, new_val){
 
     if (inquiry_mode){
 
-        var new_search_obj = {};
+        var orepr = {};
 
         $.each(wmgui.facets, function(n, fct){
             if (wmgui.search[fct] && fct == new_fct){
                 if (wmgui.multi_facets.indexOf(fct) !== -1)
-                    new_search_obj[fct] = wmgui.search[fct] + ',' + new_val;
+                    orepr[fct] = wmgui.search[fct] + ',' + new_val;
                 else
-                    new_search_obj[fct] = new_val;
+                    orepr[fct] = new_val;
 
             } else if (wmgui.search[fct]){
-                new_search_obj[fct] = wmgui.search[fct];
+                orepr[fct] = wmgui.search[fct];
 
             } else if (fct == new_fct){
-                new_search_obj[fct] = new_val;
+                orepr[fct] = new_val;
             }
         });
-        return '#inquiry/' + $.param(new_search_obj);
+        return '#inquiry/' + $.param(orepr);
 
     } else {
 
@@ -193,17 +193,18 @@ function show_interpretation(search){
     );
 }
 
+// re-loading without history affection
 function re_view_request(search_type){
-    var pseudo_input = [];
+    var caption_items = [];
     $.each(wmgui.search, function(k, v){
         if (k == 'search_type') return true;
-        pseudo_input.push(v);
+        caption_items.push(v);
     });
-    if (!pseudo_input.length) return;
+    if (!caption_items.length) return;
 
     wmgui.search_type = search_type;
     wmgui.search.search_type = search_type;
-    request_search(wmgui.search, pseudo_input.join(" ").replaceAll(",", " "), true);
+    request_search(wmgui.search, caption_items.join(" ").replaceAll(",", " "), true);
     $('#dtypes_phid > ul > li').removeClass('active');
 }
 
@@ -547,7 +548,7 @@ function build_cells(json, header, footer){
                 row[4] = wmgui.mockyear; // special *ref_id*, only handled in GUI
                 act_link = '&nbsp;';
             }
-            result_html += '<tr id="e__B' + row[0] + '" class="tcell" data-type="B"><td class=c55>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[0] + '</a>]</td><td class=a1>' + row[1] + '</td><td class=a2 title="' + row[2] + '">' + row[2] + '</td><td class=a5>' + row[5] + '</td><td class=c4>' + row[4] + '</td><td class=a6>' + act_link + '</td></tr>';
+            result_html += '<tr id="e__B' + row[0] + '" class="tcell" data-type="B"><td class=c55>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) !== -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[0] + '</a>]</td><td class=a1>' + row[1] + '</td><td class=a2 title="' + row[2] + '">' + row[2] + '</td><td class=a5>' + row[5] + '</td><td class=c4>' + row[4] + '</td><td class=a6>' + act_link + '</td></tr>';
         });
     } else if (wmgui.search_type == 1){
         if (json[0].length != 5){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -563,7 +564,7 @@ function build_cells(json, header, footer){
             var dtype = row[0].substr(0, 1),
                 preview = (row[3] == 4 || row[3] == 5 || row[3] == 6 || row[3] == 9 || row[3] == 10 || row[3] == 12) ? '<span class=launch_v>Show</span>' : ' ', // FIXME? w.r.t. open_context
                 biblio_html = (row[7] == 999999) ? '<td class=cj>&mdash;</td><td class=c4>' + wmgui.mockyear + '</td><td class=c5>&mdash;</td>' :
-                '<td class=cj>' + row[5] + '</td><td class=c4>' + row[6] + '</td><td class=c5>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[7]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[7] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[7] + '" target="_blank" rel="noopener noreferrer">' + row[7] + '</a>]</td>'; // special *ref_id*, only handled in GUI
+                '<td class=cj>' + row[5] + '</td><td class=c4>' + row[6] + '</td><td class=c5>[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[7]) !== -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[7] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[7] + '" target="_blank" rel="noopener noreferrer">' + row[7] + '</a>]</td>'; // special *ref_id*, only handled in GUI
 
             result_html += '<tr id="e__' + row[0] + '" class="tcell ' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><td class=c1>' + row[1] + '</td><td class=cp>' + preview + '</td><td class=c2>' + row[2] + '</td>' + biblio_html + '</tr>';
         });
@@ -599,7 +600,7 @@ function build_thumbs(json){
             if (full_display) title_html = (row[1].length > 60 ? row[1].substr(0, 60) + '&hellip;' : row[1]) + ', <span>' + (row[2].length > 80 ? row[2].substr(0, 80) + '&hellip;' : row[2]) + '</span>';
             else title_html = '<br /><br />&#x1f4d6;'; // book icon
 
-            result_html += '<div class="gallery_item" id="e__B' + row[0] + '" data-type="B"><div class="gallery_img"><div class="articled">' + title_html + '</div></div><div class="gallery_label">' + act_link + '<br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[3] + '&rsquo;' + row[4].toString().substr(2, 2) + '</a>]</div></div>';
+            result_html += '<div class="gallery_item" id="e__B' + row[0] + '" data-type="B"><div class="gallery_img"><div class="articled">' + title_html + '</div></div><div class="gallery_label">' + act_link + '<br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) !== -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[3] + '&rsquo;' + row[4].toString().substr(2, 2) + '</a>]</div></div>';
         });
     } else if (wmgui.search_type == 1){
         if (json[0].length != 5){ wmgui.notify('Rendering error, please try to <a href=javascript:location.reload()>reload</a>'); return ''; }
@@ -635,18 +636,18 @@ function build_thumbs(json){
             var dtype = row[0].substr(0, 1),
                 content,
                 biblio_html = (row[7] == 999999) ? '<br />&mdash;' :
-                '<br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[7]) > -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[7] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[7] + '" target="_blank" rel="noopener noreferrer">' + row[5] + '&rsquo;' + row[6].toString().substr(2, 2) + '</a>]'; // special *ref_id*, only handled in GUI
+                '<br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[7]) !== -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[7] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[7] + '" target="_blank" rel="noopener noreferrer">' + row[5] + '&rsquo;' + row[6].toString().substr(2, 2) + '</a>]'; // special *ref_id*, only handled in GUI
 
             if (dtype == 'P')
                 content = '<div>' + row[2] + '</div>';
             else if (dtype == 'S')
-                content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + '/rd_thumbs/' + row[0].split('-')[0] + '.png" />';
+                content = '<img loading="lazy" alt="' + row[0] + '" src="' + wmgui.static_host + '/rd_thumbs/' + row[0].split('-')[0] + '.png" />';
             else {
                 // FIXME
                 row[2] = row[2].split(';')[0];
                 row[2] = row[2].split(' ')[row[2].split(' ').length - 1];
                 var url_dest = (row[3] == 12) ? (row[2].split('-').length == 3 ? '/prism' : '/tetrahedron') : '/pd_thumbs/' + row[0].split('-')[0];
-                content = '<img alt="' + row[0] + '" src="' + wmgui.static_host + url_dest + '.png" /><p>' + row[2] + '</p>';
+                content = '<img loading="lazy" alt="' + row[0] + '" src="' + wmgui.static_host + url_dest + '.png" /><p>' + row[2] + '</p>';
             }
             result_html += '<div class="gallery_item ' + (cls_map[row[3]] || '') + (row[4] ? ' opened' : '') + '" id="e__' + row[0] + '" data-type="' + dtype + '" data-rank="' + row[3] + '" title="Click for more info"><div class="gallery_img">' + content + '</div><div class="gallery_label">' + row[1] + biblio_html + '</div></div>';
         });
@@ -697,7 +698,7 @@ function request_refinement(query_obj, is_heavy){
                 orepr = {};
 
             $.each(given_search, function(key, val){
-                if (['search_type', 'phid', 'numeric'].indexOf(key) > -1)
+                if (['search_type', 'phid', 'numeric'].indexOf(key) !== -1)
                     return true;
                 else if (found_obj.facet == 'elements' && (key == 'elements' || key == 'formulae'))
                     return true;
@@ -790,7 +791,8 @@ function open_context(el, launch_ext){
         $('#ctx_col').show();
         $('#visualize').attr('data-rank', rank);
         $('#xrpdize').attr('data-rank', 99); // FIXME hack
-        $('#visualize, #xrpdize, #absolidize, div.spinoff_pane, li.d_icon').hide();
+        //$('#visualize, #xrpdize, #absolidize, div.spinoff_pane, li.d_icon').hide();
+        $('#visualize, #xrpdize, div.spinoff_pane, li.d_icon').hide();
 
         open_sim_col(entry, entype, rank);
 
@@ -816,6 +818,7 @@ function open_context(el, launch_ext){
             $('#download_bib, #download_json, #visualize').show();
 
         } else if (rank == 5){
+            //$('#absolidize, #download_bib, #download_pdf, #visualize, #xrpdize, #absolidize, #download_cif, #download_inp, #download_json').show();
             $('#download_bib, #download_pdf, #visualize, #xrpdize, #absolidize, #download_cif, #download_inp, #download_json').show();
 
         } else if (rank == 6){
@@ -851,7 +854,7 @@ function open_context(el, launch_ext){
             $(this).attr('href', link_url);
         });
 
-        (wmgui.mydata_history.indexOf(entry) == -1) ? $('#absolidize').addClass('wmbutton') : $('#absolidize').removeClass('wmbutton');
+        //(wmgui.mydata_history.indexOf(entry) == -1) ? $('#absolidize').addClass('wmbutton') : $('#absolidize').removeClass('wmbutton');
 
         if (launch_ext) launch_db_iframed(rank);
     }
@@ -863,7 +866,7 @@ function open_sim_col(entry, entype, rank){
     $('#sim_col').show();
 
     var cur_obj = {q: entry},
-        allpurpose = ([0, 1, 4, 9].indexOf(rank) > -1);
+        allpurpose = ([0, 1, 4, 9].indexOf(rank) !== -1);
     if (allpurpose) cur_obj.allpurpose = true;
 
     try { wmgui.quick_ajax.abort() } catch(e){}
@@ -1040,7 +1043,7 @@ function start_visavis(plot_type){
     $('div.ctxpanel').hide();
     var toshow = $('#ctxpanel_' + wmgui.visavis_curtype);
     if (toshow.length) toshow.show();
-    if (['matrix', 'cube', 'discovery'].indexOf(wmgui.visavis_curtype) > -1) $('#cmppanel_plots').show();
+    if (['matrix', 'cube', 'discovery'].indexOf(wmgui.visavis_curtype) !== -1) $('#cmppanel_plots').show();
 
     if (wmgui.visavis_working)
         return manage_visavis();
@@ -1114,7 +1117,7 @@ function rebuild_visavis(){
     $('#pltchoice_' + wmgui.visavis_curtype).addClass('embodied');
 
     // ctx reset
-    if (['matrix', 'cube', 'discovery'].indexOf(wmgui.visavis_curtype) > -1)
+    if (['matrix', 'cube', 'discovery'].indexOf(wmgui.visavis_curtype) !== -1)
         update_dc();
 
     if (wmgui.visavis_curtype == 'matrix'){
@@ -1267,7 +1270,7 @@ function show_hints(disabled, res_count){
     var hint = JSON.stringify(cur_obj).replaceAll(' ', '+').replace('\{', '\\{').replace('\}', '\\}');
     $('#apihint span').html(hint).parent().show();
 
-    if (wmgui.search.search_type === 0 && (res_count > 3 || res_count === undefined)){
+    if (wmgui.search_type === 0 && (res_count > 3 || res_count === undefined)){
         $('a.plthint_links').each(function(){
             var that = $(this),
                 plot_type = that.attr('rev');
@@ -1497,7 +1500,7 @@ function update_dc(){
     var title = [],
         orepr = {};
     for (var key in wmgui.search){
-        if (['search_type', 'phid', 'numeric'].indexOf(key) > -1) continue;
+        if (['search_type', 'phid', 'numeric'].indexOf(key) !== -1) continue;
         orepr[key] = wmgui.search[key];
         title.push(wmgui.search[key])
     }

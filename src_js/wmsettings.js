@@ -2,8 +2,9 @@
 
 var wmgui = window.wmgui || {};
 
+wmgui.search = {}; // the main object containing the app state synced to the server
+wmgui.search_type = 0; // 0 = entries, 1 = phases, or 2 = articles (NB copied into the main state object, defines *without_history*)
 wmgui.view_mode = 1; // 1 = intro screen, 2 = results screen
-wmgui.search_type = 0; // 0 = entries, 1 = phases, or 2 = articles
 wmgui.thumbed_display = false;
 wmgui.ctx_strict_phases = ''; // empty string or anything (bool)
 //wmgui.ctx_subphases = ''; // empty string or anything (bool)
@@ -11,9 +12,14 @@ wmgui.ntab_tolerance = 100;
 wmgui.chosen_table_browser = false;
 wmgui.fuzzyout = false;
 wmgui.passive_sim_col = true;
+
 wmgui.active_ajax = null;
 wmgui.quick_ajax = null;
+
+// these are all usual search categories
 wmgui.facets = ['formulae', 'props', 'elements', 'classes', 'lattices', 'sgs', 'protos', 'authors', 'years', 'codens', 'doi', 'aeatoms', 'aetypes', 'geos', 'orgs'];
+
+// these are those categories only accessible from the advanced search menu
 wmgui.inquiries = [                                                     'sgs', 'protos', 'authors', 'years', 'codens', 'doi', 'aeatoms', 'aetypes', 'geos', 'orgs'];
 wmgui.other_facets = wmgui.inquiries.filter(function(item){ return item !== 'aetypes' }); // NOT main search field or NLP-handled
 wmgui.simple_facets = ['formulae', 'props', 'elements', 'lattices', 'sgs', 'protos', 'years', 'codens', 'doi', 'aeatoms', 'geos', 'orgs'];
@@ -26,7 +32,7 @@ wmgui.facet_names = {
     formulae: 'Chemical formulae',
     protos: 'Prototypes',
     sgs: 'Space groups',
-    numeric: 'Numerical search', // NB not a real facet!
+    numeric: 'Numerical search', // NB not a real facet
     authors: 'Authors',
     years: 'Years',
     codens: 'Journal codes',
@@ -36,7 +42,6 @@ wmgui.facet_names = {
     geos: 'Geography',
     orgs: 'Organization'
 };
-wmgui.search = {};
 wmgui.multiselects = {}; // selectize instances, for *wmgui.multi_facets* and *main*
 wmgui.selectize_emit = true;
 wmgui.unfinished_page = false;
@@ -81,7 +86,7 @@ wmgui.welcome_msgs = [
     "The MPDS includes the data extracted from the rare USSR and Japanese journals from 60-es, 70-es, and 80-es. These journals were never online.",
     "A unique feature of the MPDS is the support of the <a href='/#polyhedra'>polyhedral type searches</a>, taking into account the atomic environments."
 ];
-// NB used also in Ermac detection
+// NB this is used also in legacy Ermac detection (FIXME)
 wmgui.api_msg = 'Try <i>e.g.</i> the command below in a terminal. As finished, do not forget to withdraw your API key. See the <a href="https://developer.mpds.io">manual</a> for more details and the <a href="/#formal/api">license</a> for open data listing. <pre style="overflow-x:scroll;margin:1em 0;">curl -H Key:YOUR_API_KEY \'https://api.mpds.io/v0/download/facet?q=&bsol;{"elements":"Ag-K"&bsol;}\'</pre><div class="wmbutton" style="background:#999;border-color:#999;width:150px;margin:0 auto;font-size:0.9em;">Copy to clipboard</div>';
 
 wmgui.bid_history = [];

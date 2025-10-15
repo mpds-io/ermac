@@ -273,7 +273,7 @@ function register_events(){
         launch_db_iframed(this.getAttribute('data-rank'));
     });
 
-    $('#absolidize').click(function(){
+    /*$('#absolidize').click(function(){
 
         if (!$(this).hasClass('wmbutton')) return false;
 
@@ -304,7 +304,7 @@ function register_events(){
             if (textStatus != 'abort')
                 wmgui.notify('Please, make sure <a href="#junction">your access works</a> <br /> and try again');
         });
-    });
+    });*/
 
     $('#refine_col').on('click', 'a.extd_refine', function(){
         var facet = $(this).attr('rel');
@@ -756,17 +756,17 @@ function register_events(){
 
         var csscls = that.attr('class');
 
-        if (csscls.indexOf('numeric') > -1){
+        if (csscls.indexOf('numeric') !== -1){
             window.location.hash = '#hierarchy';
 
-        } else if (csscls.indexOf('authors') > -1 || csscls.indexOf('years') > -1 || csscls.indexOf('codens') > -1 || csscls.indexOf('doi') > -1 || csscls.indexOf('geos') > -1 || csscls.indexOf('orgs') > -1){
+        } else if (csscls.indexOf('authors') !== -1 || csscls.indexOf('years') !== -1 || csscls.indexOf('codens') !== -1 || csscls.indexOf('doi') !== -1 || csscls.indexOf('geos') !== -1 || csscls.indexOf('orgs') !== -1){
             $('#advstab_options li').removeClass('working');
             $('#advstab_options li[rev=advstab_bib]').addClass('working');
             $('div.advstab').hide();
             $('#advstab_bib').show();
             show_advsbox();
 
-        } else if (csscls.indexOf('formulae') > -1 || csscls.indexOf('props') > -1 || csscls.indexOf('elements') > -1 || csscls.indexOf('classes') > -1) {
+        } else if (csscls.indexOf('formulae') !== -1 || csscls.indexOf('props') !== -1 || csscls.indexOf('elements') !== -1 || csscls.indexOf('classes') !== -1) {
             $('#advstab_options li').removeClass('working');
             $('#advstab_options li[rev=advstab_main]').addClass('working');
             $('div.advstab').hide();
@@ -1100,13 +1100,55 @@ function register_events(){
 
     // switch sliders: first row abf
     $('#control_a').click(function(){ // entries
-        re_view_request(0);
+        ///re_view_request(0);
+        var orepr = {};
+        for (var key in wmgui.search){
+            if (['search_type', 'phid'].indexOf(key) !== -1) continue;
+            orepr[key] = wmgui.search[key];
+        }
+
+        wmgui.search_type = 0;
+        wmgui.search.search_type = wmgui.search_type;
+
+        var urlstr = $.param(orepr);
+        if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
+        else                         urlstr += '=';
+
+        window.location.hash = '#inquiry_entries/' + urlstr;
     });
     $('#control_b').click(function(){ // phases
-        re_view_request(1);
+        ///re_view_request(1);
+        var orepr = {};
+        for (var key in wmgui.search){
+            if (['search_type', 'phid'].indexOf(key) !== -1) continue;
+            orepr[key] = wmgui.search[key];
+        }
+
+        wmgui.search_type = 1;
+        wmgui.search.search_type = wmgui.search_type;
+
+        var urlstr = $.param(orepr);
+        if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
+        else                         urlstr += '=';
+
+        window.location.hash = '#inquiry_phases/' + urlstr;
     });
     $('#control_f').click(function(){ // articles
-        re_view_request(2);
+        ///re_view_request(2);
+        var orepr = {};
+        for (var key in wmgui.search){
+            if (['search_type', 'phid'].indexOf(key) !== -1) continue;
+            orepr[key] = wmgui.search[key];
+        }
+
+        wmgui.search_type = 2;
+        wmgui.search.search_type = wmgui.search_type;
+
+        var urlstr = $.param(orepr);
+        if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
+        else                         urlstr += '=';
+
+        window.location.hash = '#inquiry_articles/' + urlstr;
     });
 
     // switch sliders: second row cde
@@ -1116,7 +1158,7 @@ function register_events(){
         if (wmgui.visavis_working){
             var orepr = {};
             for (var key in wmgui.search){
-                if (['search_type', 'phid', 'numeric'].indexOf(key) > -1) continue;
+                if (['search_type', 'phid', 'numeric'].indexOf(key) !== -1) continue;
                 orepr[key] = wmgui.search[key];
             }
             var urlstr = $.param(orepr);
@@ -1136,7 +1178,7 @@ function register_events(){
         if (wmgui.visavis_working){
             var orepr = {};
             for (var key in wmgui.search){
-                if (['search_type', 'phid', 'numeric'].indexOf(key) > -1) continue;
+                if (['search_type', 'phid', 'numeric'].indexOf(key) !== -1) continue;
                 orepr[key] = wmgui.search[key];
             }
             var urlstr = $.param(orepr);
@@ -1153,7 +1195,7 @@ function register_events(){
     $('#control_e').click(function(){ // plotting
         var orepr = {};
         for (var key in wmgui.search){
-            if (['search_type', 'phid', 'numeric'].indexOf(key) > -1) continue;
+            if (['search_type', 'phid', 'numeric'].indexOf(key) !== -1) continue;
             orepr[key] = wmgui.search[key];
         }
         while (true){
