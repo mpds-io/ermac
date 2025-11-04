@@ -145,7 +145,7 @@ wmgui.pdist_endpoint =    wmgui.api_host + '/visavis/pdistribs';
 wmgui.mydata_endpoint =   wmgui.api_host + '/extension/mydata';
 
 wmgui.dd_addr_tpl =       wmgui.api_host + '/download';
-wmgui.mydata_addr =       wmgui.prod ? 'https://absolidix.com' : 'http://localhost:5000';
+wmgui.mydata_addr =       wmgui.prod ? 'https://app.absolidix.com' : 'http://localhost:5000';
 
 wmgui.path_c_entry = '#' + wmgui.api_host + '/download/c?fmt=json&q='
 wmgui.path_s_entry = '#' + wmgui.api_host + '/download/s?fmt=cif&q=';
@@ -164,7 +164,7 @@ wmgui.v_ab_vis_addr =  '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fm
 wmgui.v_pd_3d_addr =   '/labs/pd3d/?';
 
 // remote files commonly used
-wmgui.client_data_addr =  wmgui.static_host + '/wmdata.json?220923';
+wmgui.client_data_addr =  wmgui.gui_host + '/wmdata.json?220923'; // FIXME should be static_host but CSP
 wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
 
 wmgui.edition = null; // NB the edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
@@ -239,12 +239,12 @@ wmgui.elemental_names = {
 
 wmgui.collateral_links = [ // [link_href, link_rel_attr, link_value, _blank]
     ['#', 'my', 'search my publications'],
-    ['#', 'adv', 'start advanced search'],
-    ['#polyhedra', false, 'search polyhedra'],
-    ['#hierarchy', false, 'search physical properties'],
+    ['#', 'adv', 'try advanced search'],
+    ['#polyhedra', false, 'explore polyhedra'],
+    ['#hierarchy', false, 'browse physical properties'],
     [wmgui.static_host + '/labs/mpds-ml-labs/design.html', false, 'design new material', true],
     [wmgui.static_host + '/labs/mpds-ml-labs/props.html', false, 'predict properties for crystal', true],
-    ['#', 'idea', 'get inspiration'],
+    ['#', 'idea', 'get inspired'],
     ['#', 'sod', 'show structure of the day'],
     ['oauth/asm.html', false, 'connect ASM profile', true],
     ['oauth/github.html', false, 'connect GitHub profile', true],

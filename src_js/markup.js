@@ -468,7 +468,7 @@ function register_html(){
             <li class="fct_props dtypes_props" data-facet="props" data-term="crystal structure">crystal structures</li>
             <li class="fct_props dtypes_props" data-facet="props" data-term="phase diagram">phase diagrams</li>
             <li class="fct_props dtypes_props" data-facet="props" data-term="physical properties">physical properties</li>
-            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="peer-reviewed" style="margin-top:15px;">peer-reviewed experimental</li>
+            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="peer-reviewed" style="margin-top:13px;">peer-reviewed experimental</li>
             <li class="fct_classes dtypes_classes" data-facet="classes" data-term="machine-learning">machine learning</li>
             <li class="fct_classes dtypes_classes" data-facet="classes" data-term="ab initio calculations">ab initio modeling</li>
         </ul>
@@ -480,7 +480,7 @@ function register_html(){
             <li class="fct_props dtypes_props" data-rankfilter="5">crystal structures</li>
             <li class="fct_props dtypes_props" data-rankfilter="3">phase diagrams</li>
             <li class="fct_props dtypes_props" data-rankfilter="0,1,2,4,7,8,9,10">physical properties</li>
-            <li class="fct_classes dtypes_classes" data-rankfilter="0,1,2,3,4,5" style="margin-top:15px;">peer-reviewed experimental</li>
+            <li class="fct_classes dtypes_classes" data-rankfilter="0,1,2,3,4,5" style="margin-top:13px;">peer-reviewed experimental</li>
             <li class="fct_classes dtypes_classes" data-rankfilter="7">machine learning</li>
             <li class="fct_classes dtypes_classes" data-rankfilter="8,9,10">ab initio modeling</li>
         </ul>
