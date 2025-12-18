@@ -87,12 +87,12 @@ wmgui.welcome_msgs = [
     "A unique feature of the MPDS is the support of the <a href='/#polyhedra'>polyhedral type searches</a>, taking into account the atomic environments."
 ];
 // NB this is used also in legacy Ermac detection (FIXME)
-wmgui.api_msg = 'Try <i>e.g.</i> the command below in a terminal. As finished, do not forget to withdraw your API key. See the <a href="https://developer.mpds.io">manual</a> for more details and the <a href="/#formal/api">license</a> for open data listing. <pre style="overflow-x:scroll;margin:1em 0;">curl -H Key:YOUR_API_KEY \'https://api.mpds.io/v0/download/facet?q=&bsol;{"elements":"Ag-K"&bsol;}\'</pre><div class="wmbutton" style="background:#999;border-color:#999;width:150px;margin:0 auto;font-size:0.9em;">Copy to clipboard</div>';
+wmgui.api_msg = 'Try to run <i>e.g.</i> the command given below in a terminal. As finished, do not forget to revoke your API key. See the <a href="https://developer.mpds.io">manual</a> for more details and the <a href="/#formal/api">license</a> for open data listing. <pre style="overflow-x:scroll;margin:1em 0;">curl -H Key:YOUR_API_KEY \'https://api.mpds.io/v0/download/facet?q=&bsol;{"elements":"Ag-K"&bsol;}\'</pre><div class="wmbutton" style="background:#999;border-color:#999;width:150px;margin:0 auto;font-size:0.9em;">Copy to clipboard</div>';
 
 wmgui.bid_history = [];
 wmgui.mydata_history = [];
 wmgui.journal_converter = {j2c: function(){}, c2j: function(){}};
-wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'cell parameters - temperature diagram', 'cell parameters - pressure diagram', 'electron energy band structure', 'electron density of states', 'vibrational spectra']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
+wmgui.hy_complex = ['crystalline structure', 'phase diagram', 'electron energy band structure', 'electron density of states', 'vibrational spectra']; // NB check exact match in "props" p2i FIXME 'electron density of states - ab initio calculations'
 
 wmgui.visavis_curtype = 'pie'; // pie, graph, discovery, matrix, cube, qproj, lit, TODO heuristic plot type detection
 wmgui.visavis_ready = false;

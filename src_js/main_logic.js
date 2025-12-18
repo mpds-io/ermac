@@ -598,7 +598,7 @@ function build_thumbs(json){
                 act_link = 'Too many to show...';
             }
             if (full_display) title_html = (row[1].length > 60 ? row[1].substr(0, 60) + '&hellip;' : row[1]) + ', <span>' + (row[2].length > 80 ? row[2].substr(0, 80) + '&hellip;' : row[2]) + '</span>';
-            else title_html = '<br /><br />&#x1f4d6;'; // book icon
+            else title_html = '<b>&#x1f4d6;</b>'; // book icon
 
             result_html += '<div class="gallery_item" id="e__B' + row[0] + '" data-type="B"><div class="gallery_img"><div class="articled">' + title_html + '</div></div><div class="gallery_label">' + act_link + '<br />[<a class="resolve_ref' + ((wmgui.bid_history.indexOf(row[0]) !== -1) ? ' visited' : '') + '" href="' + wmgui.refs_endpoint + '?ref_id=' + row[0] + '&sid=' + wmgui.sid + '&ed=' + wmgui.edition + '" rel="' + row[0] + '" target="_blank" rel="noopener noreferrer">' + row[3] + '&rsquo;' + row[4].toString().substr(2, 2) + '</a>]</div></div>';
         });
@@ -617,12 +617,13 @@ function build_thumbs(json){
         json.sort(function(a, b){
             var dtype_a = a[0].substr(0, 1),
                 dtype_b = b[0].substr(0, 1);
+
             if (dtype_a == 'S'){
                 if (dtype_b == 'S') return a[1] > b[1] ? 1 : a[1] < b[1] ? -1 : 0;
                 return -1;
             }
             if (dtype_a == 'C'){
-                if (dtype_b == 'C') return a[1] > b[1] ? 1 : a[1] < b[1] ? -1 : 0;
+                if (dtype_b == 'C') return a[7] > b[7] ? 1 : a[7] < b[7] ? -1 : 0;
                 if (dtype_b == 'S') return 1;
                 if (dtype_b == 'P') return -1;
             }
@@ -805,7 +806,7 @@ function open_context(el, launch_ext){
                 type: 'GET',
                 url: wmgui.path_pp_ping + entry,
             }).done(function(data){
-                $('#visualize, #download_png').show();
+                $('#visualize, #download_png, #download_json').show();
             }).fail(function(xhr, textStatus, errorThrown){});
 
         } else if (rank == 2){
@@ -1629,7 +1630,7 @@ function show_dunit_info(phid, bid, entry){
             } else {
                 var n_entries = wmgui.thumbed_display ? $('div.gallery_item').length : $('tr.tcell').length;
                 if (n_entries == 1000) n_entries = 'more than ' + n_entries;
-                $('#phase_info').html('<h4>Ref. ' + bid + '</h4><p>We have ' + (n_entries == 1 ? 'one entry' : n_entries + ' entries') + ' from this reference' + citation_html + '.</p>' + (links_html.length ? '<p>In addition, search all data co-authored by ' + links_html + '.</p>' : ''));
+                $('#phase_info').html('<h4>Ref. ' + bid + '</h4><p>We have ' + (n_entries == 1 ? 'one entry' : n_entries + ' entries') + ' from this reference' + citation_html + '.</p>' + (links_html.length ? '<p>Retrieve all data co-authored by ' + links_html + '.</p>' : ''));
             }
 
         }).fail(function(xhr, textStatus, errorThrown){});

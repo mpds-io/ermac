@@ -1779,6 +1779,224 @@ const OptimadeNLP = function () {
 	}
 
 	/*
+	 * Chemical formulae parsing, courtesy of Nathan Leung, MIT license
+	 */
+	function tokenizeInitial(formula, tokens = []) {
+		if (formula.length === 0) {
+			return tokens;
+		}
+
+		// Tokenize parentheses
+		if (formula[0] === '(' || formula[0] === '[') {
+			return tokenizeInitial(formula.substr(1), [
+				...tokens, {
+					type: 'parenthesis',
+					value: 'open',
+				},
+			]);
+		}
+		if (formula[0] === ')' || formula[0] === ']') {
+			return tokenizeAfterElement(formula.substr(1), [
+				...tokens, {
+					type: 'parenthesis',
+					value: 'close',
+				},
+			]);
+		}
+
+		// Tokenize coefficient
+		let num = '';
+		for (let i = 0; i < formula.length; i++) {
+			// If the char is a number
+			if (!isNaN(Number(formula[i]))) {
+				num = num + formula[i];
+			} else {
+				// End loop if char is not a number
+				break;
+			}
+		}
+		// If a coefficient exists
+		if (num !== '') {
+			return tokenizeInitial(formula.substr(num.length), [
+				...tokens, {
+					type: 'coefficient',
+					value: Number(num),
+				},
+			]);
+		}
+
+		// Tokenize element
+		// Check if current char is uppercase letter
+		const char = formula[0];
+		const code = char.charCodeAt(0);
+		if (code >= 65 && code <= 90) {
+			// If next char is a lowercase letter
+			if (formula.length > 1) {
+				const nextChar = formula[1];
+				const nextCode = nextChar.charCodeAt(0);
+				if (nextCode >= 97 && nextCode <= 122) {
+					return tokenizeAfterElement(formula.substr(2), [
+						...tokens, {
+							type: 'element',
+							value: char + nextChar,
+						},
+					]);
+				}
+			}
+			return tokenizeAfterElement(formula.substr(1), [
+				...tokens, {
+					type: 'element',
+					value: char,
+				},
+			]);
+		}
+
+		// If it doesn't match anything
+		throw Error(`There was an error parsing formula. We were able to get to here:\n${JSON.stringify(tokens, null, 2)}
+			\n\nRemaining formula: ${formula}`);
+	}
+
+	/*
+	 * Chemical formulae parsing, courtesy of Nathan Leung, MIT license
+	 */
+	function tokenizeAfterElement(formula, tokens) {
+		if (formula.length === 0) {
+			return tokenizeInitial(formula, tokens);
+		}
+
+		// Tokenize subscript
+		// This is repeated from tokenizeInitial, perhaps
+		// take it out
+		let num = '';
+		for (let i = 0; i < formula.length; i++) {
+			// If the char is a number
+			if (!isNaN(Number(formula[i]))) {
+				num = num + formula[i];
+			} else {
+				// End loop if char is not a number
+				break;
+			}
+		}
+		// If a subscript exists
+		if (num !== '') {
+			return tokenizeInitial(formula.substr(num.length), [
+				...tokens, {
+					type: 'subscript',
+					value: Number(num),
+				},
+			]);
+		}
+
+		// If it's not anything, then pass back to tokenizeInitial
+		return tokenizeInitial(formula, tokens);
+	}
+
+	/*
+	 * Chemical formulae parsing, courtesy of Nathan Leung, MIT license
+	 */
+	function countElements(tokens, elements = {}) {
+		if (tokens.length === 0) {
+			return elements;
+		}
+		// Create keys for each element present in the tokens array
+		if (Object.keys(elements).length === 0) {
+			for (let i = 0; i < tokens.length; i++) {
+				if (tokens[i].type === 'element') {
+					if (typeof elements[tokens[i].value] === 'undefined') {
+						elements[tokens[i].value] = 0;
+					}
+				}
+			}
+		}
+
+		for (let i = 0; i < tokens.length; i++) {
+			if (tokens[i].type === 'coefficient') {
+				return countInGroup(tokens.slice(1), elements, tokens[i].value);
+			} else if (tokens[i].type === 'element') {
+				return countInGroup(tokens, elements);
+			} else if (tokens[i].type === 'parenthesis') {
+				if (tokens[i].value === 'open') {
+					for (let j = i; j < tokens.length; j++) {
+						if (tokens[j].type === 'parenthesis' && tokens[j].value === 'close') {
+							// There will always be a subscript after a parenthetical group
+							if (
+								tokens.length > (j + 1) &&
+								tokens[j].type === 'parenthesis' &&
+								tokens[j].value === 'close'
+							) {
+								if (tokens[j + 1].type === 'subscript') {
+									return countInGroup(tokens.slice(1), elements, tokens[j + 1].value);
+								}
+							}
+							//console.error(JSON.stringify(tokens, null, 2));
+							//console.error(JSON.stringify(elements, null, 2))
+							throw Error('Parenthetical group must have subscript');
+						}
+					}
+					return countInGroup(tokens.slice(1), elements);
+				} else {
+					// Skip closing parenthesis and subscript
+					return countInGroup(tokens.slice(2), elements);
+				}
+			}
+		}
+
+		// If none of the above cases are covered then throw an error
+		throw Error(`There was an error:\n\n${JSON.stringify(tokens, null, 2)}
+			\n\n${JSON.stringify(elements, null, 2)}`);
+	}
+
+	/*
+	 * Chemical formulae parsing, courtesy of Nathan Leung, MIT license
+	 */
+	function countInGroup(tokens, elements, coefficient = 1) {
+		if (tokens.length === 0) {
+			return countElements(tokens, elements);
+		}
+
+		if (tokens[0].type !== 'element') {
+			// If this happens this is likely a mistake, pass back to countElements
+			return countElements(tokens, elements);
+		}
+
+		let i = 0;
+		while (i < tokens.length) {
+			if (tokens[i].type === 'element') {
+				if (tokens.length > (i + 1) && tokens[i + 1].type === 'subscript') {
+					elements[tokens[i].value] += (tokens[i + 1].value * coefficient);
+					i += 2;
+					continue;
+				}
+				elements[tokens[i].value] += coefficient;
+				i++;
+				continue;
+			}
+			break;
+		}
+		return countElements(tokens.slice(i), elements);
+	}
+
+	/*
+	 * Sorting the formulae alphabetically for Optimade
+	 */
+	function sort_formula(text) {
+		let parsed = false;
+		try {
+			parsed = countElements(tokenizeInitial(text));
+		} catch (err) {
+			//console.error(err);
+			return text;
+		}
+		let sorted = '',
+			els = Object.keys(parsed);
+		els.sort();
+		els.forEach(function (el) {
+			sorted += el + (parsed[el] === 1 ? '' : parsed[el]);
+		});
+		return sorted;
+	}
+
+	/*
 	 * Convert MPDS search query object notation into the Optimade filter
 	 */
 	function to_optimade(parsed) {
@@ -1789,7 +2007,7 @@ const OptimadeNLP = function () {
 			else if (categ === 'formulae') {
 				if (is_formula_anonymous(parsed[categ]))
 					filter.push(`chemical_formula_anonymous="${parsed[categ]}"`);
-				else filter.push(`chemical_formula_reduced="${parsed[categ]}"`);
+				else filter.push(`chemical_formula_reduced="${sort_formula(parsed[categ])}"`);
 			} else if (categ === 'elements') {
 				filter.push(`elements HAS ALL "${parsed[categ].split('-').join('","')}"`);
 			} else if (categ === 'props') {
@@ -1813,6 +2031,7 @@ const OptimadeNLP = function () {
 		to_optimade,
 
 		is_formula_anonymous,
+		sort_formula,
 		parse_aeatoms,
 		termify_formulae,
 		is_numeric,
@@ -1830,4 +2049,6 @@ if (typeof module !== 'undefined' && module.exports) {
 	define(function () {
 		return OptimadeNLP;
 	});
+} else if (window !== undefined) {
+	window.OptimadeNLP = OptimadeNLP
 }
