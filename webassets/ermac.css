@@ -128,8 +128,9 @@ div.gallery_img > div{display:table-cell;vertical-align:middle;width:140px;heigh
 div.gallery_img > div:first-letter {font-size:1.25em;text-transform:uppercase;}
 div.gallery_img > div.phased{font-size:1em;}
 div.gallery_img > div.phased:first-letter {font-size:1em;text-transform:none;}
-div.gallery_img > div.articled{vertical-align:top;padding:8px 2px;}
+div.gallery_img > div.articled{vertical-align:middle;padding:8px 2px;}
 div.gallery_img > div.articled > span{color:#777;}
+div.gallery_img > div.articled > b{font-size:2.5em;}
 div.gallery_img > p{position:absolute;top:50px;left:0;width:100%;text-align:center;font-size:1.3em;color:#333;letter-spacing:-1px;white-space:nowrap;}
 div.gallery_img > span{display:table-cell;vertical-align:bottom;}
 div.gallery_img > span > p{background:#fff;line-height:20px;letter-spacing:-0.5px;}
