@@ -83,7 +83,7 @@ function register_html(){
     <div id="loadscroll" class="context_msg">Getting the rest of data...</div>
     <div id="toomuch" class="context_msg">There are <span></span> results not shown &mdash; please, refine the search &mdash; or use the API.</div>
     <div id="plthint" class="context_msg">
-        <span>Try to visualize these entire results as:</span>
+        <span>Try to visualize these results as:</span>
         <div id="plt_pie"><a class="plthint_links" title="Plot pie charts (overview)" rel="nofollow" href="/" rev="pie"></a></div>
         <div id="plt_lit"><a class="plthint_links" title="Plot bar charts (literature)" rel="nofollow" href="/" rev="lit"></a></div>
         <div id="plt_discovery"><a class="plthint_links" title="Search for patterns (PCA)" rel="nofollow" href="/" rev="discovery"></a></div>
@@ -795,8 +795,8 @@ function register_html(){
 <div id="hy_box" class="modal user_dialogue">
     <ul id="hy_options">
         <li rev="hy_scalars" class="working">scalars</li>
-        <li rev="hy_complex">objects and arrays</li>
-        <li rev="hy_textual">textual data</li>
+        <li rev="hy_complex">objects</li>
+        <li rev="hy_arrays">arrays</li>
         <li rev="hy_vis">visualization</li>
     </ul>
 
@@ -808,7 +808,7 @@ function register_html(){
         <div class="cross close_hy_dialogue" style="margin-top:25px;"></div><div style="clear:both;"></div>
         <ul></ul>
     </div>
-    <div id="hy_textual" class="hy_tabs" style="display:none;">
+    <div id="hy_arrays" class="hy_tabs" style="display:none;">
         <div class="cross close_hy_dialogue" style="margin-top:25px;"></div><div style="clear:both;"></div>
         <ul></ul>
     </div>

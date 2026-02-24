@@ -199,7 +199,7 @@ function satisfy_requirements(){
 
         var html_scalars = '',
             html_complex = '',
-            html_textual = '',
+            html_arrays = '',
             counter = 0;
 
         $.each(answer.hy_scalars, function(term, content){
@@ -243,21 +243,21 @@ function satisfy_requirements(){
             term = parseInt(term);
             term = answer.props_ref[term] ? answer.props_ref[term] : answer.props[term];
             counter += 1;
-            html_textual += '<li><a class="dynprop" data-val="' + term + '" href="#inquiry/props=' + term.replace(/ /g, '+') + '">' + term + '</a> (<span class="hy' + counter + '">expand</span>)<ul style="display:none;">';
+            html_arrays += '<li><a class="dynprop" data-val="' + term + '" href="#inquiry/props=' + term.replace(/ /g, '+') + '">' + term + '</a> (<span class="hy' + counter + '">expand</span>)<ul style="display:none;">';
             $.each(content, function(sub_term, sub_content){
                 sub_term = parseInt(sub_term);
                 sub_term = answer.props_ref[sub_term] ? answer.props_ref[sub_term] : answer.props[sub_term];
-                html_textual += '<li><a class="dynprop" data-val="' + sub_term + '" href="#inquiry/props=' + sub_term.replace(/ /g, '+') + '">' + sub_term + '</a><ul style="display:none;">';
+                html_arrays += '<li><a class="dynprop" data-val="' + sub_term + '" href="#inquiry/props=' + sub_term.replace(/ /g, '+') + '">' + sub_term + '</a><ul style="display:none;">';
                 $.each(sub_content, function(n, item){
                     item = parseInt(item);
                     item = answer.props_ref[item] ? answer.props_ref[item] : answer.props[item];
-                    html_textual += '<li><a class="dynprop" data-val="' + item + '" href="#inquiry/props=' + item.replace(/ /g, '+') + '">' + item + '</a></li>';
+                    html_arrays += '<li><a class="dynprop" data-val="' + item + '" href="#inquiry/props=' + item.replace(/ /g, '+') + '">' + item + '</a></li>';
                 });
-                html_textual += '</ul></li>';
+                html_arrays += '</ul></li>';
             });
-            html_textual += '</ul></li>';
+            html_arrays += '</ul></li>';
         });
-        $('#hy_textual > ul').append(html_textual);
+        $('#hy_arrays > ul').append(html_arrays);
 
         wmgui.create_autocomplete({
             selector: 'hy_suggest', minChars: 1, cache: 1,

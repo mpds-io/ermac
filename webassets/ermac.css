@@ -401,14 +401,14 @@ body.darkmode--activated #hintsbox_logo{filter:invert(100%);}
 #hy_box a{text-decoration:none;color:#333;border-bottom:1px solid #333;}
 #hy_box > div > ul > li > ul > li > ul > li{padding-left:32px;font-size:0.85em;line-height:1.7em;}
 #hy_box > div > ul > li > ul > li > ul > li > a{color:#c00;border-bottom:1px solid #c00;}
-#hy_textual span{color:#555;border-bottom:1px dotted #555;}
-#hy_textual a{color:#333 !important;border-bottom:1px solid #333 !important;}
+#hy_arrays span{color:#555;border-bottom:1px dotted #555;}
+#hy_arrays a{color:#333 !important;border-bottom:1px solid #333 !important;}
 #hy_box > div > ul > li > ul > li{padding-left:20px;font-size:0.9em;line-height:1.7em;margin-bottom:10px;}
 #hy_box > div > ul > li{color:#555;padding-left:0;font-size:1.3em;line-height:4.2vh;}
 #hy_box > div > ul > li:last-child{margin-bottom:30px;}
 #hy_box strong.numeric{display:inline-block;float:right;font-size:0.85em;letter-spacing:0.5px;font-weight:normal;cursor:pointer;border-bottom:1px solid #fff;background:#ffd;}
 #hy_box strong.numeric:hover{border-bottom:1px solid #000;}
-#hy_scalars > ul, #hy_complex > ul, #hy_textual > ul{margin:0;padding:0;}
+#hy_scalars > ul, #hy_complex > ul, #hy_arrays > ul{margin:0;padding:0;}
 
 /* NUMERIC AND OTHER BOXES */
 
