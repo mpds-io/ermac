@@ -994,10 +994,11 @@ function launch_db_iframed(rank){
             iframe_src = wmgui.engines_addrs['cifplayer'] + wmgui.path_s_entry + entry, iframe_height = 650;
 
     } else if (entype == 'P'){
-        if (rank == 1)
+        if (rank == 1){
             iframe_src = wmgui.engines_addrs['visavis'] + wmgui.path_pp_plot + entry, iframe_height = 550;
+            wmgui.notify('P-curves are in beta-testing');
 
-        else if (rank == 4)
+        } else if (rank == 4)
             iframe_src = wmgui.engines_addrs['visavis'] + wmgui.path_sd_plot + entry, iframe_height = 550;
 
         else if (rank == 9)
@@ -1018,10 +1019,7 @@ function launch_db_iframed(rank){
 
         else return;
 
-        if (entry.startswith('C3') || entry.startswith('C4'))
-            wmgui.notify('This entry is now in preparation');
-
-        else if (wmgui.entries_messages[entry])
+        if (wmgui.entries_messages[entry])
             wmgui.notify(wmgui.entries_messages[entry]);
     }
 
