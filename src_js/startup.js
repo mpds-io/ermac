@@ -28,7 +28,7 @@ function satisfy_requirements(){
         $.each(wmgui.inquiries, function(m, item){ if (past[item]){   inquiry = true; return false;   } });
 
         if (inquiry) history_html += '<li><a href="#inquiry/' + $.param(past) + '">' + title + '</a></li>';
-        else         history_html += '<li><a href="#search/' + escape(title) + '">' + title + '</a></li>';
+        else         history_html += '<li><a href="#search/' + encodeURIComponent(title) + '">' + title + '</a></li>';
     });
     $('#history ul').append(history_html);
 

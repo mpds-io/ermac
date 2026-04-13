@@ -45,6 +45,50 @@ bash deploy/build_js.sh
 The resulted file `ermac.min.js` is to be included into your webpage (see `example_prod.html`). Alternatively, see [Ermac demo](https://ermac.absolidix.com) which is just a repository branch `gh-pages` compiled by GitHub action and served at the custom domain.
 
 
+## Code architecture
+
+The entire app lives in a global namespace object `window.wmgui`. There is no module system, and the code is intentionally ES5 jQuery-style (some files use ES6+ features and are compiled with `ECMASCRIPT_NEXT`).
+
+**Script load order** (defined in `example_dev.html` and mirrored in `deploy/build_js.sh`):
+
+| File | Role |
+|---|---|
+| `wmsettings.js` | All global state, constants, API endpoint URLs, edition configs, facet definitions |
+| `wmcore.js` | Utility functions, DOM helpers, AJAX wrappers, selectize read/write helpers |
+| `sliders.js` | Numeric range slider UI (noUiSlider-based) |
+| `ptable.js` | Interactive periodic table widget |
+| `router.js` | Hash-based routing — `url__<route>()` functions handle `#search/`, `#inquiry/`, `#phase/`, `#polyhedra/`, etc. |
+| `events.js` | DOM event listeners and `register_events()` |
+| `markup.js` | HTML generation and `register_html()` (injects the full UI into `<body>`) |
+| `main_logic.js` | Core search logic: `request_search()`, display/render functions, `wmgui.notify()`, `wmgui.aug_search_cmd()` |
+| `startup.js` | `satisfy_requirements()` — initializes selectize instances, loads `wmdata.json`, wires autocomplete, triggers initial route |
+| `run.js` | Entry point — calls `assign_edition()`, `register_html()`, `satisfy_requirements()`, and `register_events()` |
+
+**Key concepts:**
+
+- `wmgui.search` — the live search state object, synced with URL hash parameters
+- `wmgui.search_type` — `0` = entries, `1` = phases, `2` = articles
+- `wmgui.facets` — the 15 search categories (formulae, props, elements, classes, lattices, sgs, protos, authors, years, codens, doi, aeatoms, aetypes, geos, orgs)
+- `wmdata.json` — client-side data (properties list, journal CODENs, property hierarchy) fetched at startup from `wmgui.client_data_addr`
+- `wmgui.editions` — multi-tenant config keyed by edition ID (0 = MPDS, 1 = ASM, 10/15/16 = Ermac variants); the active edition is detected from the current hostname
+
+**Embedded sub-apps** (loaded in iframes):
+
+- `webassets/iframe_cifplayer.html` → `webassets/cifplayer.js` — crystal structure 3D viewer
+- `webassets/iframe_visavis.html` → `webassets/visavis.js` — data visualisation engine
+- `labs/pd3d/` — 3D phase diagram viewer (Three.js-based)
+- `labs/view-phonons/` — phonon visualiser
+
+**Third-party libraries** (vendored in `src_js/third_party/` and `third_party/`):
+
+- jQuery, selectize.js, noUiSlider, wNumb, autocomplete.js, darkmode.js, jquery.tablesorter
+- `optimade_mpds_nlp.js` — NLP parser that converts free-text queries to structured facet objects
+
+### No test suite
+
+There are no automated tests. Verify changes by loading `example_dev.html` in a browser and exercising the search and visualisation features manually.
+
+
 ## License
 
 MIT &copy; Evgeny Blokhin, Tilde Materials Informatics

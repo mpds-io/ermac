@@ -1,1 +1,9 @@
+_work
 ermac.min.js
+labs/pd3d/data
+
+.claude
+.opencode
+package.json
+package-lock.json
+/node_modules

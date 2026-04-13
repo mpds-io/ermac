@@ -329,7 +329,7 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
 
         else if (k == 'formulae') val = wmgui.to_formula(val);
 
-        else if (k == 'doi' || k == 'sgs') val = unescape(val);
+        else if (k == 'doi' || k == 'sgs') val = decodeURIComponent(val);
 
         else if (k == 'elements'){
             var els = val.split('-');

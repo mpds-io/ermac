@@ -154,7 +154,7 @@ function register_events(){
 
     $('#search_box').on('click', '#legend a', function(){
         var legend = $(this).text();
-        window.location.hash = '#search/' + escape(legend);
+        window.location.hash = '#search/' + encodeURIComponent(legend);
         return false;
     });
 
@@ -441,7 +441,7 @@ function register_events(){
 
             } else if (locals.name){
                 var names = locals.name.split(' ');
-                window.location.hash = '#inquiry/authors=' + escape(names[names.length - 1]);
+                window.location.hash = '#inquiry/authors=' + encodeURIComponent(names[names.length - 1]);
             }
         }
         return false;

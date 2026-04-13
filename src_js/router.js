@@ -29,7 +29,7 @@ function url__start(arg){
  * given by the OptimadeNLP wmutils
  */
 function url__search(arg, no_sync){
-    var query = unescape(arg),
+    var query = decodeURIComponent(arg),
         parsed = wmutils.guess(query);
     //console.log(parsed);
 
@@ -55,12 +55,12 @@ function url__inquiry(arg, no_sync){
     var inquiry = arg.split("&").map( function(n){ return n = n.split("="), this[n[0]] = n[1], this }.bind({}) )[0];
 
     wmgui.facets.forEach(function(item){
-        if (inquiry[item]) inquiry[item] = unescape(inquiry[item].replaceAll('+', ' ')); // TODO XSS-protection
+        if (inquiry[item]) inquiry[item] = decodeURIComponent(inquiry[item].replaceAll('+', ' '));
     });
 
     // re-inventing serialization for numeric nested arrays
     if (inquiry.numeric){
-        inquiry.numeric = unescape(inquiry.numeric).split(';').map(function(item){ return item.split(',') });
+        inquiry.numeric = decodeURIComponent(inquiry.numeric).split(';').map(function(item){ return item.split(',') });
         inquiry.numeric = inquiry.numeric.filter(function(item){ return item.length == 3 });
         wmgui.search_type = 1; // force phases search type
     }

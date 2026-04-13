@@ -24,55 +24,23 @@ wmgui.aug_search_cmd = function(new_fct, new_val){
         if (wmgui.search[checks[i][0]] && new_fct == checks[i][1]){ delete wmgui.search[checks[i][0]]; break; }
     }
 
-    var inquiry_mode = true; // a special mode to handle selectized input items
+    var orepr = {};
 
-    /*$.each(wmgui.inquiries, function(n, fct){
-        if (wmgui.search[fct] || fct == new_fct){
-            inquiry_mode = true;
-            return false;
-        }
-    });*/
-
-    if (inquiry_mode){
-
-        var orepr = {};
-
-        $.each(wmgui.facets, function(n, fct){
-            if (wmgui.search[fct] && fct == new_fct){
-                if (wmgui.multi_facets.indexOf(fct) !== -1)
-                    orepr[fct] = wmgui.search[fct] + ',' + new_val;
-                else
-                    orepr[fct] = new_val;
-
-            } else if (wmgui.search[fct]){
-                orepr[fct] = wmgui.search[fct];
-
-            } else if (fct == new_fct){
+    $.each(wmgui.facets, function(n, fct){
+        if (wmgui.search[fct] && fct == new_fct){
+            if (wmgui.multi_facets.indexOf(fct) !== -1)
+                orepr[fct] = wmgui.search[fct] + ',' + new_val;
+            else
                 orepr[fct] = new_val;
-            }
-        });
-        return '#inquiry/' + $.param(orepr);
 
-    } else {
+        } else if (wmgui.search[fct]){
+            orepr[fct] = wmgui.search[fct];
 
-        var link_base = '';
-
-        $.each(wmgui.facets, function(n, fct){
-            if (wmgui.search[fct] && fct == new_fct){
-                if (fct == 'classes')
-                    link_base += wmgui.search[fct] + ' ' + new_val + ' ';
-                else
-                    link_base += new_val + ' ';
-
-            } else if (wmgui.search[fct]){
-                link_base += wmgui.search[fct] + ' ';
-
-            } else if (fct == new_fct){
-                link_base += new_val + ' ';
-            }
-        });
-        return '#search/' + link_base.substr(0, link_base.length - 1);
-    }
+        } else if (fct == new_fct){
+            orepr[fct] = new_val;
+        }
+    });
+    return '#inquiry/' + $.param(orepr);
 }
 
 // reading the selectize at the main search input (landing)
@@ -392,7 +360,7 @@ function rebuild_history_box(search, caption){
     if (chk_searches.indexOf(fingerprint) == -1){
         var item;
         if (inquiry) item = '<a href="#inquiry/' + $.param(orepr) + '">' + caption + '</a>';
-        else         item = '<a href="#search/' + escape(caption) + '">' + caption + '</a>';
+        else         item = '<a href="#search/' + encodeURIComponent(caption) + '">' + caption + '</a>';
 
         $('#history ul').prepend('<li>' + wmgui.clean(item) + '</li>');
         search_log.unshift(orepr);
@@ -418,7 +386,7 @@ function show_examples(box, more_examples, fix_rfn_header){
         html += '<li><a href="#search/' + wmutils.termify_formulae(wmgui.cliffhangers[wmgui.cliff_counter]) + '">' + wmgui.cliffhangers[wmgui.cliff_counter].charAt(0).toUpperCase() + wmgui.cliffhangers[wmgui.cliff_counter].slice(1) + '</a></li>';
 
         var legend = wmgui.get_interesting()['text'];
-        html += '<li><a href="#search/' + escape(legend) + '">' + legend.charAt(0).toUpperCase() + legend.slice(1).replace(/\d/g, "&#x208$&;") + '</a></li>';
+        html += '<li><a href="#search/' + encodeURIComponent(legend) + '">' + legend.charAt(0).toUpperCase() + legend.slice(1).replace(/\d/g, "&#x208$&;") + '</a></li>';
     }
     $(box + ' > ul').empty().append(html);
     $(box).show();
@@ -1155,11 +1123,11 @@ function stop_visavis(){
 
 function get_visavis_url(request, type, height){
     if (wmgui.visavis_curtype == 'pie' && !type)
-        return wmgui.engines_addrs['visavis'] + '#' + wmgui.rfn_endpoint + '?q=' + escape(JSON.stringify(request));
+        return wmgui.engines_addrs['visavis'] + '#' + wmgui.rfn_endpoint + '?q=' + encodeURIComponent(JSON.stringify(request));
 
     var height_str = height ? ('&visavis_height=' + height) : '';
 
-    return wmgui.engines_addrs['visavis'] + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + escape(JSON.stringify(request)) + height_str;
+    return wmgui.engines_addrs['visavis'] + '#' + wmgui.vis_endpoint + '/' + (type || wmgui.visavis_curtype) + '?q=' + encodeURIComponent(JSON.stringify(request)) + height_str;
 }
 
 function describe_perms(perms){
@@ -1230,7 +1198,7 @@ function show_advsbox(){
                 if (item == "codens") value = wmgui.journal_converter.c2j(value);
                 else if (item == "doi") value = value.replaceAll('%2F', '/');
 
-                $('#advs_fct_' + item).val(unescape(value.replace(/\+/g, "%20")));
+                $('#advs_fct_' + item).val(decodeURIComponent(value.replace(/\+/g, "%20")));
             } else $('#advs_fct_' + item).val('');
         });
 
@@ -1518,7 +1486,7 @@ function update_dc(){
 
         for (var prop in past){ title.push(past[prop]) }
         title = title.join(" ");
-        cmp_html += '<option value="' + escape(past_str) + '">' + title + '</option>';
+        cmp_html += '<option value="' + encodeURIComponent(past_str) + '">' + title + '</option>';
         count++;
     });
     cmp_html += '<option value="Y">No comparison</option>';
