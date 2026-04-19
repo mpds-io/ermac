@@ -140,6 +140,7 @@ wmgui.phase_endpoint =    wmgui.api_host + '/search/phase';
 wmgui.phph_endpoint =     wmgui.api_host + '/search/phase_phid';
 wmgui.auto_endpoint =     wmgui.api_host + '/search/selectize';
 wmgui.refs_endpoint =     wmgui.api_host + '/download/bib';
+wmgui.wmdata_endpoint =   wmgui.api_host + '/download/wmdata';
 wmgui.vis_endpoint =      wmgui.api_host + '/visavis';
 wmgui.pdist_endpoint =    wmgui.api_host + '/visavis/pdistribs';
 wmgui.mydata_endpoint =   wmgui.api_host + '/extension/mydata';
@@ -162,10 +163,7 @@ wmgui.engines_addrs = {
 wmgui.v_pd_user_addr = '/webassets/pd_stub.html#';
 wmgui.v_ab_vis_addr =  '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
 wmgui.v_pd_3d_addr =   '/labs/pd3d/?';
-
-// remote files commonly used
-wmgui.client_data_addr =  wmgui.gui_host + '/wmdata.json?220923'; // FIXME should be static_host but CSP
-wmgui.aetmap_addr =       wmgui.static_host + '/aets.jpg';
+wmgui.aetmap_addr =    wmgui.static_host + '/aets.jpg';
 
 wmgui.edition = null; // NB the edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
 

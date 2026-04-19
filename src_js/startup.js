@@ -41,7 +41,7 @@ function satisfy_requirements(){
     });
 
     // set client-side data features
-    $.getJSON(wmgui.client_data_addr, function(answer){
+    $.getJSON(wmgui.wmdata_endpoint, function(answer){
 
         var i = 0, len = answer.props_ref.length;
         for (i; i < len; i++){
