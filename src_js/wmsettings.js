@@ -117,6 +117,7 @@ wmgui.gui_host = window.location.protocol + '//' + window.location.host;
 wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
 wmgui.static_host =       'https://mpds.io';
 //wmgui.static_host =       'http://localhost:8070';
+wmgui.app_folder = window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/'));
 
 // below are the main MPDS API endpoints
 wmgui.login_endpoint =    wmgui.api_host + '/users/login';
@@ -156,13 +157,13 @@ wmgui.path_pp_plot = '#https://data.mpds.io/export?fmt=json&q='; // TODO
 wmgui.path_pp_ping = wmgui.prod ? 'https://data.mpds.io/ping?q=' : 'http://localhost:8080/ping?q=';
 
 wmgui.engines_addrs = {
-    'cifplayer': '/webassets/iframe_cifplayer.html',
-    'visavis': '/webassets/iframe_visavis.html'
+    'cifplayer': wmgui.app_folder + '/webassets/iframe_cifplayer.html',
+    'visavis': wmgui.app_folder + '/webassets/iframe_visavis.html'
 }
 
-wmgui.v_pd_user_addr = '/webassets/pd_stub.html#';
-wmgui.v_ab_vis_addr =  '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
-wmgui.v_pd_3d_addr =   '/labs/pd3d/?';
+wmgui.v_pd_user_addr = wmgui.app_folder + '/webassets/pd_stub.html#';
+wmgui.v_ab_vis_addr =  wmgui.app_folder + '/labs/view-phonons/#' + wmgui.api_host + '/download/p?fmt=json&q=';
+wmgui.v_pd_3d_addr =   wmgui.app_folder + '/labs/pd3d/?';
 wmgui.aetmap_addr =    wmgui.static_host + '/aets.jpg';
 
 wmgui.edition = null; // NB the edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
