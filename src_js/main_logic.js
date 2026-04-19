@@ -1627,8 +1627,8 @@ function assign_edition(){
         }
     });
 
-    // for any unknown domain, ASM MPDS is assumed
-    if (!wmgui.edition) run_edition(1);
+    // for any unknown domain, ICDD MPDS is assumed
+    if (!wmgui.edition) run_edition(0);
 
     // for any third-party integrations, id="mpds_native" should not be used
     wmgui.mpds_native = !!document.getElementById("mpds_native");
