@@ -1610,6 +1610,7 @@ function show_dunit_info(phid, bid, entry){
 }
 
 function assign_edition(){
+
     function run_edition(edition_key){
         edition_key = parseInt(edition_key);
         if (!wmgui.editions[edition_key])
@@ -1626,6 +1627,9 @@ function assign_edition(){
         }
     });
 
-    // for any unknown domain
-    if (!wmgui.edition) run_edition(0);
+    // for any unknown domain, ASM MPDS is assumed
+    if (!wmgui.edition) run_edition(1);
+
+    // for any third-party integrations, id="mpds_native" should not be used
+    wmgui.mpds_native = !!document.getElementById("mpds_native");
 }

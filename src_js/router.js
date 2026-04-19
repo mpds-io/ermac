@@ -368,8 +368,64 @@ function url__junction(arg){
 }
 
 /**
- * Products stub
+ * Moved from mpdsgui
  */
 function url__products(arg){
-    window.location.href = wmgui.static_host + '/#products';
+    if (!wmgui.mpds_native)
+        window.location.href = wmgui.static_host + '/#products';
+
+    if (wmgui.edition === 1){
+        // NB no history replacement and no new windows
+        window.location.href = 'https://www.asminternational.org/asm-materials-platform-for-data-science-api';
+
+    } else {
+        $('#overlay').show();
+        window.scrollTo(0, 0);
+        $('#productbox').show();
+    }
+}
+
+/**
+ * Moved from mpdsgui
+ */
+function url__formal(arg){
+    if (!wmgui.mpds_native)
+        window.location.href = wmgui.static_host + '/#formal/' + arg;
+
+    var header = '',
+        addr = '';
+
+    if (arg == 'terms')
+        header = 'Website Terms &amp; Conditions', addr = '/terms.json';
+
+    else if (arg == 'api')
+        header = 'MPDS API Terms &amp; Conditions', addr = '/api.json';
+
+    else if (arg == 'usfed')
+        header = 'Procurement Details', addr = '/usfed.json';
+
+    else if (arg == 'refunds')
+        header = 'Refund Policy', addr = '/refunds.json';
+
+    else if (arg == 'privacy')
+        header = 'Privacy Policy', addr = '/privacy.json';
+
+    else
+        return wmgui.notify('Sorry, unknown document requested');
+
+    wmgui.show_preloader();
+
+    $('#formalbox_navi > ul > li').removeClass('working');
+    $('a[href="#formal/' + arg + '"]').parent().addClass('working');
+
+    $.getJSON(addr, function(answer){
+        var html = '<h2>' + header + '</h2>';
+        $.each(answer, function(n, value){
+            html += '<strong>&sect;' + (n + 1) + '. ' + value.header + '</strong><p>' + value.content + '</p>';
+        });
+        $('#formalbox_content').html(html);
+        $('#formalbox, #overlay').show();
+        window.scrollTo(0, 0);
+        wmgui.hide_preloader();
+    });
 }

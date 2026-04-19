@@ -114,9 +114,8 @@ wmgui.numerics = {
 
 // NB all URLs follow below
 wmgui.gui_host = window.location.protocol + '//' + window.location.host;
-wmgui.api_host =          wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
-wmgui.static_host =       'https://mpds.io';
-//wmgui.static_host =       'http://localhost:8070';
+wmgui.api_host = wmgui.prod ? 'https://api.mpds.io/v0' : 'http://localhost:7070';
+wmgui.static_host = 'https://mpds.io';
 wmgui.app_folder = window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/'));
 
 // below are the main MPDS API endpoints
@@ -166,7 +165,8 @@ wmgui.v_ab_vis_addr =  wmgui.app_folder + '/labs/view-phonons/#' + wmgui.api_hos
 wmgui.v_pd_3d_addr =   wmgui.app_folder + '/labs/pd3d/?';
 wmgui.aetmap_addr =    wmgui.static_host + '/aets.jpg';
 
-wmgui.edition = null; // NB the edition ID (e.g. 0, 1) is determined by a current domain, see *wmgui.editions*
+wmgui.mpds_native = false; // TODO relate to wmgui.edition
+wmgui.edition = null; // NB edition ID (e.g. 0, 1) is determined by a domain
 
 wmgui.editions = {
     0: {
@@ -195,32 +195,8 @@ wmgui.editions = {
             link.href = wmgui.static_host + '/editions/asm/asm.ico';
             document.getElementsByTagName('head')[0].appendChild(link);
         }
-    },
-    10: {
-        'name': 'Ermac on MPDS',
-        'prod_url': 'https://ermac.mpds.io',
-        'dev_url': 'http://localhost:5555',
-        'actions': function(){
-            $('.only_mpds').hide();
-        }
-    },
-    15: {
-        'name': 'Ermac on Absolidix',
-        'prod_url': 'https://ermac.absolidix.com',
-        'dev_url': 'http://localhost:5560',
-        'actions': function(){
-            $('.only_mpds').hide();
-        }
-    },
-    16: {
-        'name': 'Ermac on MatCloud+',
-        'prod_url': 'https://ermac.matcloudplus.com',
-        'dev_url': 'http://localhost:5561',
-        'actions': function(){
-            $('.only_mpds').hide();
-        }
     }
-};
+}
 // NB all URLs are above
 
 wmgui.elemental_names = {
