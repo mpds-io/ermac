@@ -19573,8 +19573,8 @@ var $;
             })),
             xtitle: $mol_data_optional($mol_data_string),
             ytitle: $mol_data_optional($mol_data_string),
-            xlog: $mol_data_nullable($mol_data_boolean),
-            ylog: $mol_data_nullable($mol_data_boolean),
+            xlog: $mol_data_nullable($mol_data_number),
+            ylog: $mol_data_nullable($mol_data_number),
             xrpd: $mol_data_optional($mol_data_boolean),
         });
         class $mpds_visavis_plot_customscatter extends $.$mpds_visavis_plot_customscatter {
