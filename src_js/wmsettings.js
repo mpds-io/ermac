@@ -17,13 +17,13 @@ wmgui.active_ajax = null;
 wmgui.quick_ajax = null;
 
 // these are all usual search categories
-wmgui.facets = ['formulae', 'props', 'elements', 'classes', 'lattices', 'sgs', 'protos', 'authors', 'years', 'codens', 'doi', 'aeatoms', 'aetypes', 'geos', 'orgs'];
+wmgui.facets = ['formulae', 'props', 'elements', 'classes', 'lattices', 'sgs', 'protos', 'authors', 'years', 'codens', 'doi', 'aeatoms', 'aetypes', 'geos', 'orgs', 'wyckoff'];
 
 // these are those categories only accessible from the advanced search menu
-wmgui.inquiries = [                                                     'sgs', 'protos', 'authors', 'years', 'codens', 'doi', 'aeatoms', 'aetypes', 'geos', 'orgs'];
+wmgui.inquiries = [                                                     'sgs', 'protos', 'authors', 'years', 'codens', 'doi', 'aeatoms', 'aetypes', 'geos', 'orgs', 'wyckoff'];
 wmgui.other_facets = wmgui.inquiries.filter(function(item){ return item !== 'aetypes' }); // NOT main search field or NLP-handled
 wmgui.simple_facets = ['formulae', 'props', 'elements', 'lattices', 'sgs', 'protos', 'years', 'codens', 'doi', 'aeatoms', 'geos', 'orgs'];
-wmgui.multi_facets = ['classes', 'authors', 'aetypes'];
+wmgui.multi_facets = ['classes', 'authors', 'aetypes', 'wyckoff'];
 wmgui.facet_names = {
     props: 'Physical properties',
     elements: 'Chemical elements',
@@ -40,7 +40,8 @@ wmgui.facet_names = {
     aeatoms: 'Polyhedron atoms',
     aetypes: 'Polyhedral types',
     geos: 'Geography',
-    orgs: 'Organization'
+    orgs: 'Organization',
+    wyckoff: 'Wyckoff positions'
 };
 wmgui.multiselects = {}; // selectize instances, for *wmgui.multi_facets* and *main*
 wmgui.selectize_emit = true;
@@ -58,25 +59,26 @@ wmgui.cliffhangers = [
     "binary compounds with negative thermal expansion",
     "band gap of hexagonal ZnO",
     "ternary oxides of indium",
-    "microhardness < 0.05",
-    "temperature for metal-nonmetal transition < 10",
-    "thermoelectric figure of merit > 0.5",
+    //"microhardness < 0.05",
+    //"temperature for metal-nonmetal transition < 10",
+    //"thermoelectric figure of merit > 0.5",
     "electronic properties for semiconductor carbides",
-    "c/a > 3, a/b > 3, density < 4",
+    //"c/a > 3, a/b > 3, density < 4",
     "noble gases superconductivity",
     "W-Mo ternary phase diagram",
-    "density < 3 and temperature for congruent melting > 2000",
+    //"density < 3 and temperature for congruent melting > 2000",
     "tetragonal SrTiO&#x2083; phonons",
     "radioactive elements conductivity",
     "O&#x2083;Al&#x2082; elastic properties",
     //"refractive index > 5", // FIXME
     "sidorenkite crystal cell",
-    "birefringence < 0.005 and static permittivity > 7.5",
+    //"birefringence < 0.005 and static permittivity > 7.5",
     "phase diagrams from ab initio literature",
-    "adiabatic bulk modulus > 250 and isothermal bulk modulus > 250",
+    //"adiabatic bulk modulus > 250 and isothermal bulk modulus > 250",
     "magnetic properties of binary compounds",
     "radioactive binary compounds",
-    "binary frank-kasper type"
+    "binary frank-kasper type",
+    "liquidus projection phase diagrams"
 ];
 wmgui.welcome_msgs = [
     "The distinct phases is the central concept at the MPDS. Thanks to it, the crystal structures are linked to the phase diagrams and physical properties. Any distinct phase is uniquely determined by its chemical formula, space group, and Pearson symbol <i>e.g.</i> <a href='/#phase/CuAl2/140/tI12'>CuAl2 140 tI12</a>.",
@@ -101,7 +103,7 @@ wmgui.visavis_terminating = false;
 wmgui.visavis_starting = false; // only used by an old engine, to delete TODO
 
 wmgui.numerics = {
-    // first 8 are *pseudo_numerics*, client_prop_id > 5000
+    // these first 8 below are *pseudo_numerics*, client_prop_id > 5000
     'volume': [5001, '&#8491;<sup>3</sup>', 3, 10000, 1],
     'density':[5002, 'Mg/m<sup>3</sup>', 0.1, 30, 0.1],
     'a--b':   [5003, false, 0.1, 10, false, '<i>a/b</i>'],

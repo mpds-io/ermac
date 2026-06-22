@@ -42,7 +42,7 @@ Given your JRE works, compilation is done as follows:
 bash deploy/build_js.sh
 ```
 
-The resulted file `ermac.min.js` is to be included into your webpage (see `example_prod.html`). Alternatively, see [Ermac demo](https://ermac.absolidix.com) which is just a repository branch `gh-pages` compiled by GitHub action and served at the custom domain.
+The resulted file `ermac.min.js` is to be included into your webpage (see `example_prod.html`). Alternatively, see [Ermac demo](https://mpds-io.github.io/ermac) which is just a repository branch `gh-pages` compiled by GitHub action.
 
 
 ## Code architecture

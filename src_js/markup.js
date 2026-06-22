@@ -92,7 +92,7 @@ function register_html(){
         <div id="plt_cube"><a class="plthint_links" title="Plot ternaries cube" rel="nofollow" href="/" rev="cube"></a></div>
     </div>
 
-    <div id="apihint" class="context_msg">Get full machine-readable data using API: curl -H Key:<a href="#modal/menu">YOUR_API_KEY</a> 'https://api.mpds.io/v0/download/facet?q=<span></span>&amp;fmt=json'</div>
+    <div id="apihint" class="context_msg"><span>Get full machine-readable data using API:</span><br />curl -H Key:<a href="#modal/menu">YOUR_API_KEY</a> 'https://api.mpds.io/v0/download/facet?q=<kbd></kbd>&amp;fmt=json'</div>
 
     <!-- div id="fdwidget" class="context_msg"></div -->
 </div>
@@ -596,8 +596,13 @@ function register_html(){
         </div>
         <div class="advs advs_sgs">
             <div class="advs_capt">Space group</div>
-            <input type="text" id="advs_fct_sgs" class="advs_input" rel="sgs" maxlength="20" spellcheck="false" /><!-- simple autocomplete -->
+            <input type="text" id="advs_fct_sgs" class="advs_input" rel="sgs" maxlength="10" spellcheck="false" /><!-- simple autocomplete -->
             <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Fm-3m</a> or <a href="#" tabindex="-1">225</a></div>
+        </div>
+        <div class="advs advs_wyckoff">
+            <div class="advs_capt">Wyckoff positions</div>
+            <select id="advs_fct_wyckoff" autocomplete="false"></select><!-- multiselect autocomplete -->
+            <div class="advs_legend" data-multiselects="wyckoff"><i>e.g.</i> <a href="#" tabindex="-1">4a, 4b</a></div>
         </div>
         <div class="advs advs_protos">
             <div class="advs_capt">Prototype</div>
@@ -862,7 +867,7 @@ function register_html(){
     <div id="close_numericbox" class="cross" style="margin:12px 8px 8px 0;"></div>
     <ul></ul>
     <div id="numericbox_triggers" style="margin-top:10px;">
-        <a href="#hierarchy" title="Add new property range" style="display:inline-block;width:20px;height:20px;font-size:35px;line-height:20px;color:#ccc;text-decoration:none;margin-left:150px;border:2px solid #ccc;border-radius:15px;">+</a>
+        <a href="#hierarchy" title="Add new property range">+</a>
         <div id="numericbox_do_trigger" class="wmbutton" title="Search" style="margin-left:325px;">&#x23ce;</div>
         <div id="numericbox_drop_trigger" class="wmbutton" title="Clear all fields">&#x232b;</div>
     </div>

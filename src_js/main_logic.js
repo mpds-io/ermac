@@ -119,7 +119,6 @@ wmgui._selectize_write = function($this, name, search_obj){
             }
         }
 
-        // numerics
         if (given_search.numeric) $this.display('numeric', 'range search');
 
     } else name = [name];
@@ -1235,7 +1234,7 @@ function show_hints(disabled, res_count){
     delete cur_obj.search_type;
 
     var hint = JSON.stringify(cur_obj).replaceAll(' ', '+').replace('\{', '\\{').replace('\}', '\\}');
-    $('#apihint span').html(hint).parent().show();
+    $('#apihint kbd').html(hint).parent().show();
 
     if (wmgui.search_type === 0 && (res_count > 3 || res_count === undefined)){
         $('a.plthint_links').each(function(){
