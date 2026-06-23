@@ -203,7 +203,8 @@ div.context_msg{display:none;width:70%;margin:0 auto;padding-top:10px;color:#555
 #plt_matrix > a{background:url(plots.gif) -205px 0 no-repeat;}
 #plt_cube > a{width:70px !important;background:url(plots.gif) -265px 0 no-repeat;}
 
-#apihint{font-weight:normal;color:#888;font-size:1.15em;line-height:1.5em;margin-bottom:50px;padding:20px 5px 30px;background:#ebffd6;overflow-wrap:break-word;}
+#apihint{font-weight:normal;color:#888;font-size:1.15em;line-height:1.5em;margin-bottom:50px;padding:20px 5px 30px;background:#ebffd6;overflow-wrap:break-word;position:relative;}
+#apihint:after{content:'';position:absolute;top:0;left:50%;width:0;height:0;border:16px solid transparent;border-bottom-color:#ebffd6;border-top:0;margin-left:-16px;margin-top:-16px;}
 #apihint span{color:#000;}
 #apihint kbd{color:#c00;}
 #apihint a{text-decoration:none;color:#c00;border-bottom:1px solid #c00;}
