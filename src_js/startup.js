@@ -222,7 +222,7 @@ function satisfy_requirements(){
                     //console.log('---------' + item + ' ' + prop);
                     html_scalars += '<li><a class="dynprop" data-val="' + prop + '" href="#inquiry/props=' + prop.replace(/ /g, '+') + '">' + prop + '</a>';
                     if (specs){
-                        html_scalars += '<strong class="numeric" title="Numeric search" rel="' + prop + '">' + (specs[0] || '') + ' &nbsp;[' + specs[1] + ' &mdash; ' + specs[2] + ']&nbsp;&#x1F50D;</strong>';
+                        html_scalars += '<strong class="numeric" title="Numeric search" rel="' + prop + '">' + (specs[0] || '') + ' &nbsp;[' + specs[1] + ' &#8596; ' + specs[2] + ']&nbsp;&#x1F50D;</strong>';
                         wmgui.numerics[prop] = [item, specs[0], specs[1], specs[2], specs[3]]; // prop_name: [client_prop_id, units, min, max, ?step, ?origname]
                     }
                     html_scalars += '</li>';

@@ -621,14 +621,14 @@ function register_html(){
         </div>
 
         <div id="crtab">
-            <div>Lattice <i>a</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="alat">&#8491;  &nbsp;[1.5 &mdash; 20]&nbsp;&#x1F50D;</strong></div>
-            <div><i>a</i>/<i>b</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="a--b"> &nbsp;[0.1 &mdash; 10]&nbsp;&#x1F50D;</strong></div>
-            <div>Lattice <i>b</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="blat">&#8491;  &nbsp;[1.5 &mdash; 20]&nbsp;&#x1F50D;</strong></div>
-            <div><i>b</i>/<i>c</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="b--c"> &nbsp;[0.1 &mdash; 10]&nbsp;&#x1F50D;</strong></div>
-            <div>Lattice <i>c</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="clat">&#8491;  &nbsp;[1.5 &mdash; 20]&nbsp;&#x1F50D;</strong></div>
-            <div><i>c</i>/<i>a</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="c--a"> &nbsp;[0.1 &mdash; 10]&nbsp;&#x1F50D;</strong></div>
-            <div>Cell volume, &nbsp;<strong class="numeric" title="Numeric search" rel="volume">&#8491;<sup>3</sup>  &nbsp;[3 &mdash; 10<sup>4</sup>]&nbsp;&#x1F50D;</strong></div>
-            <div>Density, &nbsp;<strong class="numeric" title="Numeric search" rel="density"> Mg/m<sup>3</sup>  &nbsp;[0.1 &mdash; 30]&nbsp;&#x1F50D;</strong></div>
+            <div>Lattice <i>a</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="alat">&#8491;  &nbsp;[1.5 &#8596; 20]&nbsp;&#x1F50D;</strong></div>
+            <div><i>a</i>/<i>b</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="a--b"> &nbsp;[0.1 &#8596; 10]&nbsp;&#x1F50D;</strong></div>
+            <div>Lattice <i>b</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="blat">&#8491;  &nbsp;[1.5 &#8596; 20]&nbsp;&#x1F50D;</strong></div>
+            <div><i>b</i>/<i>c</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="b--c"> &nbsp;[0.1 &#8596; 10]&nbsp;&#x1F50D;</strong></div>
+            <div>Lattice <i>c</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="clat">&#8491;  &nbsp;[1.5 &#8596; 20]&nbsp;&#x1F50D;</strong></div>
+            <div><i>c</i>/<i>a</i>, &nbsp;<strong class="numeric" title="Numeric search" rel="c--a"> &nbsp;[0.1 &#8596; 10]&nbsp;&#x1F50D;</strong></div>
+            <div>Cell volume, &nbsp;<strong class="numeric" title="Numeric search" rel="volume">&#8491;<sup>3</sup>  &nbsp;[3 &#8596; 10<sup>4</sup>]&nbsp;&#x1F50D;</strong></div>
+            <div>Density, &nbsp;<strong class="numeric" title="Numeric search" rel="density"> Mg/m<sup>3</sup>  &nbsp;[0.1 &#8596; 30]&nbsp;&#x1F50D;</strong></div>
         </div>
 
     </div>
