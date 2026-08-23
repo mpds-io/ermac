@@ -41,7 +41,7 @@ wmgui.facet_names = {
     aetypes: 'Polyhedral types',
     geos: 'Geography',
     orgs: 'Organization',
-    wyckoff: 'Wyckoff positions'
+    wyckoff: 'Wyckoff search' // also positions and sequence
 };
 wmgui.multiselects = {}; // selectize instances, for *wmgui.multi_facets* and *main*
 wmgui.selectize_emit = true;

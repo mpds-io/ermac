@@ -41,7 +41,12 @@ function satisfy_requirements(){
     });
 
     // set client-side data features
-    $.getJSON(wmgui.wmdata_endpoint, function(answer){
+    $.ajax({
+        url: wmgui.wmdata_endpoint,
+        type: 'GET'
+        //data: {nocache: Math.floor(Math.random() * 1000)}
+
+    }).done(function(answer){
 
         var i = 0, len = answer.props_ref.length;
         for (i; i < len; i++){
@@ -120,6 +125,13 @@ function satisfy_requirements(){
                         var term = (wmgui.multiselects['aetypes'].read()['aetypes'] || "").split(', ').pop();
                         show_aetmap(term);
                         if ($('#aet_limit').is(':checked')) $('#aet_limit').trigger('click');
+
+                    } else if (fct == 'wyckoff'){
+                        var terms = (wmgui.multiselects['wyckoff'].read()['wyckoff'] || "").split(',').map(function(x){ return x.trim() });
+                        if (terms && terms[0] && terms.length > 1){
+                            var cmp = wmgui.is_wyckoff_position(terms[0]);
+                            if (!terms.every(function(x){ return cmp === wmgui.is_wyckoff_position(x) })) wmgui.notify('Wyckoff sequence and positions are mutually exclusive');
+                        }
                     }
                 },
                 onItemRemove: function(value){
@@ -307,6 +319,10 @@ function satisfy_requirements(){
         setInterval(rotate_interesting, 2000);
 
         window.location.hash ? url_redraw_react() : window.location.replace('#start');
+
+    }).fail(function(xhr, textStatus, errorThrown){
+        console.error(errorThrown);
+        throw new Error("Failed to load GUI");
     });
 
     // set server-side data features

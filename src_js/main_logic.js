@@ -650,7 +650,7 @@ function request_refinement(query_obj, is_heavy){
         delete given_search['is_heavy'];
 
         if (given_search.classes){ // no whitespace in multiple classes
-            classes_chk = given_search.classes.split(',').map(function(i){ return i.trim() });
+            classes_chk = given_search.classes.split(',').map(function(x){ return x.trim() });
             given_search.classes = classes_chk.join(',');
         }
 

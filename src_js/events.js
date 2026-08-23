@@ -160,7 +160,7 @@ function register_events(){
 
     $('div.advs_legend > a').click(function(){
         var that = $(this),
-            legend = that.text(),
+            legend = that.attr('rel') || that.text(),
             multiselects = that.parent().data('multiselects');
 
         if (multiselects){

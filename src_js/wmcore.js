@@ -205,6 +205,10 @@ wmgui.get_random_term = function(sequence){
     return sequence[ Math.floor(Math.random() * sequence.length) ];
 }
 
+wmgui.is_wyckoff_position = function(input){
+    return /^[1-9]/.test(input);
+}
+
 /**
  * Generate random sequences
  */
@@ -334,7 +338,7 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
         else if (k == 'elements'){
             var els = val.split('-');
             cur_nlen = els.length;
-            val = els.map(function(i){ return i.charAt(0).toUpperCase() + i.slice(1).toLowerCase() }).join(', ');
+            val = els.map(function(x){ return x.charAt(0).toUpperCase() + x.slice(1).toLowerCase() }).join(', ');
 
         } else if (k == 'classes'){
             val = val.split(',').map(function(x){ return x.trim() }).join(', ');
@@ -356,6 +360,14 @@ wmgui.get_interpretation = function(search, facet_names, num_database){
                     va = parseInt(parts[parts.length - 1]);
                 return x.replace(/\d{1,2}\-vertex/, "CN&nbsp;=&nbsp;" + va);
             }).join(', ');
+
+        } else if (k == 'wyckoff'){
+            if (wmgui.is_wyckoff_position(val)){
+                facet_names[k] = 'Wyckoff positions';
+            } else {
+                facet_names[k] = 'Wyckoff sequence';
+                val = val.replace(/\d/g, function(x){ return ["&#x2070;", "&#x00B9;", "&#x00B2;", "&#x00B3;", "&#x2074;", "&#x2075;", "&#x2076;", "&#x2077;", "&#x2078;", "&#x2079;"][x] });
+            }
 
         } else if (k == 'numeric'){
             var out = '';

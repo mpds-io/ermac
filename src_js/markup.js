@@ -339,7 +339,7 @@ function register_html(){
         <p>Automatically combined phase diagrams</p><span class="extd href">Show more info...</span><span class="legend" style="display:none">The 3d <a href="#search/phase%20diagram%20prism">prisms</a> and <a href="#search/phase%20diagram%20tetrahedron">tetrahedra</a> were automatically combined and rendered by the platform from the suitable <a href="#search/binary%20phase%20diagram">binary</a> and (or) <a href="#search/ternary%20phase%20diagram">ternary</a> phase diagrams.<br /><br /></span>
     </div>
     <div id="deactivated_data" class="spinoff_pane">
-        <p>This entry was deactivated due to the quality issues detected.</p>
+        <p>This entry was deactivated due to the quality issue detected.</p>
     </div>
 
     <ul>
@@ -600,9 +600,9 @@ function register_html(){
             <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Fm-3m</a> or <a href="#" tabindex="-1">225</a></div>
         </div>
         <div class="advs advs_wyckoff">
-            <div class="advs_capt">Wyckoff positions</div>
+            <div class="advs_capt">Wyckoff search</div>
             <select id="advs_fct_wyckoff" autocomplete="false"></select><!-- multiselect autocomplete -->
-            <div class="advs_legend" data-multiselects="wyckoff"><i>e.g.</i> <a href="#" tabindex="-1">4a, 4b</a></div>
+            <div class="advs_legend" data-multiselects="wyckoff"><i>e.g.</i> <a href="#" tabindex="-1">4a, 4b</a> or <a href="#" tabindex="-1" rel="dc2a">dc&#x00B2;a</a></div>
         </div>
         <div class="advs advs_protos">
             <div class="advs_capt">Prototype</div>
@@ -610,7 +610,7 @@ function register_html(){
             <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Ca2Nb2O7 cF88 227</a> or <a href="#" tabindex="-1">D51</a></div>
         </div>
         <div class="advs advs_aetypes">
-            <div class="advs_capt">Polyhedral type</div>
+            <div class="advs_capt">Polyhedral types</div>
             <select id="advs_fct_aetypes" autocomplete="false"></select><!-- multiselect autocomplete -->
             <div class="advs_legend" data-multiselects="aetypes"><i>e.g.</i> <a href="#" tabindex="-1">octahedron 6-vertex</a>, <span>see <a href="#polyhedra" class="link_adjuster" style="color:#c00;border-bottom:1px solid #c00;">all polyhedra</a></span></div>
         </div>
@@ -630,7 +630,6 @@ function register_html(){
             <div>Cell volume, &nbsp;<strong class="numeric" title="Numeric search" rel="volume">&#8491;<sup>3</sup>  &nbsp;[3 &#8596; 10<sup>4</sup>]&nbsp;&#x1F50D;</strong></div>
             <div>Density, &nbsp;<strong class="numeric" title="Numeric search" rel="density"> Mg/m<sup>3</sup>  &nbsp;[0.1 &#8596; 30]&nbsp;&#x1F50D;</strong></div>
         </div>
-
     </div>
 
     <div id="advstab_triggers">

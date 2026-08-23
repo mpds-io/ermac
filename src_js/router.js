@@ -225,15 +225,11 @@ function url__modal(arg){
 
     if (arg == "login"){
         if (wmgui.sid) return window.location.replace('#modal/menu');
-        //if (wmgui.sid) return window.location.replace('#start'); // for Matcloud
 
         // edition-based OAuth login (mpdsgui only)
         if (wmgui.edition == 1){
             return window.location.replace('oauth/asm.html'); // NB history replacement
-
-        } /* else if (wmgui.edition == 16){
-            return window.location.replace('oauth/matcloud.html');
-        } */
+        }
         show_modal(arg);
 
     } else if (arg == "restore" || arg == "factor"){
@@ -418,7 +414,13 @@ function url__formal(arg){
     $('#formalbox_navi > ul > li').removeClass('working');
     $('a[href="#formal/' + arg + '"]').parent().addClass('working');
 
-    $.getJSON(addr, function(answer){
+    $.ajax({
+        url: addr,
+        type: 'GET',
+        data: {nocache: Math.floor(Math.random() * 1000)},
+        beforeSend: wmgui.show_preloader
+
+    }).always(wmgui.hide_preloader).done(function(answer){
         var html = '<h2>' + header + '</h2>';
         $.each(answer, function(n, value){
             html += '<strong>&sect;' + (n + 1) + '. ' + value.header + '</strong><p>' + value.content + '</p>';
@@ -427,5 +429,6 @@ function url__formal(arg){
         $('#formalbox, #overlay').show();
         window.scrollTo(0, 0);
         wmgui.hide_preloader();
-    });
+
+    }).fail(function(xhr, textStatus, errorThrown){});
 }
