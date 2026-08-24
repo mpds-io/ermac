@@ -206,7 +206,7 @@ wmgui.get_random_term = function(sequence){
 }
 
 wmgui.is_wyckoff_position = function(input){
-    return /^[1-9]/.test(input);
+    return /^[1-9]/.test(input.trim());
 }
 
 /**
