@@ -1,9 +1,11 @@
-"use strict";
+/**
+ * Ermac UI markup: injects the full application HTML into <body>.
+ */
 
-var wmgui = window.wmgui || {};
-
-function register_html(){
-    $('body').append(`
+export function register_html() {
+  document.body.insertAdjacentHTML(
+    'beforeend',
+    `
 <div id="notifybox">Web-browser is either busy or not supported: try to <a href="javascript:location.reload()" rel="nofollow">restart</a></div>
 
 <div id="preloader"><div></div></div>
@@ -877,5 +879,6 @@ function register_html(){
 <!-- CROSS-SITE COMMS -->
 <iframe id="comms" src="https://app.absolidix.com/comms.html" style="width:0;height:0;border:none;position:absolute;"></iframe>
 <!-- iframe id="comms" src="http://localhost:5000/comms.html" style="width:0;height:0;border:none;position:absolute;"></iframe -->
-`);
+    `,
+  );
 }

@@ -12,21 +12,19 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup JAVA
-        uses: actions/setup-java@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
-          check-latest: true
+          python-version: '3.x'
 
       - name: Run per se
-        run: bash deploy/build_js.sh
+        run: python3 deploy/build_js.py
         shell: bash
 
       - name: Save files
         run: |
           mkdir dist
-          cp ermac.min.js src_js/third_party/jquery.min.js dist
+          cp ermac.min.js dist
           cp -r webassets oauth crystvis labs dist
           cp example_prod.html dist/index.html
 
