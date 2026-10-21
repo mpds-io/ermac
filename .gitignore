@@ -7,3 +7,8 @@ labs/pd3d/data
 package.json
 package-lock.json
 /node_modules
+
+# parity testing
+parity/reference/
+parity/out/
+parity/__pycache__/run_parity.cpython-312.pyc

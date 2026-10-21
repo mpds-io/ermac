@@ -25,14 +25,49 @@ the MPDS cookie flags: for full account testing prefer a non-"localhost" origin
 (e.g. http://127.0.0.1:5555), which makes the GUI talk to the MPDS API directly.
 """
 
+import argparse
+import hashlib
 import http.server
-import urllib.request
+import os
+import sys
+import threading
 import urllib.error
+import urllib.request
 
 HOST = "127.0.0.1"
 PORT = 7070
 REMOTE = "https://api.mpds.io/v0"
 TIMEOUT = 20
+
+# NB parity testing mode: with --cache DIR, responses are stored on disk and
+# replayed on subsequent identical requests, making comparative test runs
+# deterministic regardless of the live data changes at the MPDS server
+CACHE_DIR = None
+_log_lock = threading.Lock()
+
+
+def cache_lookup(method, path):
+    if not CACHE_DIR:
+        return None
+    key = hashlib.sha1(("%s %s" % (method, path)).encode()).hexdigest()
+    cache_path = os.path.join(CACHE_DIR, key)
+    if not os.path.exists(cache_path):
+        return None
+    with open(cache_path, "rb") as f:
+        status = int(f.readline().strip())
+        content_type = f.readline().strip().decode()
+        payload = f.read()
+    return status, content_type, payload
+
+
+def cache_store(method, path, status, content_type, payload):
+    if not CACHE_DIR:
+        return
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    key = hashlib.sha1(("%s %s" % (method, path)).encode()).hexdigest()
+    with open(os.path.join(CACHE_DIR, key), "wb") as f:
+        f.write(("%d\n%s\n" % (status, content_type)).encode())
+        f.write(payload)
 
 HOP_BY_HOP = {
     "connection",
@@ -70,6 +105,21 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         url = REMOTE + self.path
         body = None
 
+        cached = cache_lookup(method, self.path)
+        if cached is not None:
+            status, content_type, payload = cached
+            try:
+                self.send_response(status)
+                self._cors()
+                if content_type:
+                    self.send_header("Content-Type", content_type)
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+            return
+
         headers = {}
         for header in ("Content-Type", "Origin", "Key", "Accept-Language"):
             value = self.headers.get(header)
@@ -103,6 +153,10 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         else:
             payload = ('{"error": "dev proxy: %s"}' % last_error).encode()
 
+        cache_store(method, self.path, status,
+                    (response_headers or {}).get("Content-Type", ""),
+                    payload)
+
         try:
             self.send_response(status)
             self._cors()
@@ -129,12 +183,29 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         self._forward("GET")
 
     def log_message(self, fmt, *args):
-        print("proxy: %s - %s" % (self.address_string(), fmt % args))
+        # NB a single write() must carry the whole line: concurrent request
+        # threads otherwise interleave and corrupt the log (which the parity
+        # suite relies on), especially with unbuffered stdout
+        with _log_lock:
+            sys.stdout.write("proxy: %s - %s\n" % (self.address_string(), fmt % args))
 
 
 if __name__ == "__main__":
-    server = http.server.ThreadingHTTPServer((HOST, PORT), ProxyHandler)
-    print("dev API proxy: http://%s:%d -> %s" % (HOST, PORT, REMOTE))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--port", type=int, default=PORT)
+    parser.add_argument(
+        "--cache",
+        default=None,
+        help="cache API responses on disk and replay them, see parity/run_parity.py",
+    )
+    args = parser.parse_args()
+    if args.cache:
+        CACHE_DIR = args.cache
+    server = http.server.ThreadingHTTPServer((HOST, args.port), ProxyHandler)
+    print(
+        "dev API proxy: http://%s:%d -> %s%s"
+        % (HOST, args.port, REMOTE, " (cached: %s)" % CACHE_DIR if CACHE_DIR else "")
+    )
     try:
         server.serve_forever()
     except KeyboardInterrupt:

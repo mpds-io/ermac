@@ -83,7 +83,10 @@ export function register_events() {
     });
   }
 
-  $('#search_trigger').addEventListener('click', function () {
+  // NB an <a href="#"> element: like the old jQuery return false,
+  // the default navigation must be suppressed explicitly
+  $('#search_trigger').addEventListener('click', function (event) {
+    event.preventDefault();
     var query = wmgui.multiselects['main'].read(),
       val = $('#search_field-selectized')
         ? $('#search_field-selectized').value
@@ -214,7 +217,10 @@ export function register_events() {
     // TODO? delete wmgui.search
   });
 
-  $('#advsearch_init_trigger').addEventListener('click', function () {
+  // NB an <a href="#"> element: like the old jQuery return false,
+  // the default navigation must be suppressed explicitly
+  $('#advsearch_init_trigger').addEventListener('click', function (event) {
+    event.preventDefault();
     $$('#advstab_options li').forEach(function (li) {
       li.classList.remove('working');
     });

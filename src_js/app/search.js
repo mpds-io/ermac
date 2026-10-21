@@ -183,6 +183,10 @@ wmgui._selectize_write = function (multiselect, name, search_obj) {
 };
 
 wmgui._selectize_display = function (multiselect, facet, term) {
+  // NB consume one random value, exactly like the old implementation did
+  // (Math.floor(Math.random() * 1000) ids), to keep the global random
+  // sequence aligned between page loads, e.g. for the rotating legends
+  Math.random();
   const option_data = { facet: facet, label: term };
   multiselect.addOption(option_data);
   multiselect.addItem(option_data.id);
@@ -284,7 +288,12 @@ export async function request_search(search, caption, without_history) {
   if (wmgui.thumbed_display) {
     var db = $('#databrowser');
     db.className = 'thumbed';
-    db.innerHTML = '<tr><td>' + build_thumbs(data.out) + '</td></tr>';
+    // NB the old jQuery .append('<tr>...') put the tr directly under the
+    // table (no tbody wrapper), so the DOM stays identical
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + build_thumbs(data.out) + '</td>';
+    db.innerHTML = '';
+    db.appendChild(tr);
     slide_down($('#results'), 250);
   } else {
     var db = $('#databrowser');

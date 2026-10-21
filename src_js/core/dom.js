@@ -36,7 +36,11 @@ export function show(els, display) {
   if (!els) return;
   if (!Array.isArray(els)) els = [els];
   els.forEach(function (el) {
-    if (el) el.style.display = display || 'block';
+    if (!el) return;
+    // NB restore the natural display, like jQuery .show(): only set an
+    // explicit value when the element is still hidden by the stylesheet
+    el.style.display = '';
+    if (!isVisible(el)) el.style.display = display || 'block';
   });
 }
 
@@ -157,23 +161,26 @@ export function window_height() {
 }
 
 /**
- * Simple animations, mimicking jQuery slideUp/slideDown/fadeOut
+ * Simple animations, mimicking jQuery slideUp/slideDown/fadeOut.
+ * NB the ticks are setTimeout-driven (like the old jQuery fx loop), NOT
+ * requestAnimationFrame: compositor-driven frames do not advance while a
+ * headless virtual-time budget runs, freezing rAF animations mid-flight.
  */
 
 function animate(el, from, to, duration, on_finish) {
   const start = performance.now();
   el.style.overflow = 'hidden';
-  function step(now) {
-    const progress = Math.min((now - start) / duration, 1);
+  function step() {
+    const progress = Math.min((performance.now() - start) / duration, 1);
     el.style.height = from + (to - from) * progress + 'px';
-    if (progress < 1) requestAnimationFrame(step);
+    if (progress < 1) setTimeout(step, 16);
     else {
       el.style.overflow = '';
       el.style.height = '';
       if (on_finish) on_finish();
     }
   }
-  requestAnimationFrame(step);
+  setTimeout(step, 16);
 }
 
 export function slide_up(el, duration, on_finish) {
@@ -201,9 +208,15 @@ export function fade_out(el, duration, on_finish) {
     if (on_finish) on_finish();
     return;
   }
-  el.style.transition = 'opacity ' + (duration || 250) / 1000 + 's';
-  el.style.opacity = '0';
-  setTimeout(on_finish || function () {}, duration || 250);
+  const start_opacity = parseFloat(el.style.opacity || '1');
+  const start = performance.now();
+  function step() {
+    const progress = Math.min((performance.now() - start) / (duration || 250), 1);
+    el.style.opacity = String(start_opacity * (1 - progress));
+    if (progress < 1) setTimeout(step, 16);
+    else if (on_finish) on_finish();
+  }
+  setTimeout(step, 16);
 }
 
 /**

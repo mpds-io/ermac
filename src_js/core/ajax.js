@@ -61,18 +61,18 @@ export function ajax(settings) {
 }
 
 /**
- * URL query serialization, mimicking jQuery $.param():
- * encodeURIComponent with spaces encoded as '+'.
+ * URL query serialization, mimicking jQuery $.param() exactly:
+ * encodeURIComponent per key/value, null and undefined emitted as "key=",
+ * NB spaces stay as %20 (the vendored jQuery does NOT convert them to '+').
  */
 
 export function param(obj) {
   const parts = [];
   for (const key in obj) {
-    if (obj[key] === undefined || obj[key] === null) continue;
     parts.push(
       encodeURIComponent(key) +
         '=' +
-        encodeURIComponent(String(obj[key])).replace(/%20/g, '+'),
+        encodeURIComponent(obj[key] == null ? '' : obj[key]),
     );
   }
   return parts.join('&');

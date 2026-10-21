@@ -66,7 +66,10 @@ export function make_sortable(data_table, options) {
         return entry.col === index;
       });
       if (found)
-        th.classList.add(found.dir === 1 ? 'headerSortDown' : 'headerSortUp');
+        // NB parity with the old vendored jquery.tablesorter: it applied
+        // sortCSS = [cssDesc, cssAsc], i.e. ascending order was marked
+        // with the headerSortDown class, and vice versa
+        th.classList.add(found.dir === 1 ? 'headerSortUp' : 'headerSortDown');
     });
   }
 

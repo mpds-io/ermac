@@ -10,7 +10,7 @@ concatenates them into a single classic script:
   3. `import ... from ...` statements are stripped (names resolve at script scope);
   4. `export function`/`export const` keep their declarations, `export default <name>` is dropped.
 
-Supported import syntax (single line each):
+Supported import syntax (single- or multi-line, trailing commas allowed):
   import { a, b } from './x.js';
   import name from './x.js';        (default export)
 """
@@ -32,51 +32,50 @@ VENDORED = [
 ]
 
 IMPORT_RE = re.compile(
-    r"""^\s*import\s+(?:([\w$]+)\s*,?\s*)?(?:\{([^}]*)\})?\s*from\s+['"]([^'"]+)['"];\s*$"""
+    r"""^[ \t]*import\s+(?:([\w$]+)\s*,?\s*)?(?:\{([^}]*)\})?\s*from\s+['"]([^'"]+)['"]\s*;[ \t]*\n?""",
+    re.M,
 )
-EXPORT_DEFAULT_RE = re.compile(r"""^\s*export\s+default\s+([\w$]+)\s*;\s*$""")
+EXPORT_DEFAULT_RE = re.compile(
+    r"""^[ \t]*export\s+default\s+([\w$]+)\s*;[ \t]*\n?""", re.M
+)
 EXPORT_DECL_RE = re.compile(
-    r"""^\s*export\s+(?=(?:async\s+)?function\b|const\b|let\b|var\b|class\b)"""
+    r"""^[ \t]*export\s+(?=(?:async\s+)?function\b|const\b|let\b|var\b|class\b)""",
+    re.M,
 )
+EXPORT_BLOCK_RE = re.compile(r"""^[ \t]*export\s*\{""", re.M)
 
 
 class Module(object):
     def __init__(self, path):
         self.path = path
         with open(path, "r", encoding="utf-8") as f:
-            self.lines = f.read().splitlines()
+            source = f.read()
         self.imports = []  # (default_alias, [named], resolved_path)
         self.default_export = None  # local name of `export default`
         self.exports = set()
-        self.emitted = None
 
-        kept = []
-        for line in self.lines:
-            import_match = IMPORT_RE.match(line)
-            if import_match:
-                default_alias, named, target = import_match.groups()
-                named = [n.strip() for n in (named or "").split(",") if n.strip()]
-                self.imports.append((default_alias, named, self.resolve(target)))
-                continue
+        for match in IMPORT_RE.finditer(source):
+            default_alias, named, target = match.groups()
+            named = [n.strip() for n in (named or "").split(",") if n.strip()]
+            self.imports.append((default_alias, named, self.resolve(target)))
 
-            default_match = EXPORT_DEFAULT_RE.match(line)
-            if default_match:
-                self.default_export = default_match.group(1)
-                continue
+        body = IMPORT_RE.sub("", source)
 
-            decl_match = EXPORT_DECL_RE.match(line)
-            if decl_match:
-                self.exports.add(declare_name(line))
-                kept.append(EXPORT_DECL_RE.sub("", line, count=1))
-                continue
+        if EXPORT_BLOCK_RE.search(body):
+            raise SyntaxError(
+                "Named export blocks are not supported in %s" % path
+            )
 
-            if re.match(r"^\s*export\s*\{", line):
-                raise SyntaxError(
-                    "Named export blocks are not supported: %s in %s" % (line, path)
-                )
+        default_match = EXPORT_DEFAULT_RE.search(body)
+        if default_match:
+            self.default_export = default_match.group(1)
+            body = EXPORT_DEFAULT_RE.sub("", body, count=1)
 
-            kept.append(line)
-        self.body = "\n".join(kept)
+        for match in EXPORT_DECL_RE.finditer(body):
+            self.exports.add(declare_name(body, match.start()))
+
+        body = EXPORT_DECL_RE.sub("", body)
+        self.body = body
 
     def resolve(self, target):
         if not target.startswith("."):
@@ -89,14 +88,16 @@ class Module(object):
         return resolved
 
 
-def declare_name(line):
+def declare_name(source, offset):
+    """Determine the identifier declared by an export statement at `offset`."""
+    rest = source[offset:]
     m = (
-        re.match(r"\s*(?:export\s+)?(?:async\s+)?function\s+([\w$]+)", line)
-        or re.match(r"\s*(?:export\s+)?(?:const|let|var)\s+([\w$]+)", line)
-        or re.match(r"\s*(?:export\s+)?class\s+([\w$]+)", line)
+        re.match(r"\s*export\s+(?:async\s+)?function\s+([\w$]+)", rest)
+        or re.match(r"\s*export\s+(?:const|let|var)\s+([\w$]+)", rest)
+        or re.match(r"\s*export\s+class\s+([\w$]+)", rest)
     )
     if not m:
-        raise SyntaxError("Cannot determine the exported name: %s" % line)
+        raise SyntaxError("Cannot determine the exported name at: %r" % rest[:60])
     return m.group(1)
 
 
@@ -169,6 +170,15 @@ def bundle():
         parts.append("")
 
     result = "\n".join(parts) + "\n"
+
+    # NB guard: no ES module syntax may survive the stripping
+    leftover = re.search(r"^[ \t]*(?:import|export)\b", result, re.M)
+    if leftover:
+        context = result[leftover.start():leftover.start() + 120]
+        raise SyntaxError(
+            "unstripped ES module syntax survived in the bundle:\n%r" % context
+        )
+
     with open(TARGET, "w", encoding="utf-8") as f:
         f.write(result)
 
