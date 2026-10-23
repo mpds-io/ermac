@@ -66,18 +66,25 @@ libraries in the fixed `VENDORED` order. Consequences:
 
 ## Compatibility contracts
 
-- **CSS class contracts of the replaced plugins** are relied on by
-  `webassets/ermac.css` and by host-page CSS: `.selectize-control`,
-  `.selectize-input` (+ state classes `items`, `full`/`not-full`, `has-items`,
+- **The DOM and CSS contracts of the replaced plugins** are relied on by
+  `webassets/ermac.css` and by host-page CSS and scripts. The vanilla
+  components are ports of the *vendored* selectize 0.12 and jquery.tablesorter
+  2.0 (read them in git history: `git show master:src_js/third_party/...`),
+  not of their documentation. Search box: `.selectize-control.multi.plugin-*`,
+  `.selectize-input` (+ `items`, `full`/`not-full`, `has-items`,
   `has-options`, `focus`, `input-active`, `dropdown-active`),
-  `.selectize-dropdown(-content)`, item `data-facet`/`data-term`, the
-  `<select id>-selectized` input id; table `tablesorter`, `th.header`,
-  `headerSortUp`/`headerSortDown`. Keep the names **and** the moments they
-  are toggled.
+  `.selectize-dropdown(-content)` positioned with explicit
+  `width`/`top`/`left`, chips with `data-facet`/`data-term`/`data-value`,
+  options with `data-selectable`/`data-value`, the hidden original
+  `<select multiple class="selectized">` mirroring the chips as
+  `<option selected>`, the `<select id>-selectized` input of
+  `type="select-multiple"` auto-sized to its text. Table: `tablesorter`,
+  `th.header`, `headerSortUp`/`headerSortDown` (NB ascending is marked
+  `headerSortDown`). Keep the names **and** the moments they are toggled.
 - **Request encoding is part of the server contract.** The server was written
   against jQuery `$.param` and jQuery `.data()`: values that were numbers must
   stay numbers (`data-rankfilter="5"` read via `getAttribute` is the string
-  `"5"` — a known regression), nested objects/arrays serialize the jQuery way,
+  `"5"`: convert it, as `events.js` now does), nested objects/arrays serialize the jQuery way,
   form posts stay `application/x-www-form-urlencoded`. The parity API layer
   compares method, path, sorted query and POST body.
 - **localStorage keys** (`wm_search_log_v5`, `wm`, `bid_history`,
@@ -91,34 +98,52 @@ libraries in the fixed `VENDORED` order. Consequences:
 
 ## jQuery-migration traps (each has bitten this codebase)
 
-- `return false` from a handler does **nothing** now: neither
-  `addEventListener` nor `on()` in `core/dom.js` honor it. jQuery's
-  `return false` meant `preventDefault()` + `stopPropagation()`. About 26 handlers in
-  `events.js` still end with `return false`; call
-  `event.preventDefault()` / `stopPropagation()` explicitly where it matters,
-  notably on `<a href="#">`.
+- `return false` from a handler: `on()` in `core/dom.js` honors it like
+  jQuery (`preventDefault()` + `stopPropagation()`), plain
+  `addEventListener` handlers do **not**. Several handlers in `events.js`
+  still end with `return false` from the jQuery era; where one is a direct
+  listener, call `event.preventDefault()` / `stopPropagation()` explicitly.
+- Delegation order: jQuery ran the delegated handlers of one root deepest
+  element first, and a `stopPropagation()` in an inner handler skipped the
+  outer ones (the row "Show" button must not also open the row). `on()`
+  reproduces this; separate `addEventListener` calls on one root do not.
 - Event order with a real mouse is `mousedown → (blur of the focused input) →
   mouseup → click`. A widget that closes on blur loses the click unless its
-  `mousedown` calls `preventDefault()` (selectize and tablesorter both did; the
-  stand-ins do not yet: suggestion clicks and header-click focus loss).
-- `show()`/`hide()` in `core/dom.js` emulate jQuery (restore the stylesheet
-  display); do not replace them with `style.display = 'block'`.
+  `mousedown` calls `preventDefault()`: selectize options and chips, and
+  tablesorter headers (`cancelSelection`), all do; keep it that way.
+- Selectize deferred `onFocus` to the next tick and blurred on any document
+  mousedown outside the control; app code that writes chips while the box is
+  focused relies on that timing (the dropdown opened by the write is closed
+  again by the deferred refresh).
+- **Enter is not handled by the multiselect**: the vendored selectize has its
+  Enter handler commented out, so Enter bubbles to the `#search_holder` and
+  document handlers, which run the search with the chips **and the raw
+  typed text** (a highlighted suggestion is not picked). Never consume Enter
+  in the component.
+- `show()`/`hide()`/`toggle_display()` in `core/dom.js` implement jQuery 3:
+  `hide()` remembers the inline display, `show()` restores it or falls back
+  to the tag's default display (`list-item` for `<li>`...), and only the
+  element itself is considered, not its ancestors. Do not replace them with
+  `style.display = 'block'`.
 - jQuery `.data('x')` coerced `"5"` to `5`, `"true"` to `true`, JSON to
   objects; `getAttribute` / `dataset` return strings.
-- An event handler that stops propagation changes what *other* handlers see:
-  the old Enter on a highlighted suggestion both added the item **and** reached
-  the `#search_holder` / document Enter handlers that run the search.
+- `ajax()` rejects with `{aborted: true}` only for `.abort()`; a network
+  failure is `{aborted: false, status: 0}` and must reach the "Connection to
+  server is lost" notification, like jQuery's `'error'` vs `'abort'`.
 - `Math.random` drives visible content (legend, examples, tooltips' random
   picks, `control_e` plot type). Code that consumes random values in a
   different order shifts all of them; parity seeds the sequence but cannot
   realign it.
+- `wmgui.clean()` is the only sanitizer for server text shown in
+  notifications: keep it stripping scripts, embedded documents, `on*`
+  attributes and `javascript:` URLs (bar the app's own `location.reload()`).
 
 ## Verifying a change: the parity loop
 
 ```
 python3 parity/run_parity.py --lint                 # after editing scenarios.toml
 python3 parity/run_parity.py --only 'ms_*'          # the area you touched
-python3 parity/run_parity.py                        # everything, ~7 min
+python3 parity/run_parity.py                        # everything: 7-25 min, host-dependent
 ```
 
 - Before changing code, run the scenarios of the area and **record which
@@ -137,6 +162,13 @@ python3 parity/run_parity.py                        # everything, ~7 min
   `tooltips = false`), not the code.
 - Use native input (the default). `--input synthetic` (and the chrome-cli
   driver) dispatch synthetic events and **miss focus/blur regressions**.
+- The specification is the bundle **pinned** in `run_parity.py` (`OLD_URL`
+  at a fixed gh-pages commit, `OLD_SHA1`), not the live demo, which serves
+  the new code once it is deployed. Move it only deliberately
+  (`--reference-url` / `--reference-sha1`), after a release.
+- CI (`.github/workflows/parity.yml`) runs the component scenarios on every
+  pull request with a pinned Playwright/Chromium build; a red run is a
+  divergence to explain, not to re-run.
 - Sandboxed or macOS hosts without Chrome:
   `PARITY_BROWSER=<chromium or headless_shell> PARITY_BROWSER_ARGS=--single-process`
   with the Playwright driver; it needs no listening sockets.

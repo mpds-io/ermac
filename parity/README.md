@@ -64,7 +64,7 @@ allowed after the step (default `step_after`, 400 ms).
 | `{ mousedown = "sel" }` | a bare `mousedown` event (e.g. reference links) |
 | `{ focus = "sel" }` / `{ blur = "sel" }` / `{ blur = true }` | focus management (`true` = the active element) |
 | `{ type = "sel", text = "Ag O", clear = true }` | key-by-key typing (fires keydown/keypress/input/keyup) |
-| `{ key = "Enter", on = "sel" }` | a single key press, on `sel` or the focused element: `Enter`, `Escape`, `Backspace`, `ArrowDown`, `ArrowUp`, `Tab`, ... |
+| `{ key = "Enter", on = "sel" }` | a single key press, on `sel` or the focused element: `Enter`, `Escape`, `Backspace`, `ArrowDown`, `ArrowUp`, `Tab`, `ControlOrMeta+a`, ... The key is held 30 ms, like a person: what keydown triggers (e.g. a route change) runs before keyup instead of racing it |
 | `{ fill = "sel", text = "..." }` | set an input value at once (input + change events) |
 | `{ check = "sel" }` / `uncheck` | checkboxes and radios |
 | `{ hash = "#route" }` / `{ back = true }` | in-app navigation, browser Back |
@@ -125,8 +125,12 @@ tables, harvested from the OLD side before the run (`probe` or regex `pattern`).
 
 ## How it works
 
-1. The OLD reference bundle is fetched from the deployed demo once (cached in
-   `reference/`); the NEW bundle is rebuilt from the current sources.
+1. The OLD reference bundle is **pinned**: fetched once from a fixed gh-pages
+   commit (`OLD_URL`, the deployment of master `a71cabb`) and verified
+   against `OLD_SHA1` on every run (cached in `reference/`). The live demo
+   is deliberately not used: once the refactoring is deployed it serves the
+   NEW bundle. `--reference-url` / `--reference-sha1` move the specification
+   deliberately. The NEW bundle is rebuilt from the current sources.
 2. Both are loaded by `old.html` / `new.html` on a `localhost` origin, so
    both run in development mode and talk to the API at `localhost:7070`.
 3. `harness.js` runs before either bundle: seeded `Math.random`, frozen
@@ -142,13 +146,31 @@ tables, harvested from the OLD side before the run (`probe` or regex `pattern`).
 6. Seven comparison layers per scenario:
    - **api** — MPDS API requests: method, path, sorted query, and (playwright
      driver) the POST content type and body;
-   - **ext** — requests to external hosts (playwright driver);
+   - **ext** — requests to external hosts except images (playwright driver;
+     `<img loading="lazy">` fetches depend on the browser build's lazy-load
+     distance, the image URLs are compared through the DOM instead);
    - **dom** — the legacy semantic keys (title, tables and row order,
      interpretation, history, multiselect items, visibility states, ...);
    - **probes** — the declared probes;
    - **steps** — the step outcomes;
    - **errors** — the NEW side must not throw more than the OLD side;
-   - **pixels** — screenshots, per-channel tolerance 2, strict threshold 0.1%.
+   - **pixels** — screenshots: a pixel differs when any channel differs by
+     more than 2; strict scenarios fail above 0.1% of differing pixels.
+
+A scenario whose capture fails (e.g. no API traffic at all) is reported as
+**ERROR** and the run continues; ERROR, FAIL and XPASS make the exit code 1.
+A full run takes 7-25 min depending on the host (2 sides x ~3-8 s per
+scenario).
+
+## CI
+
+`.github/workflows/parity.yml` runs the component scenarios
+(`--tag legacy,multiselect,sort,controls,mock,keyboard`) on every pull
+request and the whole battery on manual dispatch, with Playwright pinned
+(Chromium 132: rendering and lazy loading depend on the browser build) and
+the recorded API responses cached between runs to keep the load on
+api.mpds.io minimal. The evidence (`report.json`, diffs, captures,
+screenshots) is uploaded as the `parity-out` artifact.
 
 ## Drivers
 
@@ -164,7 +186,9 @@ tables, harvested from the OLD side before the run (`probe` or regex `pattern`).
   --virtual-time-budget` with `python -m http.server` and
   `deploy/dev_api_proxy.py --cache`; steps are replayed in-page with
   synthetic DOM events, results are read back from the dumped DOM. No API
-  mocks, no external-request layer.
+  mocks, no external-request layer. Both drivers share the response cache
+  format of `deploy/dev_api_proxy.py` (POSTs are keyed by URL and body;
+  rate limits and server errors are never cached).
 
 ## Artifacts
 
