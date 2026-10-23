@@ -362,12 +362,13 @@
         window.addEventListener('load', function(){
             real_set_timeout(function(){
                 run_steps(scenario, function(log){
-                    // NB keep refreshing the result until the virtual-time
-                    // budget expires: the dump must see the SETTLED state
-                    (function refresh(){
+                    // NB the probes are captured ONCE, `settle` ms after the
+                    // last step, exactly like the playwright driver: time-
+                    // sensitive observations (e.g. a notification that hides
+                    // after 4 s) must not depend on the driver's budget
+                    real_set_timeout(function(){
                         write_result(scenario, log);
-                        real_set_timeout(refresh, 250);
-                    })();
+                    }, (scenario.timing || {}).settle || 3000);
                 });
             }, (scenario.timing || {}).boot || 3000);
         });

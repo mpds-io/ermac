@@ -12,6 +12,7 @@ NEW one. Then the two sides are compared layer by layer:
   ext      external requests (thumbnails, iframes, ...), blocked on both sides
   dom      the legacy semantic DOM keys (title, tables, interpretation, ...)
   probes   the scenario-declared probes (narrow, in-page observations)
+  expect   absolute assertions on probes, checked on EACH side
   steps    the outcome of every scripted step (ok / missing / timeout / ...)
   errors   uncaught JS errors: the new side must not throw more than the old
   pixels   rendered screenshots (tolerance, strict or loose per scenario)
@@ -93,7 +94,9 @@ PROBE_KINDS = {  # kind: (needs selector, needs @arg)
     'rects': (1, 0), 'focus': (0, 0), 'hash': (0, 0), 'title': (0, 0), 'scroll': (0, 0),
     'history': (0, 0), 'selection': (0, 0), 'storage': (1, 0), 'js': (1, 0),
 }
-LAYERS = ['api', 'ext', 'dom', 'probes', 'steps', 'errors', 'pixels']
+LAYERS = ['api', 'ext', 'dom', 'probes', 'expect', 'steps', 'errors', 'pixels']
+# expect = { "<probe>" = value } or { "<probe>" = { <operator> = value } }
+EXPECT_OPERATORS = ['equals', 'not', 'contains', 'not_contains', 'matches', 'gt', 'ge', 'lt', 'le']
 DEFAULTS = {
     'boot': 3000,             # virtual ms after page load, before the first step
     'step_after': 400,        # virtual ms after every step (unless the step sets `after`)
@@ -108,7 +111,8 @@ DEFAULTS = {
     'ignore': [],             # layers (or "probe:<probe>" / "dom:<key>") not compared
     'viewport': [1280, 2400],
 }
-SCENARIO_KEYS = set(DEFAULTS) | {'name', 'route', 'desc', 'steps', 'tags', 'skip', 'xfail', 'mock', 'storage', 'tooltips'}
+SCENARIO_KEYS = set(DEFAULTS) | {'name', 'route', 'desc', 'steps', 'tags', 'skip', 'xfail', 'mock', 'storage', 'tooltips',
+                                 'expect'}
 # NB the app shows onboarding tooltips (landing: 4 s after boot, first search:
 # 3 s after the results) until 2 searches are logged; they cover the VIEW
 # controls. `tooltips = false` presets such a neutral 2-entry search log.
@@ -183,6 +187,21 @@ def load_scenarios(path=SCENARIOS_PATH):
             for key in mock:
                 if key not in MOCK_KEYS:
                     problems.append('%s: unknown mock key "%s"' % (where, key))
+        expect = raw.get('expect', {})
+        if not isinstance(expect, dict):
+            problems.append('%s: expect must be a table of "<probe>" = value' % where)
+            expect = {}
+        for probe, wanted in expect.items():
+            problems += lint_probe(where + ' expect', probe)
+            if isinstance(wanted, dict):
+                if len(wanted) != 1 or list(wanted)[0] not in EXPECT_OPERATORS:
+                    problems.append('%s: expect "%s" needs exactly one operator of %s'
+                                    % (where, probe, ', '.join(EXPECT_OPERATORS)))
+                elif list(wanted)[0] == 'matches':
+                    try:
+                        re.compile(wanted['matches'])
+                    except re.error as error:
+                        problems.append('%s: expect "%s": bad regex (%s)' % (where, probe, error))
         if not isinstance(raw.get('storage', {}), dict):
             problems.append('%s: storage must be a table of key = "value"' % where)
         if raw.get('pixels', 'strict') not in ('strict', 'loose', 'off'):
@@ -193,6 +212,9 @@ def load_scenarios(path=SCENARIOS_PATH):
         scenario = dict(defaults)
         scenario.update(raw)
         scenario['probe'] = list(defaults['probe']) + [p for p in raw.get('probe', []) if p not in defaults['probe']]
+        # NB expected probes are evaluated (and compared old vs new) like any other
+        scenario['probe'] += [p for p in expect if p not in scenario['probe']]
+        scenario['expect'] = expect
         scenario['ignore'] = list(defaults['ignore']) + list(raw.get('ignore', []))
         scenario.setdefault('steps', [])
         scenario.setdefault('tags', [])
@@ -266,7 +288,7 @@ def packed_scenario(scenario):
         'steps': scenario['steps'],
         'probe': scenario['probe'],
         'storage': scenario.get('storage', {}),
-        'timing': {k: scenario[k] for k in ('boot', 'step_after', 'wait_for_timeout')},
+        'timing': {k: scenario[k] for k in ('boot', 'step_after', 'wait_for_timeout', 'settle')},
     }
     raw = json.dumps(payload, separators=(',', ':')).encode('utf-8')
     return base64.urlsafe_b64encode(raw).decode('ascii')
@@ -903,6 +925,18 @@ def compare(scenario, old, new, pixels_enabled, side_dir):
     if probe_diffs:
         diffs['probes'] = probe_diffs
 
+    # absolute expectations: BOTH sides must meet them (a failing OLD side
+    # means the data or the specification changed, not the refactoring)
+    if not ignored(scenario, 'expect'):
+        expect_diffs = []
+        for probe, wanted in scenario.get('expect', {}).items():
+            for side, captured in (('OLD', po), ('NEW', pn)):
+                violation = check_expectation(captured.get(probe), wanted)
+                if violation:
+                    expect_diffs.append('%s %s %s' % (side, probe, violation))
+        if expect_diffs:
+            diffs['expect'] = expect_diffs
+
     so, sn = old['result'].get('steps', []), new['result'].get('steps', [])
     if not ignored(scenario, 'steps') and so != sn:
         diffs['steps'] = ['step %d %s: OLD %s | NEW %s' % (i + 1, step_label(scenario, i), a, b)
@@ -924,6 +958,33 @@ def compare(scenario, old, new, pixels_enabled, side_dir):
             diffs['pixels'] = ['%.4f%% pixels differ (threshold %.3f%%)%s' % (
                 fraction * 100, scenario['pixel_threshold'] * 100, (', ' + note) if note else '')]
     return diffs, warnings, fraction
+
+
+def check_expectation(value, wanted):
+    """None if value meets wanted, else a description of the violation."""
+    operator, target = ('equals', wanted)
+    if isinstance(wanted, dict):
+        operator, target = list(wanted.items())[0]
+    try:
+        if operator == 'equals':
+            ok = value == target
+        elif operator == 'not':
+            ok = value != target
+        elif operator == 'contains':
+            ok = value is not None and target in value
+        elif operator == 'not_contains':
+            ok = value is None or target not in value
+        elif operator == 'matches':
+            ok = isinstance(value, str) and re.search(target, value) is not None
+        else:
+            ok = isinstance(value, (int, float)) and not isinstance(value, bool) and {
+                'gt': value > target, 'ge': value >= target,
+                'lt': value < target, 'le': value <= target}[operator]
+    except TypeError:
+        ok = False
+    if ok:
+        return None
+    return 'is %s, expected %s %s' % (clip(value), operator, clip(target))
 
 
 def step_label(scenario, index):

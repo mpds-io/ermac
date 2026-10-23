@@ -157,6 +157,9 @@ python3 parity/run_parity.py                        # everything: 7-25 min, host
 - Read failures from `out/<scenario>/diff.txt` and `old|new-capture.json`;
   `pixel-diff.png` shows *where*. The default probes (focus, search box
   state, notification, `wmgui.search`) catch many collateral changes.
+- Parity is relative (new matches old). For a fact that must hold on its
+  own, add `expect` (see `parity/README.md`); an `expect` failure on the OLD
+  side means the data or the specification moved, not your change.
 - A `WARN the OLD side itself failed step N` means the scenario is wrong
   (selector, hidden element, onboarding tooltip covering the target — use
   `tooltips = false`), not the code.

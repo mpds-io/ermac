@@ -49,8 +49,10 @@ tags = ["multiselect", "keyboard"]
 Then `python3 parity/run_parity.py --lint` and
 `python3 parity/run_parity.py --only ms_backspace_removes_last_item`.
 
-You never write expected values: the OLD side **is** the expectation. You
-only say what to do and what to look at.
+You normally never write expected values: the OLD side **is** the
+expectation. You only say what to do and what to look at. When a fact must
+hold regardless of the old GUI (e.g. "this search shows the 'similar data'
+notice"), add an [`expect`](#absolute-expectations) table.
 
 ### Steps
 
@@ -105,6 +107,47 @@ notification text and visibility, search box items/text/dropdown, open
 modals, `wmgui.search`, localStorage keys, ...). A probe that is `null` on
 both sides (selector matching nothing) is reported as a *vacuous* warning.
 
+### Absolute expectations
+
+Parity is relative: if the old and the new GUI both show 8 hits, a "no hits"
+scenario still passes. `expect` adds absolute assertions on probes, checked
+on **each** side independently:
+
+```toml
+[[scenario]]
+name = "search_am_ru_binary_similar"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Am Ru binary", after = 300 },
+  { key = "Enter", after = 1500 },
+]
+settle = 1000  # NB the notification hides 4 s after it appears
+
+[scenario.expect]
+"text:#notifybox" = { contains = "similar data shown" }
+"visible:#notifybox" = true
+"hash" = "#inquiry/elements=Am-Ru&classes=binary"
+```
+
+A one-line form works too:
+`expect = { "count:#databrowser tr.tcell, #databrowser div.gallery_item" = { gt = 0 } }`.
+A plain value means equality; operators: `equals`, `not`, `contains`,
+`not_contains` (strings, lists), `matches` (regex search), `gt`, `ge`,
+`lt`, `le` (numbers). The probes of `expect` are also compared old vs new
+like any other. Failures are reported per side in the `expect` layer, e.g.
+`OLD count:... is 8, expected equals 0`: a failing OLD side means the data or
+the specification changed, not the refactoring. NB a TOML inline table must
+stay on one line; for several expectations use a `[scenario.expect]` table
+placed after the scenario's other keys.
+
+The `qa` scenarios (`--tag qa`) are result-count checks converted from a QA
+list of facet searches: route `#inquiry/<facets>`, expecting the number the
+GUI reports in the page title (`[At least ]N result(s)`, i.e. the API's
+`estimated_count`); zero-hit cases also expect the "No hits" notice, so a
+page that failed to load cannot pass as 0. These are data facts, which the
+live API does not necessarily reproduce (another data release, access level
+or the server's fuzzy fallback): they are not part of the PR CI tag set.
+
 ### Other scenario keys
 
 | key | meaning |
@@ -116,7 +159,8 @@ both sides (selector matching nothing) is reported as a *vacuous* warning.
 | `pixels = "strict" \| "loose" \| "off"`, `pixel_threshold` | screenshot comparison; `loose` reports but never fails |
 | `api = "ordered" \| "unordered" \| "off"` | API request log comparison |
 | `viewport = [w, h]` | default `[1280, 2400]` |
-| `ignore = ["pixels", "probe:focus", "dom:header_th"]` | accept an intentional difference (say why in `desc`) |
+| `expect = { "<probe>" = value }` | absolute assertions, see above |
+| `ignore = ["pixels", "probe:focus", "dom:header_th"]` | accept an intentional difference (say why in `desc`); `expect` can be ignored too |
 | `xfail = "reason"` | known divergence: reported XFAIL, and XPASS (failing) once it is fixed |
 | `skip = "reason"` | not run |
 
@@ -143,7 +187,7 @@ tables, harvested from the OLD side before the run (`probe` or regex `pattern`).
 5. API responses: the OLD side records them in `out/<scenario>/api-cache/`,
    the NEW side replays them, so both see identical data regardless of live
    index changes. External hosts (thumbnails etc.) are blocked on both sides.
-6. Seven comparison layers per scenario:
+6. Eight comparison layers per scenario:
    - **api** — MPDS API requests: method, path, sorted query, and (playwright
      driver) the POST content type and body;
    - **ext** — requests to external hosts except images (playwright driver;
@@ -152,6 +196,7 @@ tables, harvested from the OLD side before the run (`probe` or regex `pattern`).
    - **dom** — the legacy semantic keys (title, tables and row order,
      interpretation, history, multiselect items, visibility states, ...);
    - **probes** — the declared probes;
+   - **expect** — the absolute expectations, on each side;
    - **steps** — the step outcomes;
    - **errors** — the NEW side must not throw more than the OLD side;
    - **pixels** — screenshots: a pixel differs when any channel differs by
