@@ -4,11 +4,14 @@
  *
  * Returns a promise, additionally fitted with an .abort() method.
  * The promise resolves with the parsed response, or rejects with
- * {aborted: true} for aborted requests, or {status: N} otherwise.
+ * {aborted: true} for requests cancelled via .abort(), or {status: N}
+ * otherwise; NB a network failure (offline, refused, CORS) is status 0
+ * but NOT an abort: like jQuery's textStatus 'error' vs 'abort'.
  */
 
 export function ajax(settings) {
   const xhr = new XMLHttpRequest();
+  let aborted = false;
   let url = settings.url;
   const type = (settings.type || 'GET').toUpperCase();
   let query = null;
@@ -24,7 +27,7 @@ export function ajax(settings) {
   const promise = new Promise(function (resolve, reject) {
     xhr.onreadystatechange = function () {
       if (xhr.readyState !== 4) return;
-      if (xhr.status === 0) return reject({ aborted: true, xhr: xhr });
+      if (xhr.status === 0) return reject({ aborted: aborted, status: 0, xhr: xhr });
       if (xhr.status >= 200 && xhr.status < 300) {
         let answer = xhr.responseText;
         if (
@@ -53,6 +56,7 @@ export function ajax(settings) {
   });
 
   promise.abort = function () {
+    aborted = true;
     try {
       xhr.abort();
     } catch (e) {}

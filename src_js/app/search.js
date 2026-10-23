@@ -659,11 +659,11 @@ function switch_control_mode(mode, next_mode, active_abf, active_cde) {
   if (!active_abf) active_abf = { 0: 'a', 1: 'b', 2: 'f' }[wmgui.search_type];
   if (!active_cde) active_cde = wmgui.thumbed_display ? 'd' : 'c';
 
-  $$('#control_' + active_abf + ', #control_' + active_cde).forEach(
-    function (el) {
-      el.classList.remove('active');
-    },
-  );
+  // NB like the old $('div.controlswitch > div').removeClass(): ALL six
+  // switches lose ALL their classes before the two current ones are set
+  $$('div.controlswitch > div').forEach(function (el) {
+    el.className = '';
+  });
   $('#control_' + active_abf).classList.add('active');
   $('#control_' + active_cde).classList.add('active');
 

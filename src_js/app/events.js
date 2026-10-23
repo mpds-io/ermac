@@ -895,9 +895,13 @@ export function register_events() {
 
   $$('#dtypes_phid > ul > li').forEach(function (li) {
     li.addEventListener('click', function () {
+      // NB jQuery .data() converted numeric attribute strings to numbers,
+      // and the server expects {"rankfilter": 5}, not "5"
       var rankfilter = this.getAttribute('data-rankfilter'),
         active = this.classList.contains('active'),
         legend = this.textContent;
+      if (rankfilter !== null && String(+rankfilter) === rankfilter)
+        rankfilter = +rankfilter;
       request_search(
         { phid: wmgui.search.phid, rankfilter: active ? null : rankfilter },
         legend + ' of phase ' + wmgui.search.phid,

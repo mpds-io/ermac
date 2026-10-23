@@ -29,18 +29,59 @@ export function data(el, key, value) {
 }
 
 /**
- * Display control
+ * Display control, with the jQuery 3 .show() / .hide() / .toggle() semantics:
+ * hide() remembers the inline display it overrides, show() restores it, or
+ * clears the inline value and, if the stylesheet still hides the element,
+ * uses the default display of its tag (block for div, list-item for li...).
+ * NB only the element itself is considered, not its ancestors.
  */
 
-export function show(els, display) {
+const olddisplay = new WeakMap();
+const default_displays = {};
+
+function default_display(el) {
+  const name = el.nodeName;
+  if (default_displays[name]) return default_displays[name];
+  const temp = document.body.appendChild(document.createElement(name));
+  let display = window.getComputedStyle(temp).display;
+  temp.parentNode.removeChild(temp);
+  if (display === 'none') display = 'block';
+  default_displays[name] = display;
+  return display;
+}
+
+function hidden_within_tree(el) {
+  return (
+    el.style.display === 'none' ||
+    (el.style.display === '' &&
+      el.isConnected &&
+      window.getComputedStyle(el).display === 'none')
+  );
+}
+
+function show_one(el) {
+  let value = null;
+  if (el.style.display === 'none') {
+    value = olddisplay.get(el) || null;
+    if (!value) el.style.display = '';
+  }
+  if (el.style.display === '' && hidden_within_tree(el)) value = default_display(el);
+  if (value !== null) el.style.display = value;
+}
+
+function hide_one(el) {
+  const display = el.style.display;
+  if (display !== 'none') {
+    olddisplay.set(el, display);
+    el.style.display = 'none';
+  }
+}
+
+export function show(els) {
   if (!els) return;
   if (!Array.isArray(els)) els = [els];
   els.forEach(function (el) {
-    if (!el) return;
-    // NB restore the natural display, like jQuery .show(): only set an
-    // explicit value when the element is still hidden by the stylesheet
-    el.style.display = '';
-    if (!isVisible(el)) el.style.display = display || 'block';
+    if (el) show_one(el);
   });
 }
 
@@ -48,15 +89,19 @@ export function hide(els) {
   if (!els) return;
   if (!Array.isArray(els)) els = [els];
   els.forEach(function (el) {
-    if (el) el.style.display = 'none';
+    if (el) hide_one(el);
   });
 }
 
-export function toggle_display(els, display) {
+// NB jQuery .toggle(): the display argument is kept for the call sites, but
+// like jQuery the shown state is the restored/default display
+export function toggle_display(els) {
   if (!els) return;
   if (!Array.isArray(els)) els = [els];
   els.forEach(function (el) {
-    if (el) el.style.display = isVisible(el) ? 'none' : display || 'block';
+    if (!el) return;
+    if (hidden_within_tree(el)) show_one(el);
+    else hide_one(el);
   });
 }
 
@@ -220,15 +265,61 @@ export function fade_out(el, duration, on_finish) {
 }
 
 /**
- * Delegated events, mimicking jQuery .on(event, selector, handler)
+ * Delegated events with the jQuery .on(event, selector, handler) semantics:
+ *  - all delegated handlers of a root run from ONE native listener, the
+ *    deepest matching element first (registration order within a level);
+ *  - stopPropagation() in a handler stops the handlers of the outer
+ *    matching elements of the same root (e.g. a button inside a row);
+ *  - a handler returning false means preventDefault() + stopPropagation();
+ *  - delegated clicks ignore non-primary mouse buttons.
  */
 
+const delegations = new WeakMap(); // root -> {type: [{selector, handler}]}
+
 export function on(root, selector, type, handler) {
-  (root || document).addEventListener(type, function (event) {
-    const matched = event.target.closest
-      ? event.target.closest(selector)
-      : null;
-    if (matched && (root || document).contains(matched))
-      handler.call(matched, event, matched);
-  });
+  root = root || document;
+  let types = delegations.get(root);
+  if (!types) {
+    types = {};
+    delegations.set(root, types);
+  }
+  if (!types[type]) {
+    types[type] = [];
+    const entries = types[type];
+    root.addEventListener(type, function (event) {
+      if (type === 'click' && event.button >= 1) return;
+      const queue = [];
+      for (let cur = event.target; cur && cur !== root; cur = cur.parentNode) {
+        if (cur.nodeType !== 1) continue;
+        const matched = entries.filter(function (entry) {
+          return cur.matches(entry.selector);
+        });
+        if (matched.length) queue.push({ el: cur, entries: matched });
+      }
+      let immediate_stop = false;
+      const native_stop_immediate = event.stopImmediatePropagation;
+      event.stopImmediatePropagation = function () {
+        immediate_stop = true;
+        return native_stop_immediate.call(event);
+      };
+      try {
+        for (let i = 0; i < queue.length; i++) {
+          if (event.cancelBubble) break;
+          const level = queue[i];
+          for (let j = 0; j < level.entries.length; j++) {
+            const result = level.entries[j].handler.call(level.el, event, level.el);
+            if (result === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            if (immediate_stop) break;
+          }
+          if (immediate_stop) break;
+        }
+      } finally {
+        event.stopImmediatePropagation = native_stop_immediate;
+      }
+    });
+  }
+  types[type].push({ selector: selector, handler: handler });
 }

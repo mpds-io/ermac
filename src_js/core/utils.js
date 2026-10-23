@@ -43,11 +43,32 @@ Number.prototype.count_decimals = function () {
  * Auxiliary methods relevant for DOM
  */
 
+// NB notifications interpolate server-provided text (e.g. data.error):
+// besides <script>, drop the other auto-executing vectors (event handler
+// attributes, embedded documents) and javascript: URLs, except the one the
+// app itself uses in its messages ("please try to reload")
+const UNSAFE_ELEMENTS = 'script, iframe, frame, frameset, object, embed, base, meta, link';
+const ALLOWED_JS_URL = 'javascript:location.reload()';
+
 wmgui.clean = function (str) {
   const tpl = document.createElement('template');
   tpl.innerHTML = (str || '').bold();
-  tpl.content.querySelectorAll('script').forEach(function (script) {
-    script.remove();
+  tpl.content.querySelectorAll(UNSAFE_ELEMENTS).forEach(function (el) {
+    el.remove();
+  });
+  tpl.content.querySelectorAll('*').forEach(function (el) {
+    Array.prototype.slice.call(el.attributes).forEach(function (attr) {
+      const name = attr.name.toLowerCase();
+      const value = attr.value.replace(/[\s\u0000-\u001f]+/g, '').toLowerCase();
+      if (
+        name.startsWith('on') ||
+        ((name === 'href' || name === 'src' || name === 'action' ||
+          name === 'formaction' || name === 'xlink:href') &&
+          value.startsWith('javascript:') &&
+          attr.value.trim() !== ALLOWED_JS_URL)
+      )
+        el.removeAttribute(attr.name);
+    });
   });
   const first = tpl.content.firstElementChild;
   return first ? first.innerHTML : tpl.innerHTML;

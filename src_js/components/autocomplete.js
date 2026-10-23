@@ -1,7 +1,6 @@
 // spin-off from https://github.com/Pixabay/JavaScript-autoComplete
 // converted to an ES module
 
-import { show_aetmap } from '../app/search.js';
 
 export const create_autocomplete = (function () {
   function autoComplete(options) {
@@ -40,6 +39,8 @@ export const create_autocomplete = (function () {
       menuClass: '',
       renderItem: function (item, search) {},
       onSelect: function (e, term, item) {},
+      // NB app hooks are injected by the caller: components do not import app/
+      onHover: function (term, item) {},
       arrow_pressed: false,
       custom_type: false,
     };
@@ -127,9 +128,7 @@ export const create_autocomplete = (function () {
         if (sel) sel.className = sel.className.replace('selected', '');
         this.className += ' selected';
 
-        // account aetypes aetmap
-        if (o.custom_type == 'aetypes' && show_aetmap)
-          show_aetmap(this.innerText);
+        o.onHover(this.innerText, this);
       },
       that.sc,
     );
