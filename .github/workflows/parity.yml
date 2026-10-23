@@ -1,0 +1,66 @@
+name: Parity with the deployed GUI
+
+# The refactored GUI must behave exactly like the pinned deployed bundle
+# (see parity/README.md). Pull requests run the scenarios of the components
+# most at risk; the full battery runs on demand. Recorded MPDS API responses
+# are cached between runs to keep the load on api.mpds.io minimal.
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'scenario names or globs (empty = all)'
+        required: false
+        default: ''
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Playwright and Chromium
+        run: |
+          # NB pinned: the browser build affects rendering and lazy loading;
+          # 1.50 = Chromium 132, the build the suite is validated with
+          pip install playwright==1.50.0 pillow
+          python -m playwright install --with-deps chromium
+
+      - name: Restore recorded API responses
+        uses: actions/cache@v4
+        with:
+          path: parity/out
+          key: parity-api-${{ hashFiles('parity/scenarios.toml') }}-${{ github.run_id }}
+          restore-keys: |
+            parity-api-${{ hashFiles('parity/scenarios.toml') }}-
+            parity-api-
+
+      - name: Run the parity suite
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.only }}" ]; then
+              python3 parity/run_parity.py --only '${{ github.event.inputs.only }}'
+            else
+              python3 parity/run_parity.py
+            fi
+          else
+            python3 parity/run_parity.py --tag legacy,multiselect,sort,controls,mock,keyboard
+          fi
+
+      - name: Upload the evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-out
+          path: |
+            parity/out/report.json
+            parity/out/*/diff.txt
+            parity/out/*/*-capture.json
+            parity/out/*/*.png
+          if-no-files-found: ignore

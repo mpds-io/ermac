@@ -60,6 +60,20 @@ def cache_lookup(method, path):
     return status, content_type, payload
 
 
+def cacheable(status):
+    """Transient failures (rate limits, server errors, this proxy's own 502)
+    must not be replayed forever."""
+    return status < 500 and status != 429
+
+
+def cache_key_path(method, path, body):
+    """POSTs to the same URL with different bodies are different requests.
+    NB shared with parity/run_parity.py, so both drivers read one cache."""
+    if method == "POST":
+        return path + "\n" + hashlib.sha1(body or b"").hexdigest()
+    return path
+
+
 def cache_store(method, path, status, content_type, payload):
     if not CACHE_DIR:
         return
@@ -101,11 +115,20 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Length", "0")
         self.end_headers()
 
-    def _forward(self, method):
+    def _forward(self, method, send_body=True):
         url = REMOTE + self.path
         body = None
 
-        cached = cache_lookup(method, self.path)
+        if method == "POST":
+            try:
+                length = int(self.headers.get("Content-Length") or 0)
+            except ValueError:
+                self.send_error(400, "malformed Content-Length")
+                return
+            body = self.rfile.read(length) if length > 0 else b""
+
+        key = cache_key_path(method, self.path, body)
+        cached = cache_lookup(method, key)
         if cached is not None:
             status, content_type, payload = cached
             try:
@@ -115,7 +138,8 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                     self.send_header("Content-Type", content_type)
                 self.send_header("Content-Length", str(len(payload)))
                 self.end_headers()
-                self.wfile.write(payload)
+                if send_body:
+                    self.wfile.write(payload)
             except (BrokenPipeError, ConnectionResetError):
                 pass
             return
@@ -125,10 +149,6 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
             value = self.headers.get(header)
             if value:
                 headers[header] = value
-
-        if method == "POST":
-            length = int(self.headers.get("Content-Length") or 0)
-            body = self.rfile.read(length) if length else b""
 
         request = urllib.request.Request(url, data=body, method=method, headers=headers)
 
@@ -153,9 +173,10 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         else:
             payload = ('{"error": "dev proxy: %s"}' % last_error).encode()
 
-        cache_store(method, self.path, status,
-                    (response_headers or {}).get("Content-Type", ""),
-                    payload)
+        if cacheable(status):
+            cache_store(method, key, status,
+                        (response_headers or {}).get("Content-Type", ""),
+                        payload)
 
         try:
             self.send_response(status)
@@ -169,7 +190,8 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                     self.send_header(name, value)
             self.send_header("Content-Length", str(len(payload)))
             self.end_headers()
-            self.wfile.write(payload)
+            if send_body:
+                self.wfile.write(payload)
         except (BrokenPipeError, ConnectionResetError):
             pass  # NB the browser aborted the request, e.g. on page reload
 
@@ -180,7 +202,8 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         self._forward("POST")
 
     def do_HEAD(self):
-        self._forward("GET")
+        # NB answered from the GET response (and its cache entry), headers only
+        self._forward("GET", send_body=False)
 
     def log_message(self, fmt, *args):
         # NB a single write() must carry the whole line: concurrent request

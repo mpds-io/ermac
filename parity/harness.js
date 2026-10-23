@@ -233,7 +233,7 @@
         }));
     }
 
-    function press(key, target){
+    function press(key, target, held){
         target = target || document.activeElement || document.body;
         var proceed = key_event('keydown', key, target);
         if (proceed && key.length === 1) {
@@ -243,7 +243,10 @@
             target.value = target.value.slice(0, -1);
             target.dispatchEvent(new Event('input', {bubbles: true}));
         }
-        key_event('keyup', key, target);
+        // NB a held key (`key` steps): keyup after what keydown triggered,
+        // like the playwright driver's KEY_HOLD_MS
+        if (held) real_set_timeout(function(){ key_event('keyup', key, target); }, 30);
+        else key_event('keyup', key, target);
     }
 
     function insert_text(target, text){
@@ -275,7 +278,7 @@
             var el = s.on ? all(s.on)[s.nth || 0] : document.activeElement;
             if (!el) return 'missing';
             if (s.on && el.focus) el.focus();
-            press(s.key, el);
+            press(s.key, el, true);
         },
         fill: function(s){
             var el = target_of(s, 'fill'); if (!el) return 'missing';

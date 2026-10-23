@@ -358,6 +358,36 @@ probe = ["texts:#search_holder .selectize-dropdown-content [data-selectable]"]
 tags = ["multiselect"]
 
 [[scenario]]
+name = "ms_ctrl_a_select_all"
+desc = "Cmd/Ctrl+A selects all chips, Backspace then removes them all"
+route = "#search/Ag-O"
+steps = [
+  { focus = "#search_field-selectized" },
+  { key = "ControlOrMeta+a" },
+  { key = "Backspace", after = 1200 },
+]
+probe = ["class:#search_holder .selectize-input"]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_arrow_left_caret"
+desc = "ArrowLeft moves the caret before the last chip: Backspace removes the one before the caret"
+route = "#search/Ag-O"
+steps = [
+  { focus = "#search_field-selectized" },
+  { key = "ArrowLeft" },
+  { key = "Backspace", after = 1200 },
+]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_original_select_options"
+desc = "the hidden original <select> mirrors the chips (host pages may read it)"
+route = "#search/Ag-O"
+probe = ["texts:#search_field option", "attr:#search_field@multiple", "attr:#search_field@class", "attr:#search_field-selectized@type"]
+tags = ["multiselect", "contract"]
+
+[[scenario]]
 name = "ms_max_items"
 desc = "more than maxItems=10 terms: which items are kept, the input state"
 route = "#search/H-He-Li-Be-B-C-N-O-F-Ne-Na-Mg"
@@ -514,6 +544,31 @@ name = "sort_unsortable_column"
 desc = "the Show column (cp) is not sortable"
 route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
 steps = [ { wait_for = "#databrowser tr.tcell" }, { click = "#dataheader_entries th.cp" } ]
+probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
+tags = ["sort"]
+
+[[scenario]]
+name = "sort_after_second_search"
+desc = "sorting after a second search: the header handlers of the first table must not also fire"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#databrowser tr.tcell" },
+  { hash = "#inquiry/formulae=AgO&props=crystal%20structure", after = 2500 },
+  { wait_for = "#dataheader_entries th.c5.header" },
+  { click = "#dataheader_entries th.c5.header" },
+]
+probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
+tags = ["sort"]
+
+[[scenario]]
+name = "sort_ctrl_multi"
+desc = "ctrl-click adds a second sort key (sortMultiSortKey)"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#dataheader_entries th.c2.header" },
+  { click = "#dataheader_entries th.c2.header" },
+  { eval = "document.querySelector('#dataheader_entries th.c4.header').dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, ctrlKey: true}))" },
+]
 probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
 tags = ["sort"]
 
@@ -924,9 +979,8 @@ tags = ["hierarchy"]
 
 [[scenario]]
 name = "hy_expand"
-desc = "expand toggles the nested lists; NB style=\"\" (jQuery) vs style=\"display: block\" render identically on <ul>, hence the legacy md5 key is ignored"
+desc = "expand toggles the nested lists (jQuery .toggle(): restores style=\"\")"
 route = "#hierarchy"
-ignore = ["dom:hy_scalars_md5"]
 steps = [ { click = "#hy_scalars li > span" } ]
 probe = ["texts:#hy_scalars li > span", "nvisible:#hy_scalars ul ul"]
 tags = ["hierarchy"]

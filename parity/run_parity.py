@@ -70,8 +70,15 @@ GUI_PORT = 5560
 API_PORT = 7070
 GUI_ORIGIN = 'http://localhost:%d' % GUI_PORT
 API_ORIGIN = 'http://localhost:%d' % API_PORT
-OLD_URL = 'https://mpds-io.github.io/ermac/ermac.min.js'
+# NB the specification is PINNED: the gh-pages commit deployed from master
+# a71cabb (the merge base of the refactoring). The live demo URL must not be
+# used: once the refactoring is deployed, it serves the NEW bundle and the
+# suite would silently compare new against new.
+OLD_URL = ('https://raw.githubusercontent.com/mpds-io/ermac/'
+           '5978778447bcc3b1bf423088801163cbe5f28c4e/ermac.min.js')
+OLD_SHA1 = 'c8619d4c1d425b34b9dad5f34ea9e34448b8fd57'
 TOL = 2  # per-channel pixel tolerance
+KEY_HOLD_MS = 30  # real ms between keydown and keyup of a `key` step
 
 # NB keep in sync with parity/harness.js (checked at runtime by the playwright driver)
 STEP_KINDS = ['click', 'dblclick', 'mousedown', 'hover', 'focus', 'blur', 'type', 'key',
@@ -275,18 +282,25 @@ def build_new_bundle():
                           stdout=subprocess.DEVNULL)
 
 
-def ensure_reference():
+def ensure_reference(url=OLD_URL, expected_sha1=OLD_SHA1):
     os.makedirs(os.path.join(HERE, 'reference'), exist_ok=True)
     reference = os.path.join(HERE, 'reference', 'ermac_old.min.js')
     if not os.path.exists(reference):
-        print('fetching the OLD reference bundle from', OLD_URL, '...')
-        with urllib.request.urlopen(OLD_URL, timeout=60) as response:
+        print('fetching the OLD reference bundle from', url, '...')
+        with urllib.request.urlopen(url, timeout=60) as response:
             data = response.read()
+        if expected_sha1 and hashlib.sha1(data).hexdigest() != expected_sha1:
+            die('the downloaded reference has sha1 %s, expected %s: refusing to use it'
+                % (hashlib.sha1(data).hexdigest(), expected_sha1))
         with open(reference, 'wb') as f:
             f.write(data)
     with open(reference, 'rb') as f:
-        print('reference bundle: %d bytes, sha1 %s' % (
-            os.path.getsize(reference), hashlib.sha1(f.read()).hexdigest()[:12]))
+        sha1 = hashlib.sha1(f.read()).hexdigest()
+    if expected_sha1 and sha1 != expected_sha1:
+        die('parity/reference/ermac_old.min.js has sha1 %s, expected %s (the pinned '
+            'specification); delete it to re-fetch, or pass --reference-sha1 to move '
+            'the specification deliberately' % (sha1, expected_sha1))
+    print('reference bundle: %d bytes, sha1 %s (pinned)' % (os.path.getsize(reference), sha1[:12]))
 
 
 def load_proxy_module():
@@ -378,8 +392,8 @@ class PlaywrightDriver(object):
                 return route.fulfill(status=mock.get('status', 200), body=payload, headers=headers)
 
         self.proxy.CACHE_DIR = run['cache']
-        # NB GET keys are identical to deploy/dev_api_proxy.py; POSTs also key by body
-        key = path if method != 'POST' else path + '\n' + hashlib.sha1(body or b'').hexdigest()
+        # NB the cache keys of deploy/dev_api_proxy.py: both drivers share one cache
+        key = self.proxy.cache_key_path(method, path, body)
         cached = None if self.live else self.proxy.cache_lookup(method, key)
         if cached is None:
             headers = {k: v for k, v in (('Content-Type', content_type),
@@ -397,7 +411,9 @@ class PlaywrightDriver(object):
                     break
                 except Exception as error:
                     payload = ('{"error": "parity driver: %s"}' % error).encode()
-            self.proxy.cache_store(method, key, status, ctype, payload)
+            # NB transient failures must not become permanent in the replay cache
+            if self.proxy.cacheable(status):
+                self.proxy.cache_store(method, key, status, ctype, payload)
             cached = (status, ctype, payload)
         status, ctype, payload = cached
         headers = dict(cors)
@@ -406,8 +422,11 @@ class PlaywrightDriver(object):
         route.fulfill(status=status, body=payload, headers=headers)
 
     def _external(self, route, request, run):
-        # NB external assets (thumbnails, ptable SVGs, ...) fail identically on both sides
-        run['ext'].append(request.method + ' ' + request.url)
+        # NB external assets (thumbnails, ptable SVGs, ...) fail identically on both sides.
+        # Images are not logged: <img loading="lazy"> fetches depend on the browser
+        # build's lazy-load distance, not on the app; their URLs are compared via the DOM
+        if request.resource_type != 'image':
+            run['ext'].append(request.method + ' ' + request.url)
         route.abort('connectionrefused')
 
     # -- virtual time -------------------------------------------------------
@@ -468,13 +487,16 @@ class PlaywrightDriver(object):
         elif kind == 'eval':
             page.evaluate('js => (0, eval)(js)', target)
         elif kind == 'key':
+            # NB the key is held KEY_HOLD_MS like a person does: what keydown
+            # triggers (e.g. a hashchange route) runs before keyup, instead of
+            # racing it (back-to-back CDP keydown/keyup)
             if step.get('on'):
                 el = page.locator(step['on'])
                 if el.count() <= nth:
                     return 'missing'
-                el.nth(nth).press(target, timeout=timeout)
+                el.nth(nth).press(target, timeout=timeout, delay=KEY_HOLD_MS)
             else:
-                page.keyboard.press(target)
+                page.keyboard.press(target, delay=KEY_HOLD_MS)
         elif kind == 'blur' and target is True:
             page.evaluate('() => document.activeElement && document.activeElement.blur()')
         else:
@@ -828,7 +850,11 @@ def compare_pixels(old_path, new_path, diff_path):
     if old_img.size != new_img.size:
         return 1.0, 'size mismatch: %s vs %s' % (old_img.size, new_img.size)
     diff = ImageChops.difference(old_img, new_img)
-    mask = diff.point(lambda p: 255 if p > TOL else 0).convert('L')
+    # NB a pixel differs when ANY channel exceeds the tolerance: threshold
+    # every band, then combine them (a plain .convert('L') of the
+    # thresholded image would count only pixels differing in all channels)
+    red, green, blue = [band.point(lambda p: 255 if p > TOL else 0) for band in diff.split()]
+    mask = ImageChops.lighter(ImageChops.lighter(red, green), blue)
     fraction = mask.histogram()[255] / float(old_img.size[0] * old_img.size[1])
     if diff.getbbox():
         overlay = new_img.copy()
@@ -989,6 +1015,9 @@ def main():
     parser.add_argument('--fresh-cache', action='store_true', help='drop the recorded API responses first')
     parser.add_argument('--live', action='store_true', help='playwright driver: never replay the API cache')
     parser.add_argument('--no-build', action='store_true', help='do not rebuild ermac.min.js')
+    parser.add_argument('--reference-url', default=OLD_URL, help='where to fetch the OLD bundle')
+    parser.add_argument('--reference-sha1', default=OLD_SHA1,
+                        help='expected sha1 of the OLD bundle ("" disables the check)')
     args = parser.parse_args()
     if not args.browser_arg and os.environ.get('PARITY_BROWSER_ARGS'):
         args.browser_arg = os.environ['PARITY_BROWSER_ARGS'].split()
@@ -1011,7 +1040,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     if not args.no_build:
         build_new_bundle()
-    ensure_reference()
+    ensure_reference(args.reference_url, args.reference_sha1)
     driver = make_driver(args)
     print('driver: %s%s' % (driver.name, ' (synthetic input)' if driver.synthetic else ''))
     results = []
@@ -1058,7 +1087,10 @@ def main():
                 with open(os.path.join(side_dir, side + '-capture.json'), 'w', encoding='utf-8') as f:
                     json.dump({k: v for k, v in sides[side].items() if k != 'dom'}, f, indent=1, ensure_ascii=False)
             if not sides['old']['api']:
-                die('infrastructure error: no API requests at all for %s (is the API reachable?)' % name)
+                message = 'infrastructure error: no API requests at all (is the API reachable?)'
+                results.append({'name': name, 'verdict': 'ERROR', 'reason': message})
+                print('%-34s ERROR %s' % (name, message))
+                continue
             diffs, warnings, fraction = compare(scenario, sides['old'], sides['new'], not args.no_pixels, side_dir)
             verdict = 'FAIL' if diffs else 'PASS'
             if scenario.get('xfail'):
