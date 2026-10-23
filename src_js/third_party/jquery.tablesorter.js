@@ -901,4 +901,4 @@
             return $(cell).metadata()[p];
         }, type: "numeric"
     });
-})(jQuery);
+})(window.jQuery);
