@@ -11,4 +11,10 @@ package-lock.json
 # parity testing
 parity/reference/
 parity/out/
-parity/__pycache__/run_parity.cpython-312.pyc
+__pycache__/
+# created at runtime by the chrome-cli driver (app_folder is /parity)
+parity/webassets
+parity/labs
+parity/oauth
+parity/crystvis
+parity/ermac.min.js

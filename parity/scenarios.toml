@@ -1,0 +1,1371 @@
+# Ermac parity scenarios. See parity/README.md ("Adding a parity test").
+#
+# Every [[scenario]] runs on the OLD and the NEW bundle under identical,
+# deterministic conditions; all layers (api, ext, dom, probes, steps, errors,
+# pixels) must agree. A scenario is: a route + optional steps + optional probes.
+
+[defaults]
+boot = 3000          # virtual ms after page load, before the first step
+step_after = 400     # virtual ms after each step
+settle = 3000        # virtual ms after the last step, before the capture
+pixels = "strict"
+# NB these probes are evaluated in EVERY scenario (cheap, broad UX invariants)
+probe = [
+  "hash", "title", "focus",
+  "text:#notifybox", "visible:#notifybox",
+  "texts:#search_holder .selectize-input > div[data-term]",
+  "value:#search_field-selectized",
+  "visible:#search_holder .selectize-dropdown",
+  "nvisible:div.modal",
+  "visible:#overlay",
+  "js:wmgui.view_mode", "js:wmgui.search_type", "js:wmgui.search",
+  "js:Object.keys(localStorage).sort()",
+]
+
+[[fixture]]
+name = "phid"
+route = "#inquiry_phases/elements=Ag-O&classes=oxide"
+probe = "attr:#databrowser div.gallery_img@rel"
+
+[[fixture]]
+name = "bid"
+route = "#search/Ag-O"
+pattern = 'ref_id=(\d+)&amp;sid'
+
+# ============================================================================
+# routes (the original battery)
+# ============================================================================
+
+[[scenario]]
+name = "start"
+route = "#start"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "search"
+route = "#search/Ag-O"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "inquiry_oxide"
+route = "#inquiry/elements=Ag-O&classes=oxide"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "inquiry_tabled"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "phases"
+route = "#inquiry_phases/elements=Ag-O&classes=oxide"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "articles"
+route = "#inquiry_articles/elements=Ag-O&classes=oxide"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "numeric"
+route = "#inquiry/numeric=volume%2C%3E%2C3000%3B"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "entry"
+route = "#entry/S1410618"
+pixels = "loose"
+settle = 6000
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "phase_id"
+route = "#phase_id/{phid}"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "article"
+route = "#article/{bid}"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "interlinkage"
+route = "#interlinkage/{phid}"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "hierarchy"
+route = "#hierarchy"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "polyhedra"
+route = "#polyhedra"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "modal_login"
+route = "#modal/login"
+tags = ["route", "legacy"]
+
+[[scenario]]
+name = "plot_pie"
+route = "#plot/pie/inquiry/elements=Ag-O"
+pixels = "loose"
+settle = 6000
+tags = ["route", "legacy"]
+
+# ============================================================================
+# clicks (the original battery, formerly hard-coded in harness.js)
+# ============================================================================
+
+[[scenario]]
+name = "click_advsearch"
+route = "#search/Ag-O"
+steps = [
+  { wait_for = "#databrowser div.gallery_item, #databrowser tr.tcell" },
+  { click = "#advsearch_init_trigger" },
+]
+tags = ["click", "legacy"]
+
+[[scenario]]
+name = "click_entry_ctx"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#databrowser tr.tcell" },
+  { click = "#databrowser tr.tcell" },
+]
+tags = ["click", "legacy"]
+
+[[scenario]]
+name = "click_sort"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#dataheader_entries th.c2.header" },
+  { click = "#dataheader_entries th.c2.header" },
+]
+tags = ["click", "sort", "legacy"]
+
+[[scenario]]
+name = "click_sort_desc"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#dataheader_entries th.c2.header" },
+  { click = "#dataheader_entries th.c2.header", after = 500 },
+  { click = "#dataheader_entries th.c2.header" },
+]
+tags = ["click", "sort", "legacy"]
+
+[[scenario]]
+name = "click_refine"
+route = "#search/Ag-O"
+steps = [
+  { wait_for = "#refine_col a.extd_refine" },
+  { click = "#refine_col a.extd_refine" },
+]
+tags = ["click", "legacy"]
+
+# ============================================================================
+# main search box (the vanilla multiselect replacing selectize)
+# ============================================================================
+
+[[scenario]]
+name = "ms_type_opens_suggestions"
+desc = "typing opens the suggestion dropdown with the same options, order and highlight"
+route = "#start"
+steps = [ { type = "#search_field-selectized", text = "Ag", after = 1500 } ]
+probe = [
+  "texts:#search_holder .selectize-dropdown-content [data-selectable]",
+  "classes:#search_holder .selectize-dropdown-content [data-selectable]",
+  "class:#search_holder .selectize-input",
+]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_enter_after_typing"
+desc = "Enter right after suggestions appear: selectize picks the auto-highlighted first option"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { key = "Enter" },
+]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_arrowdown_enter"
+desc = "ArrowDown then Enter adds the highlighted option as an item"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { key = "ArrowDown" },
+  { key = "Enter" },
+]
+probe = ["class:#search_holder .selectize-input"]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_arrowdown_twice_highlight"
+desc = "two ArrowDown presses move the highlight to the expected option"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { key = "ArrowDown" },
+  { key = "ArrowDown" },
+]
+probe = ["classes:#search_holder .selectize-dropdown-content [data-selectable]"]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_arrowup_highlight"
+desc = "ArrowUp on an open dropdown highlights the expected option"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { key = "ArrowUp" },
+]
+probe = ["classes:#search_holder .selectize-dropdown-content [data-selectable]"]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_escape_closes_dropdown"
+desc = "Escape closes the dropdown and keeps the typed text"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { key = "Escape" },
+]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_click_option"
+desc = "clicking a suggestion adds it, closes the dropdown, keeps the focus"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { click = "#search_holder .selectize-dropdown-content [data-selectable]" },
+]
+probe = ["class:#search_holder .selectize-input", "classes:#ptable_area li[data-pos='47']"]
+tags = ["multiselect", "mouse"]
+
+[[scenario]]
+name = "ms_hover_option"
+desc = "hovering a suggestion moves the highlight"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { hover = "#search_holder .selectize-dropdown-content [data-selectable]", nth = 1 },
+]
+probe = ["classes:#search_holder .selectize-dropdown-content [data-selectable]"]
+tags = ["multiselect", "mouse"]
+
+[[scenario]]
+name = "ms_backspace_removes_last_item"
+desc = "Backspace in the empty input removes the last item"
+route = "#search/Ag-O"
+steps = [
+  { focus = "#search_field-selectized" },
+  { key = "Backspace", after = 1200 },
+]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_backspace_twice"
+desc = "two Backspaces remove two items, in order"
+route = "#search/Ag-O"
+steps = [
+  { focus = "#search_field-selectized" },
+  { key = "Backspace", after = 1200 },
+  { key = "Backspace", after = 1200 },
+]
+probe = ["class:#search_holder .selectize-input"]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_backspace_edits_text_first"
+desc = "Backspace with typed text deletes a character, not an item"
+route = "#search/Ag-O"
+steps = [
+  { type = "#search_field-selectized", text = "Cu" },
+  { key = "Backspace", after = 1200 },
+]
+tags = ["multiselect", "keyboard"]
+
+[[scenario]]
+name = "ms_remove_button"
+desc = "the item x button removes exactly that item"
+route = "#search/Ag-O"
+steps = [ { click = "#search_holder .selectize-input > div[data-term] a.remove", after = 1200 } ]
+tags = ["multiselect", "mouse"]
+
+[[scenario]]
+name = "ms_click_item"
+desc = "clicking an item: selection highlight and focus as in selectize"
+route = "#search/Ag-O"
+steps = [ { click = "#search_holder .selectize-input > div[data-term]" } ]
+probe = ["classes:#search_holder .selectize-input > div[data-term]"]
+tags = ["multiselect", "mouse"]
+
+[[scenario]]
+name = "ms_click_item_then_backspace"
+desc = "selectize: Backspace deletes the clicked (active) item, not the last one"
+route = "#search/Ag-O"
+steps = [
+  { click = "#search_holder .selectize-input > div[data-term]" },
+  { key = "Backspace", after = 1200 },
+]
+tags = ["multiselect", "keyboard", "mouse"]
+
+[[scenario]]
+name = "ms_blur_preserves_text"
+desc = "preserve_on_blur: leaving the input keeps the typed text and closes the dropdown"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { click = "#ermac_logo", after = 600 },
+]
+probe = ["class:#search_holder .selectize-input"]
+tags = ["multiselect", "mouse"]
+
+[[scenario]]
+name = "ms_refocus_reopens"
+desc = "focusing the input again after a blur: dropdown state as in selectize"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { blur = true, after = 600 },
+  { focus = "#search_field-selectized", after = 600 },
+]
+probe = ["class:#search_holder .selectize-input"]
+tags = ["multiselect"]
+
+[[scenario]]
+name = "ms_already_selected_hidden"
+desc = "an item already in the box is not offered again (selectize hideSelected)"
+route = "#search/Ag"
+steps = [ { type = "#search_field-selectized", text = "Ag", after = 1500 } ]
+probe = ["texts:#search_holder .selectize-dropdown-content [data-selectable]"]
+tags = ["multiselect"]
+
+[[scenario]]
+name = "ms_options_filtered_by_query"
+desc = "options of an earlier query do not leak into the dropdown of a later one"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag", after = 1500 },
+  { type = "#search_field-selectized", text = "Cu", clear = true, after = 1500 },
+]
+probe = ["texts:#search_holder .selectize-dropdown-content [data-selectable]"]
+tags = ["multiselect"]
+
+[[scenario]]
+name = "ms_max_items"
+desc = "more than maxItems=10 terms: which items are kept, the input state"
+route = "#search/H-He-Li-Be-B-C-N-O-F-Ne-Na-Mg"
+probe = ["class:#search_holder .selectize-input", "readonly:#search_field-selectized"]
+tags = ["multiselect", "route"]
+
+[[scenario]]
+name = "ms_input_autogrow"
+desc = "long typed text: input width grows as in selectize"
+route = "#start"
+steps = [ { type = "#search_field-selectized", text = "superconductivity of ternary oxides", after = 1500 } ]
+probe = ["rect:#search_field-selectized", "rect:#search_holder .selectize-input"]
+pixels = "loose"
+tags = ["multiselect", "layout"]
+
+[[scenario]]
+name = "ms_initial_focus"
+desc = "the search input is focused at boot (onInitialize)"
+route = "#start"
+probe = ["class:#search_holder .selectize-input"]
+tags = ["multiselect"]
+
+# ============================================================================
+# search triggering
+# ============================================================================
+
+[[scenario]]
+name = "search_enter_raw_text"
+desc = "Enter on raw free text (no suggestion chosen) runs the search"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag2O cubic", after = 100 },
+  { key = "Enter", after = 1500 },
+]
+tags = ["search", "keyboard"]
+
+[[scenario]]
+name = "search_button_raw_text"
+desc = "the search button merges items and raw text into one inquiry"
+route = "#search/Ag-O"
+steps = [
+  { type = "#search_field-selectized", text = "oxide", after = 100 },
+  { click = "#search_trigger", after = 1500 },
+]
+tags = ["search", "mouse"]
+
+[[scenario]]
+name = "search_button_same_query"
+desc = "re-submitting the current inquiry re-triggers it (the hash-hack)"
+route = "#inquiry/elements=Ag-O"
+steps = [ { click = "#search_trigger", after = 1500 } ]
+tags = ["search", "mouse"]
+
+[[scenario]]
+name = "search_empty"
+desc = "submitting an empty box notifies 'unrecognized input'"
+route = "#start"
+steps = [ { click = "#search_trigger" } ]
+tags = ["search", "notify"]
+
+[[scenario]]
+name = "search_trailing_comma"
+desc = "a trailing comma or space of the raw text is dropped"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Ag2O,", after = 100 },
+  { click = "#search_trigger", after = 1500 },
+]
+tags = ["search"]
+
+[[scenario]]
+name = "search_numeric_text"
+desc = "a numeric expression typed in the box becomes a numeric search"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "band gap > 3", after = 100 },
+  { key = "Enter", after = 1500 },
+]
+probe = ["visible:#numericbox", "count:#numericbox div.slider_numerics"]
+tags = ["search", "numeric"]
+
+[[scenario]]
+name = "legend_click"
+desc = "the e.g. legend link searches its own text (the text is pinned: its random pick differs per side)"
+route = "#start"
+steps = [
+  { eval = "document.querySelector('#legend a').textContent = 'phase transitions of TiH\u2082'" },
+  { click = "#legend a", after = 1500 },
+]
+tags = ["search", "mouse"]
+
+[[scenario]]
+name = "logo_click_home"
+desc = "the logo returns to the landing page"
+route = "#search/Ag-O"
+steps = [ { click = "#ermac_logo a", after = 1500 } ]
+tags = ["mouse", "route"]
+
+# ============================================================================
+# table sorting (the vanilla tablesort replacing jquery.tablesorter)
+# ============================================================================
+
+[[scenario]]
+name = "sort_formula"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#dataheader_entries th.c1.header" }, { click = "#dataheader_entries th.c1.header" } ]
+probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
+tags = ["sort"]
+
+[[scenario]]
+name = "sort_year"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#dataheader_entries th.c4.header" }, { click = "#dataheader_entries th.c4.header" } ]
+probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
+tags = ["sort"]
+
+[[scenario]]
+name = "sort_ref_numeric"
+desc = "the Ref. column sorts numerically, not lexically"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#dataheader_entries th.c5.header" }, { click = "#dataheader_entries th.c5.header" } ]
+probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
+tags = ["sort"]
+
+[[scenario]]
+name = "sort_journal"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#dataheader_entries th.cj.header" }, { click = "#dataheader_entries th.cj.header" } ]
+probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
+tags = ["sort"]
+
+[[scenario]]
+name = "sort_two_columns"
+desc = "sorting by one column then another: last click wins, header classes reset"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#dataheader_entries th.c4.header" },
+  { click = "#dataheader_entries th.c4.header" },
+  { click = "#dataheader_entries th.c1.header" },
+]
+probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
+tags = ["sort"]
+
+[[scenario]]
+name = "sort_dblclick_no_text_selection"
+desc = "double-clicking a header does not select its text (tablesorter cancelSelection)"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#dataheader_entries th.c2.header" }, { dblclick = "#dataheader_entries th.c2.header" } ]
+probe = ["selection", "attrs:#databrowser tr.tcell@id"]
+tags = ["sort", "mouse"]
+
+[[scenario]]
+name = "sort_unsortable_column"
+desc = "the Show column (cp) is not sortable"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#databrowser tr.tcell" }, { click = "#dataheader_entries th.cp" } ]
+probe = ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"]
+tags = ["sort"]
+
+[[scenario]]
+name = "sort_phases_table"
+tooltips = false
+route = "#inquiry_phases/elements=Ag-O&classes=oxide"
+steps = [
+  { wait_for = "#control_c" }, { click = "#control_c", after = 1500 },
+  { wait_for = "#dataheader_phases th.header" }, { click = "#dataheader_phases th.header" },
+]
+probe = ["classes:#dataheader_phases th", "attrs:#databrowser tr@id"]
+tags = ["sort"]
+
+# ============================================================================
+# periodic table
+# ============================================================================
+
+[[scenario]]
+name = "ptable_click_element"
+desc = "clicking Ag selects it in the table and adds it to the search box"
+route = "#start"
+steps = [ { click = "#ptable_area li[data-pos='47']", after = 1500 } ]
+probe = ["classes:#ptable_area li[data-pos='47'], #ptable_area li[data-pos='8']", "visible:#ptable_results"]
+tags = ["ptable", "mouse"]
+
+[[scenario]]
+name = "ptable_click_binary"
+desc = "Ag then O: binary system selected, phase diagram fetched"
+route = "#start"
+steps = [
+  { click = "#ptable_area li[data-pos='47']", after = 1500 },
+  { click = "#ptable_area li[data-pos='8']", after = 2500 },
+]
+probe = ["classes:#ptable_area li[data-pos='47'], #ptable_area li[data-pos='8']", "visible:#ptable_results", "visible:#ptable_vis"]
+tags = ["ptable", "mouse"]
+
+[[scenario]]
+name = "ptable_click_toggle_off"
+desc = "clicking a selected element again deselects it"
+route = "#start"
+steps = [
+  { click = "#ptable_area li[data-pos='47']", after = 1500 },
+  { click = "#ptable_area li[data-pos='47']", after = 1500 },
+]
+probe = ["classes:#ptable_area li[data-pos='47']"]
+tags = ["ptable", "mouse"]
+
+[[scenario]]
+name = "ptable_remove_item_deselects"
+desc = "removing an element item from the box deselects it in the table"
+route = "#start"
+steps = [
+  { click = "#ptable_area li[data-pos='47']", after = 1500 },
+  { click = "#search_holder .selectize-input > div[data-term] a.remove", after = 1500 },
+]
+probe = ["classes:#ptable_area li[data-pos='47']"]
+tags = ["ptable", "multiselect"]
+
+[[scenario]]
+name = "ptable_dtypes_counts"
+desc = "switching the table to crystal structure counts"
+route = "#start"
+steps = [ { click = "#ptable_area li[data-pos='47']", after = 2500 }, { click = "label[for='ptable_dtypes_2']", after = 2500 } ]
+probe = ["checked:#ptable_dtypes_2", "html:#ptable_area li[data-pos='8']", "classes:#ptable_area li[data-pos='8']", "visible:#ptable_results"]
+tags = ["ptable"]
+
+[[scenario]]
+name = "ptable_dtypes_empty"
+route = "#start"
+steps = [ { click = "#ptable_area li[data-pos='47']", after = 2500 }, { click = "label[for='ptable_dtypes_0']", after = 2000 } ]
+probe = ["checked:#ptable_dtypes_0", "classes:#ptable_area li[data-pos='8']"]
+tags = ["ptable"]
+
+[[scenario]]
+name = "ptable_scroll_hides_legend"
+desc = "scrolling past 40px hides the legend and un-results the dtypes box"
+route = "#start"
+steps = [ { click = "#ptable_area li[data-pos='47']", after = 1500 }, { scroll_y = 300, after = 1000 } ]
+probe = ["class:#ptable_dtypes_box", "style:#legend@display", "class:#ptable_vis", "scroll"]
+viewport = [1280, 800]
+tags = ["ptable", "scroll"]
+
+[[scenario]]
+name = "ptable_route_selects"
+desc = "a #search route with elements also highlights them on the landing table"
+route = "#search/Cu-Zn"
+steps = [ { click = "#ermac_logo a", after = 1500 } ]
+probe = ["classes:#ptable_area li[data-pos='29'], #ptable_area li[data-pos='30']"]
+tags = ["ptable"]
+
+# ============================================================================
+# advanced search box
+# ============================================================================
+
+[[scenario]]
+name = "advs_open_default_tab"
+route = "#start"
+steps = [ { click = "#advsearch_init_trigger" } ]
+probe = ["visibles:div.advstab", "classes:#advstab_options li", "visible:#advsbox"]
+tags = ["advsearch"]
+
+[[scenario]]
+name = "advs_switch_tabs"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { click = "#advstab_options li[rev=advstab_bib]" },
+]
+probe = ["visibles:div.advstab", "classes:#advstab_options li"]
+tags = ["advsearch"]
+
+[[scenario]]
+name = "advs_legend_fills_input"
+desc = "an e.g. link fills the plain input and focuses it"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { click = ".advs_formulae .advs_legend a" },
+]
+probe = ["value:#advs_fct_formulae"]
+tags = ["advsearch"]
+
+[[scenario]]
+name = "advs_legend_fills_multiselect"
+desc = "an e.g. link of a multiselect facet writes an item"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { click = ".advs_classes .advs_legend a" },
+]
+probe = ["texts:#advstab_main .selectize-input > div[data-term]"]
+tags = ["advsearch", "multiselect"]
+
+[[scenario]]
+name = "advs_submit_formula"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { fill = "#advs_fct_formulae", text = "Ag2O" },
+  { click = "#advsearch_do_trigger", after = 1500 },
+]
+tags = ["advsearch", "search"]
+
+[[scenario]]
+name = "advs_submit_enter"
+desc = "Enter in an advanced input submits (document keydown handler)"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { type = "#advs_fct_elements", text = "Ag, O" },
+  { key = "Enter", after = 1500 },
+]
+tags = ["advsearch", "keyboard"]
+
+[[scenario]]
+name = "advs_submit_empty"
+route = "#start"
+steps = [ { click = "#advsearch_init_trigger" }, { click = "#advsearch_do_trigger" } ]
+tags = ["advsearch", "notify"]
+
+[[scenario]]
+name = "advs_doi_normalized"
+desc = "a doi.org URL is stripped down to the DOI"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_bib]" },
+  { fill = "#advs_fct_doi", text = "http://dx.doi.org/10.1103/PhysRevB.25.5150" },
+  { click = "#advsearch_do_trigger", after = 1500 },
+]
+tags = ["advsearch", "search"]
+
+[[scenario]]
+name = "advs_drop_clears"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { fill = "#advs_fct_formulae", text = "Ag2O" },
+  { click = ".advs_classes .advs_legend a" },
+  { click = "#advsearch_drop_trigger" },
+]
+probe = ["values:input.advs_input", "texts:#advsbox .selectize-input > div[data-term]"]
+tags = ["advsearch"]
+
+[[scenario]]
+name = "advs_close_cross"
+route = "#start"
+steps = [ { click = "#advsearch_init_trigger" }, { click = "#advstab_cry div.close_advs_dialogue" } ]
+tags = ["advsearch", "mouse"]
+
+[[scenario]]
+name = "advs_escape_closes"
+route = "#start"
+steps = [ { click = "#advsearch_init_trigger" }, { key = "Escape" } ]
+tags = ["advsearch", "keyboard"]
+
+[[scenario]]
+name = "advs_classes_suggestions"
+desc = "local (wmdata) suggestions of a facet multiselect"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { type = "#advs_fct_classes-selectized", text = "ox", after = 1000 },
+]
+probe = ["texts:#advstab_main .selectize-dropdown-content [data-selectable]", "visible:#advstab_main .selectize-dropdown"]
+tags = ["advsearch", "multiselect"]
+
+[[scenario]]
+name = "advs_classes_pick_with_keys"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { type = "#advs_fct_classes-selectized", text = "ox", after = 1000 },
+  { key = "ArrowDown" },
+  { key = "Enter" },
+]
+probe = ["texts:#advstab_main .selectize-input > div[data-term]", "visible:#advstab_main .selectize-dropdown"]
+tags = ["advsearch", "multiselect", "keyboard"]
+
+[[scenario]]
+name = "advs_props_autocomplete"
+desc = "the simple autocomplete of the property input"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { type = "#advs_fct_props", text = "band", after = 1000 },
+]
+probe = ["texts:div.autocomplete-suggestions .autocomplete-suggestion", "visibles:div.autocomplete-suggestions"]
+tags = ["advsearch", "autocomplete"]
+
+[[scenario]]
+name = "advs_props_autocomplete_pick"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_options li[rev=advstab_main]" },
+  { type = "#advs_fct_props", text = "band", after = 1000 },
+  { key = "ArrowDown" },
+  { key = "ArrowDown" },
+  { key = "Enter", after = 1500 },
+]
+probe = ["value:#advs_fct_props", "visibles:div.autocomplete-suggestions"]
+tags = ["advsearch", "autocomplete", "keyboard"]
+
+[[scenario]]
+name = "advs_aet_limit"
+desc = "the polyhedra limit checkbox adds the matching class keyword"
+route = "#polyhedra"
+steps = [
+  { wait_for = "#all_polyhedra_content div.gallery_item" },
+  { click = "#all_polyhedra_content div.gallery_item", nth = 5, after = 1500 },
+  { click = "#aet_limit", after = 800 },
+]
+probe = ["checked:#aet_limit", "texts:#advstab_main .selectize-input > div[data-term]"]
+tags = ["advsearch", "notify"]
+
+[[scenario]]
+name = "polyhedra_pick"
+desc = "picking a polyhedron writes the aetypes item and shows the map"
+route = "#polyhedra"
+steps = [ { wait_for = "#all_polyhedra_content div.gallery_item" }, { click = "#all_polyhedra_content div.gallery_item", nth = 5, after = 1500 } ]
+probe = ["texts:#advstab_cry .selectize-input > div[data-term]", "visible:#aetmap", "visible:#advsbox"]
+tags = ["advsearch", "polyhedra"]
+
+[[scenario]]
+name = "interpret_click_opens_advsearch"
+tooltips = false
+desc = "clicking an interpretation chip opens the matching advanced tab"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#interpret li" }, { click = "#interpret li" } ]
+probe = ["visibles:div.advstab", "classes:#advstab_options li"]
+tags = ["advsearch", "results"]
+
+# ============================================================================
+# modals, user box, keyboard
+# ============================================================================
+
+[[scenario]]
+name = "userbox_opens_login"
+route = "#search/Ag-O"
+steps = [ { click = "#userbox", after = 1000 } ]
+probe = ["visible:#loginbox"]
+tags = ["modal", "mouse"]
+
+[[scenario]]
+name = "userbox_toggle_restores_hash"
+desc = "clicking the user box twice returns to the page it was opened from"
+route = "#search/Ag-O"
+steps = [ { click = "#userbox", after = 1000 }, { click = "#userbox", after = 1500 } ]
+probe = ["visible:#loginbox"]
+tags = ["modal", "mouse"]
+
+[[scenario]]
+name = "login_escape_closes"
+route = "#modal/login"
+steps = [ { key = "Escape", after = 1000 } ]
+probe = ["visible:#loginbox"]
+tags = ["modal", "keyboard"]
+
+[[scenario]]
+name = "modal_restore"
+route = "#modal/restore"
+probe = ["visible:#restorebox", "visible:#loginbox"]
+tags = ["modal", "route"]
+
+[[scenario]]
+name = "modal_factor"
+route = "#modal/factor"
+probe = ["visible:#factorbox", "visibles:#factorbox input"]
+tags = ["modal", "route"]
+
+[[scenario]]
+name = "modal_menu_logged_out"
+desc = "the account menu redirects anonymous users to the login"
+route = "#modal/menu"
+probe = ["visible:#loginbox", "visible:#menubox"]
+tags = ["modal", "route"]
+
+[[scenario]]
+name = "modal_unknown"
+route = "#modal/nonsense"
+tags = ["modal", "route", "notify"]
+
+[[scenario]]
+name = "login_enter_submits"
+desc = "Enter in the password field submits the login form (mocked API)"
+route = "#modal/login"
+mock = [ { path = "/users/login", json = { error = "Wrong login or password" } } ]
+steps = [
+  { fill = "#login_email", text = "someone@example.invalid" },
+  { type = "#login_password", text = "secret" },
+  { key = "Enter", after = 1500 },
+]
+probe = ["text:#login_trigger", "visible:#loginbox"]
+tags = ["modal", "keyboard", "mock"]
+
+[[scenario]]
+name = "login_click_error"
+desc = "a refused login: notification text, button label restored (mocked API)"
+route = "#modal/login"
+mock = [ { path = "/users/login", json = { error = "Wrong login or password" } } ]
+steps = [
+  { fill = "#login_email", text = "someone@example.invalid" },
+  { fill = "#login_password", text = "secret" },
+  { click = "#login_trigger", after = 1500 },
+]
+probe = ["text:#login_trigger", "visible:#loginbox", "value:#login_password"]
+tags = ["modal", "mock"]
+
+[[scenario]]
+name = "login_network_error"
+desc = "the login request failing at network level (mocked)"
+route = "#modal/login"
+mock = [ { path = "/users/login", abort = true } ]
+steps = [
+  { fill = "#login_email", text = "someone@example.invalid" },
+  { fill = "#login_password", text = "secret" },
+  { click = "#login_trigger", after = 1500 },
+]
+probe = ["text:#login_trigger", "visible:#loginbox"]
+tags = ["modal", "mock"]
+
+[[scenario]]
+name = "factor_digits_advance"
+desc = "typing digits into the 2FA boxes moves the focus forward (mocked API)"
+route = "#modal/factor"
+mock = [ { path = "/users/factor", json = { error = "Wrong code" } } ]
+steps = [ { type = "#factor_form_resp_0", text = "12" } ]
+probe = ["values:#factorbox input.factor_form_resp"]
+tags = ["modal", "keyboard", "mock"]
+
+[[scenario]]
+name = "tooltip_shown_on_landing"
+desc = "the landing tooltip appears 4s after boot and is dismissed with OK"
+route = "#start"
+steps = [ { wait = 4500 }, { click = "#tooltip span", after = 800 } ]
+probe = ["visible:#tooltip", "js:wmgui.tooltip_counter"]
+tags = ["tooltip", "mouse"]
+
+[[scenario]]
+name = "darkmode_toggle"
+route = "#start"
+steps = [ { click = "#darkmode_trigger", after = 1000 } ]
+probe = ["text:#darkmode_trigger", "class:body", "storage:darkmode"]
+pixels = "loose"
+tags = ["darkmode", "mouse"]
+
+# ============================================================================
+# hierarchy and numeric search
+# ============================================================================
+
+[[scenario]]
+name = "hy_switch_tab"
+route = "#hierarchy"
+steps = [ { click = "#hy_options > li[rev=hy_complex]" } ]
+probe = ["visibles:div.hy_tabs", "classes:#hy_options > li"]
+tags = ["hierarchy"]
+
+[[scenario]]
+name = "hy_expand"
+desc = "expand toggles the nested lists; NB style=\"\" (jQuery) vs style=\"display: block\" render identically on <ul>, hence the legacy md5 key is ignored"
+route = "#hierarchy"
+ignore = ["dom:hy_scalars_md5"]
+steps = [ { click = "#hy_scalars li > span" } ]
+probe = ["texts:#hy_scalars li > span", "nvisible:#hy_scalars ul ul"]
+tags = ["hierarchy"]
+
+[[scenario]]
+name = "hy_dynprop"
+desc = "clicking a property in the hierarchy searches for it"
+route = "#hierarchy"
+steps = [ { click = "#hy_scalars a.dynprop", after = 1500 } ]
+tags = ["hierarchy", "search"]
+
+[[scenario]]
+name = "hy_numeric_slider"
+desc = "a numeric property opens a slider block in the numeric box"
+route = "#start"
+steps = [ { click = "#advsearch_init_trigger" }, { click = "#advstab_cry strong.numeric[rel=alat]", after = 1000 } ]
+probe = ["visible:#numericbox", "count:#numericbox div.slider_numerics", "texts:#numericbox div.slider_numerics", "html:#numericbox ul"]
+tags = ["advsearch", "numeric", "slider"]
+
+[[scenario]]
+name = "hy_numeric_three_sliders_warns"
+desc = "a third numeric block warns 'expect no results'"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_cry strong.numeric[rel=alat]", after = 600 },
+  { click = "#advstab_cry strong.numeric[rel=blat]", after = 600 },
+  { click = "#advstab_cry strong.numeric[rel=clat]", after = 600 },
+]
+probe = ["count:#numericbox div.slider_numerics"]
+tags = ["advsearch", "numeric", "notify"]
+
+[[scenario]]
+name = "numeric_submit"
+desc = "submitting the numeric box serializes the slider into the inquiry"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_cry strong.numeric[rel=alat]", after = 1000 },
+  { click = "#numericbox_do_trigger", after = 2000 },
+]
+tags = ["numeric", "search"]
+
+[[scenario]]
+name = "numeric_drop"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_cry strong.numeric[rel=alat]", after = 1000 },
+  { click = "#numericbox_drop_trigger", after = 1000 },
+]
+probe = ["visible:#numericbox", "count:#numericbox div.slider_numerics"]
+tags = ["numeric"]
+
+[[scenario]]
+name = "numeric_close"
+route = "#start"
+steps = [
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_cry strong.numeric[rel=alat]", after = 1000 },
+  { click = "#close_numericbox", after = 1000 },
+]
+probe = ["visible:#numericbox", "count:#numericbox div.slider_numerics"]
+tags = ["numeric"]
+
+[[scenario]]
+name = "numeric_route_slider_values"
+desc = "a numeric route restores the slider handles and their labels"
+route = "#inquiry/numeric=volume%2C%3E%2C3000%3B"
+probe = ["html:#numericbox ul", "texts:#numericbox .noUi-tooltip", "attrs:#numericbox .noUi-handle@aria-valuenow"]
+tags = ["numeric", "slider", "route"]
+
+[[scenario]]
+name = "numeric_remove_item_closes_box"
+desc = "removing the numeric item from the search box destroys the numeric box"
+route = "#inquiry/numeric=volume%2C%3E%2C3000%3B"
+steps = [ { click = "#search_holder .selectize-input > div[data-term] a.remove", after = 1200 } ]
+probe = ["visible:#numericbox", "count:#numericbox div.slider_numerics"]
+tags = ["numeric", "multiselect"]
+
+# ============================================================================
+# results pages
+# ============================================================================
+
+[[scenario]]
+name = "refine_expand_collapse"
+route = "#search/Ag-O"
+steps = [
+  { wait_for = "#refine_col a.extd_refine" },
+  { click = "#refine_col a.extd_refine", after = 1500 },
+  { wait_for = "#refine_col a.collapse_refine" },
+  { click = "#refine_col a.collapse_refine", after = 800 },
+]
+probe = ["nvisible:#refine_col li", "texts:#refine_col li a"]
+tags = ["results", "refine"]
+
+[[scenario]]
+name = "refine_link_click"
+desc = "a refinement link narrows the search"
+route = "#search/Ag-O"
+steps = [ { wait_for = "#refine_col li.fct_elements a" }, { click = "#refine_col li.fct_elements a", after = 1500 } ]
+tags = ["results", "refine"]
+
+[[scenario]]
+name = "control_phases"
+tooltips = false
+desc = "the 'phases' switch keeps the inquiry and changes the view"
+route = "#inquiry/elements=Ag-O&classes=oxide"
+steps = [ { wait_for = "#control_b" }, { click = "#control_b", after = 1500 } ]
+probe = ["classes:div.controlswitch > div"]
+tags = ["results", "controls"]
+
+[[scenario]]
+name = "control_articles"
+tooltips = false
+route = "#inquiry/elements=Ag-O&classes=oxide"
+steps = [ { wait_for = "#control_f" }, { click = "#control_f", after = 1500 } ]
+probe = ["classes:div.controlswitch > div"]
+tags = ["results", "controls"]
+
+[[scenario]]
+name = "control_table_to_previews"
+tooltips = false
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#control_d" }, { click = "#control_d", after = 1500 } ]
+probe = ["classes:div.controlswitch > div", "count:#databrowser div.gallery_item", "count:#databrowser tr.tcell"]
+tags = ["results", "controls"]
+
+[[scenario]]
+name = "control_previews_to_table"
+tooltips = false
+route = "#search/Ag-O"
+steps = [ { wait_for = "#control_c" }, { click = "#control_c", after = 1500 } ]
+probe = ["classes:div.controlswitch > div", "count:#databrowser div.gallery_item", "count:#databrowser tr.tcell"]
+tags = ["results", "controls"]
+
+[[scenario]]
+name = "control_plots"
+tooltips = false
+desc = "the 'plots' switch picks a (seeded) random plot type"
+route = "#inquiry/elements=Ag-O&classes=oxide"
+steps = [ { wait_for = "#control_e" }, { click = "#control_e", after = 2500 } ]
+pixels = "loose"
+tags = ["results", "controls", "plot"]
+
+[[scenario]]
+name = "dtypes_click"
+tooltips = false
+desc = "a data-type link augments the current search"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#dtypes li" }, { click = "#dtypes li[data-term='phase diagram']", after = 1500 } ]
+tags = ["results"]
+
+[[scenario]]
+name = "dtypes_class_replaces_class"
+tooltips = false
+desc = "peer-reviewed / machine-learning / ab initio are mutually exclusive"
+route = "#inquiry/elements=Ag-O&classes=machine-learning"
+steps = [ { wait_for = "#dtypes li" }, { click = "#dtypes li[data-term='peer-reviewed']", after = 1500 } ]
+tags = ["results"]
+
+[[scenario]]
+name = "phases_show_entries_link"
+tooltips = false
+route = "#inquiry_phases/elements=Ag-O&classes=oxide"
+steps = [ { wait_for = "#databrowser a.launch_id" }, { click = "#databrowser a.launch_id", after = 2000 } ]
+tags = ["results", "phases"]
+
+[[scenario]]
+name = "phases_strict_uncheck"
+tooltips = false
+desc = "unchecking 'include phases commonly reported together' re-requests with strict"
+route = "#inquiry_phases/elements=Ag-O&classes=oxide"
+steps = [ { wait_for = "#databrowser div.gallery_item" }, { click = "#ctx_strict_phases_trigger", after = 2000 } ]
+probe = ["checked:#ctx_strict_phases_trigger", "js:wmgui.ctx_strict_phases"]
+tags = ["results", "phases"]
+
+[[scenario]]
+name = "ref_mousedown_marks_visited"
+desc = "pressing a reference link marks all its occurrences visited and stores the bid"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#databrowser a.resolve_ref" }, { mousedown = "#databrowser a.resolve_ref" } ]
+probe = ["classes:#databrowser a.resolve_ref", "storage:bid_history"]
+tags = ["results"]
+
+[[scenario]]
+name = "visited_refs_restored"
+desc = "references stored as visited are marked on load"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+storage = { bid_history = "[84283, 7814]" }
+probe = ["classes:#databrowser a.resolve_ref"]
+tags = ["results", "storage"]
+
+[[scenario]]
+name = "entry_show_button"
+tooltips = false
+desc = "the row 'Show' button opens the context column with the visualization"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [ { wait_for = "#databrowser span.launch_v" }, { click = "#databrowser span.launch_v", after = 3000 } ]
+probe = ["visible:#ctx_col", "visible:#visavis_col", "classes:#databrowser tr.tcell"]
+pixels = "loose"
+tags = ["results", "context"]
+
+[[scenario]]
+name = "entry_ctx_close"
+tooltips = false
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#databrowser tr.tcell" },
+  { click = "#databrowser tr.tcell", after = 2000 },
+  { click = "#ctx_col div.cross", after = 800 },
+]
+probe = ["visible:#ctx_col", "visible:#sim_col", "classes:#databrowser tr.tcell"]
+tags = ["results", "context"]
+
+[[scenario]]
+name = "entry_ctx_second_row"
+tooltips = false
+desc = "opening another row moves the active highlight"
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#databrowser tr.tcell" },
+  { click = "#databrowser tr.tcell", after = 2000 },
+  { click = "#databrowser tr.tcell", nth = 2, after = 2000 },
+]
+probe = ["classes:#databrowser tr.tcell", "text:#entryno"]
+tags = ["results", "context"]
+
+[[scenario]]
+name = "thumb_click_context"
+tooltips = false
+route = "#search/Ag-O"
+steps = [ { wait_for = "#databrowser div.gallery_item" }, { click = "#databrowser div.gallery_item", nth = 1, after = 2000 } ]
+probe = ["visible:#ctx_col", "classes:#databrowser div.gallery_item"]
+tags = ["results", "context"]
+
+[[scenario]]
+name = "infinite_scroll"
+desc = "scrolling to the bottom of a long result list fetches the next page"
+route = "#search/Ag-O"
+steps = [ { wait_for = "#databrowser div.gallery_item" }, { scroll_y = 100000, after = 2500 } ]
+probe = ["count:#databrowser div.gallery_item", "js:wmgui.unfinished_page"]
+viewport = [1280, 900]
+pixels = "off"
+tags = ["results", "scroll"]
+
+[[scenario]]
+name = "phase_id_rankfilter"
+desc = "the phase data-type filters toggle on and off"
+route = "#phase_id/{phid}"
+steps = [
+  { wait_for = "#dtypes_phid li" },
+  { click = "#dtypes_phid li", after = 2000 },
+  { click = "#dtypes_phid li", after = 2000 },
+]
+probe = ["classes:#dtypes_phid li"]
+tags = ["results", "phases"]
+
+[[scenario]]
+name = "sim_col_click"
+desc = "a 'see also' link of an opened entry"
+tooltips = false
+route = "#inquiry/formulae=Ag2O&props=crystal%20structure"
+steps = [
+  { wait_for = "#databrowser tr.tcell" },
+  { click = "#databrowser tr.tcell", after = 2000 },
+  { wait_for = "#sim_col > ul > li > a" },
+  { click = "#sim_col > ul > li > a", after = 2000 },
+]
+probe = ["classes:#sim_col > ul > li"]
+tags = ["results", "interlinkage"]
+
+# ============================================================================
+# routing edge cases
+# ============================================================================
+
+[[scenario]]
+name = "route_unknown"
+route = "#nonsense/abc"
+tags = ["route", "notify"]
+
+[[scenario]]
+name = "route_search_empty"
+route = "#search/"
+tags = ["route"]
+
+[[scenario]]
+name = "route_search_unicode"
+desc = "subscripts, en dashes and spaces in a free-text search"
+route = "#search/TiH%E2%82%82%20phase%20transitions"
+tags = ["route"]
+
+[[scenario]]
+name = "route_search_garbage"
+route = "#search/qqqzzzxxx"
+tags = ["route", "notify"]
+
+[[scenario]]
+name = "route_inquiry_unknown_facet"
+route = "#inquiry/foo=bar"
+tags = ["route"]
+
+[[scenario]]
+name = "route_inquiry_entries"
+route = "#inquiry_entries/elements=Ag-O&classes=oxide"
+tags = ["route"]
+
+[[scenario]]
+name = "route_phase_triplet"
+route = "#phase/Ag2O/224/cP6"
+tags = ["route"]
+
+[[scenario]]
+name = "route_entry_unknown"
+route = "#entry/S0000000"
+tags = ["route", "notify"]
+
+[[scenario]]
+name = "route_plot_graph"
+route = "#plot/graph/inquiry/elements=Ag-O"
+pixels = "loose"
+settle = 6000
+tags = ["route", "plot"]
+
+[[scenario]]
+name = "route_plot_matrix"
+route = "#plot/matrix/inquiry/elements=Ag-O"
+pixels = "loose"
+settle = 6000
+tags = ["route", "plot"]
+
+[[scenario]]
+name = "route_junction_anon"
+desc = "the junction page redirects anonymous users"
+route = "#junction"
+tags = ["route"]
+
+[[scenario]]
+name = "route_access_mocked"
+desc = "a secret access link (mocked API refusal)"
+route = "#access/0123456789abcdef"
+mock = [ { path = "/users/access", json = { error = "This link is expired" } } ]
+tags = ["route", "mock"]
+
+[[scenario]]
+name = "route_ratify_mocked"
+route = "#ratify/0123456789abcdef"
+mock = [ { path = "/users/ratify", json = { error = "This link is expired" } } ]
+tags = ["route", "mock"]
+
+[[scenario]]
+name = "nav_back"
+desc = "browser Back after an in-app search restores the previous view"
+route = "#search/Ag-O"
+steps = [
+  { wait_for = "#databrowser div.gallery_item" },
+  { hash = "#search/Cu-Zn", after = 2500 },
+  { back = true, after = 2500 },
+]
+tags = ["route", "history"]
+
+[[scenario]]
+name = "nav_hash_from_landing"
+route = "#start"
+steps = [ { hash = "#inquiry/formulae=Ag2O&props=crystal%20structure", after = 2500 } ]
+tags = ["route"]
+
+# ============================================================================
+# persisted state (localStorage presets)
+# ============================================================================
+
+[[scenario]]
+name = "history_restored"
+desc = "the 'last searches' box is built from the stored log"
+route = "#search/Ag-O"
+storage = { wm_search_log_v5 = '[{"elements":"Cu-Zn"},{"formulae":"Ag2O","props":"crystal structure"},{"classes":"oxide","elements":"Ti-O"}]' }
+probe = ["texts:#history li", "attrs:#history li a@href"]
+tags = ["storage", "history"]
+
+[[scenario]]
+name = "history_dedup_and_cap"
+desc = "a repeated search is not logged twice; the log stays capped"
+route = "#search/Cu-Zn"
+storage = { wm_search_log_v5 = '[{"elements":"Cu-Zn"},{"elements":"A-B"},{"elements":"C-D"},{"elements":"E-F"},{"elements":"G-H"},{"elements":"I-J"},{"elements":"K-L"},{"elements":"M-N"},{"elements":"O-P"}]' }
+probe = ["texts:#history li", "storage:wm_search_log_v5"]
+tags = ["storage", "history"]
+
+[[scenario]]
+name = "history_suppresses_tooltip"
+desc = "returning users (stored history) do not get the landing tooltip"
+route = "#start"
+storage = { wm_search_log_v5 = '[{"elements":"Cu-Zn"},{"elements":"Ag-O"}]' }
+steps = [ { wait = 5000 } ]
+probe = ["visible:#tooltip", "js:wmgui.tooltip_counter"]
+tags = ["storage", "tooltip"]
+
+[[scenario]]
+name = "darkmode_restored"
+route = "#start"
+storage = { darkmode = "true" }
+probe = ["text:#darkmode_trigger", "class:body"]
+pixels = "loose"
+tags = ["storage", "darkmode"]
+
+# ============================================================================
+# API failure paths (mocked)
+# ============================================================================
+
+[[scenario]]
+name = "api_search_error_message"
+desc = "a search answered with an error object"
+route = "#inquiry/elements=Ag-O"
+mock = [ { path = "/search/facet", json = { error = "Sorry, the search is too broad" } } ]
+tags = ["mock", "notify"]
+
+[[scenario]]
+name = "api_search_unreachable"
+desc = "the search endpoint down: 'connection lost' handling"
+route = "#inquiry/elements=Ag-O"
+mock = [ { path = "/search/facet", abort = true } ]
+tags = ["mock", "notify"]
+
+[[scenario]]
+name = "api_search_http_500"
+route = "#inquiry/elements=Ag-O"
+mock = [ { path = "/search/facet", status = 500, body = "Internal Server Error" } ]
+tags = ["mock", "notify"]
+
+[[scenario]]
+name = "api_search_empty"
+desc = "zero results"
+route = "#inquiry/elements=Ag-O"
+mock = [ { path = "/search/facet", json = { out = [], total_count = 0, error = false } } ]
+tags = ["mock"]
+
+[[scenario]]
+name = "api_autocomplete_down"
+desc = "typing while the suggestion endpoint is down"
+route = "#start"
+mock = [ { path = "/search/selectize", abort = true } ]
+steps = [ { type = "#search_field-selectized", text = "Ag", after = 1500 } ]
+tags = ["mock", "multiselect"]
