@@ -47,8 +47,6 @@ The resulted file `ermac.min.js` is to be included into your webpage (see `examp
 
 ## Code architecture
 
-The entire app lives in a global namespace object `window.wmgui`. There is no module system, and the code is intentionally ES5 jQuery-style (some files use ES6+ features and are compiled with `ECMASCRIPT_NEXT`).
-
 The entire app lives in the global state object `window.wmgui` (kept for embeddability) while being structured as ES modules with explicit dependencies. In the **development mode**, the code is served directly from the `src_js/app/run.js` ES module entry (see `example_dev.html`). In the **production mode**, the code is compiled into a single static bundle `ermac.min.js` (see `example_prod.html`).
 
 **Module map** (entry: `src_js/app/run.js`):
@@ -91,9 +89,16 @@ The entire app lives in the global state object `window.wmgui` (kept for embedda
 - noUiSlider, wNumb, darkmode.js
 - `optimade_mpds_nlp.js` — NLP parser that converts free-text queries to structured facet objects
 
-### No test suite
+### Parity tests
 
-There are no automated tests. Verify changes by loading `example_dev.html` in a browser and exercising the search and visualisation features manually.
+The `parity/` suite checks that the GUI behaves exactly like the deployed version at [mpds-io.github.io/ermac](https://mpds-io.github.io/ermac): every scenario (a route, optional clicks and keystrokes, and the observations to compare) runs against the old and the new bundle in a headless browser, comparing API requests, DOM state, focus, JS errors and screenshots. Scenarios are declared in `parity/scenarios.toml`; see [`parity/README.md`](parity/README.md) for running them and adding new ones.
+
+```
+pip install playwright pillow && python -m playwright install chromium
+python3 parity/run_parity.py
+```
+
+Contributors and coding agents: see [`AGENTS.md`](AGENTS.md) for the compatibility contracts and pitfalls of changing this codebase.
 
 
 ## License

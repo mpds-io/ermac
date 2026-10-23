@@ -159,9 +159,3 @@ Match the surrounding code: 2-space indent, single quotes, semicolons,
 `snake_case` functions, the `$`/`$$`/`on` helpers from `core/dom.js`, comments
 starting with `NB` for non-obvious decisions. Keep diffs local; do not
 reformat files you are not changing.
-
-## Known stale documentation
-
-The README still says there are no automated tests (see `parity/`) and keeps
-a paragraph describing the pre-refactor ES5/jQuery global-namespace code.
-Trust the code and this file over those passages.
