@@ -26,11 +26,12 @@ import {
   slide_up,
   slide_down,
 } from '../core/dom.js';
-import { ajax, param, is_empty } from '../core/ajax.js';
+import { ajax, is_empty } from '../core/ajax.js';
 import {
   create_floating_slider,
   destroy_numericbox,
   serialize_numeric,
+  inquiry_param,
 } from '../components/sliders.js';
 import {
   select_ptable_el,
@@ -123,7 +124,7 @@ export function register_events() {
     wmgui.ctx_strict_phases = '';
     $('#ctx_strict_phases_trigger').checked = true;
 
-    var urlstr = param(query);
+    var urlstr = inquiry_param(query);
     if (window.location.hash == '#inquiry/' + urlstr) {
       // hash-hack FIXME?
       if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
@@ -189,7 +190,7 @@ export function register_events() {
     wmgui.ctx_strict_phases = '';
     $('#ctx_strict_phases_trigger').checked = true;
 
-    var urlstr = param(query);
+    var urlstr = inquiry_param(query);
     if (window.location.hash == '#inquiry/' + urlstr) {
       // hash-hack FIXME?
       if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
@@ -514,7 +515,7 @@ export function register_events() {
           '<li class="extd_rfns fct_' +
           facet +
           '"><a href="#inquiry/' +
-          param(orepr) +
+          inquiry_param(orepr) +
           '">' +
           found[0] +
           '</a></li>';
@@ -1523,7 +1524,7 @@ export function register_events() {
     wmgui.search_type = 0;
     wmgui.search.search_type = wmgui.search_type;
 
-    var urlstr = param(orepr);
+    var urlstr = inquiry_param(orepr);
     if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
     else urlstr += '=';
 
@@ -1541,7 +1542,7 @@ export function register_events() {
     wmgui.search_type = 1;
     wmgui.search.search_type = wmgui.search_type;
 
-    var urlstr = param(orepr);
+    var urlstr = inquiry_param(orepr);
     if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
     else urlstr += '=';
 
@@ -1559,7 +1560,7 @@ export function register_events() {
     wmgui.search_type = 2;
     wmgui.search.search_type = wmgui.search_type;
 
-    var urlstr = param(orepr);
+    var urlstr = inquiry_param(orepr);
     if (urlstr.slice(-1) == '=') urlstr = urlstr.substr(0, urlstr.length - 1);
     else urlstr += '=';
 
@@ -1577,7 +1578,7 @@ export function register_events() {
         if (['search_type', 'phid', 'numeric'].indexOf(key) !== -1) continue;
         orepr[key] = wmgui.search[key];
       }
-      var urlstr = param(orepr);
+      var urlstr = inquiry_param(orepr);
       if (window.location.hash == '#inquiry/' + urlstr) {
         // hash-hack FIXME?
         if (urlstr.slice(-1) == '=')
@@ -1598,7 +1599,7 @@ export function register_events() {
         if (['search_type', 'phid', 'numeric'].indexOf(key) !== -1) continue;
         orepr[key] = wmgui.search[key];
       }
-      var urlstr = param(orepr);
+      var urlstr = inquiry_param(orepr);
       if (window.location.hash == '#inquiry/' + urlstr) {
         // hash-hack FIXME?
         if (urlstr.slice(-1) == '=')
@@ -1620,7 +1621,7 @@ export function register_events() {
       var plot_type = wmgui.get_random_term(['matrix', 'cube']); // the most interesting visualization types
       if (plot_type != wmgui.visavis_curtype) break;
     }
-    window.location.hash = '#plot/' + plot_type + '/inquiry/' + param(orepr);
+    window.location.hash = '#plot/' + plot_type + '/inquiry/' + inquiry_param(orepr);
   });
 
   $('#ctx_strict_phases_trigger').addEventListener('change', function (e) {

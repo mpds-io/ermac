@@ -25,8 +25,10 @@ with the deployed version**, checked by `parity/`.
    (`python3 deploy/build_js.py`), gitignored, and deployed by CI from `master`.
 6. **Do not "fix" a parity failure by editing its scenario.** The OLD deployed
    bundle is the specification. Change a scenario only for an *intentional*,
-   maintainer-approved behavior change, and say why (`ignore` / `xfail` with a
-   `desc`).
+   maintainer-approved behavior change, and say why: `xfail = "<reason>"`
+   plus a `[scenario.expect_new]` table pinning the new behavior (an xfail
+   scenario without it would pass whatever the new code does), or `ignore`
+   for a layer that is irrelevant to the scenario.
 
 ## Where a change goes
 
@@ -84,9 +86,18 @@ libraries in the fixed `VENDORED` order. Consequences:
 - **Request encoding is part of the server contract.** The server was written
   against jQuery `$.param` and jQuery `.data()`: values that were numbers must
   stay numbers (`data-rankfilter="5"` read via `getAttribute` is the string
-  `"5"`: convert it, as `events.js` now does), nested objects/arrays serialize the jQuery way,
+  `"5"`: convert it, as `events.js` now does), nested objects/arrays serialize the jQuery way
+  (`param()` in `core/ajax.js` is a faithful port of jQuery 3.7.1 `$.param`),
   form posts stay `application/x-www-form-urlencoded`. The parity API layer
   compares method, path, sorted query and POST body.
+- **Numeric searches in hashes** use the router's own `prop,sign,value;...`
+  form (`#inquiry/numeric=band%20gap%2C%3E%2C3`). Build every `#inquiry...`
+  hash with `inquiry_param()` (`components/sliders.js`), which serializes a
+  numeric array that way, never with `param()` directly. Approved fix: the old
+  GUI passed the arrays to `$.param` in the typed-text search and the VIEW
+  buttons, giving `numeric[0][]=...` keys the router cannot read ("Unrecognized
+  input"); see the `search_numeric_text*` and `numeric_view_phases_button`
+  scenarios. The route syntax itself is unchanged (rule 4).
 - **localStorage keys** (`wm_search_log_v5`, `wm`, `bid_history`,
   `absolidix_v1`, `wm_u_email`, `wm_reload_v1`, `wm_redir_v1`, `darkmode`) hold
   users' history and session: never rename or reshape them without a migration.
@@ -137,6 +148,11 @@ libraries in the fixed `VENDORED` order. Consequences:
 - `wmgui.clean()` is the only sanitizer for server text shown in
   notifications: keep it stripping scripts, embedded documents, `on*`
   attributes and `javascript:` URLs (bar the app's own `location.reload()`).
+- A "simplified" `$.param` that just `encodeURIComponent`s each value turns
+  an array into `a,b,c` instead of `key[]=a&key[]=b&key[]=c`. This once
+  silently changed (and half-fixed) the numeric search URLs; `param()` is
+  tested against the vendored jQuery for nested arrays, objects, `null`,
+  functions and top-level `{name, value}` arrays.
 
 ## Verifying a change: the parity loop
 

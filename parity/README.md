@@ -148,6 +148,31 @@ page that failed to load cannot pass as 0. These are data facts, which the
 live API does not necessarily reproduce (another data release, access level
 or the server's fuzzy fallback): they are not part of the PR CI tag set.
 
+### Approved behaviour changes
+
+When the new GUI deliberately differs from the old one (a fix the maintainer
+approved), the scenario keeps comparing both sides, is marked `xfail` with the
+reason, and pins the **new** behaviour with `expect_new`, checked on the NEW
+side only. A violated `expect_new` makes the scenario FAIL even though it is
+xfail; without it an xfail scenario would pass whatever NEW does.
+
+```toml
+[[scenario]]
+name = "search_numeric_text"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "band gap > 3", after = 100 },
+  { key = "Enter", after = 1500 },
+]
+xfail = "APPROVED CHANGE: the old GUI wrote numeric[0][]=... keys the router cannot read"
+
+[scenario.expect_new]
+"hash" = "#inquiry/numeric=band%20gap%2C%3E%2C3"
+"js:JSON.stringify(wmgui.search.numeric)" = '[["band gap",">","3"]]'
+```
+
+The linter rejects `expect_new` without `xfail`.
+
 ### Other scenario keys
 
 | key | meaning |
@@ -161,7 +186,7 @@ or the server's fuzzy fallback): they are not part of the PR CI tag set.
 | `viewport = [w, h]` | default `[1280, 2400]` |
 | `expect = { "<probe>" = value }` | absolute assertions, see above |
 | `ignore = ["pixels", "probe:focus", "dom:header_th"]` | accept an intentional difference (say why in `desc`); `expect` can be ignored too |
-| `xfail = "reason"` | known divergence: reported XFAIL, and XPASS (failing) once it is fixed |
+| `xfail = "reason"` | known or approved divergence: reported XFAIL, and XPASS (failing) once the sides agree; pair it with `expect_new` |
 | `skip = "reason"` | not run |
 
 Route placeholders such as `#phase_id/{phid}` are filled from `[[fixture]]`

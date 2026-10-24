@@ -8,12 +8,13 @@
 import wmgui from '../core/settings.js';
 import { wmutils } from '../core/utils.js';
 import { $, $$, hide, set_attr, append_html, isVisible } from '../core/dom.js';
-import { ajax, param } from '../core/ajax.js';
+import { ajax } from '../core/ajax.js';
 import { create_autocomplete } from '../components/autocomplete.js';
 import { create_multiselect } from '../components/multiselect.js';
 import {
   create_floating_slider,
   destroy_numericbox,
+  inquiry_param,
 } from '../components/sliders.js';
 import { show_aetmap, init_user_login, rotate_interesting } from './search.js';
 import { url_redraw_react } from './router.js';
@@ -53,7 +54,7 @@ export function satisfy_requirements() {
 
     if (inquiry)
       history_html +=
-        '<li><a href="#inquiry/' + param(past) + '">' + title + '</a></li>';
+        '<li><a href="#inquiry/' + inquiry_param(past) + '">' + title + '</a></li>';
     else
       history_html +=
         '<li><a href="#search/' +

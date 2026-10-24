@@ -29,6 +29,7 @@ import {
   destroy_numericbox,
   get_sliders_ranges,
   serialize_numeric,
+  inquiry_param,
 } from '../components/sliders.js';
 import { make_sortable } from '../components/tablesort.js';
 
@@ -83,7 +84,7 @@ wmgui.aug_search_cmd = function (new_fct, new_val) {
       orepr[fct] = new_val;
     }
   });
-  return '#inquiry/' + param(orepr);
+  return '#inquiry/' + inquiry_param(orepr);
 };
 
 // reading the multiselect at the main search input (landing)
@@ -471,7 +472,7 @@ function rebuild_history_box(search, caption) {
   if (chk_searches.indexOf(fingerprint) == -1) {
     var item;
     if (inquiry)
-      item = '<a href="#inquiry/' + param(orepr) + '">' + caption + '</a>';
+      item = '<a href="#inquiry/' + inquiry_param(orepr) + '">' + caption + '</a>';
     else
       item =
         '<a href="#search/' +
@@ -1161,7 +1162,7 @@ export async function request_refinement(query_obj, is_heavy) {
         '<li class="fct_' +
         found_obj.facet +
         '"><a href="#inquiry/' +
-        param(orepr) +
+        inquiry_param(orepr) +
         '">' +
         found_obj.value +
         '</a></li>';

@@ -468,6 +468,72 @@ steps = [
 ]
 probe = ["visible:#numericbox", "count:#numericbox div.slider_numerics"]
 tags = ["search", "numeric"]
+xfail = "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)"
+
+[scenario.expect_new]
+"hash" = "#inquiry/numeric=band%20gap%2C%3E%2C3"
+"js:JSON.stringify(wmgui.search.numeric)" = '[["band gap",">","3"]]'
+"js:wmgui.search_type" = 1
+"text:#notifybox" = { not_contains = "Unrecognized" }
+
+[[scenario]]
+name = "search_numeric_text_two_conditions"
+desc = "two numeric conditions typed in the box become one numeric search with both"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "band gap > 3 seebeck coefficient < 100", after = 100 },
+  { key = "Enter", after = 1500 },
+]
+probe = ["visible:#numericbox", "count:#numericbox div.slider_numerics"]
+tags = ["search", "numeric"]
+xfail = "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)"
+
+[scenario.expect_new]
+"hash" = "#inquiry/numeric=band%20gap%2C%3E%2C3%3Bseebeck%20coefficient%2C%3C%2C100"
+"js:JSON.stringify(wmgui.search.numeric)" = '[["band gap",">","3"],["seebeck coefficient","<","100"]]'
+"text:#notifybox" = { not_contains = "Unrecognized" }
+
+[[scenario]]
+name = "search_numeric_text_with_formula"
+desc = "a formula plus a numeric condition typed in the box keeps both"
+route = "#start"
+steps = [
+  { type = "#search_field-selectized", text = "Bi2Te3 seebeck coefficient > 100", after = 100 },
+  { key = "Enter", after = 1500 },
+]
+tags = ["search", "numeric"]
+xfail = "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)"
+
+[scenario.expect_new]
+"hash" = "#inquiry/formulae=Bi2Te3&numeric=seebeck%20coefficient%2C%3E%2C100"
+"js:JSON.stringify(wmgui.search.numeric)" = '[["seebeck coefficient",">","100"]]'
+
+[[scenario]]
+name = "numeric_route_two_conditions"
+desc = "a two-condition numeric route is parsed identically (router format, no serialization involved)"
+route = "#inquiry/numeric=band%20gap%2C%3E%2C3%3Bseebeck%20coefficient%2C%3C%2C100"
+probe = ["js:JSON.stringify(wmgui.search.numeric)", "js:wmgui.search_type", "count:#numericbox div.slider_numerics"]
+tags = ["route", "numeric"]
+
+[[scenario]]
+name = "numeric_hint_links"
+desc = "the 'Show only unaries/...' links of a numeric search reuse the current hash (no serialization involved)"
+route = "#inquiry/numeric=band%20gap%2C%3C%2C1"
+probe = ["attrs:#interpret li[rel]@rel"]
+tags = ["numeric", "refine"]
+expect = { "attrs:#interpret li[rel]@rel" = { contains = "#inquiry/classes=unary&numeric=band%20gap%2C%3C%2C1" } }
+
+[[scenario]]
+name = "numeric_view_phases_button"
+desc = "the (only) phases VIEW button of a numeric search keeps the numeric condition"
+route = "#inquiry/numeric=volume%2C%3E%2C3000%3B"
+steps = [ { click = "#control_b", after = 1500 } ]
+tags = ["numeric", "controls"]
+xfail = "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)"
+
+[scenario.expect_new]
+"hash" = "#inquiry_phases/numeric=volume%2C%3E%2C3000="
+"js:JSON.stringify(wmgui.search.numeric)" = '[["volume",">","3000"]]'
 
 [[scenario]]
 name = "legend_click"

@@ -65,19 +65,59 @@ export function ajax(settings) {
 }
 
 /**
- * URL query serialization, mimicking jQuery $.param() exactly:
- * encodeURIComponent per key/value, null and undefined emitted as "key=",
+ * URL query serialization, mimicking the vendored jQuery 3.7.1 $.param()
+ * (traditional = false) exactly: encodeURIComponent per key/value, null and
+ * undefined emitted as "key=", function values called, nested values
+ * expanded like jQuery's buildParams(): arrays as key[]= (key[i]= for
+ * object/array members), objects as key[name]=, a top-level array as
+ * {name, value} pairs.
  * NB spaces stay as %20 (the vendored jQuery does NOT convert them to '+').
+ * NB #inquiry hashes with a numeric search need inquiry_param() instead.
  */
+
+const PARAM_RBRACKET = /\[\]$/;
+const PARAM_NON_OBJECT_TAGS = [
+  'Boolean', 'Number', 'String', 'Function', 'Array', 'Date', 'RegExp', 'Error', 'Symbol',
+];
+
+function param_is_object(value) {
+  // jQuery's toType(value) === 'object'
+  if (value == null || (typeof value !== 'object' && typeof value !== 'function')) return false;
+  const tag = Object.prototype.toString.call(value).slice(8, -1);
+  return PARAM_NON_OBJECT_TAGS.indexOf(tag) === -1;
+}
+
+function param_build(prefix, value, add) {
+  if (Array.isArray(value)) {
+    value.forEach(function (member, index) {
+      if (PARAM_RBRACKET.test(prefix)) add(prefix, member);
+      else
+        param_build(
+          prefix + '[' + (typeof member === 'object' && member != null ? index : '') + ']',
+          member,
+          add,
+        );
+    });
+  } else if (!param_is_object(value)) {
+    add(prefix, value);
+  } else {
+    for (const name in value) param_build(prefix + '[' + name + ']', value[name], add);
+  }
+}
 
 export function param(obj) {
   const parts = [];
-  for (const key in obj) {
-    parts.push(
-      encodeURIComponent(key) +
-        '=' +
-        encodeURIComponent(obj[key] == null ? '' : obj[key]),
-    );
+  const add = function (key, value) {
+    const resolved = typeof value === 'function' ? value() : value;
+    parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(resolved == null ? '' : resolved));
+  };
+  if (obj == null) return '';
+  if (Array.isArray(obj)) {
+    obj.forEach(function (item) {
+      add(item.name, item.value);
+    });
+  } else {
+    for (const key in obj) param_build(key, obj[key], add);
   }
   return parts.join('&');
 }

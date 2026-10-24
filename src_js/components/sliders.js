@@ -6,6 +6,7 @@
 
 import wmgui from '../core/settings.js';
 import { $, $$, show, hide, isVisible } from '../core/dom.js';
+import { param } from '../core/ajax.js';
 
 export function create_floating_slider(
   prop_name,
@@ -137,4 +138,26 @@ export function get_sliders_ranges(url_num_obj, num_database) {
 export function serialize_numeric(prop, sign, value) {
   // re-inventing serialization for numeric nested arrays
   return prop + ',' + sign + ',' + value + ';';
+}
+
+/**
+ * #inquiry hash serialization: param(), except that a numeric search kept as
+ * the nested [prop, sign, value] arrays (as given by wmutils.guess() or kept
+ * in wmgui.search) is written in the router's own "prop,sign,value;..." form,
+ * like the sliders path does via serialize_numeric().
+ * NB intentional fix: the old GUI passed the arrays to $.param() as is, which
+ * produced numeric[0][]=... keys the router cannot read ("Unrecognized
+ * input"; parity scenario search_numeric_text, approved via xfail).
+ */
+export function inquiry_param(query) {
+  if (!query || !Array.isArray(query.numeric)) return param(query);
+  var copy = {};
+  for (var key in query) copy[key] = query[key]; // NB keeps the key order
+  copy.numeric = query.numeric
+    .map(function (item) {
+      return serialize_numeric.apply(this, item); // unpack
+    })
+    .join('');
+  if (copy.numeric.slice(-1) == ';') copy.numeric = copy.numeric.slice(0, -1);
+  return param(copy);
 }

@@ -13,6 +13,9 @@ NEW one. Then the two sides are compared layer by layer:
   dom      the legacy semantic DOM keys (title, tables, interpretation, ...)
   probes   the scenario-declared probes (narrow, in-page observations)
   expect   absolute assertions on probes, checked on EACH side
+  expect_new  absolute assertions checked on the NEW side only: they pin an
+           approved behaviour change (`xfail`) and fail the scenario even
+           when it is xfail
   steps    the outcome of every scripted step (ok / missing / timeout / ...)
   errors   uncaught JS errors: the new side must not throw more than the old
   pixels   rendered screenshots (tolerance, strict or loose per scenario)
@@ -94,7 +97,7 @@ PROBE_KINDS = {  # kind: (needs selector, needs @arg)
     'rects': (1, 0), 'focus': (0, 0), 'hash': (0, 0), 'title': (0, 0), 'scroll': (0, 0),
     'history': (0, 0), 'selection': (0, 0), 'storage': (1, 0), 'js': (1, 0),
 }
-LAYERS = ['api', 'ext', 'dom', 'probes', 'expect', 'steps', 'errors', 'pixels']
+LAYERS = ['api', 'ext', 'dom', 'probes', 'expect', 'expect_new', 'steps', 'errors', 'pixels']
 # expect = { "<probe>" = value } or { "<probe>" = { <operator> = value } }
 EXPECT_OPERATORS = ['equals', 'not', 'contains', 'not_contains', 'matches', 'gt', 'ge', 'lt', 'le']
 DEFAULTS = {
@@ -112,7 +115,7 @@ DEFAULTS = {
     'viewport': [1280, 2400],
 }
 SCENARIO_KEYS = set(DEFAULTS) | {'name', 'route', 'desc', 'steps', 'tags', 'skip', 'xfail', 'mock', 'storage', 'tooltips',
-                                 'expect'}
+                                 'expect', 'expect_new'}
 # NB the app shows onboarding tooltips (landing: 4 s after boot, first search:
 # 3 s after the results) until 2 searches are logged; they cover the VIEW
 # controls. `tooltips = false` presets such a neutral 2-entry search log.
@@ -187,21 +190,26 @@ def load_scenarios(path=SCENARIOS_PATH):
             for key in mock:
                 if key not in MOCK_KEYS:
                     problems.append('%s: unknown mock key "%s"' % (where, key))
-        expect = raw.get('expect', {})
-        if not isinstance(expect, dict):
-            problems.append('%s: expect must be a table of "<probe>" = value' % where)
-            expect = {}
-        for probe, wanted in expect.items():
-            problems += lint_probe(where + ' expect', probe)
-            if isinstance(wanted, dict):
-                if len(wanted) != 1 or list(wanted)[0] not in EXPECT_OPERATORS:
-                    problems.append('%s: expect "%s" needs exactly one operator of %s'
-                                    % (where, probe, ', '.join(EXPECT_OPERATORS)))
-                elif list(wanted)[0] == 'matches':
-                    try:
-                        re.compile(wanted['matches'])
-                    except re.error as error:
-                        problems.append('%s: expect "%s": bad regex (%s)' % (where, probe, error))
+        tables = {}
+        for table in ('expect', 'expect_new'):
+            tables[table] = raw.get(table, {})
+            if not isinstance(tables[table], dict):
+                problems.append('%s: %s must be a table of "<probe>" = value' % (where, table))
+                tables[table] = {}
+            for probe, wanted in tables[table].items():
+                problems += lint_probe(where + ' ' + table, probe)
+                if isinstance(wanted, dict):
+                    if len(wanted) != 1 or list(wanted)[0] not in EXPECT_OPERATORS:
+                        problems.append('%s: %s "%s" needs exactly one operator of %s'
+                                        % (where, table, probe, ', '.join(EXPECT_OPERATORS)))
+                    elif list(wanted)[0] == 'matches':
+                        try:
+                            re.compile(wanted['matches'])
+                        except re.error as error:
+                            problems.append('%s: %s "%s": bad regex (%s)' % (where, table, probe, error))
+        if tables['expect_new'] and not raw.get('xfail'):
+            problems.append('%s: expect_new pins an approved change: it needs xfail = "<reason>"' % where)
+        expect, expect_new = tables['expect'], tables['expect_new']
         if not isinstance(raw.get('storage', {}), dict):
             problems.append('%s: storage must be a table of key = "value"' % where)
         if raw.get('pixels', 'strict') not in ('strict', 'loose', 'off'):
@@ -213,8 +221,9 @@ def load_scenarios(path=SCENARIOS_PATH):
         scenario.update(raw)
         scenario['probe'] = list(defaults['probe']) + [p for p in raw.get('probe', []) if p not in defaults['probe']]
         # NB expected probes are evaluated (and compared old vs new) like any other
-        scenario['probe'] += [p for p in expect if p not in scenario['probe']]
+        scenario['probe'] += [p for p in list(expect) + list(expect_new) if p not in scenario['probe']]
         scenario['expect'] = expect
+        scenario['expect_new'] = expect_new
         scenario['ignore'] = list(defaults['ignore']) + list(raw.get('ignore', []))
         scenario.setdefault('steps', [])
         scenario.setdefault('tags', [])
@@ -936,6 +945,16 @@ def compare(scenario, old, new, pixels_enabled, side_dir):
                     expect_diffs.append('%s %s %s' % (side, probe, violation))
         if expect_diffs:
             diffs['expect'] = expect_diffs
+    # NEW-only expectations of an approved change (see the verdict: they make
+    # an xfail scenario FAIL, otherwise it would be XFAIL whatever NEW does)
+    if not ignored(scenario, 'expect_new'):
+        new_diffs = []
+        for probe, wanted in scenario.get('expect_new', {}).items():
+            violation = check_expectation(pn.get(probe), wanted)
+            if violation:
+                new_diffs.append('NEW %s %s' % (probe, violation))
+        if new_diffs:
+            diffs['expect_new'] = new_diffs
 
     so, sn = old['result'].get('steps', []), new['result'].get('steps', [])
     if not ignored(scenario, 'steps') and so != sn:
@@ -1156,6 +1175,8 @@ def main():
             verdict = 'FAIL' if diffs else 'PASS'
             if scenario.get('xfail'):
                 verdict = 'XFAIL' if diffs else 'XPASS'
+                if 'expect_new' in diffs:
+                    verdict = 'FAIL'  # the approved new behaviour itself broke
             entry = {'name': name, 'verdict': verdict, 'diffs': diffs, 'warnings': warnings,
                      'pixels': fraction, 'seconds': round(time.time() - started, 1),
                      'notes': sides['old']['notes'] + sides['new']['notes']}
