@@ -140,13 +140,19 @@ the specification changed, not the refactoring. NB a TOML inline table must
 stay on one line; for several expectations use a `[scenario.expect]` table
 placed after the scenario's other keys.
 
-The `qa` scenarios (`--tag qa`) are result-count checks converted from a QA
-list of facet searches: route `#inquiry/<facets>`, expecting the number the
+The `qa` scenarios (`--tag qa`) are result-count checks for 78 facet
+searches from a QA list: route `#inquiry/<facets>`, expecting the number the
 GUI reports in the page title (`[At least ]N result(s)`, i.e. the API's
-`estimated_count`); zero-hit cases also expect the "No hits" notice, so a
-page that failed to load cannot pass as 0. These are data facts, which the
-live API does not necessarily reproduce (another data release, access level
-or the server's fuzzy fallback): they are not part of the PR CI tag set.
+`estimated_count`). The counts were re-recorded from the live API (the QA
+list's own numbers were outdated; each `desc` keeps them) and are checked
+loosely so that growing data keeps them green: nonzero cases expect at least
+the recorded count (`ge`), cases hitting the server's fuzzy fallback also
+expect its "similar data shown" notice, and zero cases expect 0 plus their
+notice ("No hits" / "Unrecognized property"), so a page that failed to load
+cannot pass as 0. Runs replay the recorded responses, so the counts only
+move with `--fresh-cache` or `--live`, e.g. a periodic
+`--tag qa --fresh-cache` to watch the data. Their parity comparison counts
+like any other scenario; the tag is not part of the PR CI set.
 
 ### Approved behaviour changes
 
@@ -237,7 +243,7 @@ scenario).
 `.github/workflows/parity.yml` runs the component scenarios
 (`--tag legacy,multiselect,sort,controls,mock,keyboard`) on every pull
 request and the whole battery on manual dispatch, with Playwright pinned
-(Chromium 132: rendering and lazy loading depend on the browser build) and
+(Chromium 133: rendering and lazy loading depend on the browser build) and
 the recorded API responses cached between runs to keep the load on
 api.mpds.io minimal. The evidence (`report.json`, diffs, captures,
 screenshots) is uploaded as the `parity-out` artifact.

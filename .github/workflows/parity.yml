@@ -28,7 +28,7 @@ jobs:
       - name: Install Playwright and Chromium
         run: |
           # NB pinned: the browser build affects rendering and lazy loading;
-          # 1.50 = Chromium 132, the build the suite is validated with
+          # 1.50 = Chromium 133, the build the suite is validated with
           pip install playwright==1.50.0 pillow
           python -m playwright install --with-deps chromium
 

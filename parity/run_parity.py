@@ -1060,6 +1060,12 @@ def harvest_fixtures(driver, fixtures):
 
 def make_driver(args):
     browser_args = list(args.browser_arg or [])
+    if args.driver is None:
+        args.driver = default_driver()
+        if args.driver == 'chrome-cli':
+            print('NB playwright is not installed: falling back to --driver chrome-cli '
+                  '(synthetic input, which misses focus/blur regressions; '
+                  '`pip install playwright==1.50.0` for the default driver)')
     if args.driver == 'chrome-cli':
         return ChromeCliDriver(args.browser, browser_args)
     try:
@@ -1084,7 +1090,8 @@ def main():
     parser.add_argument('--list', action='store_true', help='list the scenarios and exit')
     parser.add_argument('--lint', action='store_true', help='validate scenarios.toml and exit')
     parser.add_argument('--scenarios', default=SCENARIOS_PATH)
-    parser.add_argument('--driver', choices=['playwright', 'chrome-cli'], default=default_driver())
+    parser.add_argument('--driver', choices=['playwright', 'chrome-cli'], default=None,
+                        help='default: playwright when installed, else chrome-cli')
     parser.add_argument('--input', choices=['native', 'synthetic'], default='native',
                         help='playwright driver: native input (default) or the in-page synthetic executor')
     parser.add_argument('--browser', default=os.environ.get('PARITY_BROWSER'),
