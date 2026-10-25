@@ -8,7 +8,7 @@
  *     calls are recorded (window.__parity.errors), so a refactoring that
  *     starts throwing is caught even when the DOM happens to look right;
  *  3. probes: window.__parity.probe([...]) evaluates the declarative probe
- *     strings of parity/scenarios.toml (see parity/README.md) in-page, for
+ *     strings of parity/scenarios.json (see parity/README.md) in-page, for
  *     BOTH drivers, so the observation semantics are identical everywhere;
  *  4. synthetic step executor: for the chrome-cli driver (no remote control),
  *     the scenario is passed as ?p=<base64url JSON> and its steps are

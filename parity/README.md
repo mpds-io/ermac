@@ -13,38 +13,48 @@ python3 parity/run_parity.py                      # everything
 python3 parity/run_parity.py --only 'ms_*,start'  # names or glob patterns
 python3 parity/run_parity.py --tag multiselect    # by tag
 python3 parity/run_parity.py --list               # what is there
-python3 parity/run_parity.py --lint               # validate scenarios.toml only
+python3 parity/run_parity.py --lint               # validate scenarios.json + config.json only
 python3 parity/run_parity.py --no-pixels          # skip the screenshot layer
 ```
 
-The tests live in **[`scenarios.toml`](scenarios.toml)**, one `[[scenario]]`
-table each. The runner (`run_parity.py`) and the in-page harness
-(`harness.js`) contain no test-specific code.
+The tests live in **[`scenarios.json`](scenarios.json)**, a list of scenario
+objects; the defaults applied to every scenario and the fixtures are in
+**[`config.json`](config.json)**. The runner (`run_parity.py`) and the
+in-page harness (`harness.js`) contain no test-specific code.
+
+JSON has no comments: any object (a scenario, a step, the defaults, a
+fixture) may carry a `"comment"` (a string or a list of strings), which is
+ignored. Scenarios that open a group of related tests carry
+`"comment": "section: ..."`. The linter reports syntax errors with their line
+and column, duplicate keys (which JSON parsers otherwise silently resolve to
+the last one) and unknown keys.
 
 ## Adding a parity test
 
-Append a table to `scenarios.toml`. A route alone is a valid test:
+Add an object to the list in `scenarios.json`. A route alone is a valid test:
 
-```toml
-[[scenario]]
-name = "route_inquiry_entries"
-route = "#inquiry_entries/elements=Ag-O&classes=oxide"
+```json
+{
+  "name": "route_inquiry_entries",
+  "route": "#inquiry_entries/elements=Ag-O&classes=oxide"
+}
 ```
 
 A narrow interaction test is a route, a few **steps**, and the **probes** that
 pin the behavior down:
 
-```toml
-[[scenario]]
-name = "ms_backspace_removes_last_item"
-desc = "Backspace in the empty input removes the last item"
-route = "#search/Ag-O"
-steps = [
-  { focus = "#search_field-selectized" },
-  { key = "Backspace", after = 1200 },
-]
-probe = ["texts:#search_holder .selectize-input > div[data-term]"]
-tags = ["multiselect", "keyboard"]
+```json
+{
+  "name": "ms_backspace_removes_last_item",
+  "desc": "Backspace in the empty input removes the last item",
+  "route": "#search/Ag-O",
+  "steps": [
+    {"focus": "#search_field-selectized"},
+    {"key": "Backspace", "after": 1200}
+  ],
+  "probe": ["texts:#search_holder .selectize-input > div[data-term]"],
+  "tags": ["multiselect", "keyboard"]
+}
 ```
 
 Then `python3 parity/run_parity.py --lint` and
@@ -53,28 +63,28 @@ Then `python3 parity/run_parity.py --lint` and
 You normally never write expected values: the OLD side **is** the
 expectation. You only say what to do and what to look at. When a fact must
 hold regardless of the old GUI (e.g. "this search shows the 'similar data'
-notice"), add an [`expect`](#absolute-expectations) table.
+notice"), add an [`expect`](#absolute-expectations) object.
 
 ### Steps
 
-Each step is an inline table with exactly one action. `nth = N` picks the
-N-th match of a selector (default 0). `after = ms` overrides the virtual time
+Each step is an object with exactly one action. `"nth": N` picks the
+N-th match of a selector (default 0). `"after": ms` overrides the virtual time
 allowed after the step (default `step_after`, 400 ms).
 
 | step | meaning |
 |---|---|
-| `{ click = "sel" }` / `dblclick` / `hover` | mouse on the element |
-| `{ mousedown = "sel" }` | a bare `mousedown` event (e.g. reference links) |
-| `{ focus = "sel" }` / `{ blur = "sel" }` / `{ blur = true }` | focus management (`true` = the active element) |
-| `{ type = "sel", text = "Ag O", clear = true }` | key-by-key typing (fires keydown/keypress/input/keyup) |
-| `{ key = "Enter", on = "sel" }` | a single key press, on `sel` or the focused element: `Enter`, `Escape`, `Backspace`, `ArrowDown`, `ArrowUp`, `Tab`, `ControlOrMeta+a`, ... The key is held 30 ms, like a person: what keydown triggers (e.g. a route change) runs before keyup instead of racing it |
-| `{ fill = "sel", text = "..." }` | set an input value at once (input + change events) |
-| `{ check = "sel" }` / `uncheck` | checkboxes and radios |
-| `{ hash = "#route" }` / `{ back = true }` | in-app navigation, browser Back |
-| `{ scroll = "sel" }` / `{ scroll_y = 600 }` | scroll an element into view / the window to y |
-| `{ wait = 2000 }` | let 2000 ms of virtual time pass |
-| `{ wait_for = "sel", timeout = 10000 }` / `wait_gone` | until an element appears / disappears |
-| `{ eval = "js" }` | escape hatch: run JS in the page |
+| `{"click": "sel"}` / `dblclick` / `hover` | mouse on the element |
+| `{"mousedown": "sel"}` | a bare `mousedown` event (e.g. reference links) |
+| `{"focus": "sel"}` / `{"blur": "sel"}` / `{"blur": true}` | focus management (`true` = the active element) |
+| `{"type": "sel", "text": "Ag O", "clear": true}` | key-by-key typing (fires keydown/keypress/input/keyup) |
+| `{"key": "Enter", "on": "sel"}` | a single key press, on `sel` or the focused element: `Enter`, `Escape`, `Backspace`, `ArrowDown`, `ArrowUp`, `Tab`, `ControlOrMeta+a`, ... The key is held 30 ms, like a person: what keydown triggers (e.g. a route change) runs before keyup instead of racing it |
+| `{"fill": "sel", "text": "..."}` | set an input value at once (input + change events) |
+| `{"check": "sel"}` / `uncheck` | checkboxes and radios |
+| `{"hash": "#route"}` / `{"back": true}` | in-app navigation, browser Back |
+| `{"scroll": "sel"}` / `{"scroll_y": 600}` | scroll an element into view / the window to y |
+| `{"wait": 2000}` | let 2000 ms of virtual time pass |
+| `{"wait_for": "sel", "timeout": 10000}` / `wait_gone` | until an element appears / disappears |
+| `{"eval": "js"}` | escape hatch: run JS in the page |
 
 A step whose selector matches nothing is recorded as `missing`, a wait that
 expires as `timeout`; the remaining steps are `skipped`. The step outcomes are
@@ -103,7 +113,7 @@ the page after the last step; its value must be identical on both sides.
 | `storage:key` | a localStorage value |
 | `js:expression` | any JSON-able JS expression, e.g. `js:wmgui.search` |
 
-`[defaults].probe` lists the probes evaluated in **every** scenario (focus,
+`defaults.probe` in `config.json` lists the probes evaluated in **every** scenario (focus,
 notification text and visibility, search box items/text/dropdown, open
 modals, `wmgui.search`, localStorage keys, ...). A probe that is `null` on
 both sides (selector matching nothing) is reported as a *vacuous* warning.
@@ -114,32 +124,32 @@ Parity is relative: if the old and the new GUI both show 8 hits, a "no hits"
 scenario still passes. `expect` adds absolute assertions on probes, checked
 on **each** side independently:
 
-```toml
-[[scenario]]
-name = "search_am_ru_binary_similar"
-route = "#start"
-steps = [
-  { type = "#search_field-selectized", text = "Am Ru binary", after = 300 },
-  { key = "Enter", after = 1500 },
-]
-settle = 1000  # NB the notification hides 4 s after it appears
-
-[scenario.expect]
-"text:#notifybox" = { contains = "similar data shown" }
-"visible:#notifybox" = true
-"hash" = "#inquiry/elements=Am-Ru&classes=binary"
+```json
+{
+  "comment": "settle: NB the notification hides 4 s after it appears",
+  "name": "search_am_ru_binary_similar",
+  "route": "#start",
+  "steps": [
+    {"type": "#search_field-selectized", "text": "Am Ru binary", "after": 300},
+    {"key": "Enter", "after": 1500}
+  ],
+  "settle": 1000,
+  "expect": {
+    "text:#notifybox": {"contains": "similar data shown"},
+    "visible:#notifybox": true,
+    "hash": "#inquiry/elements=Am-Ru&classes=binary"
+  }
+}
 ```
 
-A one-line form works too:
-`expect = { "count:#databrowser tr.tcell, #databrowser div.gallery_item" = { gt = 0 } }`.
-A plain value means equality; operators: `equals`, `not`, `contains`,
+E.g. `"expect": {"count:#databrowser tr.tcell, #databrowser div.gallery_item": {"gt": 0}}`
+asserts that there are results. A plain value means equality; operators: `equals`, `not`, `contains`,
 `not_contains` (strings, lists), `matches` (regex search), `gt`, `ge`,
 `lt`, `le` (numbers). The probes of `expect` are also compared old vs new
 like any other. Failures are reported per side in the `expect` layer, e.g.
 `OLD count:... is 8, expected equals 0`: a failing OLD side means the data or
-the specification changed, not the refactoring. NB a TOML inline table must
-stay on one line; for several expectations use a `[scenario.expect]` table
-placed after the scenario's other keys.
+the specification changed, not the refactoring. NB in JSON a backslash in a
+probe must be doubled, e.g. `"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1"`.
 
 The `qa` scenarios (`--tag qa`) are result-count checks for 78 facet
 searches from a QA list: route `#inquiry/<facets>`, expecting the number the
@@ -163,19 +173,20 @@ reason, and pins the **new** behaviour with `expect_new`, checked on the NEW
 side only. A violated `expect_new` makes the scenario FAIL even though it is
 xfail; without it an xfail scenario would pass whatever NEW does.
 
-```toml
-[[scenario]]
-name = "search_numeric_text"
-route = "#start"
-steps = [
-  { type = "#search_field-selectized", text = "band gap > 3", after = 100 },
-  { key = "Enter", after = 1500 },
-]
-xfail = "APPROVED CHANGE: the old GUI wrote numeric[0][]=... keys the router cannot read"
-
-[scenario.expect_new]
-"hash" = "#inquiry/numeric=band%20gap%2C%3E%2C3"
-"js:JSON.stringify(wmgui.search.numeric)" = '[["band gap",">","3"]]'
+```json
+{
+  "name": "search_numeric_text",
+  "route": "#start",
+  "steps": [
+    {"type": "#search_field-selectized", "text": "band gap > 3", "after": 100},
+    {"key": "Enter", "after": 1500}
+  ],
+  "xfail": "APPROVED CHANGE: the old GUI wrote numeric[0][]=... keys the router cannot read",
+  "expect_new": {
+    "hash": "#inquiry/numeric=band%20gap%2C%3E%2C3",
+    "js:JSON.stringify(wmgui.search.numeric)": "[[\"band gap\",\">\",\"3\"]]"
+  }
+}
 ```
 
 The linter rejects `expect_new` without `xfail`.
@@ -185,19 +196,20 @@ The linter rejects `expect_new` without `xfail`.
 | key | meaning |
 |---|---|
 | `desc`, `tags` | free text; `--tag` selects by tag |
-| `storage = { key = "value" }` | localStorage preset, set before the app boots |
-| `mock = [ { path = "/users/login", json = {...} } ]` | stub an API path (prefix): `json`/`body`, `status`, `method`, or `abort = true` for a network failure. Mocked scenarios never reach the MPDS server (playwright driver only) |
+| `"storage": {"key": "value"}` | localStorage preset, set before the app boots |
+| `"mock": [{"path": "/users/login", "json": {...}}]` | stub an API path (prefix): `json`/`body`, `status`, `method`, or `"abort": true` for a network failure. Mocked scenarios never reach the MPDS server (playwright driver only) |
 | `boot`, `settle`, `step_after`, `wait_for_timeout` | virtual-time budget (ms) around the steps |
-| `pixels = "strict" \| "loose" \| "off"`, `pixel_threshold` | screenshot comparison; `loose` reports but never fails |
-| `api = "ordered" \| "unordered" \| "off"` | API request log comparison |
-| `viewport = [w, h]` | default `[1280, 2400]` |
-| `expect = { "<probe>" = value }` | absolute assertions, see above |
-| `ignore = ["pixels", "probe:focus", "dom:header_th"]` | accept an intentional difference (say why in `desc`); `expect` can be ignored too |
-| `xfail = "reason"` | known or approved divergence: reported XFAIL, and XPASS (failing) once the sides agree; pair it with `expect_new` |
-| `skip = "reason"` | not run |
+| `"pixels": "strict" \| "loose" \| "off"`, `pixel_threshold` | screenshot comparison; `loose` reports but never fails |
+| `"api": "ordered" \| "unordered" \| "off"` | API request log comparison |
+| `"viewport": [w, h]` | default `[1280, 2400]` |
+| `"expect": {"<probe>": value}` | absolute assertions, see above |
+| `"ignore": ["pixels", "probe:focus", "dom:header_th"]` | accept an intentional difference (say why in `desc`); `expect` can be ignored too |
+| `"xfail": "reason"` | known or approved divergence: reported XFAIL, and XPASS (failing) once the sides agree; pair it with `expect_new` |
+| `"skip": "reason"` | not run |
 
-Route placeholders such as `#phase_id/{phid}` are filled from `[[fixture]]`
-tables, harvested from the OLD side before the run (`probe` or regex `pattern`).
+Route placeholders such as `#phase_id/{phid}` are filled from the `fixtures`
+of `config.json`, harvested from the OLD side before the run (`probe` or regex
+`pattern`).
 
 ## How it works
 

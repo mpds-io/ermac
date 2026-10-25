@@ -36,9 +36,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: parity/out
-          key: parity-api-${{ hashFiles('parity/scenarios.toml') }}-${{ github.run_id }}
+          key: parity-api-${{ hashFiles('parity/scenarios.json', 'parity/config.json') }}-${{ github.run_id }}
           restore-keys: |
-            parity-api-${{ hashFiles('parity/scenarios.toml') }}-
+            parity-api-${{ hashFiles('parity/scenarios.json', 'parity/config.json') }}-
             parity-api-
 
       - name: Run the parity suite

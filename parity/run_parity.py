@@ -3,7 +3,7 @@
 Ermac parity test: automated comparative testing of the refactored GUI
 against the previously deployed version (https://mpds-io.github.io/ermac).
 
-Every scenario of parity/scenarios.toml (a hash route + optional scripted
+Every scenario of parity/scenarios.json (a hash route + optional scripted
 steps + optional probes, see parity/README.md) runs twice under identical,
 deterministic conditions: once with the OLD reference bundle, once with the
 NEW one. Then the two sides are compared layer by layer:
@@ -57,13 +57,6 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-try:
-    import tomllib
-except ImportError:  # Python < 3.11
-    try:
-        import tomli as tomllib
-    except ImportError:
-        tomllib = None
 
 try:
     from PIL import Image, ImageChops
@@ -74,7 +67,8 @@ except ImportError:
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 OUT = os.environ.get('PARITY_OUT') or os.path.join(HERE, 'out')
-SCENARIOS_PATH = os.path.join(HERE, 'scenarios.toml')
+SCENARIOS_PATH = os.path.join(HERE, 'scenarios.json')  # a list of scenario objects
+CONFIG_PATH = os.path.join(HERE, 'config.json')  # {"defaults": {...}, "fixtures": [...]}
 GUI_PORT = 5560
 API_PORT = 7070
 GUI_ORIGIN = 'http://localhost:%d' % GUI_PORT
@@ -151,19 +145,63 @@ def progress(message):
 # scenarios: loading and linting
 # ----------------------------------------------------------------------------
 
-def load_scenarios(path=SCENARIOS_PATH):
-    if tomllib is None:
-        die('reading %s needs Python >= 3.11 (tomllib) or `pip install tomli`' % path)
-    with open(path, 'rb') as f:
-        data = tomllib.load(f)
+def read_json(path, problems):
+    """JSON with the errors a hand-edited file needs: the line and column of a
+    syntax error, and duplicate keys (json would silently keep the last one)."""
+    label = os.path.relpath(path)
+
+    def no_duplicates(pairs):
+        seen, name = {}, dict(pairs).get('name')
+        for key, value in pairs:
+            if key in seen:
+                problems.append('%s: duplicate key "%s"%s' % (label, key, ' in "%s"' % name if isinstance(name, str) else ''))
+            seen[key] = value
+        return seen
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f, object_pairs_hook=no_duplicates)
+    except FileNotFoundError:
+        problems.append('%s: not found' % label)
+    except ValueError as error:
+        problems.append('%s: invalid JSON: %s' % (label, error))
+    return None
+
+
+def strip_comments(value):
+    """`comment` (a string or a list of strings) is allowed on any object and ignored."""
+    if isinstance(value, dict):
+        return {k: strip_comments(v) for k, v in value.items() if k != 'comment'}
+    if isinstance(value, list):
+        return [strip_comments(v) for v in value]
+    return value
+
+
+def load_scenarios(path=SCENARIOS_PATH, config_path=CONFIG_PATH):
     problems = []
+    config = read_json(config_path, problems)
+    listing = read_json(path, problems)
+    if config is None or listing is None:
+        return [], [], problems
+    if not isinstance(config, dict):
+        return [], [], problems + ['%s: must be an object {"defaults": {...}, "fixtures": [...]}' % os.path.relpath(config_path)]
+    for key in config:
+        if key not in ('comment', 'defaults', 'fixtures'):
+            problems.append('%s: unknown key "%s"' % (os.path.relpath(config_path), key))
+    if not isinstance(listing, list):
+        return [], [], problems + ['%s: must be a list of scenario objects' % os.path.relpath(path)]
+    for index, entry in enumerate(listing):
+        if not isinstance(entry, dict):
+            problems.append('%s: entry %d is not an object' % (os.path.relpath(path), index + 1))
+    data = {'defaults': strip_comments(config.get('defaults', {})),
+            'fixture': strip_comments(config.get('fixtures', [])),
+            'scenario': strip_comments([e for e in listing if isinstance(e, dict)])}
     defaults = dict(DEFAULTS)
     for key, value in data.get('defaults', {}).items():
         if key not in DEFAULTS:
-            problems.append('[defaults]: unknown key "%s"' % key)
+            problems.append('defaults: unknown key "%s"' % key)
         defaults[key] = value
     for probe in defaults['probe']:
-        problems += lint_probe('[defaults]', probe)
+        problems += lint_probe('defaults', probe)
 
     fixtures = []
     for fixture in data.get('fixture', []):
@@ -1369,8 +1407,9 @@ def main():
     parser.add_argument('--only', help='comma-separated scenario names or glob patterns')
     parser.add_argument('--tag', help='comma-separated tags')
     parser.add_argument('--list', action='store_true', help='list the scenarios and exit')
-    parser.add_argument('--lint', action='store_true', help='validate scenarios.toml and exit')
-    parser.add_argument('--scenarios', default=SCENARIOS_PATH)
+    parser.add_argument('--lint', action='store_true', help='validate scenarios.json and config.json and exit')
+    parser.add_argument('--scenarios', default=SCENARIOS_PATH, help='a JSON list of scenario objects')
+    parser.add_argument('--config', default=CONFIG_PATH, help='JSON {"defaults": {...}, "fixtures": [...]}')
     parser.add_argument('--driver', choices=['playwright', 'chrome-cli'], default='playwright')
     parser.add_argument('--input', choices=['native', 'synthetic'], default='native',
                         help='playwright driver: native input (default) or the in-page synthetic executor')
@@ -1394,9 +1433,9 @@ def main():
     if not args.browser_arg and os.environ.get('PARITY_BROWSER_ARGS'):
         args.browser_arg = os.environ['PARITY_BROWSER_ARGS'].split()
 
-    scenarios, fixtures, problems = load_scenarios(args.scenarios)
+    scenarios, fixtures, problems = load_scenarios(args.scenarios, args.config)
     if problems:
-        print('\n'.join('scenarios.toml: ' + p for p in problems))
+        print('\n'.join(problems))
         die('%d problem(s) in %s' % (len(problems), args.scenarios))
     selected = select(scenarios, args.only, args.tag)
     if args.lint:

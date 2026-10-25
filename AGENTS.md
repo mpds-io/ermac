@@ -25,8 +25,8 @@ with the deployed version**, checked by `parity/`.
    (`python3 deploy/build_js.py`), gitignored, and deployed by CI from `master`.
 6. **Do not "fix" a parity failure by editing its scenario.** The OLD deployed
    bundle is the specification. Change a scenario only for an *intentional*,
-   maintainer-approved behavior change, and say why: `xfail = "<reason>"`
-   plus a `[scenario.expect_new]` table pinning the new behavior (an xfail
+   maintainer-approved behavior change, and say why: `"xfail": "<reason>"`
+   plus an `"expect_new"` object pinning the new behavior (an xfail
    scenario without it would pass whatever the new code does), or `ignore`
    for a layer that is irrelevant to the scenario.
 
@@ -166,7 +166,7 @@ libraries in the fixed `VENDORED` order. Consequences:
 ## Verifying a change: the parity loop
 
 ```
-python3 parity/run_parity.py --lint                 # after editing scenarios.toml
+python3 parity/run_parity.py --lint                 # after editing scenarios.json / config.json
 python3 parity/run_parity.py --only 'ms_*'          # the area you touched
 python3 parity/run_parity.py                        # everything: 7-25 min, host-dependent
 ```
@@ -187,7 +187,7 @@ python3 parity/run_parity.py                        # everything: 7-25 min, host
   side means the data or the specification moved, not your change.
 - A `WARN the OLD side itself failed step N` means the scenario is wrong
   (selector, hidden element, onboarding tooltip covering the target — use
-  `tooltips = false`), not the code.
+  `"tooltips": false`), not the code.
 - A scenario reported `ERROR SideFrozen` hung the browser (an endless loop,
   a promise that never settles, a request that never completes): the
   watchdog killed it after `--stall-timeout` s; its last activity says where.
@@ -213,7 +213,7 @@ python3 parity/run_parity.py                        # everything: 7-25 min, host
   `--fresh-cache` should be the exception.
 - **Never exercise account endpoints against production** (`/users/login`,
   `factor`, `access`, `ratify`, `lost_password`, `new_password`, `api_key`):
-  use `mock = [...]` in the scenario. Never put real credentials or API keys in
+  use `"mock": [...]` in the scenario. Never put real credentials or API keys in
   scenarios, fixtures, caches or commits.
 - Do not commit `parity/out/`, `parity/reference/` or recorded responses.
 

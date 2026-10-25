@@ -91,7 +91,7 @@ The entire app lives in the global state object `window.wmgui` (kept for embedda
 
 ### Parity tests
 
-The `parity/` suite checks that the GUI behaves exactly like the deployed version at [mpds-io.github.io/ermac](https://mpds-io.github.io/ermac): every scenario (a route, optional clicks and keystrokes, and the observations to compare) runs against the old and the new bundle in a headless browser, comparing API requests, DOM state, focus, JS errors and screenshots. Scenarios are declared in `parity/scenarios.toml`; see [`parity/README.md`](parity/README.md) for running them and adding new ones.
+The `parity/` suite checks that the GUI behaves exactly like the deployed version at [mpds-io.github.io/ermac](https://mpds-io.github.io/ermac): every scenario (a route, optional clicks and keystrokes, and the observations to compare) runs against the old and the new bundle in a headless browser, comparing API requests, DOM state, focus, JS errors and screenshots. Scenarios are declared in `parity/scenarios.json` (a list of scenario objects; defaults and fixtures in `parity/config.json`); see [`parity/README.md`](parity/README.md) for running them and adding new ones.
 
 ```
 # NB one interpreter throughout: install with the python3 that runs the suite

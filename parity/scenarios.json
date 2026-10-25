@@ -1,0 +1,2174 @@
+[
+  {
+    "comment": "section: routes (the original battery)",
+    "name": "start",
+    "route": "#start",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "search",
+    "route": "#search/Ag-O",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "inquiry_oxide",
+    "route": "#inquiry/elements=Ag-O&classes=oxide",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "inquiry_tabled",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "phases",
+    "route": "#inquiry_phases/elements=Ag-O&classes=oxide",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "articles",
+    "route": "#inquiry_articles/elements=Ag-O&classes=oxide",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "numeric",
+    "route": "#inquiry/numeric=volume%2C%3E%2C3000%3B",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "entry",
+    "route": "#entry/S1410618",
+    "pixels": "loose",
+    "settle": 6000,
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "phase_id",
+    "route": "#phase_id/{phid}",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "article",
+    "route": "#article/{bid}",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "interlinkage",
+    "route": "#interlinkage/{phid}",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "hierarchy",
+    "route": "#hierarchy",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "polyhedra",
+    "route": "#polyhedra",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "modal_login",
+    "route": "#modal/login",
+    "tags": ["route", "legacy"]
+  },
+  {
+    "name": "plot_pie",
+    "route": "#plot/pie/inquiry/elements=Ag-O",
+    "pixels": "loose",
+    "settle": 6000,
+    "tags": ["route", "legacy"]
+  },
+  {
+    "comment": "section: clicks (the original battery, formerly hard-coded in harness.js)",
+    "name": "click_advsearch",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"wait_for": "#databrowser div.gallery_item, #databrowser tr.tcell"},
+      {"click": "#advsearch_init_trigger"}
+    ],
+    "tags": ["click", "legacy"]
+  },
+  {
+    "name": "click_entry_ctx",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [{"wait_for": "#databrowser tr.tcell"}, {"click": "#databrowser tr.tcell"}],
+    "tags": ["click", "legacy"]
+  },
+  {
+    "name": "click_sort",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.c2.header"},
+      {"click": "#dataheader_entries th.c2.header"}
+    ],
+    "tags": ["click", "sort", "legacy"]
+  },
+  {
+    "name": "click_sort_desc",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.c2.header"},
+      {"click": "#dataheader_entries th.c2.header", "after": 500},
+      {"click": "#dataheader_entries th.c2.header"}
+    ],
+    "tags": ["click", "sort", "legacy"]
+  },
+  {
+    "name": "click_refine",
+    "route": "#search/Ag-O",
+    "steps": [{"wait_for": "#refine_col a.extd_refine"}, {"click": "#refine_col a.extd_refine"}],
+    "tags": ["click", "legacy"]
+  },
+  {
+    "comment": "section: main search box (the vanilla multiselect replacing selectize)",
+    "name": "ms_type_opens_suggestions",
+    "desc": "typing opens the suggestion dropdown with the same options, order and highlight",
+    "route": "#start",
+    "steps": [{"type": "#search_field-selectized", "text": "Ag", "after": 1500}],
+    "probe": [
+      "texts:#search_holder .selectize-dropdown-content [data-selectable]",
+      "classes:#search_holder .selectize-dropdown-content [data-selectable]",
+      "class:#search_holder .selectize-input"
+    ],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_enter_after_typing",
+    "desc": "Enter right after suggestions appear: selectize picks the auto-highlighted first option",
+    "route": "#start",
+    "steps": [{"type": "#search_field-selectized", "text": "Ag", "after": 1500}, {"key": "Enter"}],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_arrowdown_enter",
+    "desc": "ArrowDown then Enter adds the highlighted option as an item",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag", "after": 1500},
+      {"key": "ArrowDown"},
+      {"key": "Enter"}
+    ],
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_arrowdown_twice_highlight",
+    "desc": "two ArrowDown presses move the highlight to the expected option",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag", "after": 1500},
+      {"key": "ArrowDown"},
+      {"key": "ArrowDown"}
+    ],
+    "probe": ["classes:#search_holder .selectize-dropdown-content [data-selectable]"],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_arrowup_highlight",
+    "desc": "ArrowUp on an open dropdown highlights the expected option",
+    "route": "#start",
+    "steps": [{"type": "#search_field-selectized", "text": "Ag", "after": 1500}, {"key": "ArrowUp"}],
+    "probe": ["classes:#search_holder .selectize-dropdown-content [data-selectable]"],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_escape_closes_dropdown",
+    "desc": "Escape closes the dropdown and keeps the typed text",
+    "route": "#start",
+    "steps": [{"type": "#search_field-selectized", "text": "Ag", "after": 1500}, {"key": "Escape"}],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_click_option",
+    "desc": "clicking a suggestion adds it, closes the dropdown, keeps the focus",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag", "after": 1500},
+      {"click": "#search_holder .selectize-dropdown-content [data-selectable]"}
+    ],
+    "probe": ["class:#search_holder .selectize-input", "classes:#ptable_area li[data-pos='47']"],
+    "tags": ["multiselect", "mouse"]
+  },
+  {
+    "name": "ms_hover_option",
+    "desc": "hovering a suggestion moves the highlight",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag", "after": 1500},
+      {"hover": "#search_holder .selectize-dropdown-content [data-selectable]", "nth": 1}
+    ],
+    "probe": ["classes:#search_holder .selectize-dropdown-content [data-selectable]"],
+    "tags": ["multiselect", "mouse"]
+  },
+  {
+    "name": "ms_backspace_removes_last_item",
+    "desc": "Backspace in the empty input removes the last item",
+    "route": "#search/Ag-O",
+    "steps": [{"focus": "#search_field-selectized"}, {"key": "Backspace", "after": 1200}],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_backspace_twice",
+    "desc": "two Backspaces remove two items, in order",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"focus": "#search_field-selectized"},
+      {"key": "Backspace", "after": 1200},
+      {"key": "Backspace", "after": 1200}
+    ],
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_backspace_edits_text_first",
+    "desc": "Backspace with typed text deletes a character, not an item",
+    "route": "#search/Ag-O",
+    "steps": [{"type": "#search_field-selectized", "text": "Cu"}, {"key": "Backspace", "after": 1200}],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_remove_button",
+    "desc": "the item x button removes exactly that item",
+    "route": "#search/Ag-O",
+    "steps": [{"click": "#search_holder .selectize-input > div[data-term] a.remove", "after": 1200}],
+    "tags": ["multiselect", "mouse"]
+  },
+  {
+    "name": "ms_click_item",
+    "desc": "clicking an item: selection highlight and focus as in selectize",
+    "route": "#search/Ag-O",
+    "steps": [{"click": "#search_holder .selectize-input > div[data-term]"}],
+    "probe": ["classes:#search_holder .selectize-input > div[data-term]"],
+    "tags": ["multiselect", "mouse"]
+  },
+  {
+    "name": "ms_click_item_then_backspace",
+    "desc": "selectize: Backspace deletes the clicked (active) item, not the last one",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"click": "#search_holder .selectize-input > div[data-term]"},
+      {"key": "Backspace", "after": 1200}
+    ],
+    "tags": ["multiselect", "keyboard", "mouse"]
+  },
+  {
+    "name": "ms_blur_preserves_text",
+    "desc": "preserve_on_blur: leaving the input keeps the typed text and closes the dropdown",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag", "after": 1500},
+      {"click": "#ermac_logo", "after": 600}
+    ],
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect", "mouse"]
+  },
+  {
+    "name": "ms_refocus_reopens",
+    "desc": "focusing the input again after a blur: dropdown state as in selectize",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag", "after": 1500},
+      {"blur": true, "after": 600},
+      {"focus": "#search_field-selectized", "after": 600}
+    ],
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect"]
+  },
+  {
+    "name": "ms_already_selected_hidden",
+    "desc": "an item already in the box is not offered again (selectize hideSelected)",
+    "route": "#search/Ag",
+    "steps": [{"type": "#search_field-selectized", "text": "Ag", "after": 1500}],
+    "probe": ["texts:#search_holder .selectize-dropdown-content [data-selectable]"],
+    "tags": ["multiselect"]
+  },
+  {
+    "name": "ms_options_filtered_by_query",
+    "desc": "options of an earlier query do not leak into the dropdown of a later one",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag", "after": 1500},
+      {"type": "#search_field-selectized", "text": "Cu", "clear": true, "after": 1500}
+    ],
+    "probe": ["texts:#search_holder .selectize-dropdown-content [data-selectable]"],
+    "tags": ["multiselect"]
+  },
+  {
+    "name": "ms_ctrl_a_select_all",
+    "desc": "Cmd/Ctrl+A selects all chips, Backspace then removes them all",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"focus": "#search_field-selectized"},
+      {"key": "ControlOrMeta+a"},
+      {"key": "Backspace", "after": 1200}
+    ],
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_arrow_left_caret",
+    "desc": "ArrowLeft moves the caret before the last chip: Backspace removes the one before the caret",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"focus": "#search_field-selectized"},
+      {"key": "ArrowLeft"},
+      {"key": "Backspace", "after": 1200}
+    ],
+    "tags": ["multiselect", "keyboard"]
+  },
+  {
+    "name": "ms_original_select_options",
+    "desc": "the hidden original <select> mirrors the chips (host pages may read it)",
+    "route": "#search/Ag-O",
+    "probe": [
+      "texts:#search_field option",
+      "attr:#search_field@multiple",
+      "attr:#search_field@class",
+      "attr:#search_field-selectized@type"
+    ],
+    "tags": ["multiselect", "contract"]
+  },
+  {
+    "name": "ms_max_items",
+    "desc": "more than maxItems=10 terms: which items are kept, the input state",
+    "route": "#search/H-He-Li-Be-B-C-N-O-F-Ne-Na-Mg",
+    "probe": ["class:#search_holder .selectize-input", "readonly:#search_field-selectized"],
+    "tags": ["multiselect", "route"]
+  },
+  {
+    "name": "ms_input_autogrow",
+    "desc": "long typed text: input width grows as in selectize",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "superconductivity of ternary oxides", "after": 1500}
+    ],
+    "probe": ["rect:#search_field-selectized", "rect:#search_holder .selectize-input"],
+    "pixels": "loose",
+    "tags": ["multiselect", "layout"]
+  },
+  {
+    "name": "ms_initial_focus",
+    "desc": "the search input is focused at boot (onInitialize)",
+    "route": "#start",
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect"]
+  },
+  {
+    "comment": "section: search triggering",
+    "name": "search_enter_raw_text",
+    "desc": "Enter on raw free text (no suggestion chosen) runs the search",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag2O cubic", "after": 100},
+      {"key": "Enter", "after": 1500}
+    ],
+    "tags": ["search", "keyboard"]
+  },
+  {
+    "name": "search_button_raw_text",
+    "desc": "the search button merges items and raw text into one inquiry",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "oxide", "after": 100},
+      {"click": "#search_trigger", "after": 1500}
+    ],
+    "tags": ["search", "mouse"]
+  },
+  {
+    "name": "search_button_same_query",
+    "desc": "re-submitting the current inquiry re-triggers it (the hash-hack)",
+    "route": "#inquiry/elements=Ag-O",
+    "steps": [{"click": "#search_trigger", "after": 1500}],
+    "tags": ["search", "mouse"]
+  },
+  {
+    "name": "search_empty",
+    "desc": "submitting an empty box notifies 'unrecognized input'",
+    "route": "#start",
+    "steps": [{"click": "#search_trigger"}],
+    "tags": ["search", "notify"]
+  },
+  {
+    "name": "search_trailing_comma",
+    "desc": "a trailing comma or space of the raw text is dropped",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Ag2O,", "after": 100},
+      {"click": "#search_trigger", "after": 1500}
+    ],
+    "tags": ["search"]
+  },
+  {
+    "name": "search_numeric_text",
+    "desc": "a numeric expression typed in the box becomes a numeric search",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "band gap > 3", "after": 100},
+      {"key": "Enter", "after": 1500}
+    ],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["search", "numeric"],
+    "xfail": "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)",
+    "expect_new": {
+      "hash": "#inquiry/numeric=band%20gap%2C%3E%2C3",
+      "js:JSON.stringify(wmgui.search.numeric)": "[[\"band gap\",\">\",\"3\"]]",
+      "js:wmgui.search_type": 1,
+      "text:#notifybox": {"not_contains": "Unrecognized"}
+    }
+  },
+  {
+    "name": "search_numeric_text_two_conditions",
+    "desc": "two numeric conditions typed in the box become one numeric search with both",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "band gap > 3 seebeck coefficient < 100", "after": 100},
+      {"key": "Enter", "after": 1500}
+    ],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["search", "numeric"],
+    "xfail": "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)",
+    "expect_new": {
+      "hash": "#inquiry/numeric=band%20gap%2C%3E%2C3%3Bseebeck%20coefficient%2C%3C%2C100",
+      "js:JSON.stringify(wmgui.search.numeric)": "[[\"band gap\",\">\",\"3\"],[\"seebeck coefficient\",\"<\",\"100\"]]",
+      "text:#notifybox": {"not_contains": "Unrecognized"}
+    }
+  },
+  {
+    "name": "search_numeric_text_with_formula",
+    "desc": "a formula plus a numeric condition typed in the box keeps both",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Bi2Te3 seebeck coefficient > 100", "after": 100},
+      {"key": "Enter", "after": 1500}
+    ],
+    "tags": ["search", "numeric"],
+    "xfail": "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)",
+    "expect_new": {
+      "hash": "#inquiry/formulae=Bi2Te3&numeric=seebeck%20coefficient%2C%3E%2C100",
+      "js:JSON.stringify(wmgui.search.numeric)": "[[\"seebeck coefficient\",\">\",\"100\"]]"
+    }
+  },
+  {
+    "name": "numeric_route_two_conditions",
+    "desc": "a two-condition numeric route is parsed identically (router format, no serialization involved)",
+    "route": "#inquiry/numeric=band%20gap%2C%3E%2C3%3Bseebeck%20coefficient%2C%3C%2C100",
+    "probe": [
+      "js:JSON.stringify(wmgui.search.numeric)",
+      "js:wmgui.search_type",
+      "count:#numericbox div.slider_numerics"
+    ],
+    "tags": ["route", "numeric"]
+  },
+  {
+    "name": "numeric_hint_links",
+    "desc": "the 'Show only unaries/...' links of a numeric search reuse the current hash (no serialization involved)",
+    "route": "#inquiry/numeric=band%20gap%2C%3C%2C1",
+    "probe": ["attrs:#interpret li[rel]@rel"],
+    "tags": ["numeric", "refine"],
+    "expect": {
+      "attrs:#interpret li[rel]@rel": {"contains": "#inquiry/classes=unary&numeric=band%20gap%2C%3C%2C1"}
+    }
+  },
+  {
+    "name": "numeric_view_phases_button",
+    "desc": "the (only) phases VIEW button of a numeric search keeps the numeric condition",
+    "route": "#inquiry/numeric=volume%2C%3E%2C3000%3B",
+    "steps": [{"click": "#control_b", "after": 1500}],
+    "tags": ["numeric", "controls"],
+    "xfail": "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)",
+    "expect_new": {
+      "hash": "#inquiry_phases/numeric=volume%2C%3E%2C3000=",
+      "js:JSON.stringify(wmgui.search.numeric)": "[[\"volume\",\">\",\"3000\"]]"
+    }
+  },
+  {
+    "name": "legend_click",
+    "desc": "the e.g. legend link searches its own text (the text is pinned: its random pick differs per side)",
+    "route": "#start",
+    "steps": [
+      {"eval": "document.querySelector('#legend a').textContent = 'phase transitions of TiH₂'"},
+      {"click": "#legend a", "after": 1500}
+    ],
+    "tags": ["search", "mouse"]
+  },
+  {
+    "name": "logo_click_home",
+    "desc": "the logo returns to the landing page",
+    "route": "#search/Ag-O",
+    "steps": [{"click": "#ermac_logo a", "after": 1500}],
+    "tags": ["mouse", "route"]
+  },
+  {
+    "comment": "section: table sorting (the vanilla tablesort replacing jquery.tablesorter)",
+    "name": "sort_formula",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.c1.header"},
+      {"click": "#dataheader_entries th.c1.header"}
+    ],
+    "probe": ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"],
+    "tags": ["sort"]
+  },
+  {
+    "name": "sort_year",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.c4.header"},
+      {"click": "#dataheader_entries th.c4.header"}
+    ],
+    "probe": ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"],
+    "tags": ["sort"]
+  },
+  {
+    "name": "sort_ref_numeric",
+    "desc": "the Ref. column sorts numerically, not lexically",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.c5.header"},
+      {"click": "#dataheader_entries th.c5.header"}
+    ],
+    "probe": ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"],
+    "tags": ["sort"]
+  },
+  {
+    "name": "sort_journal",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.cj.header"},
+      {"click": "#dataheader_entries th.cj.header"}
+    ],
+    "probe": ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"],
+    "tags": ["sort"]
+  },
+  {
+    "name": "sort_two_columns",
+    "desc": "sorting by one column then another: last click wins, header classes reset",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.c4.header"},
+      {"click": "#dataheader_entries th.c4.header"},
+      {"click": "#dataheader_entries th.c1.header"}
+    ],
+    "probe": ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"],
+    "tags": ["sort"]
+  },
+  {
+    "name": "sort_dblclick_no_text_selection",
+    "desc": "double-clicking a header does not select its text (tablesorter cancelSelection)",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.c2.header"},
+      {"dblclick": "#dataheader_entries th.c2.header"}
+    ],
+    "probe": ["selection", "attrs:#databrowser tr.tcell@id"],
+    "tags": ["sort", "mouse"]
+  },
+  {
+    "name": "sort_unsortable_column",
+    "desc": "the Show column (cp) is not sortable",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [{"wait_for": "#databrowser tr.tcell"}, {"click": "#dataheader_entries th.cp"}],
+    "probe": ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"],
+    "tags": ["sort"]
+  },
+  {
+    "name": "sort_after_second_search",
+    "desc": "sorting after a second search: the header handlers of the first table must not also fire",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#databrowser tr.tcell"},
+      {"hash": "#inquiry/formulae=AgO&props=crystal%20structure", "after": 2500},
+      {"wait_for": "#dataheader_entries th.c5.header"},
+      {"click": "#dataheader_entries th.c5.header"}
+    ],
+    "probe": ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"],
+    "tags": ["sort"]
+  },
+  {
+    "name": "sort_ctrl_multi",
+    "desc": "ctrl-click adds a second sort key (sortMultiSortKey)",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#dataheader_entries th.c2.header"},
+      {"click": "#dataheader_entries th.c2.header"},
+      {
+        "eval": "document.querySelector('#dataheader_entries th.c4.header').dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, ctrlKey: true}))"
+      }
+    ],
+    "probe": ["attrs:#databrowser tr.tcell@id", "classes:#dataheader_entries th"],
+    "tags": ["sort"]
+  },
+  {
+    "name": "sort_phases_table",
+    "tooltips": false,
+    "route": "#inquiry_phases/elements=Ag-O&classes=oxide",
+    "steps": [
+      {"wait_for": "#control_c"},
+      {"click": "#control_c", "after": 1500},
+      {"wait_for": "#dataheader_phases th.header"},
+      {"click": "#dataheader_phases th.header"}
+    ],
+    "probe": ["classes:#dataheader_phases th", "attrs:#databrowser tr@id"],
+    "tags": ["sort"]
+  },
+  {
+    "comment": "section: periodic table",
+    "name": "ptable_click_element",
+    "desc": "clicking Ag selects it in the table and adds it to the search box",
+    "route": "#start",
+    "steps": [{"click": "#ptable_area li[data-pos='47']", "after": 1500}],
+    "probe": [
+      "classes:#ptable_area li[data-pos='47'], #ptable_area li[data-pos='8']",
+      "visible:#ptable_results"
+    ],
+    "tags": ["ptable", "mouse"]
+  },
+  {
+    "name": "ptable_click_binary",
+    "desc": "Ag then O: binary system selected, phase diagram fetched",
+    "route": "#start",
+    "steps": [
+      {"click": "#ptable_area li[data-pos='47']", "after": 1500},
+      {"click": "#ptable_area li[data-pos='8']", "after": 2500}
+    ],
+    "probe": [
+      "classes:#ptable_area li[data-pos='47'], #ptable_area li[data-pos='8']",
+      "visible:#ptable_results",
+      "visible:#ptable_vis"
+    ],
+    "tags": ["ptable", "mouse"]
+  },
+  {
+    "name": "ptable_click_toggle_off",
+    "desc": "clicking a selected element again deselects it",
+    "route": "#start",
+    "steps": [
+      {"click": "#ptable_area li[data-pos='47']", "after": 1500},
+      {"click": "#ptable_area li[data-pos='47']", "after": 1500}
+    ],
+    "probe": ["classes:#ptable_area li[data-pos='47']"],
+    "tags": ["ptable", "mouse"]
+  },
+  {
+    "name": "ptable_remove_item_deselects",
+    "desc": "removing an element item from the box deselects it in the table",
+    "route": "#start",
+    "steps": [
+      {"click": "#ptable_area li[data-pos='47']", "after": 1500},
+      {"click": "#search_holder .selectize-input > div[data-term] a.remove", "after": 1500}
+    ],
+    "probe": ["classes:#ptable_area li[data-pos='47']"],
+    "tags": ["ptable", "multiselect"]
+  },
+  {
+    "name": "ptable_dtypes_counts",
+    "desc": "switching the table to crystal structure counts",
+    "route": "#start",
+    "steps": [
+      {"click": "#ptable_area li[data-pos='47']", "after": 2500},
+      {"click": "label[for='ptable_dtypes_2']", "after": 2500}
+    ],
+    "probe": [
+      "checked:#ptable_dtypes_2",
+      "html:#ptable_area li[data-pos='8']",
+      "classes:#ptable_area li[data-pos='8']",
+      "visible:#ptable_results"
+    ],
+    "tags": ["ptable"]
+  },
+  {
+    "name": "ptable_dtypes_empty",
+    "route": "#start",
+    "steps": [
+      {"click": "#ptable_area li[data-pos='47']", "after": 2500},
+      {"click": "label[for='ptable_dtypes_0']", "after": 2000}
+    ],
+    "probe": ["checked:#ptable_dtypes_0", "classes:#ptable_area li[data-pos='8']"],
+    "tags": ["ptable"]
+  },
+  {
+    "name": "ptable_scroll_hides_legend",
+    "desc": "scrolling past 40px hides the legend and un-results the dtypes box",
+    "route": "#start",
+    "steps": [{"click": "#ptable_area li[data-pos='47']", "after": 1500}, {"scroll_y": 300, "after": 1000}],
+    "probe": ["class:#ptable_dtypes_box", "style:#legend@display", "class:#ptable_vis", "scroll"],
+    "viewport": [1280, 800],
+    "tags": ["ptable", "scroll"]
+  },
+  {
+    "name": "ptable_route_selects",
+    "desc": "a #search route with elements also highlights them on the landing table",
+    "route": "#search/Cu-Zn",
+    "steps": [{"click": "#ermac_logo a", "after": 1500}],
+    "probe": ["classes:#ptable_area li[data-pos='29'], #ptable_area li[data-pos='30']"],
+    "tags": ["ptable"]
+  },
+  {
+    "comment": "section: advanced search box",
+    "name": "advs_open_default_tab",
+    "route": "#start",
+    "steps": [{"click": "#advsearch_init_trigger"}],
+    "probe": ["visibles:div.advstab", "classes:#advstab_options li", "visible:#advsbox"],
+    "tags": ["advsearch"]
+  },
+  {
+    "name": "advs_switch_tabs",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"click": "#advstab_options li[rev=advstab_bib]"}
+    ],
+    "probe": ["visibles:div.advstab", "classes:#advstab_options li"],
+    "tags": ["advsearch"]
+  },
+  {
+    "name": "advs_legend_fills_input",
+    "desc": "an e.g. link fills the plain input and focuses it",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"click": ".advs_formulae .advs_legend a"}
+    ],
+    "probe": ["value:#advs_fct_formulae"],
+    "tags": ["advsearch"]
+  },
+  {
+    "name": "advs_legend_fills_multiselect",
+    "desc": "an e.g. link of a multiselect facet writes an item",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"click": ".advs_classes .advs_legend a"}
+    ],
+    "probe": ["texts:#advstab_main .selectize-input > div[data-term]"],
+    "tags": ["advsearch", "multiselect"]
+  },
+  {
+    "name": "advs_submit_formula",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"fill": "#advs_fct_formulae", "text": "Ag2O"},
+      {"click": "#advsearch_do_trigger", "after": 1500}
+    ],
+    "tags": ["advsearch", "search"]
+  },
+  {
+    "name": "advs_submit_enter",
+    "desc": "Enter in an advanced input submits (document keydown handler)",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"type": "#advs_fct_elements", "text": "Ag, O"},
+      {"key": "Enter", "after": 1500}
+    ],
+    "tags": ["advsearch", "keyboard"]
+  },
+  {
+    "name": "advs_submit_empty",
+    "route": "#start",
+    "steps": [{"click": "#advsearch_init_trigger"}, {"click": "#advsearch_do_trigger"}],
+    "tags": ["advsearch", "notify"]
+  },
+  {
+    "name": "advs_doi_normalized",
+    "desc": "a doi.org URL is stripped down to the DOI",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_bib]"},
+      {"fill": "#advs_fct_doi", "text": "http://dx.doi.org/10.1103/PhysRevB.25.5150"},
+      {"click": "#advsearch_do_trigger", "after": 1500}
+    ],
+    "tags": ["advsearch", "search"]
+  },
+  {
+    "name": "advs_drop_clears",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"fill": "#advs_fct_formulae", "text": "Ag2O"},
+      {"click": ".advs_classes .advs_legend a"},
+      {"click": "#advsearch_drop_trigger"}
+    ],
+    "probe": ["values:input.advs_input", "texts:#advsbox .selectize-input > div[data-term]"],
+    "tags": ["advsearch"]
+  },
+  {
+    "name": "advs_close_cross",
+    "route": "#start",
+    "steps": [{"click": "#advsearch_init_trigger"}, {"click": "#advstab_cry div.close_advs_dialogue"}],
+    "tags": ["advsearch", "mouse"]
+  },
+  {
+    "name": "advs_escape_closes",
+    "route": "#start",
+    "steps": [{"click": "#advsearch_init_trigger"}, {"key": "Escape"}],
+    "tags": ["advsearch", "keyboard"]
+  },
+  {
+    "name": "advs_classes_suggestions",
+    "desc": "local (wmdata) suggestions of a facet multiselect",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"type": "#advs_fct_classes-selectized", "text": "ox", "after": 1000}
+    ],
+    "probe": [
+      "texts:#advstab_main .selectize-dropdown-content [data-selectable]",
+      "visible:#advstab_main .selectize-dropdown"
+    ],
+    "tags": ["advsearch", "multiselect"]
+  },
+  {
+    "name": "advs_classes_pick_with_keys",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"type": "#advs_fct_classes-selectized", "text": "ox", "after": 1000},
+      {"key": "ArrowDown"},
+      {"key": "Enter"}
+    ],
+    "probe": [
+      "texts:#advstab_main .selectize-input > div[data-term]",
+      "visible:#advstab_main .selectize-dropdown"
+    ],
+    "tags": ["advsearch", "multiselect", "keyboard"]
+  },
+  {
+    "name": "advs_props_autocomplete",
+    "desc": "the simple autocomplete of the property input",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"type": "#advs_fct_props", "text": "band", "after": 1000}
+    ],
+    "probe": [
+      "texts:div.autocomplete-suggestions .autocomplete-suggestion",
+      "visibles:div.autocomplete-suggestions"
+    ],
+    "tags": ["advsearch", "autocomplete"]
+  },
+  {
+    "name": "advs_props_autocomplete_pick",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_options li[rev=advstab_main]"},
+      {"type": "#advs_fct_props", "text": "band", "after": 1000},
+      {"key": "ArrowDown"},
+      {"key": "ArrowDown"},
+      {"key": "Enter", "after": 1500}
+    ],
+    "probe": ["value:#advs_fct_props", "visibles:div.autocomplete-suggestions"],
+    "tags": ["advsearch", "autocomplete", "keyboard"]
+  },
+  {
+    "name": "advs_aet_limit",
+    "desc": "the polyhedra limit checkbox adds the matching class keyword",
+    "route": "#polyhedra",
+    "steps": [
+      {"wait_for": "#all_polyhedra_content div.gallery_item"},
+      {"click": "#all_polyhedra_content div.gallery_item", "nth": 5, "after": 1500},
+      {"click": "#aet_limit", "after": 800}
+    ],
+    "probe": ["checked:#aet_limit", "texts:#advstab_main .selectize-input > div[data-term]"],
+    "tags": ["advsearch", "notify"]
+  },
+  {
+    "name": "polyhedra_pick",
+    "desc": "picking a polyhedron writes the aetypes item and shows the map",
+    "route": "#polyhedra",
+    "steps": [
+      {"wait_for": "#all_polyhedra_content div.gallery_item"},
+      {"click": "#all_polyhedra_content div.gallery_item", "nth": 5, "after": 1500}
+    ],
+    "probe": ["texts:#advstab_cry .selectize-input > div[data-term]", "visible:#aetmap", "visible:#advsbox"],
+    "tags": ["advsearch", "polyhedra"]
+  },
+  {
+    "name": "interpret_click_opens_advsearch",
+    "tooltips": false,
+    "desc": "clicking an interpretation chip opens the matching advanced tab",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [{"wait_for": "#interpret li"}, {"click": "#interpret li"}],
+    "probe": ["visibles:div.advstab", "classes:#advstab_options li"],
+    "tags": ["advsearch", "results"]
+  },
+  {
+    "comment": "section: modals, user box, keyboard",
+    "name": "userbox_opens_login",
+    "route": "#search/Ag-O",
+    "steps": [{"click": "#userbox", "after": 1000}],
+    "probe": ["visible:#loginbox"],
+    "tags": ["modal", "mouse"]
+  },
+  {
+    "name": "userbox_toggle_restores_hash",
+    "desc": "clicking the user box twice returns to the page it was opened from",
+    "route": "#search/Ag-O",
+    "steps": [{"click": "#userbox", "after": 1000}, {"click": "#userbox", "after": 1500}],
+    "probe": ["visible:#loginbox"],
+    "tags": ["modal", "mouse"]
+  },
+  {
+    "name": "login_escape_closes",
+    "route": "#modal/login",
+    "steps": [{"key": "Escape", "after": 1000}],
+    "probe": ["visible:#loginbox"],
+    "tags": ["modal", "keyboard"]
+  },
+  {
+    "name": "modal_restore",
+    "route": "#modal/restore",
+    "probe": ["visible:#restorebox", "visible:#loginbox"],
+    "tags": ["modal", "route"]
+  },
+  {
+    "name": "modal_factor",
+    "route": "#modal/factor",
+    "probe": ["visible:#factorbox", "visibles:#factorbox input"],
+    "tags": ["modal", "route"]
+  },
+  {
+    "name": "modal_menu_logged_out",
+    "desc": "the account menu redirects anonymous users to the login",
+    "route": "#modal/menu",
+    "probe": ["visible:#loginbox", "visible:#menubox"],
+    "tags": ["modal", "route"]
+  },
+  {
+    "name": "modal_unknown",
+    "route": "#modal/nonsense",
+    "tags": ["modal", "route", "notify"]
+  },
+  {
+    "name": "login_enter_submits",
+    "desc": "Enter in the password field submits the login form (mocked API)",
+    "route": "#modal/login",
+    "mock": [{"path": "/users/login", "json": {"error": "Wrong login or password"}}],
+    "steps": [
+      {"fill": "#login_email", "text": "someone@example.invalid"},
+      {"type": "#login_password", "text": "secret"},
+      {"key": "Enter", "after": 1500}
+    ],
+    "probe": ["text:#login_trigger", "visible:#loginbox"],
+    "tags": ["modal", "keyboard", "mock"]
+  },
+  {
+    "name": "login_click_error",
+    "desc": "a refused login: notification text, button label restored (mocked API)",
+    "route": "#modal/login",
+    "mock": [{"path": "/users/login", "json": {"error": "Wrong login or password"}}],
+    "steps": [
+      {"fill": "#login_email", "text": "someone@example.invalid"},
+      {"fill": "#login_password", "text": "secret"},
+      {"click": "#login_trigger", "after": 1500}
+    ],
+    "probe": ["text:#login_trigger", "visible:#loginbox", "value:#login_password"],
+    "tags": ["modal", "mock"]
+  },
+  {
+    "name": "login_network_error",
+    "desc": "the login request failing at network level (mocked)",
+    "route": "#modal/login",
+    "mock": [{"path": "/users/login", "abort": true}],
+    "steps": [
+      {"fill": "#login_email", "text": "someone@example.invalid"},
+      {"fill": "#login_password", "text": "secret"},
+      {"click": "#login_trigger", "after": 1500}
+    ],
+    "probe": ["text:#login_trigger", "visible:#loginbox"],
+    "tags": ["modal", "mock"]
+  },
+  {
+    "name": "factor_digits_advance",
+    "desc": "typing digits into the 2FA boxes moves the focus forward (mocked API)",
+    "route": "#modal/factor",
+    "mock": [{"path": "/users/factor", "json": {"error": "Wrong code"}}],
+    "steps": [{"type": "#factor_form_resp_0", "text": "12"}],
+    "probe": ["values:#factorbox input.factor_form_resp"],
+    "tags": ["modal", "keyboard", "mock"]
+  },
+  {
+    "name": "tooltip_shown_on_landing",
+    "desc": "the landing tooltip appears 4s after boot and is dismissed with OK",
+    "route": "#start",
+    "steps": [{"wait": 4500}, {"click": "#tooltip span", "after": 800}],
+    "probe": ["visible:#tooltip", "js:wmgui.tooltip_counter"],
+    "tags": ["tooltip", "mouse"]
+  },
+  {
+    "name": "darkmode_toggle",
+    "route": "#start",
+    "steps": [{"click": "#darkmode_trigger", "after": 1000}],
+    "probe": ["text:#darkmode_trigger", "class:body", "storage:darkmode"],
+    "pixels": "loose",
+    "tags": ["darkmode", "mouse"]
+  },
+  {
+    "comment": "section: hierarchy and numeric search",
+    "name": "hy_switch_tab",
+    "route": "#hierarchy",
+    "steps": [{"click": "#hy_options > li[rev=hy_complex]"}],
+    "probe": ["visibles:div.hy_tabs", "classes:#hy_options > li"],
+    "tags": ["hierarchy"]
+  },
+  {
+    "name": "hy_expand",
+    "desc": "expand toggles the nested lists (jQuery .toggle(): restores style=\"\")",
+    "route": "#hierarchy",
+    "steps": [{"click": "#hy_scalars li > span"}],
+    "probe": ["texts:#hy_scalars li > span", "nvisible:#hy_scalars ul ul"],
+    "tags": ["hierarchy"]
+  },
+  {
+    "name": "hy_dynprop",
+    "desc": "clicking a property in the hierarchy searches for it",
+    "route": "#hierarchy",
+    "steps": [{"click": "#hy_scalars a.dynprop", "after": 1500}],
+    "tags": ["hierarchy", "search"]
+  },
+  {
+    "name": "hy_numeric_slider",
+    "desc": "a numeric property opens a slider block in the numeric box",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_cry strong.numeric[rel=alat]", "after": 1000}
+    ],
+    "probe": [
+      "visible:#numericbox",
+      "count:#numericbox div.slider_numerics",
+      "texts:#numericbox div.slider_numerics",
+      "html:#numericbox ul"
+    ],
+    "tags": ["advsearch", "numeric", "slider"]
+  },
+  {
+    "name": "hy_numeric_three_sliders_warns",
+    "desc": "a third numeric block warns 'expect no results'",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_cry strong.numeric[rel=alat]", "after": 600},
+      {"click": "#advstab_cry strong.numeric[rel=blat]", "after": 600},
+      {"click": "#advstab_cry strong.numeric[rel=clat]", "after": 600}
+    ],
+    "probe": ["count:#numericbox div.slider_numerics"],
+    "tags": ["advsearch", "numeric", "notify"]
+  },
+  {
+    "name": "numeric_submit",
+    "desc": "submitting the numeric box serializes the slider into the inquiry",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_cry strong.numeric[rel=alat]", "after": 1000},
+      {"click": "#numericbox_do_trigger", "after": 2000}
+    ],
+    "tags": ["numeric", "search"]
+  },
+  {
+    "name": "numeric_drop",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_cry strong.numeric[rel=alat]", "after": 1000},
+      {"click": "#numericbox_drop_trigger", "after": 1000}
+    ],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["numeric"]
+  },
+  {
+    "name": "numeric_close",
+    "route": "#start",
+    "steps": [
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_cry strong.numeric[rel=alat]", "after": 1000},
+      {"click": "#close_numericbox", "after": 1000}
+    ],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["numeric"]
+  },
+  {
+    "name": "numeric_route_slider_values",
+    "desc": "a numeric route restores the slider handles and their labels",
+    "route": "#inquiry/numeric=volume%2C%3E%2C3000%3B",
+    "probe": [
+      "html:#numericbox ul",
+      "texts:#numericbox .noUi-tooltip",
+      "attrs:#numericbox .noUi-handle@aria-valuenow"
+    ],
+    "tags": ["numeric", "slider", "route"]
+  },
+  {
+    "name": "numeric_remove_item_closes_box",
+    "desc": "removing the numeric item from the search box destroys the numeric box",
+    "route": "#inquiry/numeric=volume%2C%3E%2C3000%3B",
+    "steps": [{"click": "#search_holder .selectize-input > div[data-term] a.remove", "after": 1200}],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["numeric", "multiselect"]
+  },
+  {
+    "comment": "section: results pages",
+    "name": "refine_expand_collapse",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"wait_for": "#refine_col a.extd_refine"},
+      {"click": "#refine_col a.extd_refine", "after": 1500},
+      {"wait_for": "#refine_col a.collapse_refine"},
+      {"click": "#refine_col a.collapse_refine", "after": 800}
+    ],
+    "probe": ["nvisible:#refine_col li", "texts:#refine_col li a"],
+    "tags": ["results", "refine"]
+  },
+  {
+    "name": "refine_link_click",
+    "desc": "a refinement link narrows the search",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"wait_for": "#refine_col li.fct_elements a"},
+      {"click": "#refine_col li.fct_elements a", "after": 1500}
+    ],
+    "tags": ["results", "refine"]
+  },
+  {
+    "name": "control_phases",
+    "tooltips": false,
+    "desc": "the 'phases' switch keeps the inquiry and changes the view",
+    "route": "#inquiry/elements=Ag-O&classes=oxide",
+    "steps": [{"wait_for": "#control_b"}, {"click": "#control_b", "after": 1500}],
+    "probe": ["classes:div.controlswitch > div"],
+    "tags": ["results", "controls"]
+  },
+  {
+    "name": "control_articles",
+    "tooltips": false,
+    "route": "#inquiry/elements=Ag-O&classes=oxide",
+    "steps": [{"wait_for": "#control_f"}, {"click": "#control_f", "after": 1500}],
+    "probe": ["classes:div.controlswitch > div"],
+    "tags": ["results", "controls"]
+  },
+  {
+    "name": "control_table_to_previews",
+    "tooltips": false,
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [{"wait_for": "#control_d"}, {"click": "#control_d", "after": 1500}],
+    "probe": [
+      "classes:div.controlswitch > div",
+      "count:#databrowser div.gallery_item",
+      "count:#databrowser tr.tcell"
+    ],
+    "tags": ["results", "controls"]
+  },
+  {
+    "name": "control_previews_to_table",
+    "tooltips": false,
+    "route": "#search/Ag-O",
+    "steps": [{"wait_for": "#control_c"}, {"click": "#control_c", "after": 1500}],
+    "probe": [
+      "classes:div.controlswitch > div",
+      "count:#databrowser div.gallery_item",
+      "count:#databrowser tr.tcell"
+    ],
+    "tags": ["results", "controls"]
+  },
+  {
+    "name": "control_plots",
+    "tooltips": false,
+    "desc": "the 'plots' switch picks a (seeded) random plot type",
+    "route": "#inquiry/elements=Ag-O&classes=oxide",
+    "steps": [{"wait_for": "#control_e"}, {"click": "#control_e", "after": 2500}],
+    "pixels": "loose",
+    "tags": ["results", "controls", "plot"]
+  },
+  {
+    "name": "dtypes_click",
+    "tooltips": false,
+    "desc": "a data-type link augments the current search",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [{"wait_for": "#dtypes li"}, {"click": "#dtypes li[data-term='phase diagram']", "after": 1500}],
+    "tags": ["results"]
+  },
+  {
+    "name": "dtypes_class_replaces_class",
+    "tooltips": false,
+    "desc": "peer-reviewed / machine-learning / ab initio are mutually exclusive",
+    "route": "#inquiry/elements=Ag-O&classes=machine-learning",
+    "steps": [{"wait_for": "#dtypes li"}, {"click": "#dtypes li[data-term='peer-reviewed']", "after": 1500}],
+    "tags": ["results"]
+  },
+  {
+    "name": "phases_show_entries_link",
+    "tooltips": false,
+    "route": "#inquiry_phases/elements=Ag-O&classes=oxide",
+    "steps": [
+      {"wait_for": "#databrowser a.launch_id"},
+      {"click": "#databrowser a.launch_id", "after": 2000}
+    ],
+    "tags": ["results", "phases"]
+  },
+  {
+    "name": "phases_strict_uncheck",
+    "tooltips": false,
+    "desc": "unchecking 'include phases commonly reported together' re-requests with strict",
+    "route": "#inquiry_phases/elements=Ag-O&classes=oxide",
+    "steps": [
+      {"wait_for": "#databrowser div.gallery_item"},
+      {"click": "#ctx_strict_phases_trigger", "after": 2000}
+    ],
+    "probe": ["checked:#ctx_strict_phases_trigger", "js:wmgui.ctx_strict_phases"],
+    "tags": ["results", "phases"]
+  },
+  {
+    "name": "ref_mousedown_marks_visited",
+    "desc": "pressing a reference link marks all its occurrences visited and stores the bid",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [{"wait_for": "#databrowser a.resolve_ref"}, {"mousedown": "#databrowser a.resolve_ref"}],
+    "probe": ["classes:#databrowser a.resolve_ref", "storage:bid_history"],
+    "tags": ["results"]
+  },
+  {
+    "name": "visited_refs_restored",
+    "desc": "references stored as visited are marked on load",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "storage": {"bid_history": "[84283, 7814]"},
+    "probe": ["classes:#databrowser a.resolve_ref"],
+    "tags": ["results", "storage"]
+  },
+  {
+    "name": "entry_show_button",
+    "tooltips": false,
+    "desc": "the row 'Show' button opens the context column with the visualization",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#databrowser span.launch_v"},
+      {"click": "#databrowser span.launch_v", "after": 3000}
+    ],
+    "probe": ["visible:#ctx_col", "visible:#visavis_col", "classes:#databrowser tr.tcell"],
+    "pixels": "loose",
+    "tags": ["results", "context"]
+  },
+  {
+    "name": "entry_ctx_close",
+    "tooltips": false,
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#databrowser tr.tcell"},
+      {"click": "#databrowser tr.tcell", "after": 2000},
+      {"click": "#ctx_col div.cross", "after": 800}
+    ],
+    "probe": ["visible:#ctx_col", "visible:#sim_col", "classes:#databrowser tr.tcell"],
+    "tags": ["results", "context"]
+  },
+  {
+    "name": "entry_ctx_second_row",
+    "tooltips": false,
+    "desc": "opening another row moves the active highlight",
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#databrowser tr.tcell"},
+      {"click": "#databrowser tr.tcell", "after": 2000},
+      {"click": "#databrowser tr.tcell", "nth": 2, "after": 2000}
+    ],
+    "probe": ["classes:#databrowser tr.tcell", "text:#entryno"],
+    "tags": ["results", "context"]
+  },
+  {
+    "name": "thumb_click_context",
+    "tooltips": false,
+    "route": "#search/Ag-O",
+    "steps": [
+      {"wait_for": "#databrowser div.gallery_item"},
+      {"click": "#databrowser div.gallery_item", "nth": 1, "after": 2000}
+    ],
+    "probe": ["visible:#ctx_col", "classes:#databrowser div.gallery_item"],
+    "tags": ["results", "context"]
+  },
+  {
+    "name": "infinite_scroll",
+    "desc": "scrolling to the bottom of a long result list fetches the next page",
+    "route": "#search/Ag-O",
+    "steps": [{"wait_for": "#databrowser div.gallery_item"}, {"scroll_y": 100000, "after": 2500}],
+    "probe": ["count:#databrowser div.gallery_item", "js:wmgui.unfinished_page"],
+    "viewport": [1280, 900],
+    "pixels": "off",
+    "tags": ["results", "scroll"]
+  },
+  {
+    "name": "phase_id_rankfilter",
+    "desc": "the phase data-type filters toggle on and off",
+    "route": "#phase_id/{phid}",
+    "steps": [
+      {"wait_for": "#dtypes_phid li"},
+      {"click": "#dtypes_phid li", "after": 2000},
+      {"click": "#dtypes_phid li", "after": 2000}
+    ],
+    "probe": ["classes:#dtypes_phid li"],
+    "tags": ["results", "phases"]
+  },
+  {
+    "name": "sim_col_click",
+    "desc": "a 'see also' link of an opened entry",
+    "tooltips": false,
+    "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
+    "steps": [
+      {"wait_for": "#databrowser tr.tcell"},
+      {"click": "#databrowser tr.tcell", "after": 2000},
+      {"wait_for": "#sim_col > ul > li > a"},
+      {"click": "#sim_col > ul > li > a", "after": 2000}
+    ],
+    "probe": ["classes:#sim_col > ul > li"],
+    "tags": ["results", "interlinkage"]
+  },
+  {
+    "comment": "section: routing edge cases",
+    "name": "route_unknown",
+    "route": "#nonsense/abc",
+    "tags": ["route", "notify"]
+  },
+  {
+    "name": "route_search_empty",
+    "route": "#search/",
+    "tags": ["route"]
+  },
+  {
+    "name": "route_search_unicode",
+    "desc": "subscripts, en dashes and spaces in a free-text search",
+    "route": "#search/TiH%E2%82%82%20phase%20transitions",
+    "tags": ["route"]
+  },
+  {
+    "name": "route_search_garbage",
+    "route": "#search/qqqzzzxxx",
+    "tags": ["route", "notify"]
+  },
+  {
+    "name": "route_inquiry_unknown_facet",
+    "route": "#inquiry/foo=bar",
+    "tags": ["route"]
+  },
+  {
+    "name": "route_inquiry_entries",
+    "route": "#inquiry_entries/elements=Ag-O&classes=oxide",
+    "tags": ["route"]
+  },
+  {
+    "name": "route_phase_triplet",
+    "route": "#phase/Ag2O/224/cP6",
+    "tags": ["route"]
+  },
+  {
+    "name": "route_entry_unknown",
+    "route": "#entry/S0000000",
+    "tags": ["route", "notify"]
+  },
+  {
+    "name": "route_plot_graph",
+    "route": "#plot/graph/inquiry/elements=Ag-O",
+    "pixels": "loose",
+    "settle": 6000,
+    "tags": ["route", "plot"]
+  },
+  {
+    "name": "route_plot_matrix",
+    "route": "#plot/matrix/inquiry/elements=Ag-O",
+    "pixels": "loose",
+    "settle": 6000,
+    "tags": ["route", "plot"]
+  },
+  {
+    "name": "route_junction_anon",
+    "desc": "the junction page redirects anonymous users",
+    "route": "#junction",
+    "tags": ["route"]
+  },
+  {
+    "name": "route_access_mocked",
+    "desc": "a secret access link (mocked API refusal)",
+    "route": "#access/0123456789abcdef",
+    "mock": [{"path": "/users/access", "json": {"error": "This link is expired"}}],
+    "tags": ["route", "mock"]
+  },
+  {
+    "name": "route_ratify_mocked",
+    "route": "#ratify/0123456789abcdef",
+    "mock": [{"path": "/users/ratify", "json": {"error": "This link is expired"}}],
+    "tags": ["route", "mock"]
+  },
+  {
+    "name": "nav_back",
+    "desc": "browser Back after an in-app search restores the previous view",
+    "route": "#search/Ag-O",
+    "steps": [
+      {"wait_for": "#databrowser div.gallery_item"},
+      {"hash": "#search/Cu-Zn", "after": 2500},
+      {"back": true, "after": 2500}
+    ],
+    "tags": ["route", "history"]
+  },
+  {
+    "name": "nav_hash_from_landing",
+    "route": "#start",
+    "steps": [{"hash": "#inquiry/formulae=Ag2O&props=crystal%20structure", "after": 2500}],
+    "tags": ["route"]
+  },
+  {
+    "comment": "section: persisted state (localStorage presets)",
+    "name": "history_restored",
+    "desc": "the 'last searches' box is built from the stored log",
+    "route": "#search/Ag-O",
+    "storage": {
+      "wm_search_log_v5": "[{\"elements\":\"Cu-Zn\"},{\"formulae\":\"Ag2O\",\"props\":\"crystal structure\"},{\"classes\":\"oxide\",\"elements\":\"Ti-O\"}]"
+    },
+    "probe": ["texts:#history li", "attrs:#history li a@href"],
+    "tags": ["storage", "history"]
+  },
+  {
+    "name": "history_dedup_and_cap",
+    "desc": "a repeated search is not logged twice; the log stays capped",
+    "route": "#search/Cu-Zn",
+    "storage": {
+      "wm_search_log_v5": "[{\"elements\":\"Cu-Zn\"},{\"elements\":\"A-B\"},{\"elements\":\"C-D\"},{\"elements\":\"E-F\"},{\"elements\":\"G-H\"},{\"elements\":\"I-J\"},{\"elements\":\"K-L\"},{\"elements\":\"M-N\"},{\"elements\":\"O-P\"}]"
+    },
+    "probe": ["texts:#history li", "storage:wm_search_log_v5"],
+    "tags": ["storage", "history"]
+  },
+  {
+    "name": "history_suppresses_tooltip",
+    "desc": "returning users (stored history) do not get the landing tooltip",
+    "route": "#start",
+    "storage": {"wm_search_log_v5": "[{\"elements\":\"Cu-Zn\"},{\"elements\":\"Ag-O\"}]"},
+    "steps": [{"wait": 5000}],
+    "probe": ["visible:#tooltip", "js:wmgui.tooltip_counter"],
+    "tags": ["storage", "tooltip"]
+  },
+  {
+    "name": "darkmode_restored",
+    "route": "#start",
+    "storage": {"darkmode": "true"},
+    "probe": ["text:#darkmode_trigger", "class:body"],
+    "pixels": "loose",
+    "tags": ["storage", "darkmode"]
+  },
+  {
+    "comment": "section: API failure paths (mocked)",
+    "name": "api_search_error_message",
+    "desc": "a search answered with an error object",
+    "route": "#inquiry/elements=Ag-O",
+    "mock": [{"path": "/search/facet", "json": {"error": "Sorry, the search is too broad"}}],
+    "tags": ["mock", "notify"]
+  },
+  {
+    "name": "api_search_unreachable",
+    "desc": "the search endpoint down: 'connection lost' handling",
+    "route": "#inquiry/elements=Ag-O",
+    "mock": [{"path": "/search/facet", "abort": true}],
+    "tags": ["mock", "notify"]
+  },
+  {
+    "name": "api_search_http_500",
+    "route": "#inquiry/elements=Ag-O",
+    "mock": [{"path": "/search/facet", "status": 500, "body": "Internal Server Error"}],
+    "tags": ["mock", "notify"]
+  },
+  {
+    "name": "api_search_empty",
+    "desc": "zero results",
+    "route": "#inquiry/elements=Ag-O",
+    "mock": [{"path": "/search/facet", "json": {"out": [], "total_count": 0, "error": false}}],
+    "tags": ["mock"]
+  },
+  {
+    "name": "api_autocomplete_down",
+    "desc": "typing while the suggestion endpoint is down",
+    "route": "#start",
+    "mock": [{"path": "/search/selectize", "abort": true}],
+    "steps": [{"type": "#search_field-selectized", "text": "Ag", "after": 1500}],
+    "tags": ["mock", "multiselect"]
+  },
+  {
+    "comment": "section: absolute expectations (`expect`: checked on EACH side, not only old vs new)",
+    "name": "search_ru_am_has_hits",
+    "desc": "Ru and Am together do have hits (8 entries as recorded on 2026-10-23)",
+    "route": "#search/Ru-Am",
+    "probe": ["texts:#search_holder .selectize-input > div[data-term]"],
+    "expect": {
+      "count:#databrowser tr.tcell, #databrowser div.gallery_item": {"gt": 0},
+      "title": {"matches": "^\\d+ results?$"}
+    },
+    "tags": ["search", "expect"]
+  },
+  {
+    "comment": "settle: NB the notification hides 4 s after it appears",
+    "name": "search_am_ru_binary_similar",
+    "desc": "free text 'Am Ru binary': no exact binary Am-Ru, the server's 'similar data shown' notice is displayed",
+    "route": "#start",
+    "steps": [
+      {"type": "#search_field-selectized", "text": "Am Ru binary", "after": 300},
+      {"key": "Enter", "after": 1500}
+    ],
+    "settle": 1000,
+    "tags": ["search", "notify", "expect"],
+    "expect": {
+      "text:#notifybox": {"contains": "similar data shown"},
+      "visible:#notifybox": true,
+      "hash": "#inquiry/elements=Am-Ru&classes=binary"
+    }
+  },
+  {
+    "comment": "section: entry context: the \"See also\" column (#sim_col) and closing panels by ESC",
+    "name": "sim_col_property_entry",
+    "desc": "clicking a property entry fills 'See also' with similar values of that property",
+    "route": "#inquiry/formulae=TiO2&props=band%20gap",
+    "tooltips": false,
+    "steps": [
+      {"wait_for": "#databrowser tr.tcell"},
+      {"click": "#databrowser tr.tcell[id*='P']", "after": 2500}
+    ],
+    "probe": [
+      "visible:#sim_col",
+      "text:#sim_legend",
+      "texts:#sim_col > ul li",
+      "attrs:#sim_col > ul a@href",
+      "visible:#own_phase",
+      "visible:#ctx_col"
+    ],
+    "tags": ["context", "sim"],
+    "expect": {"text:#sim_legend": {"contains": "Similar"}, "count:#sim_col > ul li": {"gt": 0}}
+  },
+  {
+    "name": "sim_col_property_entry_thumbs",
+    "desc": "the same in the thumbnail view (the property name is read from the selected thumbnail)",
+    "route": "#inquiry/formulae=TiO2&props=band%20gap",
+    "tooltips": false,
+    "steps": [
+      {"wait_for": "#databrowser tr.tcell"},
+      {"click": "#control_d", "after": 3000},
+      {"wait_for": "#databrowser div.gallery_item"},
+      {"click": "#databrowser div.gallery_item[id*='P'] div.gallery_img", "after": 2500}
+    ],
+    "probe": [
+      "visible:#sim_col",
+      "text:#sim_legend",
+      "texts:#sim_col > ul li",
+      "attrs:#sim_col > ul a@href",
+      "visible:#own_phase"
+    ],
+    "tags": ["context", "sim", "thumbs"],
+    "expect": {"text:#sim_legend": {"contains": "Similar"}, "count:#sim_col > ul li": {"gt": 0}}
+  },
+  {
+    "name": "esc_closes_entry_columns",
+    "desc": "ESC closes the entry and 'See also' columns of a selected entry",
+    "route": "#inquiry/formulae=TiO2&props=band%20gap",
+    "tooltips": false,
+    "steps": [
+      {"wait_for": "#databrowser tr.tcell"},
+      {"click": "#databrowser tr.tcell[id*='P']", "after": 2500},
+      {"key": "Escape", "after": 800}
+    ],
+    "probe": ["visible:#ctx_col", "visible:#sim_col", "count:#databrowser .busy_entry"],
+    "tags": ["context", "keyboard"],
+    "expect": {"visible:#ctx_col": false, "visible:#sim_col": false}
+  },
+  {
+    "name": "esc_closes_all_visible_panels",
+    "desc": "ESC clicks every visible close-cross at once (entry columns, advanced search, numeric box), like $('div.cross:visible').trigger('click')",
+    "route": "#inquiry/formulae=TiO2&props=band%20gap",
+    "tooltips": false,
+    "steps": [
+      {"wait_for": "#databrowser tr.tcell"},
+      {"click": "#databrowser tr.tcell[id*='P']", "after": 2500},
+      {"click": "#advsearch_init_trigger"},
+      {"click": "#advstab_cry strong.numeric[rel=alat]", "after": 1000},
+      {"key": "Escape", "after": 1500}
+    ],
+    "probe": ["visible:#ctx_col", "visible:#sim_col", "visible:#numericbox", "nvisible:div.cross", "hash"],
+    "tags": ["context", "keyboard", "numeric", "advsearch"],
+    "expect": {"visible:#ctx_col": false, "visible:#numericbox": false, "nvisible:div.cross": 0}
+  },
+  {
+    "comment": [
+      "section: QA: result counts (78 facet searches from a QA list, re-recorded from the live API on 2026-10-24: the original qa.json counts were outdated)",
+      "Each case is an inquiry route; the count is the one the GUI reports in the page title (\"[At least ]N result(s)\", the API estimated_count). The checks are loose so that growing data keeps them green:",
+      "- nonzero cases expect at least the recorded count (ge);",
+      "- cases that hit the server's fuzzy fallback also expect its \"similar data shown\" notice;",
+      "- zero cases expect 0 plus their notice (\"No hits\" / \"Unrecognized property\"), so a page that failed to load cannot pass as 0.",
+      "The desc keeps the original qa.json value. Runs replay the recorded API responses; only --fresh-cache / --live re-check the counts against the API."
+    ],
+    "name": "qa_01_formulae_tio2",
+    "desc": "formulae=tio2: >= 1717 results (recorded 2026-10-24; the outdated qa.json had 989)",
+    "route": "#inquiry/formulae=tio2",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 1717}}
+  },
+  {
+    "name": "qa_02_formulae_al2o3",
+    "desc": "formulae=al2o3: >= 963 results (recorded 2026-10-24; the outdated qa.json had 594)",
+    "route": "#inquiry/formulae=al2o3",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 963}}
+  },
+  {
+    "name": "qa_03_formulae_culamnseo",
+    "desc": "formulae=CuLaMnSeO: >= 16 results (recorded 2026-10-24; the outdated qa.json had 16)",
+    "route": "#inquiry/formulae=CuLaMnSeO",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 16}}
+  },
+  {
+    "name": "qa_04_formulae_coseru",
+    "desc": "formulae=coseru: >= 1 results (recorded 2026-10-24; the outdated qa.json had 0)",
+    "route": "#inquiry/formulae=coseru",
+    "tags": ["qa", "expect", "count"],
+    "expect": {
+      "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 1},
+      "text:#notifybox": {"contains": "similar data shown"}
+    }
+  },
+  {
+    "name": "qa_05_formulae_nac60",
+    "desc": "formulae=nac60: >= 1 results (recorded 2026-10-24; the outdated qa.json had 1)",
+    "route": "#inquiry/formulae=nac60",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 1}}
+  },
+  {
+    "name": "qa_06_formulae_aggatese",
+    "desc": "formulae=AgGaTeSe: >= 20 results (recorded 2026-10-24; the outdated qa.json had 10)",
+    "route": "#inquiry/formulae=AgGaTeSe",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 20}}
+  },
+  {
+    "name": "qa_07_formulae_geo",
+    "desc": "formulae=geo: >= 6 results (recorded 2026-10-24; the outdated qa.json had 1)",
+    "route": "#inquiry/formulae=geo",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 6}}
+  },
+  {
+    "name": "qa_08_formulae_beo",
+    "desc": "formulae=beo: >= 376 results (recorded 2026-10-24; the outdated qa.json had 320)",
+    "route": "#inquiry/formulae=beo",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 376}}
+  },
+  {
+    "name": "qa_09_formulae_ersi",
+    "desc": "formulae=ErSi: >= 78 results (recorded 2026-10-24; the outdated qa.json had 33)",
+    "route": "#inquiry/formulae=ErSi",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 78}}
+  },
+  {
+    "name": "qa_10_formulae_ersi",
+    "desc": "formulae=ErSI: >= 26 results (recorded 2026-10-24; the outdated qa.json had 2)",
+    "route": "#inquiry/formulae=ErSI",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 26}}
+  },
+  {
+    "name": "qa_11_formulae_ca3_po4_2",
+    "desc": "formulae=Ca3(PO4)2: >= 166 results (recorded 2026-10-24; the outdated qa.json had 44)",
+    "route": "#inquiry/formulae=Ca3%28PO4%292",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 166}}
+  },
+  {
+    "name": "qa_12_formulae_ca3_po4_2",
+    "desc": "formulae=Ca3[PO4]2: >= 166 results (recorded 2026-10-24; the outdated qa.json had 44)",
+    "route": "#inquiry/formulae=Ca3%5BPO4%5D2",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 166}}
+  },
+  {
+    "name": "qa_13_classes_ternary_oxide",
+    "desc": "classes=ternary, oxide: >= 235798 results (recorded 2026-10-24; the outdated qa.json had 78404)",
+    "route": "#inquiry/classes=ternary%2C%20oxide",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 235798}}
+  },
+  {
+    "name": "qa_14_classes_nonmetal",
+    "desc": "classes=nonmetal: >= 398412 results (recorded 2026-10-24; the outdated qa.json had 317859)",
+    "route": "#inquiry/classes=nonmetal",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 398412}}
+  },
+  {
+    "name": "qa_15_classes_lanthanoid_unary",
+    "desc": "classes=lanthanoid, unary: >= 14307 results (recorded 2026-10-24; the outdated qa.json had 8475)",
+    "route": "#inquiry/classes=lanthanoid%2C%20unary",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 14307}}
+  },
+  {
+    "name": "qa_16_classes_conductor",
+    "desc": "classes=conductor: >= 823766 results (recorded 2026-10-24; the outdated qa.json had 412863)",
+    "route": "#inquiry/classes=conductor",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 823766}}
+  },
+  {
+    "name": "qa_17_classes_deuterium",
+    "desc": "classes=deuterium: >= 22068 results (recorded 2026-10-24; the outdated qa.json had 5736)",
+    "route": "#inquiry/classes=deuterium",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 22068}}
+  },
+  {
+    "name": "qa_18_classes_tritium",
+    "desc": "classes=tritium: >= 60 results (recorded 2026-10-24; the outdated qa.json had 13)",
+    "route": "#inquiry/classes=tritium",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 60}}
+  },
+  {
+    "name": "qa_19_props_phase_diagram",
+    "desc": "props=phase diagram: >= 140255 results (recorded 2026-10-24; the outdated qa.json had 227809)",
+    "route": "#inquiry/props=phase%20diagram",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 140255}}
+  },
+  {
+    "name": "qa_20_props_grueneisen_coefficients",
+    "desc": "props=Grueneisen coefficients: >= 1984 results (recorded 2026-10-24; the outdated qa.json had 1260)",
+    "route": "#inquiry/props=Grueneisen%20coefficients",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 1984}}
+  },
+  {
+    "name": "qa_21_props_seebeck_coefficient",
+    "desc": "props=Seebeck coefficient: >= 127050 results (recorded 2026-10-24; the outdated qa.json had 6837)",
+    "route": "#inquiry/props=Seebeck%20coefficient",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 127050}}
+  },
+  {
+    "name": "qa_22_props_figure_of_merit",
+    "desc": "props=figure of merit: >= 2146 results (recorded 2026-10-24; the outdated qa.json had 469)",
+    "route": "#inquiry/props=figure%20of%20merit",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 2146}}
+  },
+  {
+    "name": "qa_23_props_conductivity",
+    "desc": "props=conductivity: >= 313256 results (recorded 2026-10-24; the outdated qa.json had 88703)",
+    "route": "#inquiry/props=conductivity",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 313256}}
+  },
+  {
+    "name": "qa_24_props_valence",
+    "desc": "props=valence: >= 15802 results (recorded 2026-10-24; the outdated qa.json had 15941)",
+    "route": "#inquiry/props=valence",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 15802}}
+  },
+  {
+    "name": "qa_25_elements_ti_o",
+    "desc": "elements=ti-o: >= 125649 results (recorded 2026-10-24; the outdated qa.json had 55956)",
+    "route": "#inquiry/elements=ti-o",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 125649}}
+  },
+  {
+    "name": "qa_26_elements_o",
+    "desc": "elements=O: >= 1336183 results (recorded 2026-10-24; the outdated qa.json had 573839)",
+    "route": "#inquiry/elements=O",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 1336183}}
+  },
+  {
+    "name": "qa_27_elements_rg",
+    "desc": "elements=Rg: >= 10 results (recorded 2026-10-24; the outdated qa.json had 1)",
+    "route": "#inquiry/elements=Rg",
+    "tags": ["qa", "expect", "count"],
+    "expect": {
+      "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 10},
+      "text:#notifybox": {"contains": "similar data shown"}
+    }
+  },
+  {
+    "name": "qa_28_elements_f",
+    "desc": "elements=F: >= 135634 results (recorded 2026-10-24; the outdated qa.json had 44094)",
+    "route": "#inquiry/elements=F",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 135634}}
+  },
+  {
+    "name": "qa_29_elements_cl",
+    "desc": "elements=Cl: >= 104057 results (recorded 2026-10-24; the outdated qa.json had 34885)",
+    "route": "#inquiry/elements=Cl",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 104057}}
+  },
+  {
+    "name": "qa_30_elements_br",
+    "desc": "elements=Br: >= 47670 results (recorded 2026-10-24; the outdated qa.json had 14611)",
+    "route": "#inquiry/elements=Br",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 47670}}
+  },
+  {
+    "name": "qa_31_elements_i",
+    "desc": "elements=I: >= 48146 results (recorded 2026-10-24; the outdated qa.json had 16581)",
+    "route": "#inquiry/elements=I",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 48146}}
+  },
+  {
+    "name": "qa_32_elements_at",
+    "desc": "elements=At: >= 88 results (recorded 2026-10-24; the outdated qa.json had 13)",
+    "route": "#inquiry/elements=At",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 88}}
+  },
+  {
+    "name": "qa_33_classes_halogen",
+    "desc": "classes=halogen: >= 321042 results (recorded 2026-10-24; the outdated qa.json had 102998)",
+    "route": "#inquiry/classes=halogen",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 321042}}
+  },
+  {
+    "name": "qa_34_lattices_cubic",
+    "desc": "lattices=cubic: >= 708486 results (recorded 2026-10-24; the outdated qa.json had 324635)",
+    "route": "#inquiry/lattices=cubic",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 708486}}
+  },
+  {
+    "name": "qa_35_lattices_rhomb",
+    "desc": "lattices=rhomb: >= 282602 results (recorded 2026-10-24; the outdated qa.json had 94925)",
+    "route": "#inquiry/lattices=rhomb",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 282602}}
+  },
+  {
+    "name": "qa_36_protos_ca2nb2o7_cf88_227",
+    "desc": "protos=Ca2Nb2O7 cF88 227: >= 12199 results (recorded 2026-10-24; the outdated qa.json had 5082)",
+    "route": "#inquiry/protos=Ca2Nb2O7%20cF88%20227",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 12199}}
+  },
+  {
+    "name": "qa_37_protos_h2o",
+    "desc": "protos=H2O: no hits (recorded 2026-10-24; the outdated qa.json had 0)",
+    "route": "#inquiry/protos=H2O",
+    "tags": ["qa", "expect", "count"],
+    "expect": {
+      "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": 0,
+      "text:#notifybox": {"contains": "No hits"}
+    }
+  },
+  {
+    "name": "qa_38_sgs_pbnm",
+    "desc": "sgs=Pbnm: >= 15701 results (recorded 2026-10-24; the outdated qa.json had 0)",
+    "route": "#inquiry/sgs=Pbnm",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 15701}}
+  },
+  {
+    "name": "qa_39_sgs_pnma",
+    "desc": "sgs=Pnma: >= 81268 results (recorded 2026-10-24; the outdated qa.json had 46213)",
+    "route": "#inquiry/sgs=Pnma",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 81268}}
+  },
+  {
+    "name": "qa_40_sgs_i4_mcm",
+    "desc": "sgs=i4/mcm: >= 15416 results (recorded 2026-10-24; the outdated qa.json had 9856)",
+    "route": "#inquiry/sgs=i4%2Fmcm",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 15416}}
+  },
+  {
+    "name": "qa_41_sgs_79",
+    "desc": "sgs=79: >= 676 results (recorded 2026-10-24; the outdated qa.json had 247)",
+    "route": "#inquiry/sgs=79",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 676}}
+  },
+  {
+    "name": "qa_42_sgs_211",
+    "desc": "sgs=211: >= 18 results (recorded 2026-10-24; the outdated qa.json had 1)",
+    "route": "#inquiry/sgs=211",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 18}}
+  },
+  {
+    "name": "qa_43_authors_evarestov",
+    "desc": "authors=Evarestov: >= 9 results (recorded 2026-10-24; the outdated qa.json had 53)",
+    "route": "#inquiry/authors=Evarestov",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 9}}
+  },
+  {
+    "name": "qa_44_authors_blokhin",
+    "desc": "authors=Blokhin: >= 28 results (recorded 2026-10-24; the outdated qa.json had 46)",
+    "route": "#inquiry/authors=Blokhin",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 28}}
+  },
+  {
+    "name": "qa_45_authors_okamoto",
+    "desc": "authors=Okamoto: >= 16731 results (recorded 2026-10-24; the outdated qa.json had 14424)",
+    "route": "#inquiry/authors=Okamoto",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 16731}}
+  },
+  {
+    "name": "qa_46_authors_villars",
+    "desc": "authors=Villars: >= 464 results (recorded 2026-10-24; the outdated qa.json had 387)",
+    "route": "#inquiry/authors=Villars",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 464}}
+  },
+  {
+    "name": "qa_47_elements_at_props_cell",
+    "desc": "elements=At, props=cell: >= 10 results (recorded 2026-10-24; the outdated qa.json had 1)",
+    "route": "#inquiry/elements=At&props=cell",
+    "tags": ["qa", "expect", "count"],
+    "expect": {
+      "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 10},
+      "text:#notifybox": {"contains": "similar data shown"}
+    }
+  },
+  {
+    "name": "qa_48_formulae_tio2_props_band_gap",
+    "desc": "formulae=tio2, props=band gap: >= 93 results (recorded 2026-10-24; the outdated qa.json had 140)",
+    "route": "#inquiry/formulae=tio2&props=band%20gap",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 93}}
+  },
+  {
+    "name": "qa_49_formulae_o3al2_props_elastic_properties",
+    "desc": "formulae=O3Al2, props=elastic properties: no hits (recorded 2026-10-24; the outdated qa.json had 37)",
+    "route": "#inquiry/formulae=O3Al2&props=elastic%20properties",
+    "tags": ["qa", "expect", "count"],
+    "expect": {
+      "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": 0,
+      "text:#notifybox": {"contains": "Unrecognized property"}
+    }
+  },
+  {
+    "name": "qa_50_props_optical_properties_formulae_likso4",
+    "desc": "props=optical properties, formulae=LiKSO4: >= 97 results (recorded 2026-10-24; the outdated qa.json had 66)",
+    "route": "#inquiry/props=optical%20properties&formulae=LiKSO4",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 97}}
+  },
+  {
+    "name": "qa_51_formulae_gdniin_props_conductivity",
+    "desc": "formulae=gdniin, props=conductivity: >= 5 results (recorded 2026-10-24; the outdated qa.json had 2)",
+    "route": "#inquiry/formulae=gdniin&props=conductivity",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 5}}
+  },
+  {
+    "name": "qa_52_props_band_gap_classes_chloride",
+    "desc": "props=band gap, classes=chloride: >= 4578 results (recorded 2026-10-24; the outdated qa.json had 680)",
+    "route": "#inquiry/props=band%20gap&classes=chloride",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 4578}}
+  },
+  {
+    "name": "qa_53_classes_rare_earth_chalcogen_organic_props_magnetism",
+    "desc": "classes=rare earth, chalcogen, organic, props=magnetism: >= 364 results (recorded 2026-10-24; the outdated qa.json had 245)",
+    "route": "#inquiry/classes=rare%20earth%2C%20chalcogen%2C%20organic&props=magnetism",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 364}}
+  },
+  {
+    "name": "qa_54_elements_te_sn_classes_metal_transitional",
+    "desc": "elements=Te-Sn, classes=metal, transitional: >= 431 results (recorded 2026-10-24; the outdated qa.json had 81)",
+    "route": "#inquiry/elements=Te-Sn&classes=metal%2C%20transitional",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 431}}
+  },
+  {
+    "name": "qa_55_classes_radioactive_nonmetal_props_conductivity",
+    "desc": "classes=radioactive, nonmetal, props=conductivity: >= 626 results (recorded 2026-10-24; the outdated qa.json had 629)",
+    "route": "#inquiry/classes=radioactive%2C%20nonmetal&props=conductivity",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 626}}
+  },
+  {
+    "name": "qa_56_classes_noble_gas_props_superconductivity",
+    "desc": "classes=noble gas, props=superconductivity: >= 8 results (recorded 2026-10-24; the outdated qa.json had 16)",
+    "route": "#inquiry/classes=noble%20gas&props=superconductivity",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 8}}
+  },
+  {
+    "name": "qa_57_classes_quaternary_perovskite_props_thermodynamics",
+    "desc": "classes=quaternary, perovskite, props=thermodynamics: >= 26463 results (recorded 2026-10-24; the outdated qa.json had 2047)",
+    "route": "#inquiry/classes=quaternary%2C%20perovskite&props=thermodynamics",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 26463}}
+  },
+  {
+    "name": "qa_58_props_crystalline_structure_classes_binary",
+    "desc": "props=crystalline structure, classes=binary: >= 66845 results (recorded 2026-10-24; the outdated qa.json had 75532)",
+    "route": "#inquiry/props=crystalline%20structure&classes=binary",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 66845}}
+  },
+  {
+    "name": "qa_59_props_crystal_cell_classes_binary",
+    "desc": "props=crystal cell, classes=binary: >= 66845 results (recorded 2026-10-24; the outdated qa.json had 75532)",
+    "route": "#inquiry/props=crystal%20cell&classes=binary",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 66845}}
+  },
+  {
+    "name": "qa_60_props_phases_classes_ferromagnet_ternary",
+    "desc": "props=phases, classes=ferromagnet, ternary: >= 6601 results (recorded 2026-10-24; the outdated qa.json had 2639)",
+    "route": "#inquiry/props=phases&classes=ferromagnet%2C%20ternary",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 6601}}
+  },
+  {
+    "name": "qa_61_classes_carbide_semiconductor_props_electronic_propert",
+    "desc": "classes=carbide, semiconductor, props=electronic properties: >= 647 results (recorded 2026-10-24; the outdated qa.json had 343)",
+    "route": "#inquiry/classes=carbide%2C%20semiconductor&props=electronic%20properties",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 647}}
+  },
+  {
+    "name": "qa_62_classes_lanthanoid_transitional_props_electronic_prope",
+    "desc": "classes=lanthanoid, transitional, props=electronic properties: >= 111239 results (recorded 2026-10-24; the outdated qa.json had 43583)",
+    "route": "#inquiry/classes=lanthanoid%2C%20transitional&props=electronic%20properties",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 111239}}
+  },
+  {
+    "name": "qa_63_elements_in_classes_binary_oxide_metal",
+    "desc": "elements=In, classes=binary, oxide, metal: >= 416 results (recorded 2026-10-24; the outdated qa.json had 185)",
+    "route": "#inquiry/elements=In&classes=binary%2C%20oxide%2C%20metal",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 416}}
+  },
+  {
+    "name": "qa_64_classes_organic_elements_pb_i",
+    "desc": "classes=organic, elements=pb-i: >= 84 results (recorded 2026-10-24; the outdated qa.json had 53)",
+    "route": "#inquiry/classes=organic&elements=pb-i",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 84}}
+  },
+  {
+    "name": "qa_65_classes_organic_perovskite_elements_pb_i",
+    "desc": "classes=organic, perovskite, elements=pb-i: >= 5 results (recorded 2026-10-24; the outdated qa.json had 0)",
+    "route": "#inquiry/classes=organic%2C%20perovskite&elements=pb-i",
+    "tags": ["qa", "expect", "count"],
+    "expect": {
+      "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 5},
+      "text:#notifybox": {"contains": "similar data shown"}
+    }
+  },
+  {
+    "name": "qa_66_elements_mn_be_classes_halogen",
+    "desc": "elements=Mn-Be, classes=halogen: >= 143 results (recorded 2026-10-24; the outdated qa.json had 18)",
+    "route": "#inquiry/elements=Mn-Be&classes=halogen",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 143}}
+  },
+  {
+    "name": "qa_67_elements_pd_classes_hydride_props_lattice",
+    "desc": "elements=Pd, classes=hydride, props=lattice: >= 146 results (recorded 2026-10-24; the outdated qa.json had 98)",
+    "route": "#inquiry/elements=Pd&classes=hydride&props=lattice",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 146}}
+  },
+  {
+    "name": "qa_68_classes_perovskite_props_phase_diagram",
+    "desc": "classes=perovskite, props=phase diagram: >= 1768 results (recorded 2026-10-24; the outdated qa.json had 15000)",
+    "route": "#inquiry/classes=perovskite&props=phase%20diagram",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 1768}}
+  },
+  {
+    "name": "qa_69_props_thermodynamics_classes_superconductor_elements_f",
+    "desc": "props=thermodynamics, classes=superconductor, elements=fe: >= 3252 results (recorded 2026-10-24; the outdated qa.json had 525)",
+    "route": "#inquiry/props=thermodynamics&classes=superconductor&elements=fe",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 3252}}
+  },
+  {
+    "name": "qa_70_props_superconductivity_classes_superconductor_element",
+    "desc": "props=superconductivity, classes=superconductor, elements=C: >= 2165 results (recorded 2026-10-24; the outdated qa.json had 1307)",
+    "route": "#inquiry/props=superconductivity&classes=superconductor&elements=C",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 2165}}
+  },
+  {
+    "name": "qa_71_elements_y_classes_oxide_ternary_props_lattice",
+    "desc": "elements=Y, classes=oxide, ternary, props=lattice: >= 1982 results (recorded 2026-10-24; the outdated qa.json had 1239)",
+    "route": "#inquiry/elements=Y&classes=oxide%2C%20ternary&props=lattice",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 1982}}
+  },
+  {
+    "name": "qa_72_formulae_srtio3_classes_ternary_lattices_tetragonal",
+    "desc": "formulae=srtio3, classes=ternary, lattices=tetragonal: >= 404 results (recorded 2026-10-24; the outdated qa.json had 571)",
+    "route": "#inquiry/formulae=srtio3&classes=ternary&lattices=tetragonal",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 404}}
+  },
+  {
+    "name": "qa_73_lattices_tetragonal_formulae_srtio3_props_phonons",
+    "desc": "lattices=tetragonal, formulae=SrTiO3, props=phonons: >= 21 results (recorded 2026-10-24; the outdated qa.json had 23)",
+    "route": "#inquiry/lattices=tetragonal&formulae=SrTiO3&props=phonons",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 21}}
+  },
+  {
+    "name": "qa_74_props_band_gap_lattices_hexagonal_formulae_zno",
+    "desc": "props=band gap, lattices=hexagonal, formulae=ZnO: >= 139 results (recorded 2026-10-24; the outdated qa.json had 142)",
+    "route": "#inquiry/props=band%20gap&lattices=hexagonal&formulae=ZnO",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 139}}
+  },
+  {
+    "name": "qa_75_elements_cr_fe_lattices_tricl",
+    "desc": "elements=cr-fe, lattices=tricl: >= 117 results (recorded 2026-10-24; the outdated qa.json had 14)",
+    "route": "#inquiry/elements=cr-fe&lattices=tricl",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 117}}
+  },
+  {
+    "name": "qa_76_lattices_hexagonal_classes_carbide_semiconductor_props",
+    "desc": "lattices=hexagonal, classes=carbide, semiconductor, props=electronic properties: >= 231 results (recorded 2026-10-24; the outdated qa.json had 107)",
+    "route": "#inquiry/lattices=hexagonal&classes=carbide%2C%20semiconductor&props=electronic%20properties",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 231}}
+  },
+  {
+    "name": "qa_77_classes_intermetallic_binary_props_lattice_lattices_cu",
+    "desc": "classes=intermetallic, binary, props=lattice, lattices=cubic: >= 10825 results (recorded 2026-10-24; the outdated qa.json had 9624)",
+    "route": "#inquiry/classes=intermetallic%2C%20binary&props=lattice&lattices=cubic",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 10825}}
+  },
+  {
+    "name": "qa_78_props_magnetism_classes_ferromagnet_chalcogen_lattices",
+    "desc": "props=magnetism, classes=ferromagnet, chalcogen, lattices=monocl: >= 5593 results (recorded 2026-10-24; the outdated qa.json had 2106)",
+    "route": "#inquiry/props=magnetism&classes=ferromagnet%2C%20chalcogen&lattices=monocl",
+    "tags": ["qa", "expect", "count"],
+    "expect": {"js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {"ge": 5593}}
+  }
+]
