@@ -21,9 +21,11 @@ NEW one. Then the two sides are compared layer by layer:
   pixels   rendered screenshots (tolerance, strict or loose per scenario)
 
 Drivers:
-  playwright  (default when importable) native input via Playwright, static
-              files and API served by request interception (no sockets, no
-              proxy process), Playwright fake clock = virtual time;
+  playwright  (default) native input via Playwright, static files and API
+              served by request interception (no sockets, no proxy
+              process), Playwright fake clock = virtual time; every side
+              runs in a watched worker process, so a freeze costs at most
+              --stall-timeout seconds (see parity/README.md);
   chrome-cli  google-chrome --dump-dom --virtual-time-budget, the static
               server + deploy/dev_api_proxy.py; steps are replayed in-page
               with synthetic events by parity/harness.js.
@@ -44,9 +46,12 @@ import json
 import mimetypes
 import os
 import re
+import queue
 import shutil
+import signal
 import subprocess
 import sys
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -82,6 +87,7 @@ OLD_URL = ('https://raw.githubusercontent.com/mpds-io/ermac/'
            '5978778447bcc3b1bf423088801163cbe5f28c4e/ermac.min.js')
 OLD_SHA1 = 'c8619d4c1d425b34b9dad5f34ea9e34448b8fd57'
 TOL = 2  # per-channel pixel tolerance
+IDLE_BUDGET = 60.0  # s per side spent waiting for pending requests, in total
 KEY_HOLD_MS = 30  # real ms between keydown and keyup of a `key` step
 
 # NB keep in sync with parity/harness.js (checked at runtime by the playwright driver)
@@ -129,6 +135,16 @@ def banner(text):
 
 def die(message):
     sys.exit('FATAL: ' + message)
+
+
+# NB freeze protection: a side run reports what it is doing; in the worker
+# process (see WorkerDriver) this feeds the watchdog and the heartbeat lines
+_PROGRESS = None
+
+
+def progress(message):
+    if _PROGRESS is not None:
+        _PROGRESS(message)
 
 
 # ----------------------------------------------------------------------------
@@ -309,8 +325,11 @@ def packed_scenario(scenario):
 
 def build_new_bundle():
     print('building the new bundle...')
-    subprocess.check_call([sys.executable, os.path.join(ROOT, 'deploy', 'build_js.py')],
-                          stdout=subprocess.DEVNULL)
+    try:
+        subprocess.check_call([sys.executable, os.path.join(ROOT, 'deploy', 'build_js.py')],
+                              stdout=subprocess.DEVNULL, timeout=300)
+    except subprocess.TimeoutExpired:
+        die('deploy/build_js.py did not finish within 300 s')
 
 
 def ensure_reference(url=OLD_URL, expected_sha1=OLD_SHA1):
@@ -365,17 +384,29 @@ class PlaywrightDriver(object):
 
     name = 'playwright'
 
-    def __init__(self, browser_path=None, browser_args=(), synthetic=False, live=False):
+    def __init__(self, browser_path=None, browser_args=(), synthetic=False, live=False, defer_close=False):
         from playwright.sync_api import sync_playwright
         self.synthetic = synthetic
         self.live = live
+        # NB in the worker, the browser is closed AFTER the result is sent: a
+        # browser that does not close then costs a worker, not the result
+        self.defer_close = defer_close
+        self._pending_close = []
         self.proxy = load_proxy_module()
         self._pw = sync_playwright().start()
         self.launch = {'headless': True, 'args': list(browser_args)}
         if browser_path:
             self.launch['executable_path'] = browser_path
 
+    def close_pending(self):
+        while self._pending_close:
+            try:
+                self._pending_close.pop().close()
+            except Exception:
+                pass
+
     def close(self):
+        self.close_pending()
         self._pw.stop()
 
     # -- network ------------------------------------------------------------
@@ -430,6 +461,7 @@ class PlaywrightDriver(object):
             headers = {k: v for k, v in (('Content-Type', content_type),
                                           ('Accept-Language', request.headers.get('accept-language')))
                        if v}
+            progress('API %s %s' % (method, path[:120]))
             # NB redirects are NOT followed, exactly as in deploy/dev_api_proxy.py
             status, response_headers, payload = self.proxy.fetch_remote(method, path, body, headers)
             # NB a transport failure (502, no headers) carries a JSON error payload
@@ -458,11 +490,27 @@ class PlaywrightDriver(object):
     # -- virtual time -------------------------------------------------------
 
     def _idle(self, page, run, limit=30.0):
-        deadline = time.time() + limit
+        """Wait for the pending requests, at most `limit` s per call and
+        IDLE_BUDGET s per side in total: a request that never completes must
+        not cost `limit` seconds again at every virtual-time chunk."""
+        if not run['inflight']:
+            return
+        started = time.time()
+        deadline = started + min(limit, run['idle_left'])
+        reported = started
         while run['inflight'] and time.time() < deadline:
             page.wait_for_timeout(10)
+            if time.time() - reported > 2:
+                reported = time.time()
+                pending = sorted(q.url for q in list(run['inflight']))
+                progress('waiting %.0f s for %d request(s): %s' % (reported - started, len(pending),
+                                                                  pending[0][:120] if pending else '?'))
+        run['idle_left'] -= time.time() - started
         if run['inflight']:
-            run['notes'].append('network not idle after %ds (%d in flight)' % (limit, len(run['inflight'])))
+            run['notes'].append('network not idle after %.0fs (%d in flight: %s)%s' % (
+                time.time() - started, len(run['inflight']),
+                ', '.join(sorted(q.url for q in list(run['inflight'])))[:200],
+                '; idle budget exhausted' if run['idle_left'] <= 0 else ''))
             run['inflight'].clear()
 
     def _vrun(self, page, run, ms, chunk=50):
@@ -562,7 +610,8 @@ class PlaywrightDriver(object):
     def run(self, side, scenario, route_str, side_dir, cache_dir, budget=None):
         import datetime
         run = {'api': [], 'ext': [], 'inflight': set(), 'notes': [], 'cache': cache_dir,
-               'mock': scenario.get('mock', [])}
+               'mock': scenario.get('mock', []), 'idle_left': IDLE_BUDGET}
+        progress('launching the browser')
         width, height = scenario['viewport']
         # NB a fresh browser per side run: a clean profile (no localStorage
         # carry-over), and single-process builds cannot close contexts
@@ -593,6 +642,10 @@ class PlaywrightDriver(object):
                     'for (var k in s) window.localStorage.setItem(k, s[k]); }'
                     % (json.dumps(GUI_ORIGIN), json.dumps(scenario['storage'])))
             page = context.new_page()
+            # NB no Playwright call may wait forever (evaluate() itself has no
+            # timeout: a renderer stuck in JS is the watchdog's job)
+            page.set_default_timeout(30000)
+            page.set_default_navigation_timeout(120000)
             page_errors = []
             page.on('pageerror', lambda e: page_errors.append(str(e)))
 
@@ -604,6 +657,7 @@ class PlaywrightDriver(object):
 
             query = ('?p=' + packed_scenario(scenario)) if self.synthetic else ''
             url = '%s/parity/%s.html%s%s' % (GUI_ORIGIN, side, query, route_str)
+            progress('loading %s' % (route_str or '/'))
             page.goto(url, wait_until='load', timeout=120000)
 
             try:
@@ -618,18 +672,22 @@ class PlaywrightDriver(object):
                 raw = page.evaluate("() => { var n = document.getElementById('__parity_result'); return n ? n.textContent : null; }")
                 result = json.loads(raw) if raw else {'steps': ['harness did not finish'], 'errors': [], 'probes': {}}
             else:
+                progress('boot (%d virtual ms)' % scenario['boot'])
                 self._vrun(page, run, scenario['boot'])
                 steps_log = []
-                for step in scenario['steps']:
+                for index, step in enumerate(scenario['steps']):
                     if steps_log and steps_log[-1] != 'ok':
                         steps_log.append('skipped')
                         continue
+                    progress('step %d/%d: %s' % (index + 1, len(scenario['steps']), step_label(scenario, index)))
                     try:
                         outcome = self._native_step(page, run, scenario, step)
                     except Exception as error:
                         outcome = 'error: ' + str(error).split('\n')[0][:120]
                     steps_log.append(outcome)
+                progress('settle (%d virtual ms)' % scenario['settle'])
                 self._vrun(page, run, scenario['settle'])
+                progress('capturing the probes')
                 try:
                     result = page.evaluate(
                         '(probes) => ({probes: window.__parity.probe(probes), errors: window.__parity.errors.slice()})',
@@ -644,16 +702,20 @@ class PlaywrightDriver(object):
             for error in page_errors:
                 if not any(error.split('\n')[0] in e for e in result['errors']):
                     result['errors'].append('pageerror: ' + error.split('\n')[0])
+            progress('capturing the DOM and the screenshot')
             dom = page.content()
             shot = os.path.join(side_dir, side + '.png')
             page.screenshot(path=shot, timeout=60000, animations='allow', caret='hide')
             return {'dom': dom, 'shot': shot, 'api': run['api'], 'ext': sorted(run['ext']),
                     'result': result, 'notes': run['notes']}
         finally:
-            try:
-                browser.close()
-            except Exception:
-                pass
+            if self.defer_close:
+                self._pending_close.append(browser)
+            else:
+                try:
+                    browser.close()
+                except Exception:
+                    pass
 
 
 # ----------------------------------------------------------------------------
@@ -1064,6 +1126,200 @@ def harvest_fixtures(driver, fixtures):
     return values
 
 
+# ----------------------------------------------------------------------------
+# freeze protection: every Playwright side run happens in a worker process
+# ----------------------------------------------------------------------------
+
+class SideFrozen(Exception):
+    pass
+
+
+class WorkerDriver(object):
+    """Runs the Playwright driver in a child process with its own process
+    group, so that ANY freeze is bounded: a renderer stuck in JS, a CDP call
+    that never returns, a request that never completes, a browser that does
+    not close. The worker streams progress; no progress for `stall` seconds,
+    or more than `cap` seconds for one side, kills the whole group (worker,
+    Playwright's node driver and, through its SIGTERM handler, Chromium) and
+    the side raises SideFrozen. The next side gets a fresh worker."""
+
+    name = 'playwright'
+    HEARTBEAT = 15  # s between "still running" lines
+    CLOSE_TIMEOUT = 20  # s for the worker to close the previous browser
+
+    def __init__(self, config, stall, cap):
+        self.config = config
+        self.synthetic = config['synthetic']
+        self.stall, self.cap = stall, cap
+        self.proc, self.lines, self.awaiting_ready = None, None, False
+
+    def _start(self):
+        self.proc = subprocess.Popen(
+            [sys.executable, '-u', os.path.abspath(__file__), '--_worker', json.dumps(self.config)],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None,
+            start_new_session=True, text=True, encoding='utf-8', bufsize=1)
+        self.lines = queue.Queue()
+
+        def reader(stream, sink):
+            for line in stream:
+                try:
+                    sink.put(json.loads(line))
+                except ValueError:
+                    pass  # NB not protocol: ignore
+            sink.put(None)  # EOF: the worker is gone
+        threading.Thread(target=reader, args=(self.proc.stdout, self.lines), daemon=True).start()
+        self.awaiting_ready = False
+
+    def _kill(self):
+        proc, self.proc = self.proc, None
+        if proc is None or proc.poll() is not None:
+            return
+        # NB SIGTERM first: Playwright's node driver then kills the browsers it
+        # launched (they live in process groups of their own); SIGKILL after 5 s
+        for sig, grace in ((signal.SIGTERM, 5), (signal.SIGKILL, 5)):
+            try:
+                os.killpg(proc.pid, sig)
+            except (ProcessLookupError, PermissionError, AttributeError):
+                try:
+                    proc.kill()
+                except Exception:
+                    pass
+            try:
+                proc.wait(timeout=grace)
+                return
+            except subprocess.TimeoutExpired:
+                continue
+
+    def _next(self, timeout):
+        try:
+            return self.lines.get(timeout=timeout)
+        except queue.Empty:
+            return 'timeout'
+
+    def _await_ready(self):
+        """The worker closes the previous browser after sending its result."""
+        if not self.awaiting_ready:
+            return
+        deadline = time.time() + self.CLOSE_TIMEOUT
+        while time.time() < deadline:
+            message = self._next(deadline - time.time())
+            if message is None or message == 'timeout':
+                break
+            if message.get('ready'):
+                self.awaiting_ready = False
+                return
+        print('      NB the browser of the previous side did not close within %d s: worker restarted'
+              % self.CLOSE_TIMEOUT, flush=True)
+        self._kill()
+
+    def run(self, side, scenario, route_str, side_dir, cache_dir, budget=None):
+        self._await_ready()
+        if self.proc is None or self.proc.poll() is not None:
+            self._start()
+        job = {'op': 'run', 'side': side, 'scenario': scenario, 'route': route_str,
+               'side_dir': side_dir, 'cache_dir': cache_dir, 'budget': budget}
+        try:
+            self.proc.stdin.write(json.dumps(job) + '\n')
+            self.proc.stdin.flush()
+        except (BrokenPipeError, OSError):
+            self._kill()
+            raise RuntimeError('the worker process died before the %s side started' % side.upper())
+        started = last_progress = last_beat = time.time()
+        activity = 'starting'
+        while True:
+            now = time.time()
+            wait = min(self.stall - (now - last_progress), self.cap - (now - started),
+                       self.HEARTBEAT - (now - last_beat))
+            message = self._next(max(wait, 0.05))
+            now = time.time()
+            if message == 'timeout':
+                if now - last_progress >= self.stall or now - started >= self.cap:
+                    self._kill()
+                    why = ('no progress for %d s' % self.stall) if now - last_progress >= self.stall \
+                        else ('over the %d s cap' % self.cap)
+                    raise SideFrozen('%s side froze (%s), last activity: %s' % (side.upper(), why, activity))
+                if now - last_beat >= self.HEARTBEAT:
+                    print('      ... %s %s side, %.0f s: %s' % (scenario['name'], side.upper(), now - started,
+                                                              activity), flush=True)
+                    last_beat = now
+                continue
+            if message is None:
+                code = self.proc.poll() if self.proc else None
+                self._kill()
+                raise RuntimeError('the worker process exited (code %s) during the %s side, last activity: %s'
+                                   % (code, side.upper(), activity))
+            if 'progress' in message:
+                activity, last_progress = message['progress'], now
+            elif 'fatal' in message:
+                self._kill()
+                die(message['fatal'].replace('FATAL: ', '', 1))
+            elif 'error' in message:
+                self.awaiting_ready = True
+                if message.get('type') == 'NotSupported':
+                    raise NotSupported(message['error'])
+                raise RuntimeError(message['error'])
+            elif 'result' in message:
+                self.awaiting_ready = True
+                return message['result']
+
+    def close(self):
+        proc = self.proc
+        if proc is not None and proc.poll() is None:
+            try:
+                proc.stdin.write(json.dumps({'op': 'stop'}) + '\n')
+                proc.stdin.flush()
+                proc.wait(timeout=10)
+            except Exception:
+                pass
+        self._kill()
+
+
+def worker_main(config_json):
+    """The worker side of WorkerDriver: one JSON job per stdin line; protocol
+    messages (progress, result, error, ready) on the original stdout, which
+    is then pointed at stderr so stray output cannot corrupt the protocol."""
+    global _PROGRESS
+    config = json.loads(config_json)
+    channel = os.fdopen(os.dup(1), 'w', encoding='utf-8', buffering=1)
+    os.dup2(2, 1)
+    lock = threading.Lock()
+
+    def send(message):
+        with lock:
+            channel.write(json.dumps(message) + '\n')
+            channel.flush()
+    _PROGRESS = lambda text: send({'progress': text})
+    try:
+        driver = PlaywrightDriver(config['browser'], config['browser_args'], synthetic=config['synthetic'],
+                                  live=config['live'], defer_close=True)
+    except SystemExit as error:
+        send({'fatal': str(error.code)})
+        return
+    try:
+        for line in sys.stdin:
+            job = json.loads(line)
+            if job.get('op') == 'stop':
+                break
+            try:
+                send({'result': driver.run(job['side'], job['scenario'], job['route'], job['side_dir'],
+                                           job['cache_dir'], budget=job.get('budget'))})
+            except SystemExit as error:
+                send({'fatal': str(error.code)})
+                return
+            except NotSupported as error:
+                send({'error': str(error), 'type': 'NotSupported'})
+            except Exception as error:
+                send({'error': '%s: %s' % (type(error).__name__, str(error).split('\n')[0][:300])})
+            finally:
+                driver.close_pending()
+                send({'ready': True})
+    finally:
+        try:
+            driver.close()
+        except Exception:
+            pass
+
+
 def make_driver(args):
     browser_args = list(args.browser_arg or [])
     if args.driver == 'chrome-cli':
@@ -1080,6 +1336,10 @@ def make_driver(args):
             '  %s -m playwright install chromium\n'
             '(or run with --driver chrome-cli and an installed Chrome: synthetic input only)'
             % (sys.executable, sys.version.split()[0], sys.executable, sys.executable))
+    if args.stall_timeout > 0:
+        return WorkerDriver({'browser': args.browser, 'browser_args': browser_args,
+                             'synthetic': args.input == 'synthetic', 'live': args.live},
+                            stall=args.stall_timeout, cap=args.side_timeout)
     return PlaywrightDriver(args.browser, browser_args, synthetic=(args.input == 'synthetic'), live=args.live)
 
 
@@ -1098,6 +1358,13 @@ def find_chrome():
 
 
 def main():
+    if len(sys.argv) == 3 and sys.argv[1] == '--_worker':
+        return worker_main(sys.argv[2])
+    # NB progress must show even when the output is piped (CI logs, | tee)
+    try:
+        sys.stdout.reconfigure(line_buffering=True)
+    except AttributeError:
+        pass
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--only', help='comma-separated scenario names or glob patterns')
     parser.add_argument('--tag', help='comma-separated tags')
@@ -1115,6 +1382,11 @@ def main():
     parser.add_argument('--fresh-cache', action='store_true', help='drop the recorded API responses first')
     parser.add_argument('--live', action='store_true', help='playwright driver: never replay the API cache')
     parser.add_argument('--no-build', action='store_true', help='do not rebuild ermac.min.js')
+    parser.add_argument('--stall-timeout', type=float, default=float(os.environ.get('PARITY_STALL_TIMEOUT', 90)),
+                        help='playwright: kill a side that reports no progress for this many seconds '
+                             '(env PARITY_STALL_TIMEOUT, default 90; 0 runs in-process, unguarded)')
+    parser.add_argument('--side-timeout', type=float, default=float(os.environ.get('PARITY_SIDE_TIMEOUT', 600)),
+                        help='playwright: hard cap per side in seconds (env PARITY_SIDE_TIMEOUT, default 600)')
     parser.add_argument('--reference-url', default=OLD_URL, help='where to fetch the OLD bundle')
     parser.add_argument('--reference-sha1', default=OLD_SHA1,
                         help='expected sha1 of the OLD bundle ("" disables the check)')
@@ -1142,14 +1414,21 @@ def main():
         build_new_bundle()
     ensure_reference(args.reference_url, args.reference_sha1)
     driver = make_driver(args)
-    print('driver: %s%s' % (driver.name, ' (synthetic input)' if driver.synthetic else ''))
+    print('driver: %s%s%s' % (driver.name, ' (synthetic input)' if driver.synthetic else '',
+                              (', watchdog: stall %ds, cap %ds per side' % (args.stall_timeout, args.side_timeout))
+                              if isinstance(driver, WorkerDriver) else ''))
     results = []
+    interrupted = False
+    frozen_in_a_row = 0
     try:
         needed = set(re.findall(r'\{(\w+)\}', ' '.join(s['route'] for s in selected)))
         fixture_values = {}
         if needed:
             banner('harvesting fixtures from the OLD side: %s' % ', '.join(sorted(needed)))
-            fixture_values = harvest_fixtures(driver, [f for f in fixtures if f['name'] in needed])
+            try:
+                fixture_values = harvest_fixtures(driver, [f for f in fixtures if f['name'] in needed])
+            except SideFrozen as error:
+                die('harvesting the fixtures froze: %s' % error)
             print('fixtures:', fixture_values)
 
         banner('running %d scenarios x 2 sides' % len(selected))
@@ -1177,10 +1456,18 @@ def main():
                 print('%-34s SKIP (%s)' % (name, reason))
                 continue
             except Exception as error:
-                message = '%s: %s' % (type(error).__name__, str(error).split('\n')[0][:200])
-                results.append({'name': name, 'verdict': 'ERROR', 'reason': message})
+                message = '%s: %s' % (type(error).__name__, str(error).split('\n')[0][:300])
+                results.append({'name': name, 'verdict': 'ERROR', 'reason': message,
+                                'seconds': round(time.time() - started, 1)})
                 print('%-34s ERROR %s' % (name, message))
+                write_report(driver, results, complete=False)
+                frozen_in_a_row = frozen_in_a_row + 1 if isinstance(error, SideFrozen) else 0
+                if frozen_in_a_row >= 3:
+                    die('%d scenarios in a row froze: the environment (browser, network, API) is likely '
+                        'broken rather than the scenarios; see the ERROR lines above and %s'
+                        % (frozen_in_a_row, os.path.relpath(os.path.join(OUT, 'report.json'))))
                 continue
+            frozen_in_a_row = 0
             for side in ('old', 'new'):
                 with open(os.path.join(side_dir, side + '-dom.html'), 'w', encoding='utf-8') as f:
                     f.write(sides[side]['dom'])
@@ -1217,12 +1504,17 @@ def main():
                     print('      %-6s ... %d more (see %s)' % (layer, len(items) - 4, os.path.relpath(os.path.join(side_dir, 'diff.txt'))))
             for warning in warnings:
                 print('      WARN   %s' % warning)
+            write_report(driver, results, complete=False)
+    except KeyboardInterrupt:
+        interrupted = True
+        print('\ninterrupted: stopping the browser processes...', flush=True)
+        if isinstance(driver, WorkerDriver):
+            driver._kill()  # NB no polite stop: the worker may be mid-scenario
     finally:
         driver.close()
 
-    with open(os.path.join(OUT, 'report.json'), 'w', encoding='utf-8') as f:
-        json.dump({'driver': driver.name, 'synthetic': driver.synthetic, 'results': results}, f, indent=1)
-    banner('summary')
+    write_report(driver, results, complete=not interrupted)
+    banner('summary' + (' (INTERRUPTED: partial)' if interrupted else ''))
     counts = {}
     for r in results:
         counts[r['verdict']] = counts.get(r['verdict'], 0) + 1
@@ -1231,7 +1523,17 @@ def main():
     if failed:
         print('failing:', ' '.join(failed))
     print('report: %s' % os.path.relpath(os.path.join(OUT, 'report.json')))
-    sys.exit(1 if failed else 0)
+    sys.exit(130 if interrupted else (1 if failed else 0))
+
+
+def write_report(driver, results, complete):
+    """Rewritten after every scenario: a run that is killed or interrupted
+    still leaves its results so far."""
+    path = os.path.join(OUT, 'report.json')
+    with open(path + '.tmp', 'w', encoding='utf-8') as f:
+        json.dump({'driver': driver.name, 'synthetic': driver.synthetic, 'complete': complete,
+                   'results': results}, f, indent=1)
+    os.replace(path + '.tmp', path)
 
 
 if __name__ == '__main__':

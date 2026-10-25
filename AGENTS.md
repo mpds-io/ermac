@@ -188,6 +188,10 @@ python3 parity/run_parity.py                        # everything: 7-25 min, host
 - A `WARN the OLD side itself failed step N` means the scenario is wrong
   (selector, hidden element, onboarding tooltip covering the target — use
   `tooltips = false`), not the code.
+- A scenario reported `ERROR SideFrozen` hung the browser (an endless loop,
+  a promise that never settles, a request that never completes): the
+  watchdog killed it after `--stall-timeout` s; its last activity says where.
+  Never "fix" it by raising the timeout before you know what it waits for.
 - Use native input (the default). `--input synthetic` (and the chrome-cli
   driver) dispatch synthetic events and **miss focus/blur regressions**.
 - The specification is the bundle **pinned** in `run_parity.py` (`OLD_URL`

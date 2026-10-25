@@ -275,6 +275,27 @@ its own: if this Python cannot import playwright, or its Chromium is not
 downloaded, the run stops and prints the exact install commands for the
 interpreter it runs under.
 
+## Freezes and interruptions
+
+A run cannot hang. With the Playwright driver every side runs in a worker
+process (its own process group) that reports what it is doing: launching,
+loading, each step, each live API request, capturing. A side that reports
+nothing for `--stall-timeout` seconds (default 90, env
+`PARITY_STALL_TIMEOUT`), or runs longer than `--side-timeout` (default 600,
+env `PARITY_SIDE_TIMEOUT`), is killed together with its browser and the
+scenario is reported as ERROR with its last activity, e.g.
+`SideFrozen: OLD side froze (no progress for 90 s), last activity: step 2/3:
+(click "#control_d")`; the next scenario gets a fresh worker. Three frozen
+scenarios in a row stop the run: the environment is then broken, not the
+scenarios. While a side runs longer than 15 s a heartbeat line shows what it
+is waiting for, so a slow API (`API GET /search/facet...`) is told apart from
+a freeze. Waiting for pending requests is capped at 60 s per side in total.
+
+`report.json` is rewritten after every scenario (`"complete": false` until
+the end); Ctrl-C stops the browsers at once, prints the partial summary and
+exits with 130. `--stall-timeout 0` runs in-process without the watchdog
+(for debugging the driver itself).
+
 ## Artifacts
 
 `out/<scenario>/` (or `$PARITY_OUT/<scenario>/`): `old|new-dom.html`,
