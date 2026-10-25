@@ -2071,8 +2071,13 @@ export function register_events() {
       }
     } else if (key == 27) {
       // ESC
-      const target = $$('div.cross').find(isVisible);
-      if (target) target.click();
+      // NB like $('div.cross:visible').trigger('click'): ALL visible crosses
+      // (collected first, as one click may hide the others)
+      $$('div.cross')
+        .filter(isVisible)
+        .forEach(function (cross) {
+          cross.click();
+        });
     }
   });
 

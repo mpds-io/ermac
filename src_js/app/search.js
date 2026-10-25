@@ -1401,11 +1401,12 @@ async function open_sim_col(entry, entype, rank) {
     }
   } else {
     // FIXME this is fragile
-    var prop = wmgui.thumbed_display
-      ? $('#sim_col div.busy_entry > div.gallery_img > div').textContent.split(
-          ';',
-        )[0]
-      : $('#sim_col tr.busy_entry > td.c2').textContent.split(';')[0];
+    // NB the selected (busy) entry is in the results (#databrowser), not in
+    // #sim_col; like jQuery's .text(), a missing element gives ''
+    var prop_el = wmgui.thumbed_display
+        ? $('div.busy_entry > div.gallery_img > div')
+        : $('tr.busy_entry > td.c2'),
+      prop = (prop_el ? prop_el.textContent : '').split(';')[0];
 
     data.out.sim.forEach(function (row, k) {
       if (counter == 8) return;

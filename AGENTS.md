@@ -148,6 +148,15 @@ libraries in the fixed `VENDORED` order. Consequences:
 - `wmgui.clean()` is the only sanitizer for server text shown in
   notifications: keep it stripping scripts, embedded documents, `on*`
   attributes and `javascript:` URLs (bar the app's own `location.reload()`).
+- jQuery is null-safe, the DOM is not: `$('x').text()` on no match is `''`,
+  `$('x').textContent` throws. Inside an `async` function the throw becomes
+  an unhandled rejection and the UI silently stays half-built (the "See
+  also" column once stayed empty because a ported selector was scoped to
+  `#sim_col`, where the selected `busy_entry` row never is). Keep the
+  original selector's scope, and guard reads that may not match.
+- jQuery acts on the whole set: `$('div.cross:visible').trigger('click')`
+  clicks every visible cross (ESC closes all panels); `.find(isVisible)`
+  picks only the first. Port set operations with `filter` + `forEach`.
 - A "simplified" `$.param` that just `encodeURIComponent`s each value turns
   an array into `a,b,c` instead of `key[]=a&key[]=b&key[]=c`. This once
   silently changed (and half-fixed) the numeric search URLs; `param()` is

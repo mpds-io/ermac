@@ -1519,6 +1519,78 @@ tags = ["search", "notify", "expect"]
 "hash" = "#inquiry/elements=Am-Ru&classes=binary"
 
 # ============================================================================
+# entry context: the "See also" column (#sim_col) and closing panels by ESC
+# ============================================================================
+
+[[scenario]]
+name = "sim_col_property_entry"
+desc = "clicking a property entry fills 'See also' with similar values of that property"
+route = "#inquiry/formulae=TiO2&props=band%20gap"
+tooltips = false
+steps = [ { wait_for = "#databrowser tr.tcell" }, { click = "#databrowser tr.tcell[id*='P']", after = 2500 } ]
+probe = ["visible:#sim_col", "text:#sim_legend", "texts:#sim_col > ul li", "attrs:#sim_col > ul a@href", "visible:#own_phase", "visible:#ctx_col"]
+tags = ["context", "sim"]
+
+[scenario.expect]
+"text:#sim_legend" = { contains = "Similar" }
+"count:#sim_col > ul li" = { gt = 0 }
+
+[[scenario]]
+name = "sim_col_property_entry_thumbs"
+desc = "the same in the thumbnail view (the property name is read from the selected thumbnail)"
+route = "#inquiry/formulae=TiO2&props=band%20gap"
+tooltips = false
+steps = [
+  { wait_for = "#databrowser tr.tcell" },
+  { click = "#control_d", after = 3000 },
+  { wait_for = "#databrowser div.gallery_item" },
+  { click = "#databrowser div.gallery_item[id*='P'] div.gallery_img", after = 2500 },
+]
+probe = ["visible:#sim_col", "text:#sim_legend", "texts:#sim_col > ul li", "attrs:#sim_col > ul a@href", "visible:#own_phase"]
+tags = ["context", "sim", "thumbs"]
+
+[scenario.expect]
+"text:#sim_legend" = { contains = "Similar" }
+"count:#sim_col > ul li" = { gt = 0 }
+
+[[scenario]]
+name = "esc_closes_entry_columns"
+desc = "ESC closes the entry and 'See also' columns of a selected entry"
+route = "#inquiry/formulae=TiO2&props=band%20gap"
+tooltips = false
+steps = [
+  { wait_for = "#databrowser tr.tcell" },
+  { click = "#databrowser tr.tcell[id*='P']", after = 2500 },
+  { key = "Escape", after = 800 },
+]
+probe = ["visible:#ctx_col", "visible:#sim_col", "count:#databrowser .busy_entry"]
+tags = ["context", "keyboard"]
+
+[scenario.expect]
+"visible:#ctx_col" = false
+"visible:#sim_col" = false
+
+[[scenario]]
+name = "esc_closes_all_visible_panels"
+desc = "ESC clicks every visible close-cross at once (entry columns, advanced search, numeric box), like $('div.cross:visible').trigger('click')"
+route = "#inquiry/formulae=TiO2&props=band%20gap"
+tooltips = false
+steps = [
+  { wait_for = "#databrowser tr.tcell" },
+  { click = "#databrowser tr.tcell[id*='P']", after = 2500 },
+  { click = "#advsearch_init_trigger" },
+  { click = "#advstab_cry strong.numeric[rel=alat]", after = 1000 },
+  { key = "Escape", after = 1500 },
+]
+probe = ["visible:#ctx_col", "visible:#sim_col", "visible:#numericbox", "nvisible:div.cross", "hash"]
+tags = ["context", "keyboard", "numeric", "advsearch"]
+
+[scenario.expect]
+"visible:#ctx_col" = false
+"visible:#numericbox" = false
+"nvisible:div.cross" = 0
+
+# ============================================================================
 # QA: result counts (78 facet searches from a QA list, re-recorded from the
 # live API on 2026-10-24: the original qa.json counts were outdated)
 # Each case is an inquiry route; the count is the one the GUI reports in the
