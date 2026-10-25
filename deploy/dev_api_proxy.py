@@ -32,6 +32,7 @@ import os
 import sys
 import threading
 import urllib.error
+import urllib.parse
 import urllib.request
 
 HOST = "127.0.0.1"
@@ -47,6 +48,8 @@ _log_lock = threading.Lock()
 
 
 def cache_lookup(method, path):
+    """(status, content_type, payload, location) or None. NB a redirect
+    record carries its Location on a third header line."""
     if not CACHE_DIR:
         return None
     key = hashlib.sha1(("%s %s" % (method, path)).encode()).hexdigest()
@@ -56,8 +59,9 @@ def cache_lookup(method, path):
     with open(cache_path, "rb") as f:
         status = int(f.readline().strip())
         content_type = f.readline().strip().decode()
+        location = f.readline().strip().decode() if is_redirect(status) else ""
         payload = f.read()
-    return status, content_type, payload
+    return status, content_type, payload, location
 
 
 def cacheable(status):
@@ -74,14 +78,63 @@ def cache_key_path(method, path, body):
     return path
 
 
-def cache_store(method, path, status, content_type, payload):
+def cache_store(method, path, status, content_type, payload, location=""):
     if not CACHE_DIR:
         return
     os.makedirs(CACHE_DIR, exist_ok=True)
     key = hashlib.sha1(("%s %s" % (method, path)).encode()).hexdigest()
     with open(os.path.join(CACHE_DIR, key), "wb") as f:
         f.write(("%d\n%s\n" % (status, content_type)).encode())
+        if is_redirect(status):
+            f.write(("%s\n" % location).encode())
         f.write(payload)
+
+
+def is_redirect(status):
+    return 300 <= status < 400
+
+
+class _KeepRedirects(urllib.request.HTTPRedirectHandler):
+    """Hand 3xx responses back instead of following them: the browser must
+    see the redirect itself. E.g. an anonymous /download/p?...&fmt=pdf is a
+    302 to https://mpds.io/#junction (sign-in); followed here, the proxy
+    served the mpds.io page (its fragment lost) as if it were the API
+    response, with its relative assets resolving to the proxy: broken HTML."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+_OPENER = urllib.request.build_opener(_KeepRedirects)
+
+
+def fetch_remote(method, path, body=None, headers=None):
+    """(status, response_headers, payload) of REMOTE + path, redirects NOT
+    followed; transport errors give a 502 with a JSON error payload.
+    NB shared with parity/run_parity.py."""
+    request = urllib.request.Request(REMOTE + path, data=body, method=method, headers=headers or {})
+    last_error = None
+    # NB the CDN may occasionally cut a response short, so retry once
+    for attempt in (1, 2):
+        try:
+            with _OPENER.open(request, timeout=TIMEOUT) as response:
+                return response.status, response.headers, response.read()
+        except urllib.error.HTTPError as error:  # NB includes the 3xx
+            return error.code, error.headers, error.read()
+        except Exception as error:
+            last_error = error
+    return 502, {}, ('{"error": "dev proxy: %s"}' % last_error).encode()
+
+
+def local_location(location, path, local_origin):
+    """A redirect back into the API stays on this proxy; others (mpds.io)
+    are passed as absolute URLs, fragment included."""
+    if not location:
+        return location
+    absolute = urllib.parse.urljoin(REMOTE + path, location)
+    if absolute.startswith(REMOTE + "/") or absolute == REMOTE:
+        return local_origin + absolute[len(REMOTE):]
+    return absolute
 
 HOP_BY_HOP = {
     "connection",
@@ -116,7 +169,6 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def _forward(self, method, send_body=True):
-        url = REMOTE + self.path
         body = None
 
         if method == "POST":
@@ -129,13 +181,16 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
 
         key = cache_key_path(method, self.path, body)
         cached = cache_lookup(method, key)
+        local_origin = "http://%s" % (self.headers.get("Host") or "%s:%d" % (HOST, PORT))
         if cached is not None:
-            status, content_type, payload = cached
+            status, content_type, payload, location = cached
             try:
                 self.send_response(status)
                 self._cors()
                 if content_type:
                     self.send_header("Content-Type", content_type)
+                if location:
+                    self.send_header("Location", local_location(location, self.path, local_origin))
                 self.send_header("Content-Length", str(len(payload)))
                 self.end_headers()
                 if send_body:
@@ -150,33 +205,13 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
             if value:
                 headers[header] = value
 
-        request = urllib.request.Request(url, data=body, method=method, headers=headers)
-
-        payload, status, response_headers = b"", 502, {}
-
-        # NB the CDN may occasionally cut a response short, so retry once
-        last_error = None
-        for attempt in (1, 2):
-            try:
-                with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
-                    payload = response.read()
-                    status = response.status
-                    response_headers = response.headers
-                break
-            except urllib.error.HTTPError as error:
-                payload = error.read()
-                status = error.code
-                response_headers = error.headers
-                break
-            except Exception as error:
-                last_error = error
-        else:
-            payload = ('{"error": "dev proxy: %s"}' % last_error).encode()
+        status, response_headers, payload = fetch_remote(method, self.path, body, headers)
+        location = (response_headers or {}).get("Location", "")
 
         if cacheable(status):
             cache_store(method, key, status,
                         (response_headers or {}).get("Content-Type", ""),
-                        payload)
+                        payload, location)
 
         try:
             self.send_response(status)
@@ -184,6 +219,8 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
             for name, value in (response_headers or {}).items():
                 # NB the proxy handles CORS itself (the origin it sees is localhost,
                 # not the real browser origin), so drop the remote CORS headers
+                if name.lower() == "location":
+                    value = local_location(value, self.path, local_origin)
                 if name.lower() not in HOP_BY_HOP and not name.lower().startswith(
                     "access-control-"
                 ):

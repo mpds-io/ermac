@@ -430,26 +430,21 @@ class PlaywrightDriver(object):
             headers = {k: v for k, v in (('Content-Type', content_type),
                                           ('Accept-Language', request.headers.get('accept-language')))
                        if v}
-            remote = urllib.request.Request(self.proxy.REMOTE + path, data=body, method=method, headers=headers)
-            status, ctype, payload = 502, 'application/json', b''
-            for attempt in (1, 2):
-                try:
-                    with urllib.request.urlopen(remote, timeout=self.proxy.TIMEOUT) as response:
-                        status, ctype, payload = response.status, response.headers.get('Content-Type', ''), response.read()
-                    break
-                except urllib.error.HTTPError as error:
-                    status, ctype, payload = error.code, error.headers.get('Content-Type', ''), error.read()
-                    break
-                except Exception as error:
-                    payload = ('{"error": "parity driver: %s"}' % error).encode()
+            # NB redirects are NOT followed, exactly as in deploy/dev_api_proxy.py
+            status, response_headers, payload = self.proxy.fetch_remote(method, path, body, headers)
+            # NB a transport failure (502, no headers) carries a JSON error payload
+            ctype = (response_headers or {}).get('Content-Type', '') or ('application/json' if status == 502 else '')
+            location = (response_headers or {}).get('Location', '')
             # NB transient failures must not become permanent in the replay cache
             if self.proxy.cacheable(status):
-                self.proxy.cache_store(method, key, status, ctype, payload)
-            cached = (status, ctype, payload)
-        status, ctype, payload = cached
+                self.proxy.cache_store(method, key, status, ctype, payload, location)
+            cached = (status, ctype, payload, location)
+        status, ctype, payload, location = cached
         headers = dict(cors)
         if ctype:
             headers['Content-Type'] = ctype
+        if location:
+            headers['Location'] = self.proxy.local_location(location, path, API_ORIGIN)
         route.fulfill(status=status, body=payload, headers=headers)
 
     def _external(self, route, request, run):
@@ -571,7 +566,15 @@ class PlaywrightDriver(object):
         width, height = scenario['viewport']
         # NB a fresh browser per side run: a clean profile (no localStorage
         # carry-over), and single-process builds cannot close contexts
-        browser = self._pw.chromium.launch(**self.launch)
+        try:
+            browser = self._pw.chromium.launch(**self.launch)
+        except Exception as error:
+            if "Executable doesn't exist" in str(error) or 'playwright install' in str(error):
+                die("playwright is installed but its Chromium is not: run\n"
+                    "  %s -m playwright install chromium\n"
+                    "(or point PARITY_BROWSER / --browser at a Chromium executable)\n%s"
+                    % (sys.executable, str(error).strip().split('\n')[0]))
+            raise
         context = browser.new_context(
             viewport={'width': width, 'height': height}, device_scale_factor=1,
             locale='en-US', timezone_id='UTC')
@@ -583,9 +586,12 @@ class PlaywrightDriver(object):
             context.on('requestfinished', lambda q: run['inflight'].discard(q))
             context.on('requestfailed', lambda q: run['inflight'].discard(q))
             if scenario.get('storage'):
+                # NB init scripts run in EVERY document of the page; frames with an
+                # opaque origin have no localStorage (and would throw a pageerror)
                 context.add_init_script(
-                    'var s = %s; for (var k in s) window.localStorage.setItem(k, s[k]);'
-                    % json.dumps(scenario['storage']))
+                    'if (location.origin === %s) { var s = %s; '
+                    'for (var k in s) window.localStorage.setItem(k, s[k]); }'
+                    % (json.dumps(GUI_ORIGIN), json.dumps(scenario['storage'])))
             page = context.new_page()
             page_errors = []
             page.on('pageerror', lambda e: page_errors.append(str(e)))
@@ -661,7 +667,7 @@ class ChromeCliDriver(object):
     synthetic = True
 
     def __init__(self, browser_path=None, browser_args=()):
-        self.chrome = browser_path or 'google-chrome'
+        self.chrome = browser_path or find_chrome()
         self.browser_args = list(browser_args)
         for label, port in (('static server', GUI_PORT), ('API proxy', API_PORT)):
             if not port_free(port):
@@ -1060,27 +1066,35 @@ def harvest_fixtures(driver, fixtures):
 
 def make_driver(args):
     browser_args = list(args.browser_arg or [])
-    if args.driver is None:
-        args.driver = default_driver()
-        if args.driver == 'chrome-cli':
-            print('NB playwright is not installed: falling back to --driver chrome-cli '
-                  '(synthetic input, which misses focus/blur regressions; '
-                  '`pip install playwright==1.50.0` for the default driver)')
     if args.driver == 'chrome-cli':
         return ChromeCliDriver(args.browser, browser_args)
+    # NB no silent fallback to chrome-cli: it needs a Chrome binary and real
+    # sockets, and its synthetic input misses focus/blur regressions
     try:
         import playwright  # noqa: F401
     except ImportError:
-        die('the playwright driver needs `pip install playwright` (or use --driver chrome-cli)')
+        die('the playwright driver needs playwright, which this Python cannot import:\n'
+            '  %s (Python %s)\n'
+            '`pip` may have installed it for another interpreter. Install it for this one:\n'
+            '  %s -m pip install playwright==1.50.0\n'
+            '  %s -m playwright install chromium\n'
+            '(or run with --driver chrome-cli and an installed Chrome: synthetic input only)'
+            % (sys.executable, sys.version.split()[0], sys.executable, sys.executable))
     return PlaywrightDriver(args.browser, browser_args, synthetic=(args.input == 'synthetic'), live=args.live)
 
 
-def default_driver():
-    try:
-        import playwright  # noqa: F401
-        return 'playwright'
-    except ImportError:
-        return 'chrome-cli'
+CHROME_CANDIDATES = ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser', 'chrome',
+                     '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+                     '/Applications/Chromium.app/Contents/MacOS/Chromium']
+
+
+def find_chrome():
+    for candidate in CHROME_CANDIDATES:
+        found = shutil.which(candidate) or (os.path.isfile(candidate) and candidate)
+        if found:
+            return found
+    die('--driver chrome-cli found no Chrome/Chromium (tried %s): set PARITY_BROWSER or --browser'
+        % ', '.join(os.path.basename(c) for c in CHROME_CANDIDATES))
 
 
 def main():
@@ -1090,8 +1104,7 @@ def main():
     parser.add_argument('--list', action='store_true', help='list the scenarios and exit')
     parser.add_argument('--lint', action='store_true', help='validate scenarios.toml and exit')
     parser.add_argument('--scenarios', default=SCENARIOS_PATH)
-    parser.add_argument('--driver', choices=['playwright', 'chrome-cli'], default=None,
-                        help='default: playwright when installed, else chrome-cli')
+    parser.add_argument('--driver', choices=['playwright', 'chrome-cli'], default='playwright')
     parser.add_argument('--input', choices=['native', 'synthetic'], default='native',
                         help='playwright driver: native input (default) or the in-page synthetic executor')
     parser.add_argument('--browser', default=os.environ.get('PARITY_BROWSER'),

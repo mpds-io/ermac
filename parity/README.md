@@ -6,7 +6,8 @@ the OLD bundle and on the NEW one under identical, deterministic conditions,
 and the two sides must agree. No manual inspection needed.
 
 ```
-pip install playwright pillow && python -m playwright install chromium
+# NB one interpreter throughout: install with the python3 that runs the suite
+python3 -m pip install playwright==1.50.0 pillow && python3 -m playwright install chromium
 
 python3 parity/run_parity.py                      # everything
 python3 parity/run_parity.py --only 'ms_*,start'  # names or glob patterns
@@ -264,7 +265,15 @@ screenshots) is uploaded as the `parity-out` artifact.
   synthetic DOM events, results are read back from the dumped DOM. No API
   mocks, no external-request layer. Both drivers share the response cache
   format of `deploy/dev_api_proxy.py` (POSTs are keyed by URL and body;
-  rate limits and server errors are never cached).
+  rate limits and server errors are never cached; redirects are passed to
+  the browser, not followed, and replayed with their `Location`). The
+  browser is `--browser` / `PARITY_BROWSER`, else the first Chrome/Chromium
+  found in `PATH` or `/Applications`.
+
+The Playwright driver is the default and never falls back to chrome-cli on
+its own: if this Python cannot import playwright, or its Chromium is not
+downloaded, the run stops and prints the exact install commands for the
+interpreter it runs under.
 
 ## Artifacts
 

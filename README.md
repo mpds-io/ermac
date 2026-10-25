@@ -94,7 +94,8 @@ The entire app lives in the global state object `window.wmgui` (kept for embedda
 The `parity/` suite checks that the GUI behaves exactly like the deployed version at [mpds-io.github.io/ermac](https://mpds-io.github.io/ermac): every scenario (a route, optional clicks and keystrokes, and the observations to compare) runs against the old and the new bundle in a headless browser, comparing API requests, DOM state, focus, JS errors and screenshots. Scenarios are declared in `parity/scenarios.toml`; see [`parity/README.md`](parity/README.md) for running them and adding new ones.
 
 ```
-pip install playwright pillow && python -m playwright install chromium
+# NB one interpreter throughout: install with the python3 that runs the suite
+python3 -m pip install playwright==1.50.0 pillow && python3 -m playwright install chromium
 python3 parity/run_parity.py
 ```
 
