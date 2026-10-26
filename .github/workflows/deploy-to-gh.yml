@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+      - refactor-vanilla-es-modules
+  workflow_dispatch:
 
 jobs:
   build-then-deploy:
