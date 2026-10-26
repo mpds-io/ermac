@@ -7,6 +7,11 @@ on:
       - refactor-vanilla-es-modules
   workflow_dispatch:
 
+# NB the fork's Actions default is read-only: the deploy step needs
+# write access to push the gh-pages branch
+permissions:
+  contents: write
+
 jobs:
   build-then-deploy:
     runs-on: ubuntu-latest
