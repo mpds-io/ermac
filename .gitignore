@@ -18,3 +18,5 @@ parity/labs
 parity/oauth
 parity/crystvis
 parity/ermac.min.js
+
+.venv

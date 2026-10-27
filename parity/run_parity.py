@@ -688,10 +688,14 @@ class PlaywrightDriver(object):
             page.on('pageerror', lambda e: page_errors.append(str(e)))
 
             # NB fake clock with a fixed epoch: timers only fire when the
-            # driver advances virtual time, identically on both sides
+            # driver advances virtual time, identically on both sides.
+            # NB pause_at must stay AHEAD of the running fake clock: after
+            # install(time=t0) the clock ticks in real time, and the RPC
+            # roundtrip already puts it past t0 + 1ms ("fast-forward to the
+            # past" crash), hence a comfortable 1s margin below
             t0 = datetime.datetime(2026, 1, 15, 12, 0, 0, tzinfo=datetime.timezone.utc)
             page.clock.install(time=t0)
-            page.clock.pause_at(t0 + datetime.timedelta(milliseconds=1))
+            page.clock.pause_at(t0 + datetime.timedelta(seconds=1))
 
             query = ('?p=' + packed_scenario(scenario)) if self.synthetic else ''
             url = '%s/parity/%s.html%s%s' % (GUI_ORIGIN, side, query, route_str)

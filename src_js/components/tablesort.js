@@ -1,180 +1,231 @@
 /**
- * Ermac table sorter: a vanilla port of the subset of the vendored
- * jquery.tablesorter 2.0 used by Ermac (see git history:
- * src_js/third_party/jquery.tablesorter.js), keeping its CSS class contract
- * (th.header, th.headerSortUp, th.headerSortDown, see webassets/ermac.css)
- * and its semantics:
- *  - rows are sorted from a cache built at init (or on update()), ties keep
- *    the cached order; update() re-reads the rows WITHOUT re-sorting;
- *  - cell text is the raw textContent (or data-sort-value), formatted by the
- *    column parser; columns without a configured sorter auto-detect to
- *    'chemical' (the first registered parser whose is() accepts anything);
- *  - every header keeps its own click counter: asc, desc, asc, ...;
- *    ctrl-click (sortMultiSortKey) adds a column or flips its direction;
- *  - a header mousedown is cancelled (cancelSelection): no text selection,
- *    and the focus stays where it was (e.g. in the search box);
- *  - re-initializing on the same headers replaces the old handlers.
+ * Ermac table sorter: a vanilla replacement for the jquery.tablesorter plugin.
+ *
+ * This is a port of the *vendored* tablesorter 2.0 subset the app uses (not
+ * of the upstream documentation), preserving the observable contract:
+ * the CSS class names (th.header, headerSortUp, headerSortDown, see
+ * webassets/ermac.css), the custom chemical/doi parsers added in the
+ * vendored file, the locale-aware text comparison (sortLocaleCompare),
+ * and the mousedown text-selection cancellation (cancelSelection).
  *
  * The data table body and the header cells live in two separate tables
- * (the old 'selectorHeaders' / 'selectorHeaderParent' use case).
+ * (the old tablesorter 'selectorHeaders' / 'selectorHeaderParent' use case).
+ * Ctrl-click appends a column to the current multi-sort.
  */
 
-function format_float(s) {
-  const i = parseFloat(s);
-  return isNaN(i) ? 0 : i;
-}
+/*
+ * The parsers of the vendored tablesorter, formats verbatim:
+ *
+ *   text     trim(s.toLocaleLowerCase())                 type text
+ *   chemical trim(s.replace('[', '').replace('(', ''))   type text
+ *   digit    parseFloat(s) || 0                         type numeric
+ *   doi      parseInt(s.replace('[', '').replace(']', '')) || 0  type numeric
+ */
 
-function format_int(s) {
-  const i = parseInt(s);
-  return isNaN(i) ? 0 : i;
-}
-
-// NB the parsers registered by the vendored plugin, in registration order
-const PARSERS = {
-  text: { type: 'text', format: (s) => s.toLocaleLowerCase().trim() },
-  chemical: { type: 'text', format: (s) => s.replace('[', '').replace('(', '').trim() },
-  digit: { type: 'numeric', format: (s) => format_float(s) },
-  url: { type: 'text', format: (s) => s.replace(/(https?|ftp|file):\/\//, '').trim() },
-  doi: { type: 'numeric', format: (s) => format_int(s.replace('[', '').replace(']', '')) },
+var PARSERS = {
+  text: {
+    type: 'text',
+    format: function (s) {
+      return s.trim().toLocaleLowerCase();
+    },
+  },
+  chemical: {
+    type: 'text',
+    format: function (s) {
+      return s.trim().replace('[', '').replace('(', '');
+    },
+  },
+  digit: {
+    type: 'numeric',
+    format: function (s) {
+      var value = parseFloat(s);
+      return isNaN(value) ? 0 : value;
+    },
+  },
+  doi: {
+    type: 'numeric',
+    format: function (s) {
+      var value = parseInt(s.replace('[', '').replace(']', ''));
+      return isNaN(value) ? 0 : value;
+    },
+  },
 };
-const DETECTED = 'chemical';
 
-function cell_text(cell) {
-  if (!cell) return '';
-  const sort_value = cell.getAttribute('data-sort-value');
-  return sort_value !== null ? sort_value : cell.textContent;
+function cell_text(row, col) {
+  const cell = row.cells[col];
+  return cell ? cell.textContent.trim() : '';
 }
-
-function compare(type, a, b) {
-  if (type === 'text') return a == b ? 0 : a < b ? -1 : 1;
-  return a - b;
-}
-
-const bound_headers = new WeakMap(); // th -> its listeners, for re-init
 
 export function make_sortable(data_table, options) {
   options = options || {};
-  const header_cells = Array.prototype.slice.call(
-    document.querySelectorAll(options.selectorHeaders),
-  );
+  const header_cells = document.querySelectorAll(options.selectorHeaders);
   const headers_conf = options.headers || {};
-  const multi_key = options.sortMultiSortKey || 'shiftKey';
+  const tbody = data_table.tBodies[0];
 
-  function parser_of(index) {
+  let sortlist = []; // [{col, dir}] where dir 0 = asc, 1 = desc
+  var counts = {}; // per-column click counter, like the old this.count
+  var parsers = null; // NB detected once like the old buildParserCache()
+  // NB the old comparator ends with the orgOrderCol tie-break: equal values
+  // fall back to the position in the cache built at init/update time, NOT
+  // to the browser sort stability
+  var original_index = new WeakMap();
+
+  function parser_for(index) {
     const conf = headers_conf[index];
-    if (conf && conf.sorter === false) return null; // unsortable
-    const name = conf && conf.sorter ? conf.sorter : DETECTED;
-    return PARSERS[name] || PARSERS[DETECTED];
-  }
-
-  let cache = [];
-  function build_cache() {
-    const tbody = data_table.tBodies[0];
-    cache = tbody
-      ? Array.prototype.map.call(tbody.rows, function (row, position) {
-          const values = header_cells.map(function (th, index) {
-            const parser = parser_of(index);
-            return parser ? parser.format(cell_text(row.cells[index])) : null;
-          });
-          return { row: row, values: values, position: position };
-        })
-      : [];
-  }
-
-  let sort_list = []; // [[column, order]], order 0 = asc, 1 = desc
-
-  function set_headers_css() {
-    header_cells.forEach(function (th) {
-      th.classList.remove('headerSortUp', 'headerSortDown');
-    });
-    // NB sortCSS = [cssDesc, cssAsc]: ascending is marked headerSortDown
-    sort_list.forEach(function (entry) {
-      const th = header_cells[entry[0]];
-      if (th) th.classList.add(entry[1] === 0 ? 'headerSortDown' : 'headerSortUp');
-    });
-  }
-
-  function multisort() {
-    cache.sort(function (a, b) {
-      for (let i = 0; i < sort_list.length; i++) {
-        const column = sort_list[i][0], order = sort_list[i][1];
-        const type = parser_of(column).type;
-        const result = order === 0
-          ? compare(type, a.values[column], b.values[column])
-          : compare(type, b.values[column], a.values[column]);
-        if (result) return result;
+    if (conf !== undefined && conf.sorter === false) return false;
+    const name = conf && conf.sorter !== undefined ? conf.sorter : undefined;
+    if (name !== undefined && PARSERS[name]) return PARSERS[name];
+    // NB like the old detectParserForColumn: auto-detect digits, else text
+    for (var row_index = 0; row_index < tbody.rows.length; row_index++) {
+      const value = cell_text(tbody.rows[row_index], index);
+      if (value !== '') {
+        return /^[-+]?\d*$/.test(value.replace(/[,.']/g, ''))
+          ? PARSERS.digit
+          : PARSERS.text;
       }
-      return a.position - b.position;
+    }
+    return PARSERS.text;
+  }
+
+  function detect_parsers() {
+    parsers = [];
+    const first_row = tbody.rows[0];
+    for (var col = 0; col < (first_row ? first_row.cells.length : 0); col++)
+      parsers.push(parser_for(col));
+    for (var i = 0; i < tbody.rows.length; i++)
+      original_index.set(tbody.rows[i], i);
+  }
+
+  // NB like the old buildCache(): every cell formatted once per sort
+  function apply() {
+    if (!sortlist.length || !tbody) return;
+    const rows = Array.prototype.slice.call(tbody.rows);
+
+    const keyed = rows.map(function (row) {
+      const values = [];
+      for (var col = 0; col < row.cells.length; col++) {
+        values.push(
+          parsers[col] ? parsers[col].format(cell_text(row, col)) : '',
+        );
+      }
+      return { row: row, values: values };
     });
-    const tbody = data_table.tBodies[0];
-    cache.forEach(function (entry) {
+
+    // NB the vendored makeSortFunction() builds RAW codepoint comparisons,
+    // the localeCompare branch is dead code in that version
+    const comparators = [];
+    sortlist.forEach(function (entry) {
+      const col = entry.col;
+      const parser = parsers[col];
+      const a = function (x) { return x.values[col]; };
+      if (parser && parser.type === 'text') {
+        comparators.push(
+          entry.dir === 0
+            ? function (x, y) {
+                const va = a(x), vb = a(y);
+                return va === vb
+                  ? 0
+                  : va === null
+                    ? Number.POSITIVE_INFINITY
+                    : vb === null
+                      ? Number.NEGATIVE_INFINITY
+                      : va < vb
+                        ? -1
+                        : 1;
+              }
+            : function (x, y) {
+                const va = a(x), vb = a(y);
+                return va === vb
+                  ? 0
+                  : va === null
+                    ? Number.POSITIVE_INFINITY
+                    : vb === null
+                      ? Number.NEGATIVE_INFINITY
+                      : vb < va
+                        ? -1
+                        : 1;
+              },
+        );
+      } else {
+        comparators.push(
+          entry.dir === 0
+            ? function (x, y) { return a(x) - a(y); }
+            : function (x, y) { return a(y) - a(x); },
+        );
+      }
+    });
+
+    keyed.sort(function (a, b) {
+      for (var i = 0; i < comparators.length; i++) {
+        const result = comparators[i](a, b);
+        if (result !== 0) return result;
+      }
+      // NB the orgOrderCol tie-break of the old comparator
+      const oa = original_index.get(a.row), ob = original_index.get(b.row);
+      return oa === undefined || ob === undefined ? 0 : oa - ob;
+    });
+    keyed.forEach(function (entry) {
       tbody.appendChild(entry.row);
     });
   }
 
-  build_cache();
+  function refresh_header_classes() {
+    header_cells.forEach(function (th, index) {
+      th.classList.remove('headerSortUp', 'headerSortDown');
+      const found = sortlist.find(function (entry) {
+        return entry.col === index;
+      });
+      // NB parity with the old vendored plugin: it applied
+      // sortCSS = [cssDesc, cssAsc], i.e. ascending order was marked
+      // with the headerSortDown class, and vice versa
+      if (found)
+        th.classList.add(found.dir === 1 ? 'headerSortUp' : 'headerSortDown');
+    });
+  }
 
   header_cells.forEach(function (th, index) {
-    // NB like $headers.unbind(): a new table replaces the old handlers
-    const previous = bound_headers.get(th);
-    if (previous) {
-      th.removeEventListener('click', previous.click);
-      th.removeEventListener('mousedown', previous.mousedown);
-    }
-    th.count = 0;
-    const sortable = parser_of(index) !== null;
-    if (sortable) th.classList.add('header');
-
-    const click = function (event) {
-      // NB the old plugin ignored header clicks while a visualization
-      // iframe (id="iframe", a named window property) was open
-      if (window.iframe) {
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-      }
-      const tbody = data_table.tBodies[0];
-      if (sortable && tbody && tbody.rows.length) {
-        const order = th.count++ % 2;
-        if (!event[multi_key]) {
-          sort_list = [[index, order]];
-        } else {
-          const existing = sort_list.find(function (entry) {
-            return entry[0] === index;
-          });
-          if (existing) {
-            th.count = existing[1] + 1;
-            existing[1] = th.count % 2;
-          } else {
-            sort_list.push([index, order]);
-          }
-        }
-        setTimeout(function () {
-          set_headers_css();
-          multisort();
-        }, 1);
-        // NB jQuery `return false`, only for an actual sort
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    };
-    const mousedown = function (event) {
-      // cancelSelection
-      th.onselectstart = function () {
-        return false;
-      };
+    // NB cancelSelection is bound to ALL header cells in the old plugin,
+    // the unsortable ones too: a click on them must not move the focus
+    th.addEventListener('mousedown', function (event) {
       event.preventDefault();
       event.stopPropagation();
-    };
-    th.addEventListener('click', click);
-    th.addEventListener('mousedown', mousedown);
-    bound_headers.set(th, { click: click, mousedown: mousedown });
+    });
+    if (parser_for(index) === false) return; // unsortable column
+    th.classList.add('header');
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', function (event) {
+      const existing = sortlist.find(function (entry) {
+        return entry.col === index;
+      });
+
+      if (event.ctrlKey && options.sortMultiSortKey === 'ctrlKey') {
+        if (existing) existing.dir = existing.dir === 0 ? 1 : 0;
+        else sortlist.push({ col: index, dir: 0 });
+      } else {
+        if (existing && sortlist.length === 1)
+          existing.dir = existing.dir === 0 ? 1 : 0;
+        else sortlist = [{ col: index, dir: 0 }];
+      }
+      counts[index] = (counts[index] || 0) + 1;
+      refresh_header_classes();
+      apply();
+    });
   });
 
+  detect_parsers();
+
   return {
-    // NB like trigger('update'): re-read the rows, keep their current order
+    // NB like the old 'update' event: the parsers are re-detected,
+    // the current sort is re-applied to the appended rows
     update: function () {
-      setTimeout(build_cache, 1);
+      detect_parsers();
+      apply();
+    },
+    destroy: function () {
+      sortlist = [];
+      header_cells.forEach(function (th) {
+        th.classList.remove('header', 'headerSortUp', 'headerSortDown');
+      });
     },
   };
 }
