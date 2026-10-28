@@ -7,3 +7,16 @@ labs/pd3d/data
 package.json
 package-lock.json
 /node_modules
+
+# parity testing
+parity/reference/
+parity/out/
+__pycache__/
+# created at runtime by the chrome-cli driver (app_folder is /parity)
+parity/webassets
+parity/labs
+parity/oauth
+parity/crystvis
+parity/ermac.min.js
+
+.venv

@@ -1,0 +1,38 @@
+{
+  "comment": [
+    "Ermac parity configuration: the defaults applied to every scenario, and the fixtures (real ids harvested from the OLD side, used as {name} in routes). The scenarios are in parity/scenarios.json, a list of scenario objects; see parity/README.md (\"Adding a parity test\").",
+    "Every scenario runs on the OLD and the NEW bundle under identical, deterministic conditions; all layers (api, ext, dom, probes, steps, errors, pixels) must agree. A scenario is a route + optional steps + optional probes."
+  ],
+  "defaults": {
+    "comment": [
+      "boot: virtual ms after page load, before the first step",
+      "step_after: virtual ms after each step (unless the step sets after)",
+      "settle: virtual ms after the last step, before the capture",
+      "probe: evaluated in EVERY scenario (cheap, broad UX invariants)"
+    ],
+    "boot": 3000,
+    "step_after": 400,
+    "settle": 3000,
+    "pixels": "strict",
+    "probe": [
+      "hash",
+      "title",
+      "focus",
+      "text:#notifybox",
+      "visible:#notifybox",
+      "texts:#search_holder .selectize-input > div[data-term]",
+      "value:#search_field-selectized",
+      "visible:#search_holder .selectize-dropdown",
+      "nvisible:div.modal",
+      "visible:#overlay",
+      "js:wmgui.view_mode",
+      "js:wmgui.search_type",
+      "js:wmgui.search",
+      "js:Object.keys(localStorage).sort()"
+    ]
+  },
+  "fixtures": [
+    {"name": "phid", "route": "#inquiry_phases/elements=Ag-O&classes=oxide", "probe": "attr:#databrowser div.gallery_img@rel"},
+    {"name": "bid", "route": "#search/Ag-O", "pattern": "ref_id=(\\d+)&amp;sid"}
+  ]
+}
