@@ -224,21 +224,22 @@ export function create_multiselect(select_el, settings) {
 
   function position_dropdown() {
     // NB like selectize positionDropdown(): $control is the INPUT HOLDER,
-    // position() is measured within its offsetParent (the wrapper,
-    // position:relative in ermac.css), and top is advanced by the holder's
-    // outerHeight(true). Since the dropdown lives in the same wrapper, the
-    // resulting coordinates are wrapper-relative.
+    // and jQuery position() EXCLUDES the holder's own margins (border-box
+    // offset minus marginTop/marginLeft), while outerHeight(true) adds
+    // them back. The wrapper-relative coordinates follow.
     const holder_rect = input_holder.getBoundingClientRect();
     const control_rect = control.getBoundingClientRect();
     const holder_style = getComputedStyle(input_holder);
     const pos_top =
       holder_rect.top -
       control_rect.top -
-      parseFloat(getComputedStyle(control).borderTopWidth || '0');
+      parseFloat(getComputedStyle(control).borderTopWidth || '0') -
+      parseFloat(holder_style.marginTop || '0');
     const pos_left =
       holder_rect.left -
       control_rect.left -
-      parseFloat(getComputedStyle(control).borderLeftWidth || '0');
+      parseFloat(getComputedStyle(control).borderLeftWidth || '0') -
+      parseFloat(holder_style.marginLeft || '0');
     const outer =
       input_holder.offsetHeight +
       parseFloat(holder_style.marginTop) +
@@ -341,7 +342,9 @@ export function create_multiselect(select_el, settings) {
     self.active_option_id = null;
     self.loaded_searches = {};
     self.has_options = !!Object.keys(self.options).length;
-    self.close();
+    // NB like the vendored clearOptions(): the dropdown is NOT closed here,
+    // the app's load handler clears options on every keystroke while the
+    // dropdown stays open
     refresh_classes();
   };
 
