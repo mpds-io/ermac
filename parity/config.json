@@ -8,12 +8,14 @@
       "boot: virtual ms after page load, before the first step",
       "step_after: virtual ms after each step (unless the step sets after)",
       "settle: virtual ms after the last step, before the capture",
-      "probe: evaluated in EVERY scenario (cheap, broad UX invariants)"
+      "probe: evaluated in EVERY scenario (cheap, broad UX invariants)",
+      "ignore_attributes: the accessibility markup (src_js/core/a11y.js) is stripped before old vs new comparisons; the a11y scenarios assert it on the NEW side"
     ],
     "boot": 3000,
     "step_after": 400,
     "settle": 3000,
     "pixels": "strict",
+    "ignore_attributes": ["role", "tabindex", "aria-*", "inert", "data-a11y-*"],
     "probe": [
       "hash",
       "title",

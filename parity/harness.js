@@ -374,3 +374,94 @@
         });
     }
 })();
+
+
+/*
+ * Accessibility audit (see the accessibility plan): window.__a11y() returns,
+ * for the current page, the Tab stops, the mouse-only controls (pointer
+ * cursor, not keyboard-reachable) by region, the focusable elements outside
+ * an open dialog, and the controls that cannot be brought into view (fixed
+ * and off-screen, or clipped). Used by the `a11y` scenarios, e.g.
+ * "js:window.__a11y().mouse_only_total".
+ */
+window.__a11y = function () {
+  var FOCUSABLE = 'a[href], button, input:not([type=hidden]), select, textarea, [tabindex], summary, [contenteditable=true]';
+  function desc(el) {
+    var s = el.tagName.toLowerCase() + (el.id ? '#' + el.id : '');
+    var cls = (el.getAttribute('class') || '').trim().split(/\s+/).filter(Boolean).slice(0, 2);
+    if (cls.length) s += '.' + cls.join('.');
+    var t = (el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 32);
+    return t ? s + ' "' + t + '"' : s;
+  }
+  function region(el) {
+    var r = el.parentElement;
+    while (r && !(r.id && /^(userbox|search_box|legend|main|results|ptable_holder|ptable_area|refine_col|ctx_col|sim_col|right_col|advsbox|hy_box|loginbox|menubox|all_polyhedra_box|numericbox|examples|history|dtypes|interpret|header_entries|header_phases|header_articles|aetmap|tooltip)$/.test(r.id))) r = r.parentElement;
+    return r ? '#' + r.id : 'body';
+  }
+  function visible(el) {
+    if (!el.getClientRects().length) return false;
+    var cs = getComputedStyle(el);
+    return cs.visibility !== 'hidden' && cs.display !== 'none' && cs.opacity !== '0';
+  }
+  // NB roving widgets: one item is the Tab stop, the others (tabindex=-1) are
+  // reached with the arrow keys
+  var ROVING = '#ptable_area > ul, #databrowser, #all_polyhedra_content, [role=tablist], [role=radiogroup]';
+  function roving_member(el) {
+    var group = el.getAttribute('tabindex') === '-1' && el.closest(ROVING);
+    return !!(group && group.querySelector('[tabindex="0"]'));
+  }
+  function tabbable(el) { return el.matches(FOCUSABLE) && !el.disabled && !el.closest('[inert]') && (el.tabIndex >= 0 || roving_member(el)) && visible(el); }
+  var all = Array.prototype.slice.call(document.body.querySelectorAll('*')).filter(visible);
+  var tabs = all.filter(tabbable);
+  var mouse = all.filter(function (el) {
+    // NB [data-a11y-keyboard]: a documented keyboard alternative (e.g. Backspace removes a chip)
+    if (tabbable(el) || el.closest(FOCUSABLE) || el.closest('label') || el.closest('[data-a11y-keyboard]')) return false;
+    if (getComputedStyle(el).cursor !== 'pointer') return false;
+    var p = el.parentElement;
+    return !(p && getComputedStyle(p).cursor === 'pointer' && !p.closest(FOCUSABLE));
+  });
+  var by = {};
+  mouse.forEach(function (el) { var r = region(el); (by[r] = by[r] || []).push(desc(el)); });
+  var mouse_only = {};
+  Object.keys(by).forEach(function (r) { mouse_only[r] = {count: by[r].length, examples: by[r].slice(0, 6)}; });
+  var modal = all.filter(function (el) { return el.matches('div.modal.user_dialogue'); }).pop();
+  // NB #userbox stays above the overlay by design (it toggles the login and
+  // account dialogs), like in the deployed GUI: not a leak
+  var leaking = modal ? tabs.filter(function (el) { return !modal.contains(el) && !el.closest('#userbox'); }) : [];
+  var leak = modal ? leaking.length : null;
+  // zoom: what cannot be brought into view
+  var de = document.documentElement, hx = getComputedStyle(de).overflowX, bx = getComputedStyle(document.body).overflowX;
+  var maxX = (hx === 'hidden' || bx === 'hidden') ? innerWidth : de.scrollWidth;
+  var unreachable = [];
+  tabs.concat(mouse).forEach(function (el) {
+    var r = el.getBoundingClientRect(), fixed = false, clipped = false, a = el.parentElement;
+    for (var e = el; e && e !== document.body; e = e.parentElement) if (getComputedStyle(e).position === 'fixed') { fixed = true; break; }
+    while (a && a !== document.body) {
+      var cs = getComputedStyle(a);
+      if (cs.overflowX !== 'visible' || cs.overflowY !== 'visible') {
+        var ar = a.getBoundingClientRect();
+        if ((cs.overflowX === 'hidden' && (r.right > ar.right + 1 || r.left < ar.left - 1)) || (cs.overflowY === 'hidden' && (r.bottom > ar.bottom + 1 || r.top < ar.top - 1))) { clipped = true; break; }
+      }
+      a = a.parentElement;
+    }
+    // NB inside a fixed box, a vertically scrollable ancestor that is itself in view brings the element into view
+    var scroller = null;
+    for (var s = el.parentElement; fixed && s && s !== document.body; s = s.parentElement) {
+      var sy = getComputedStyle(s).overflowY;
+      if ((sy === 'auto' || sy === 'scroll') && s.scrollHeight > s.clientHeight) { scroller = s; break; }
+    }
+    var scroll_ok = scroller && scroller.getBoundingClientRect().bottom <= innerHeight + 4; // NB borders
+    var off = fixed ? (r.right > innerWidth + 1 || r.left < -1 || (!scroll_ok && r.bottom > innerHeight + 1)) : (r.left + scrollX < -1 || r.right + scrollX > maxX + 1);
+    if (clipped || off) unreachable.push((fixed ? '[fixed] ' : '') + (clipped ? '[clipped] ' : '') + region(el) + ' ' + desc(el));
+  });
+  return {
+    tab_count: tabs.length,
+    tab_order: tabs.slice(0, 40).map(function (el) { return region(el) + ' ' + desc(el); }),
+    mouse_only_total: mouse.length, mouse_only: mouse_only,
+    modal: modal ? '#' + modal.id : null, focusable_outside_modal: leak,
+    outside_modal: leaking.slice(0, 20).map(function (el) { return region(el) + ' ' + desc(el); }),
+    viewport: [innerWidth, innerHeight], scroll_width: de.scrollWidth, overflow_x: [hx, bx],
+    unreachable: unreachable.slice(0, 1000), unreachable_total: unreachable.length,
+    focus_after_open: document.activeElement ? desc(document.activeElement) : null
+  };
+};

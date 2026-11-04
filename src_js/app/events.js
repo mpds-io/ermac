@@ -3,6 +3,7 @@
  */
 
 import wmgui from '../core/settings.js';
+import { a11y_context_opened, a11y_context_closed } from '../core/a11y.js';
 import { wmutils } from '../core/utils.js';
 import {
   $,
@@ -322,6 +323,8 @@ export function register_events() {
     'click',
     function (event) {
       open_context(this, false);
+      // NB event.detail is 0 for a keyboard activation (Enter / Space)
+      a11y_context_opened(this, event.detail === 0);
     },
   );
 
@@ -791,6 +794,7 @@ export function register_events() {
       hide($$('#ctx_col, #sim_col'));
       wmgui.passive_sim_col = true;
       close_vibox();
+      a11y_context_closed();
     });
   });
 

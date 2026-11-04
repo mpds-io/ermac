@@ -14,8 +14,9 @@ NEW one. Then the two sides are compared layer by layer:
   probes   the scenario-declared probes (narrow, in-page observations)
   expect   absolute assertions on probes, checked on EACH side
   expect_new  absolute assertions checked on the NEW side only: they pin an
-           approved behaviour change (`xfail`) and fail the scenario even
-           when it is xfail
+           approved behaviour change (`xfail`, or `approved` for a change
+           confined to those probes) and fail the scenario even when it is
+           xfail
   steps    the outcome of every scripted step (ok / missing / timeout / ...)
   errors   uncaught JS errors: the new side must not throw more than the old
   pixels   rendered screenshots (tolerance, strict or loose per scenario)
@@ -80,6 +81,11 @@ API_ORIGIN = 'http://localhost:%d' % API_PORT
 OLD_URL = ('https://raw.githubusercontent.com/mpds-io/ermac/'
            '5978778447bcc3b1bf423088801163cbe5f28c4e/ermac.min.js')
 OLD_SHA1 = 'c8619d4c1d425b34b9dad5f34ea9e34448b8fd57'
+# NB the OLD side's stylesheet, pinned at the same gh-pages commit (it was
+# the working tree's on both sides before: CSS changes went unnoticed)
+OLD_CSS_URL = ('https://raw.githubusercontent.com/mpds-io/ermac/'
+               '5978778447bcc3b1bf423088801163cbe5f28c4e/webassets/ermac.css')
+OLD_CSS_SHA1 = '32cfd281dff9a050b7dee3056e0e0f19582deae6'
 TOL = 2  # per-channel pixel tolerance
 IDLE_BUDGET = 60.0  # s per side spent waiting for pending requests, in total
 KEY_HOLD_MS = 30  # real ms between keydown and keyup of a `key` step
@@ -112,10 +118,12 @@ DEFAULTS = {
     'semantics': True,        # the legacy semantic DOM keys
     'probe': [],              # probes applied to every scenario
     'ignore': [],             # layers (or "probe:<probe>" / "dom:<key>") not compared
+    'ignore_attributes': [],  # attributes stripped from the DOM and probe values before comparing
+                              # ("aria-*" = a prefix), e.g. the accessibility markup
     'viewport': [1280, 2400],
 }
 SCENARIO_KEYS = set(DEFAULTS) | {'name', 'route', 'desc', 'steps', 'tags', 'skip', 'xfail', 'mock', 'storage', 'tooltips',
-                                 'expect', 'expect_new'}
+                                 'expect', 'expect_new', 'approved'}
 # NB the app shows onboarding tooltips (landing: 4 s after boot, first search:
 # 3 s after the results) until 2 searches are logged; they cover the VIEW
 # controls. `tooltips = false` presets such a neutral 2-entry search log.
@@ -261,8 +269,17 @@ def load_scenarios(path=SCENARIOS_PATH, config_path=CONFIG_PATH):
                             re.compile(wanted['matches'])
                         except re.error as error:
                             problems.append('%s: %s "%s": bad regex (%s)' % (where, table, probe, error))
-        if tables['expect_new'] and not raw.get('xfail'):
-            problems.append('%s: expect_new pins an approved change: it needs xfail = "<reason>"' % where)
+        if tables['expect_new'] and not (raw.get('xfail') or raw.get('approved')):
+            problems.append('%s: expect_new pins an approved change: it needs "xfail" or "approved": "<reason>"' % where)
+        if 'approved' in raw:
+            # an approved change confined to the expect_new probes: they are
+            # pinned on NEW instead of compared, every other layer still is
+            if not isinstance(raw['approved'], str) or not raw['approved'].strip():
+                problems.append('%s: approved needs a reason string' % where)
+            if not tables['expect_new']:
+                problems.append('%s: approved needs expect_new pinning the changed probes' % where)
+            if raw.get('xfail'):
+                problems.append('%s: approved and xfail exclude each other (xfail already tolerates every layer)' % where)
         expect, expect_new = tables['expect'], tables['expect_new']
         if not isinstance(raw.get('storage', {}), dict):
             problems.append('%s: storage must be a table of key = "value"' % where)
@@ -368,6 +385,30 @@ def build_new_bundle():
                               stdout=subprocess.DEVNULL, timeout=300)
     except subprocess.TimeoutExpired:
         die('deploy/build_js.py did not finish within 300 s')
+
+
+def ensure_reference_css(url=OLD_CSS_URL, expected_sha1=OLD_CSS_SHA1):
+    """parity/reference/ermac_old.css: the deployed stylesheet, its relative
+    image URLs pointed at the shared webassets/ (the images are not under test)."""
+    os.makedirs(os.path.join(HERE, 'reference'), exist_ok=True)
+    original = os.path.join(HERE, 'reference', 'ermac_old.orig.css')
+    if not os.path.exists(original):
+        print('fetching the OLD reference stylesheet from', url, '...')
+        with urllib.request.urlopen(url, timeout=60) as response:
+            data = response.read()
+        with open(original, 'wb') as f:
+            f.write(data)
+    with open(original, 'rb') as f:
+        data = f.read()
+    sha1 = hashlib.sha1(data).hexdigest()
+    if expected_sha1 and sha1 != expected_sha1:
+        die('parity/reference/ermac_old.orig.css has sha1 %s, expected %s (the pinned '
+            'specification); delete it to re-fetch, or pass --reference-css-sha1 to move '
+            'the specification deliberately' % (sha1, expected_sha1))
+    css = re.sub(rb'url\((?![\'"]?(?:data:|https?:|/))([\'"]?)', rb'url(\1../webassets/', data)
+    with open(os.path.join(HERE, 'reference', 'ermac_old.css'), 'wb') as f:
+        f.write(css)
+    print('reference stylesheet: %d bytes, sha1 %s (pinned)' % (len(data), sha1[:12]))
 
 
 def ensure_reference(url=OLD_URL, expected_sha1=OLD_SHA1):
@@ -1011,9 +1052,31 @@ def ignored(scenario, layer, key=None):
     return layer in ignore or (key is not None and '%s:%s' % (layer, key) in ignore)
 
 
+def attribute_stripper(names):
+    """A function removing the given attributes from markup in any value
+    (strings, lists, dicts); 'aria-*' is a prefix. Covers name="v", name='v'
+    and bare boolean attributes (inert)."""
+    if not names:
+        return lambda value: value
+    alternatives = '|'.join(re.escape(n[:-1]) + r'[\w-]*' if n.endswith('*') else re.escape(n) + r'(?![\w-])'
+                            for n in names)
+    pattern = re.compile(r'\s(?:%s)(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'))?(?=[\s/>])' % alternatives)
+
+    def strip(value):
+        if isinstance(value, str):
+            return pattern.sub('', value) if '<' in value else value
+        if isinstance(value, list):
+            return [strip(v) for v in value]
+        if isinstance(value, dict):
+            return {k: strip(v) for k, v in value.items()}
+        return value
+    return strip
+
+
 def compare(scenario, old, new, pixels_enabled, side_dir):
     """Returns {layer: [difference descriptions]} and vacuity warnings."""
     diffs, warnings = {}, []
+    strip = attribute_stripper(scenario.get('ignore_attributes'))
 
     if scenario['api'] != 'off' and not ignored(scenario, 'api'):
         a, b = old['api'], new['api']
@@ -1025,18 +1088,22 @@ def compare(scenario, old, new, pixels_enabled, side_dir):
         diffs['ext'] = multiset_diff(old['ext'], new['ext'])
 
     if scenario['semantics'] and not ignored(scenario, 'dom'):
-        so, sn = extract_semantics(old['dom']), extract_semantics(new['dom'])
+        so, sn = extract_semantics(strip(old['dom'])), extract_semantics(strip(new['dom']))
         keys = [k for k in sorted(set(so) | set(sn)) if so.get(k) != sn.get(k) and not ignored(scenario, 'dom', k)]
         if keys:
             diffs['dom'] = ['%s: OLD %r | NEW %r' % (k, clip(so.get(k)), clip(sn.get(k))) for k in keys]
 
     po, pn = old['result'].get('probes', {}), new['result'].get('probes', {})
+    # NB the expectations below see the raw values (they may assert the attributes)
+    so_probes, sn_probes = strip(po), strip(pn)
     probe_diffs = []
+    # NB `approved`: the probes pinned by expect_new are not compared
+    approved = set(scenario.get('expect_new', {})) if scenario.get('approved') else set()
     for probe in scenario['probe'] + ['(url)']:
-        if ignored(scenario, 'probe', probe):
+        if ignored(scenario, 'probe', probe) or probe in approved:
             continue
-        if po.get(probe) != pn.get(probe):
-            probe_diffs.append('%s: OLD %s | NEW %s' % (probe, clip(po.get(probe)), clip(pn.get(probe))))
+        if so_probes.get(probe) != sn_probes.get(probe):
+            probe_diffs.append('%s: OLD %s | NEW %s' % (probe, clip(so_probes.get(probe)), clip(sn_probes.get(probe))))
         elif po.get(probe) is None and probe != '(url)':
             warnings.append('vacuous probe (null on both sides): ' + probe)
         elif isinstance(po.get(probe), str) and po[probe].startswith('PROBE ERROR'):
@@ -1071,7 +1138,8 @@ def compare(scenario, old, new, pixels_enabled, side_dir):
         diffs['steps'] = ['step %d %s: OLD %s | NEW %s' % (i + 1, step_label(scenario, i), a, b)
                           for i, (a, b) in enumerate(zip(so, sn)) if a != b] or ['OLD %s | NEW %s' % (so, sn)]
     bad_old = [i for i, outcome in enumerate(so) if outcome != 'ok']
-    if bad_old:
+    # NB an approved change (expect_new) may well target controls the OLD side lacks
+    if bad_old and not scenario.get('expect_new'):
         warnings.append('the OLD side itself failed step %d %s (%s): the scenario does not exercise what it claims'
                         % (bad_old[0] + 1, step_label(scenario, bad_old[0]), so[bad_old[0]]))
 
@@ -1431,6 +1499,9 @@ def main():
     parser.add_argument('--side-timeout', type=float, default=float(os.environ.get('PARITY_SIDE_TIMEOUT', 600)),
                         help='playwright: hard cap per side in seconds (env PARITY_SIDE_TIMEOUT, default 600)')
     parser.add_argument('--reference-url', default=OLD_URL, help='where to fetch the OLD bundle')
+    parser.add_argument('--reference-css-url', default=OLD_CSS_URL, help='where to fetch the OLD stylesheet')
+    parser.add_argument('--reference-css-sha1', default=OLD_CSS_SHA1,
+                        help='expected sha1 of the OLD stylesheet ("" disables the check)')
     parser.add_argument('--reference-sha1', default=OLD_SHA1,
                         help='expected sha1 of the OLD bundle ("" disables the check)')
     args = parser.parse_args()
@@ -1456,6 +1527,7 @@ def main():
     if not args.no_build:
         build_new_bundle()
     ensure_reference(args.reference_url, args.reference_sha1)
+    ensure_reference_css(args.reference_css_url, args.reference_css_sha1)
     driver = make_driver(args)
     print('driver: %s%s%s' % (driver.name, ' (synthetic input)' if driver.synthetic else '',
                               (', watchdog: stall %ds, cap %ds per side' % (args.stall_timeout, args.side_timeout))
@@ -1530,6 +1602,8 @@ def main():
             entry = {'name': name, 'verdict': verdict, 'diffs': diffs, 'warnings': warnings,
                      'pixels': fraction, 'seconds': round(time.time() - started, 1),
                      'notes': sides['old']['notes'] + sides['new']['notes']}
+            if scenario.get('approved'):
+                entry['approved'] = scenario['approved']
             results.append(entry)
             with open(os.path.join(side_dir, 'diff.txt'), 'w', encoding='utf-8') as f:
                 for layer, items in diffs.items():
@@ -1561,7 +1635,9 @@ def main():
     counts = {}
     for r in results:
         counts[r['verdict']] = counts.get(r['verdict'], 0) + 1
-    print('  '.join('%s %d' % kv for kv in sorted(counts.items())))
+    approved = sum(1 for r in results if r.get('approved') and r['verdict'] == 'PASS')
+    print('  '.join('%s %d' % kv for kv in sorted(counts.items()))
+          + ('  (PASS incl. %d with an approved probe change)' % approved if approved else ''))
     failed = [r['name'] for r in results if r['verdict'] in ('FAIL', 'XPASS', 'ERROR')]
     if failed:
         print('failing:', ' '.join(failed))

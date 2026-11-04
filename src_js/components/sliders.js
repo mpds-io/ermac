@@ -74,6 +74,13 @@ export function create_floating_slider(
       },
     },
   });
+  // NB noUiSlider 14 handles are focusable and keyboard-operable (arrows),
+  // but unnamed; version 14 has no handleAttributes option
+  document
+    .querySelectorAll('#slider_' + prop_id + ' .noUi-handle')
+    .forEach(function (handle, index) {
+      handle.setAttribute('aria-label', prop_name + (index ? ', upper bound' : ', lower bound'));
+    });
 }
 
 export function destroy_numericbox() {

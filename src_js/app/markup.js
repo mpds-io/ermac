@@ -6,6 +6,8 @@ export function register_html() {
   document.body.insertAdjacentHTML(
     'beforeend',
     `
+<button type="button" id="a11y_skip">Skip to content</button>
+
 <div id="notifybox">Web-browser is either busy or not supported: try to <a href="javascript:location.reload()" rel="nofollow">restart</a></div>
 
 <div id="preloader"><div></div></div>
@@ -25,16 +27,16 @@ export function register_html() {
 </div>
 
 <!-- SEARCH -->
-<div id="search_box">
+<div id="search_box" role="search">
     <div id="ermac_logo"><a href="#start"></a></div>
 
     <div id="search_area">
         <div id="search_holder">
             <select id="search_field" autocomplete="off" autofocus></select>
         </div>
-        <a href="#hierarchy" id="hierarchy_trigger" class="wmbutton" title="Show list of properties">&mu;<span><sub>x</sub><sup>&deg;</sup></span></a>
-        <a href="#" id="advsearch_init_trigger" class="wmbutton" title="Show search options">&#9776;</a>
-        <a href="#" id="search_trigger" class="wmbutton" title="Search">&#x23ce;</a>
+        <a href="#hierarchy" id="hierarchy_trigger" class="wmbutton" title="Show list of properties" aria-label="Show list of properties">&mu;<span><sub>x</sub><sup>&deg;</sup></span></a>
+        <a href="#" id="advsearch_init_trigger" class="wmbutton" title="Show search options" aria-label="Show search options">&#9776;</a>
+        <a href="#" id="search_trigger" class="wmbutton" title="Search" aria-label="Search">&#x23ce;</a>
     </div>
 
     <div id="legend"></div>
@@ -78,8 +80,74 @@ export function register_html() {
     </div>
 </div>
 
+<!-- NB the side columns come before the results: Tab order (they are position:fixed) -->
+<!-- LEFT MAIN COLUMN -->
+<div id="refine_col" class="side_cols" role="navigation" aria-label="Filters">
+    <div class="col_title">Filters</div>
+    <div id="rfn_preloader"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>
+    <ul></ul>
+
+    <div id="phases_ctx">
+        <div class="col_title">Distinct phases</div>
+        <br />
+        <div style="text-align:center;"><input type="checkbox" id="ctx_strict_phases_trigger" checked />&nbsp;<label for="ctx_strict_phases_trigger">include phases commonly reported together</label></div>
+        <!-- br />
+        &nbsp;<input type="checkbox" id="ctx_subphases_trigger" />&nbsp;<label for="ctx_subphases_trigger">constituent phases</label -->
+        <span>See the <a target="_blank" href="https://github.com/mpds-io/mpds-distinct-phases">public dumps</a> of the distinct phases appeared at least once in the literature.</span>
+    </div>
+
+    <div id="examples" class="examples">
+        <div class="col_title">Examples</div>
+        <ul></ul>
+    </div>
+</div>
+
+<!-- RIGHT MAIN COLUMN -->
+<div id="right_col" class="side_cols" role="complementary" aria-label="View and data types">
+    <div class="col_title">View</div>
+
+    <div class="controlswitch">
+        <div id="control_a">entries</div><div id="control_b">phases</div><div id="control_f">articles</div>
+    </div>
+
+    <div class="controlswitch">
+        <div id="control_c">table</div><div id="control_d">previews</div><div id="control_e">plots</div>
+    </div>
+
+    <ul id="interpret"></ul>
+
+    <div id="dtypes">
+        <div class="col_title">Data types</div>
+        <ul>
+            <li class="fct_props dtypes_props" data-facet="props" data-term="crystal structure">crystal structures</li>
+            <li class="fct_props dtypes_props" data-facet="props" data-term="phase diagram">phase diagrams</li>
+            <li class="fct_props dtypes_props" data-facet="props" data-term="physical properties">physical properties</li>
+            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="peer-reviewed" style="margin-top:13px;">peer-reviewed experimental</li>
+            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="machine-learning">machine learning</li>
+            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="ab initio calculations">ab initio modeling</li>
+        </ul>
+    </div>
+
+    <div id="dtypes_phid" style="display:none;">
+        <div class="col_title">This phase</div>
+        <ul>
+            <li class="fct_props dtypes_props" data-rankfilter="5">crystal structures</li>
+            <li class="fct_props dtypes_props" data-rankfilter="3">phase diagrams</li>
+            <li class="fct_props dtypes_props" data-rankfilter="0,1,2,4,7,8,9,10">physical properties</li>
+            <li class="fct_classes dtypes_classes" data-rankfilter="0,1,2,3,4,5" style="margin-top:13px;">peer-reviewed experimental</li>
+            <li class="fct_classes dtypes_classes" data-rankfilter="7">machine learning</li>
+            <li class="fct_classes dtypes_classes" data-rankfilter="8,9,10">ab initio modeling</li>
+        </ul>
+    </div>
+
+    <div id="history">
+        <div class="col_title">Last searches</div>
+        <ul></ul>
+    </div>
+</div>
+
 <!-- DATAGRID -->
-<div id="main">
+<div id="main" role="main">
     <div id="results"><table id="databrowser"></table></div>
 
     <div id="loadscroll" class="context_msg">Getting the rest of data...</div>
@@ -303,29 +371,8 @@ export function register_html() {
     </div>
 </div>
 
-<!-- LEFT MAIN COLUMN -->
-<div id="refine_col" class="side_cols">
-    <div class="col_title">Filters</div>
-    <div id="rfn_preloader"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>
-    <ul></ul>
-
-    <div id="phases_ctx">
-        <div class="col_title">Distinct phases</div>
-        <br />
-        <div style="text-align:center;"><input type="checkbox" id="ctx_strict_phases_trigger" checked />&nbsp;<label for="ctx_strict_phases_trigger">include phases commonly reported together</label></div>
-        <!-- br />
-        &nbsp;<input type="checkbox" id="ctx_subphases_trigger" />&nbsp;<label for="ctx_subphases_trigger">constituent phases</label -->
-        <span>See the <a target="_blank" href="https://github.com/mpds-io/mpds-distinct-phases">public dumps</a> of the distinct phases appeared at least once in the literature.</span>
-    </div>
-
-    <div id="examples" class="examples">
-        <div class="col_title">Examples</div>
-        <ul></ul>
-    </div>
-</div>
-
 <!-- LEFT CONTEXT COLUMN -->
-<div id="ctx_col" class="side_cols">
+<div id="ctx_col" class="side_cols" role="complementary" aria-label="Entry">
     <div class="col_title">Entry <span id="entryno"></span> <div class="cross _close_ctx" style="margin:12px 2px 0 0;"></div></div>
 
     <div id="ml_data" class="spinoff_pane">
@@ -450,52 +497,8 @@ export function register_html() {
     </div>
 </div>
 
-<!-- RIGHT MAIN COLUMN -->
-<div id="right_col" class="side_cols">
-    <div class="col_title">View</div>
-
-    <div class="controlswitch">
-        <div id="control_a">entries</div><div id="control_b">phases</div><div id="control_f">articles</div>
-    </div>
-
-    <div class="controlswitch">
-        <div id="control_c">table</div><div id="control_d">previews</div><div id="control_e">plots</div>
-    </div>
-
-    <ul id="interpret"></ul>
-
-    <div id="dtypes">
-        <div class="col_title">Data types</div>
-        <ul>
-            <li class="fct_props dtypes_props" data-facet="props" data-term="crystal structure">crystal structures</li>
-            <li class="fct_props dtypes_props" data-facet="props" data-term="phase diagram">phase diagrams</li>
-            <li class="fct_props dtypes_props" data-facet="props" data-term="physical properties">physical properties</li>
-            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="peer-reviewed" style="margin-top:13px;">peer-reviewed experimental</li>
-            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="machine-learning">machine learning</li>
-            <li class="fct_classes dtypes_classes" data-facet="classes" data-term="ab initio calculations">ab initio modeling</li>
-        </ul>
-    </div>
-
-    <div id="dtypes_phid" style="display:none;">
-        <div class="col_title">This phase</div>
-        <ul>
-            <li class="fct_props dtypes_props" data-rankfilter="5">crystal structures</li>
-            <li class="fct_props dtypes_props" data-rankfilter="3">phase diagrams</li>
-            <li class="fct_props dtypes_props" data-rankfilter="0,1,2,4,7,8,9,10">physical properties</li>
-            <li class="fct_classes dtypes_classes" data-rankfilter="0,1,2,3,4,5" style="margin-top:13px;">peer-reviewed experimental</li>
-            <li class="fct_classes dtypes_classes" data-rankfilter="7">machine learning</li>
-            <li class="fct_classes dtypes_classes" data-rankfilter="8,9,10">ab initio modeling</li>
-        </ul>
-    </div>
-
-    <div id="history">
-        <div class="col_title">Last searches</div>
-        <ul></ul>
-    </div>
-</div>
-
 <!-- RIGHT CONTEXT COLUMN -->
-<div id="sim_col" class="side_cols">
+<div id="sim_col" class="side_cols" role="complementary" aria-label="See also">
     <div class="col_title">See also <div class="cross _close_ctx" style="margin:12px 2px 0 0;"></div></div>
     <div id="sim_preloader"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>
 
@@ -521,7 +524,7 @@ export function register_html() {
 </div>
 
 <!-- ADVANCED SEARCH MODAL -->
-<div id="advsbox" class="modal user_dialogue">
+<div id="advsbox" class="modal user_dialogue" aria-label="Search options">
     <ul id="advstab_options">
         <li rev="advstab_bib">bibliography</li>
         <li rev="advstab_cry">crystallography</li>
@@ -534,22 +537,22 @@ export function register_html() {
         <div class="advs advs_formulae">
             <div class="advs_capt">Chemical formula</div>
             <input type="text" id="advs_fct_formulae" class="advs_input" maxlength="200" spellcheck="false" /><!-- no autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Ca3(PO4)2</a> or <a href="#" tabindex="-1">ABC3</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">Ca3(PO4)2</a> or <a href="#">ABC3</a></div>
         </div>
         <div class="advs advs_elements">
             <div class="advs_capt">Chemical elements</div>
             <input type="text" id="advs_fct_elements" class="advs_input" maxlength="100" spellcheck="false" /><!-- no autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Co-Te-Pb</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">Co-Te-Pb</a></div>
         </div>
         <div class="advs advs_props">
             <div class="advs_capt">Physical property</div>
             <input type="text" id="advs_fct_props" class="advs_input" rel="props" maxlength="200" spellcheck="true" /><!-- simple autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">crystal structure</a> or <a href="#" tabindex="-1">EXAFS</a>, <span>see <a href="#hierarchy" style="color:#c00;border-bottom:1px solid #c00;">the hierarchy</a></span></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">crystal structure</a> or <a href="#">EXAFS</a>, <span>see <a href="#hierarchy" style="color:#c00;border-bottom:1px solid #c00;">the hierarchy</a></span></div>
         </div>
         <div class="advs advs_classes" style="margin-bottom:3vmin;">
             <div class="advs_capt">Materials class</div>
             <select id="advs_fct_classes" autocomplete="false"></select><!-- multiselect autocomplete -->
-            <div class="advs_legend" data-multiselects="classes"><i>e.g.</i> <a href="#" tabindex="-1">hydride, nonmetal</a> or <a href="#" tabindex="-1">olivine, ternary</a></div>
+            <div class="advs_legend" data-multiselects="classes"><i>e.g.</i> <a href="#">hydride, nonmetal</a> or <a href="#">olivine, ternary</a></div>
         </div>
     </div>
 
@@ -559,32 +562,32 @@ export function register_html() {
         <div class="advs advs_authors">
             <div class="advs_capt">Publication author</div>
             <select id="advs_fct_authors" autocomplete="false"></select><!-- multiselect autocomplete -->
-            <div class="advs_legend" data-multiselects="authors"><i>e.g.</i> <a href="#" tabindex="-1">Maier, Merkle</a></div>
+            <div class="advs_legend" data-multiselects="authors"><i>e.g.</i> <a href="#">Maier, Merkle</a></div>
         </div>
         <div class="advs advs_years">
             <div class="advs_capt">Publication years</div>
             <input type="text" id="advs_fct_years" class="advs_input" maxlength="20" spellcheck="false" /><!-- no autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">2000-2021</a> or <a href="#" tabindex="-1">1955</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">2000-2021</a> or <a href="#">1955</a></div>
         </div>
         <div class="advs advs_codens">
             <div class="advs_capt">Journal or book</div>
             <input type="text" id="advs_fct_codens" class="advs_input" rel="codens" maxlength="200" style="letter-spacing:-1px;" spellcheck="true" /><!-- simple autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Physical Review Letters</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">Physical Review Letters</a></div>
         </div>
         <div class="advs advs_doi">
             <div class="advs_capt">Publication DOI</div>
             <input type="text" id="advs_fct_doi" class="advs_input u-url url" maxlength="200" style="letter-spacing:-1px;" spellcheck="false" /><!-- no autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">10.1103/physrevb.88.241407</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">10.1103/physrevb.88.241407</a></div>
         </div>
         <div class="advs advs_geos">
             <div class="advs_capt">Geography</div>
             <input type="text" id="advs_fct_geos" class="advs_input geo" rel="geos" maxlength="150" spellcheck="true" /><!-- simple autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">USA</a> or <a href="#" tabindex="-1">Haikou, Hainan, China</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">USA</a> or <a href="#">Haikou, Hainan, China</a></div>
         </div>
         <div class="advs advs_orgs" style="margin-bottom:3vmin;">
             <div class="advs_capt">Organization</div>
             <input type="text" id="advs_fct_orgs" class="advs_input p-org org" rel="orgs" maxlength="200" spellcheck="true" /><!-- simple autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Thermo-Calc</a> or <a href="#" tabindex="-1">Boeing</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">Thermo-Calc</a> or <a href="#">Boeing</a></div>
         </div>
     </div>
 
@@ -594,32 +597,32 @@ export function register_html() {
         <div class="advs advs_lattices">
             <div class="advs_capt">Crystal system</div>
             <input type="text" id="advs_fct_lattices" class="advs_input" rel="lattices" maxlength="20" spellcheck="true" /><!-- simple autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">cubic</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">cubic</a></div>
         </div>
         <div class="advs advs_sgs">
             <div class="advs_capt">Space group</div>
             <input type="text" id="advs_fct_sgs" class="advs_input" rel="sgs" maxlength="10" spellcheck="false" /><!-- simple autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Fm-3m</a> or <a href="#" tabindex="-1">225</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">Fm-3m</a> or <a href="#">225</a></div>
         </div>
         <div class="advs advs_wyckoff">
             <div class="advs_capt">Wyckoff search</div>
             <select id="advs_fct_wyckoff" autocomplete="false"></select><!-- multiselect autocomplete -->
-            <div class="advs_legend" data-multiselects="wyckoff"><i>e.g.</i> <a href="#" tabindex="-1">4a, 4b</a> or <a href="#" tabindex="-1" rel="dc2a">dc&#x00B2;a</a></div>
+            <div class="advs_legend" data-multiselects="wyckoff"><i>e.g.</i> <a href="#">4a, 4b</a> or <a href="#" rel="dc2a">dc&#x00B2;a</a></div>
         </div>
         <div class="advs advs_protos">
             <div class="advs_capt">Prototype</div>
             <input type="text" id="advs_fct_protos" class="advs_input" rel="protos" maxlength="100" spellcheck="false" /><!-- simple autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">Ca2Nb2O7 cF88 227</a> or <a href="#" tabindex="-1">D51</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">Ca2Nb2O7 cF88 227</a> or <a href="#">D51</a></div>
         </div>
         <div class="advs advs_aetypes">
             <div class="advs_capt">Polyhedral types</div>
             <select id="advs_fct_aetypes" autocomplete="false"></select><!-- multiselect autocomplete -->
-            <div class="advs_legend" data-multiselects="aetypes"><i>e.g.</i> <a href="#" tabindex="-1">octahedron 6-vertex</a>, <span>see <a href="#polyhedra" class="link_adjuster" style="color:#c00;border-bottom:1px solid #c00;">all polyhedra</a></span></div>
+            <div class="advs_legend" data-multiselects="aetypes"><i>e.g.</i> <a href="#">octahedron 6-vertex</a>, <span>see <a href="#polyhedra" class="link_adjuster" style="color:#c00;border-bottom:1px solid #c00;">all polyhedra</a></span></div>
         </div>
         <div class="advs advs_aeatoms">
             <div class="advs_capt">Polyhedron atoms</div>
             <input type="text" id="advs_fct_aeatoms" class="advs_input" maxlength="100" spellcheck="false" /><!-- no autocomplete -->
-            <div class="advs_legend"><i>e.g.</i> <a href="#" tabindex="-1">U</a> or <a href="#" tabindex="-1">X-Se</a> or <a href="#" tabindex="-1">UO6</a> or <a href="#" tabindex="-1">UX7</a></div>
+            <div class="advs_legend"><i>e.g.</i> <a href="#">U</a> or <a href="#">X-Se</a> or <a href="#">UO6</a> or <a href="#">UX7</a></div>
         </div>
 
         <div id="crtab">
@@ -641,7 +644,7 @@ export function register_html() {
 </div>
 
 <!-- LOGIN MODAL -->
-<div id="loginbox" class="modal user_dialogue">
+<div id="loginbox" class="modal user_dialogue" aria-label="Log in">
     <div class="cross close_user_dialogue"></div>
     <br />
 
@@ -657,7 +660,7 @@ export function register_html() {
 </div>
 
 <!-- FACTOR MODAL -->
-<div id="factorbox" class="modal user_dialogue">
+<div id="factorbox" class="modal user_dialogue" aria-label="Log in with an access code">
     <div class="cross close_user_dialogue"></div>
     <br />
 
@@ -682,7 +685,7 @@ export function register_html() {
 </div>
 
 <!-- RESTORE MODAL -->
-<div id="restorebox" class="modal user_dialogue">
+<div id="restorebox" class="modal user_dialogue" aria-label="Restore the password">
     <div class="cross close_user_dialogue"></div>
     <br />
 
@@ -696,7 +699,7 @@ export function register_html() {
 </div>
 
 <!-- USER MENU MODAL -->
-<div id="menubox" class="modal user_dialogue">
+<div id="menubox" class="modal user_dialogue" aria-label="Account">
     <ul id="tab_links">
         <li rev="usr_tab_account" class="working">account</li>
         <li rev="usr_tab_perms">data access</li>
@@ -798,7 +801,7 @@ export function register_html() {
 <div id="tagcloudbox" class="menu_collateral"></div>
 
 <!-- NEW PROPS HIERARCHY MODAL -->
-<div id="hy_box" class="modal user_dialogue">
+<div id="hy_box" class="modal user_dialogue" aria-label="Physical properties">
     <ul id="hy_options">
         <li rev="hy_scalars" class="working">scalars</li>
         <li rev="hy_complex">objects</li>
@@ -829,7 +832,7 @@ export function register_html() {
 <div id="visavis"><iframe id="visavis_iframe" frameborder=0 scrolling="no" width="100%" height="100%"></iframe></div>
 
 <!-- DISCOVERY SETTINGS MODAL -->
-<div id="discovery_custom_box" class="modal user_dialogue">
+<div id="discovery_custom_box" class="modal user_dialogue" aria-label="Discovery settings">
     <div id="close_dc_dialogue" class="cross"></div>
     <h3>Used properties</h3>
     <div id="discovery_enabled"></div>
@@ -840,7 +843,7 @@ export function register_html() {
 </div>
 
 <!-- ALL POLYHEDRA MODAL -->
-<div id="all_polyhedra_box" class="modal user_dialogue">
+<div id="all_polyhedra_box" class="modal user_dialogue" aria-label="Polyhedral types">
     <div id="close_ph_dialogue" class="cross" style="margin:18px;"></div>
     <div style="width:100%;text-align:center;font-size:1.25em;line-height:4vh;letter-spacing:0.5px;padding:2.6em 0 0.5em;">The most common polyhedral types</div>
     <div class="divider"></div>
@@ -848,7 +851,7 @@ export function register_html() {
 </div>
 
 <!-- SORTING SETTINGS MODAL -->
-<div id="ss_custom_box" class="modal user_dialogue">
+<div id="ss_custom_box" class="modal user_dialogue" aria-label="Plot settings">
     <div id="close_ss_dialogue" class="cross"></div>
     <div style="clear:both;width:100%;"></div>
     <div id="ss_x" class="ss_col"><h3>First axis</h3><ul></ul></div>

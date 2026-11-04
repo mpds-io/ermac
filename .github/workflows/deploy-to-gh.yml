@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - refactor-vanilla-es-modules
+      - vpat_fixes
   workflow_dispatch:
 
 # NB the fork's Actions default is read-only: the deploy step needs

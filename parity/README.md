@@ -189,7 +189,46 @@ xfail; without it an xfail scenario would pass whatever NEW does.
 }
 ```
 
-The linter rejects `expect_new` without `xfail`.
+When the change is confined to a few probes (an a11y change moving the
+`focus`, say) a whole-scenario `xfail` would be too wide: it tolerates every
+layer, so an unrelated regression in the same scenario would go unnoticed.
+Use `"approved": "<reason>"` instead: the probes named in `expect_new` are
+pinned on NEW and left out of the OLD-vs-NEW comparison, everything else is
+compared as usual and the scenario PASSes or FAILs normally (the summary
+counts these PASSes, `report.json` carries the reason).
+
+```json
+{
+  "name": "control_phases",
+  "route": "#inquiry/elements=Ag-O&classes=oxide",
+  "steps": [{"wait_for": "#control_b"}, {"click": "#control_b", "after": 1500}],
+  "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
+  "expect_new": {"focus": "#control_b"}
+}
+```
+
+The linter rejects `expect_new` without `xfail` or `approved`, `approved`
+without `expect_new`, and both `approved` and `xfail` on one scenario.
+
+### Accessibility audit (`--tag a11y`)
+
+`harness.js` defines `window.__a11y()`, usable in any `js:` probe, e.g.
+`"js:window.__a11y().mouse_only_total"`. It returns:
+
+| key | meaning |
+|---|---|
+| `mouse_only_total`, `mouse_only` | visible `cursor:pointer` elements (outermost of a pointer subtree) that are neither focusable nor inside a focusable element or a `<label>`, by region, with examples; members of a roving group (`tabindex="-1"` under a `tabindex="0"` sibling) and `[data-a11y-keyboard]` elements (documented other keyboard model) count as reachable |
+| `tab_count`, `tab_order` | the Tab sequence (the first 40, with their region) |
+| `modal`, `focusable_outside_modal`, `outside_modal` | the visible dialog and the Tab stops outside it (`#userbox` is exempt: it stays above the overlay by design) |
+| `unreachable_total`, `unreachable` | controls cut off by the viewport or by an `overflow:hidden` ancestor (4 px tolerance in scrollable columns), i.e. that zooming makes unusable |
+| `viewport`, `scroll_width`, `overflow_x`, `focus_after_open` | context |
+
+The `a11y_audit_*` scenarios pin 0 mouse-only controls on the main screens and
+0 Tab stops outside each dialog; `a11y_zoom150_*` / `a11y_zoom200_*` pin 0
+unreachable controls at 853×533 / 640×400 (150% / 200% of 1280×800); the others pin single keyboard contracts (arrows in
+the periodic table, Enter on a VIEW switch, focus into and back out of
+dialogs, the skip control). They are `xfail` against the deployed GUI, which
+has none of this, and `expect_new` pins the result.
 
 ### Other scenario keys
 
@@ -204,7 +243,9 @@ The linter rejects `expect_new` without `xfail`.
 | `"viewport": [w, h]` | default `[1280, 2400]` |
 | `"expect": {"<probe>": value}` | absolute assertions, see above |
 | `"ignore": ["pixels", "probe:focus", "dom:header_th"]` | accept an intentional difference (say why in `desc`); `expect` can be ignored too |
+| `"ignore_attributes": ["role", "aria-*"]` | attributes stripped from the DOM and the probe values before the comparison (`aria-*` is a prefix); the default in `config.json` strips the accessibility markup (`role`, `tabindex`, `aria-*`, `inert`, `data-a11y-*`). `expect`/`expect_new` see the raw values |
 | `"xfail": "reason"` | known or approved divergence: reported XFAIL, and XPASS (failing) once the sides agree; pair it with `expect_new` |
+| `"approved": "reason"` | an approved change confined to the `expect_new` probes, see above |
 | `"skip": "reason"` | not run |
 
 Route placeholders such as `#phase_id/{phid}` are filled from the `fixtures`
@@ -219,6 +260,11 @@ of `config.json`, harvested from the OLD side before the run (`probe` or regex
    is deliberately not used: once the refactoring is deployed it serves the
    NEW bundle. `--reference-url` / `--reference-sha1` move the specification
    deliberately. The NEW bundle is rebuilt from the current sources.
+   The OLD **stylesheet** is pinned the same way (`OLD_CSS_URL`,
+   `OLD_CSS_SHA1`, `--reference-css-url` / `--reference-css-sha1`): `old.html`
+   loads `reference/ermac_old.css` (its `url()`s rewritten to `webassets/`),
+   `new.html` the working tree's `webassets/ermac.css`, so a CSS change is a
+   pixel diff like any other.
 2. Both are loaded by `old.html` / `new.html` on a `localhost` origin, so
    both run in development mode and talk to the API at `localhost:7070`.
 3. `harness.js` runs before either bundle: seeded `Math.random`, frozen

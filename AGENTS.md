@@ -27,8 +27,11 @@ with the deployed version**, checked by `parity/`.
    bundle is the specification. Change a scenario only for an *intentional*,
    maintainer-approved behavior change, and say why: `"xfail": "<reason>"`
    plus an `"expect_new"` object pinning the new behavior (an xfail
-   scenario without it would pass whatever the new code does), or `ignore`
-   for a layer that is irrelevant to the scenario.
+   scenario without it would pass whatever the new code does), or, when the
+   change is confined to a few probes (typically `focus`),
+   `"approved": "<reason>"` plus `"expect_new"`: those probes are pinned on
+   NEW instead of compared, and every other layer still is. `ignore` is for
+   a layer that is irrelevant to the scenario.
 
 ## Where a change goes
 
@@ -38,6 +41,7 @@ with the deployed version**, checked by `parity/`.
 | add an API call | endpoint URL in `src_js/core/settings.js` (`wmgui.<x>_endpoint`), call via `ajax()` from `core/ajax.js` | check the request encoding (see below) |
 | change rendered HTML | `src_js/app/markup.js` (static shell) or the render functions in `src_js/app/search.js` | ids/classes are CSS and embedding contracts |
 | change a click/key behavior | `src_js/app/events.js` (`register_events()`) | add a narrow interaction scenario |
+| add a clickable control, tab set or dialog | the markup/render site, plus an entry in `A11Y_CONTROLS` (and `A11Y_ROVING` for a group) in `src_js/core/a11y.js` | `parity --tag a11y` (the audits count mouse-only controls) |
 | change search-box behavior | `src_js/components/multiselect.js` (selectize stand-in) | `parity --tag multiselect` |
 | change table sorting | `src_js/components/tablesort.js` (tablesorter stand-in) | `parity --tag sort` |
 | change styling | `webassets/ermac.css` | pixels layer; keep class names |
@@ -106,6 +110,55 @@ libraries in the fixed `VENDORED` order. Consequences:
 - **`String.prototype.startswith`** (lowercase) and friends are deliberate
   base-type extensions in `core/utils.js`; `startswith` is not a typo of
   `startsWith`.
+
+## Accessibility contracts
+
+The keyboard and zoom support (VPAT findings WCAG 2.1.1 Keyboard, 1.4.4
+Resize Text) lives in `src_js/core/a11y.js`, installed by `app/run.js`, and
+the ACCESSIBILITY section at the end of `webassets/ermac.css`.
+
+- **Declarative, not per render site.** The app renders much of its UI as
+  HTML strings. `A11Y_CONTROLS` maps selectors to a role, label, state
+  (`aria-pressed`/`-selected`/`-checked`/`-expanded`/`-sort` derived from the
+  existing classes such as `active`, `working`, `selected_a`) and
+  `tabindex`; a MutationObserver re-applies it after every content or class
+  change. A new mouse-only `div`/`span`/`li` control needs an entry, or the
+  a11y audits report it. Native `<button>`/`<a href>`/inputs need none.
+- **One activation path.** Enter/Space on a `role=button|tab|radio|link`
+  (or `data-a11y-activate`) element calls its `click()`, so the existing
+  click handlers in `events.js` serve the keyboard too. Do not add parallel
+  key handlers; keep the click handlers delegated and idempotent.
+- **Roving groups** (`A11Y_ROVING`): the periodic table (an 18-column grid),
+  the results rows, the gallery and polyhedra items, the tab lists and the
+  VIEW switches have one Tab stop and arrow keys inside.
+- **Dialogs** (`div.modal.user_dialogue`): when one becomes visible, the rest
+  of `<body>` is made `inert`, except `A11Y_NOT_INERT` (the overlay,
+  notifications, `#numericbox` next to the advanced search, `#userbox` which
+  stays above the overlay and toggles the account dialogs, the `<body>`-level
+  autocomplete suggestions, tooltips, the preloader). The dialog takes the
+  focus (or keeps a field the code already focused), and on close the focus
+  returns to the opener. Anything appended to `<body>` that a dialog needs
+  goes into `A11Y_NOT_INERT`, or it becomes unclickable. Host pages can drive
+  the same logic: `wmgui.open_dialog(box, initial_selector)` /
+  `wmgui.release_dialog()` (public API, rule 3).
+- **Skip control:** routing uses the hash, so the skip control is a
+  `<button id="a11y_skip">` moving the focus, never an `href="#..."` link
+  (that would navigate).
+- **Focus rings** use `:focus-visible` (keyboard only); mouse users see no
+  change. Text inputs keep their old look. Chips keep the multiselect's
+  keyboard model (Backspace removes the last one).
+- **Zoom (1.4.4):** at 150% and 200% zoom of a 1280×800 screen (853×533 and
+  640×400 CSS px viewports) all controls must stay reachable: the periodic
+  table and the hierarchy dialog are clamped instead of a negative
+  `margin-left`, the fixed side columns and the fixed dialogs scroll
+  vertically instead of clipping, and the hierarchy's `vh` line heights have
+  an `em` floor. `a11y_zoom150_*` / `a11y_zoom200_*` audit this. Sizes in
+  `vh`/`vw` inside `overflow:hidden` are the usual culprit.
+- **Parity:** the comparison strips `role`, `tabindex`, `aria-*`, `inert`
+  and `data-a11y-*` (`ignore_attributes` in `parity/config.json`), so the
+  attributes alone do not diverge from the deployed GUI, while focus and
+  pixels still do. The OLD side uses the CSS **pinned** with the bundle
+  (`OLD_CSS_URL`/`OLD_CSS_SHA1`), so a CSS change shows up as a pixel diff.
 
 ## jQuery-migration traps (each has bitten this codebase)
 
@@ -195,9 +248,11 @@ python3 parity/run_parity.py                        # everything: 7-25 min, host
 - Use native input (the default). `--input synthetic` (and the chrome-cli
   driver) dispatch synthetic events and **miss focus/blur regressions**.
 - The specification is the bundle **pinned** in `run_parity.py` (`OLD_URL`
-  at a fixed gh-pages commit, `OLD_SHA1`), not the live demo, which serves
-  the new code once it is deployed. Move it only deliberately
-  (`--reference-url` / `--reference-sha1`), after a release.
+  at a fixed gh-pages commit, `OLD_SHA1`, and its stylesheet `OLD_CSS_URL`,
+  `OLD_CSS_SHA1`), not the live demo, which serves the new code once it is
+  deployed. Move it only deliberately (`--reference-url` /
+  `--reference-sha1`, `--reference-css-url` / `--reference-css-sha1`), after
+  a release.
 - CI (`.github/workflows/parity.yml`) runs the component scenarios on every
   pull request with a pinned Playwright/Chromium build; a red run is a
   divergence to explain, not to re-run.

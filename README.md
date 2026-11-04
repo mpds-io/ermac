@@ -57,6 +57,7 @@ The entire app lives in the global state object `window.wmgui` (kept for embedda
 | `core/ajax.js` | Abortable promise-based XHR wrapper, URL serialization (`param`), `is_empty` |
 | `core/settings.js` | All global state (`window.wmgui`), constants, API endpoint URLs, edition configs |
 | `core/utils.js` | Base-type extensions, `wmgui.clean`, `loadCSS`, domain data, interpretation HTML, random query generators |
+| `core/a11y.js` | Keyboard accessibility: a declarative registry giving the clickable `div`/`span`/`li` controls roles, labels, states and Tab stops, Enter/Space activation, arrow keys in grouped widgets, focus management of dialogs (`wmgui.open_dialog()` / `wmgui.release_dialog()`) |
 | `components/multiselect.js` | Vanilla multi-select input (replaces selectize.js, same CSS classes) |
 | `components/tablesort.js` | Vanilla table sorting (replaces jquery.tablesorter, same CSS classes) |
 | `components/autocomplete.js` | Simple autocompletion (converted from the vendored spin-off) |
@@ -67,7 +68,7 @@ The entire app lives in the global state object `window.wmgui` (kept for embedda
 | `app/markup.js` | HTML generation and `register_html()` (injects the full UI into `<body>`) |
 | `app/search.js` | Core search logic: `request_search()`, display/render functions, `wmgui.notify()`, `wmgui.aug_search_cmd()`, user session |
 | `app/startup.js` | `satisfy_requirements()` — initializes multiselects, loads client data, wires autocomplete, triggers initial route |
-| `app/run.js` | Entry point — calls `assign_edition()`, `register_html()`, `satisfy_requirements()`, and `register_events()` |
+| `app/run.js` | Entry point — calls `assign_edition()`, `register_html()`, `satisfy_requirements()`, `register_events()` and `install_a11y()` |
 
 **Key concepts:**
 
@@ -76,6 +77,7 @@ The entire app lives in the global state object `window.wmgui` (kept for embedda
 - `wmgui.facets` — the 15 search categories (formulae, props, elements, classes, lattices, sgs, protos, authors, years, codens, doi, aeatoms, aetypes, geos, orgs)
 - `wmdata` — client-side data (properties list, journal CODENs, property hierarchy) fetched at startup from `wmgui.wmdata_endpoint`
 - `wmgui.editions` — multi-tenant config keyed by edition ID (0 = MPDS, 1 = ASM, 10/15/16 = Ermac variants); the active edition is detected from the current hostname
+- Accessibility — every control is reachable and operable with the keyboard (Tab, Enter/Space, arrow keys in the periodic table, the results, the tabs and the VIEW switches; ESC closes panels), dialogs keep the focus inside and return it on close, and the layout stays usable at 200% zoom. A host page that adds its own dialog can use `wmgui.open_dialog(box, initial_selector)` / `wmgui.release_dialog()`
 
 **Embedded sub-apps** (loaded in iframes):
 
