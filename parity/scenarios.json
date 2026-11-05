@@ -3,100 +3,64 @@
     "comment": "section: routes (the original battery)",
     "name": "start",
     "route": "#start",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "search",
     "route": "#search/Ag-O",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "inquiry_oxide",
     "route": "#inquiry/elements=Ag-O&classes=oxide",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "inquiry_tabled",
     "route": "#inquiry/formulae=Ag2O&props=crystal%20structure",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "phases",
     "route": "#inquiry_phases/elements=Ag-O&classes=oxide",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "articles",
     "route": "#inquiry_articles/elements=Ag-O&classes=oxide",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "numeric",
     "route": "#inquiry/numeric=volume%2C%3E%2C3000%3B",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "entry",
     "route": "#entry/S1410618",
     "pixels": "loose",
     "settle": 6000,
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "phase_id",
     "route": "#phase_id/{phid}",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "article",
     "route": "#article/{bid}",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "interlinkage",
     "route": "#interlinkage/{phid}",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "hierarchy",
     "route": "#hierarchy",
-    "tags": [
-      "route",
-      "legacy"
-    ],
+    "tags": ["route", "legacy"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): an opened dialog takes the focus",
     "expect_new": {
       "focus": "#hy_box"
@@ -105,10 +69,7 @@
   {
     "name": "polyhedra",
     "route": "#polyhedra",
-    "tags": [
-      "route",
-      "legacy"
-    ],
+    "tags": ["route", "legacy"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): an opened dialog takes the focus",
     "expect_new": {
       "focus": "#all_polyhedra_box"
@@ -117,20 +78,14 @@
   {
     "name": "modal_login",
     "route": "#modal/login",
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "name": "plot_pie",
     "route": "#plot/pie/inquiry/elements=Ag-O",
     "pixels": "loose",
     "settle": 6000,
-    "tags": [
-      "route",
-      "legacy"
-    ]
+    "tags": ["route", "legacy"]
   },
   {
     "comment": "section: clicks (the original battery, formerly hard-coded in harness.js)",
@@ -144,10 +99,7 @@
         "click": "#advsearch_init_trigger"
       }
     ],
-    "tags": [
-      "click",
-      "legacy"
-    ],
+    "tags": ["click", "legacy"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): an opened dialog takes the focus",
     "expect_new": {
       "focus": "#advsbox"
@@ -164,10 +116,7 @@
         "click": "#databrowser tr.tcell"
       }
     ],
-    "tags": [
-      "click",
-      "legacy"
-    ],
+    "tags": ["click", "legacy"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#e__S311308"
@@ -184,11 +133,7 @@
         "click": "#dataheader_entries th.c2.header"
       }
     ],
-    "tags": [
-      "click",
-      "sort",
-      "legacy"
-    ]
+    "tags": ["click", "sort", "legacy"]
   },
   {
     "name": "click_sort_desc",
@@ -205,11 +150,7 @@
         "click": "#dataheader_entries th.c2.header"
       }
     ],
-    "tags": [
-      "click",
-      "sort",
-      "legacy"
-    ]
+    "tags": ["click", "sort", "legacy"]
   },
   {
     "name": "click_refine",
@@ -222,10 +163,7 @@
         "click": "#refine_col a.extd_refine"
       }
     ],
-    "tags": [
-      "click",
-      "legacy"
-    ]
+    "tags": ["click", "legacy"]
   },
   {
     "comment": "section: main search box (the vanilla multiselect replacing selectize)",
@@ -244,10 +182,7 @@
       "classes:#search_holder .selectize-dropdown-content [data-selectable]",
       "class:#search_holder .selectize-input"
     ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_enter_after_typing",
@@ -263,10 +198,7 @@
         "key": "Enter"
       }
     ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_arrowdown_enter",
@@ -285,13 +217,8 @@
         "key": "Enter"
       }
     ],
-    "probe": [
-      "class:#search_holder .selectize-input"
-    ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_arrowdown_twice_highlight",
@@ -313,10 +240,7 @@
     "probe": [
       "classes:#search_holder .selectize-dropdown-content [data-selectable]"
     ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_arrowup_highlight",
@@ -335,10 +259,7 @@
     "probe": [
       "classes:#search_holder .selectize-dropdown-content [data-selectable]"
     ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_escape_closes_dropdown",
@@ -354,10 +275,7 @@
         "key": "Escape"
       }
     ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_click_option",
@@ -377,10 +295,7 @@
       "class:#search_holder .selectize-input",
       "classes:#ptable_area li[data-pos='47']"
     ],
-    "tags": [
-      "multiselect",
-      "mouse"
-    ]
+    "tags": ["multiselect", "mouse"]
   },
   {
     "name": "ms_hover_option",
@@ -400,10 +315,7 @@
     "probe": [
       "classes:#search_holder .selectize-dropdown-content [data-selectable]"
     ],
-    "tags": [
-      "multiselect",
-      "mouse"
-    ]
+    "tags": ["multiselect", "mouse"]
   },
   {
     "name": "ms_backspace_removes_last_item",
@@ -418,10 +330,7 @@
         "after": 1200
       }
     ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_backspace_twice",
@@ -440,13 +349,8 @@
         "after": 1200
       }
     ],
-    "probe": [
-      "class:#search_holder .selectize-input"
-    ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_backspace_edits_text_first",
@@ -462,10 +366,7 @@
         "after": 1200
       }
     ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_remove_button",
@@ -477,10 +378,7 @@
         "after": 1200
       }
     ],
-    "tags": [
-      "multiselect",
-      "mouse"
-    ]
+    "tags": ["multiselect", "mouse"]
   },
   {
     "name": "ms_click_item",
@@ -491,13 +389,8 @@
         "click": "#search_holder .selectize-input > div[data-term]"
       }
     ],
-    "probe": [
-      "classes:#search_holder .selectize-input > div[data-term]"
-    ],
-    "tags": [
-      "multiselect",
-      "mouse"
-    ]
+    "probe": ["classes:#search_holder .selectize-input > div[data-term]"],
+    "tags": ["multiselect", "mouse"]
   },
   {
     "name": "ms_click_item_then_backspace",
@@ -512,11 +405,7 @@
         "after": 1200
       }
     ],
-    "tags": [
-      "multiselect",
-      "keyboard",
-      "mouse"
-    ]
+    "tags": ["multiselect", "keyboard", "mouse"]
   },
   {
     "name": "ms_blur_preserves_text",
@@ -533,13 +422,8 @@
         "after": 600
       }
     ],
-    "probe": [
-      "class:#search_holder .selectize-input"
-    ],
-    "tags": [
-      "multiselect",
-      "mouse"
-    ]
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect", "mouse"]
   },
   {
     "name": "ms_refocus_reopens",
@@ -560,12 +444,8 @@
         "after": 600
       }
     ],
-    "probe": [
-      "class:#search_holder .selectize-input"
-    ],
-    "tags": [
-      "multiselect"
-    ]
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect"]
   },
   {
     "name": "ms_already_selected_hidden",
@@ -581,9 +461,7 @@
     "probe": [
       "texts:#search_holder .selectize-dropdown-content [data-selectable]"
     ],
-    "tags": [
-      "multiselect"
-    ]
+    "tags": ["multiselect"]
   },
   {
     "name": "ms_options_filtered_by_query",
@@ -605,9 +483,7 @@
     "probe": [
       "texts:#search_holder .selectize-dropdown-content [data-selectable]"
     ],
-    "tags": [
-      "multiselect"
-    ]
+    "tags": ["multiselect"]
   },
   {
     "name": "ms_ctrl_a_select_all",
@@ -625,13 +501,8 @@
         "after": 1200
       }
     ],
-    "probe": [
-      "class:#search_holder .selectize-input"
-    ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_arrow_left_caret",
@@ -649,10 +520,7 @@
         "after": 1200
       }
     ],
-    "tags": [
-      "multiselect",
-      "keyboard"
-    ]
+    "tags": ["multiselect", "keyboard"]
   },
   {
     "name": "ms_original_select_options",
@@ -664,10 +532,7 @@
       "attr:#search_field@class",
       "attr:#search_field-selectized@type"
     ],
-    "tags": [
-      "multiselect",
-      "contract"
-    ]
+    "tags": ["multiselect", "contract"]
   },
   {
     "name": "ms_max_items",
@@ -677,10 +542,7 @@
       "class:#search_holder .selectize-input",
       "readonly:#search_field-selectized"
     ],
-    "tags": [
-      "multiselect",
-      "route"
-    ]
+    "tags": ["multiselect", "route"]
   },
   {
     "name": "ms_input_autogrow",
@@ -698,21 +560,14 @@
       "rect:#search_holder .selectize-input"
     ],
     "pixels": "loose",
-    "tags": [
-      "multiselect",
-      "layout"
-    ]
+    "tags": ["multiselect", "layout"]
   },
   {
     "name": "ms_initial_focus",
     "desc": "the search input is focused at boot (onInitialize)",
     "route": "#start",
-    "probe": [
-      "class:#search_holder .selectize-input"
-    ],
-    "tags": [
-      "multiselect"
-    ]
+    "probe": ["class:#search_holder .selectize-input"],
+    "tags": ["multiselect"]
   },
   {
     "comment": "section: search triggering",
@@ -730,10 +585,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "search",
-      "keyboard"
-    ]
+    "tags": ["search", "keyboard"]
   },
   {
     "name": "search_button_raw_text",
@@ -750,10 +602,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "search",
-      "mouse"
-    ]
+    "tags": ["search", "mouse"]
   },
   {
     "name": "search_button_same_query",
@@ -765,10 +614,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "search",
-      "mouse"
-    ]
+    "tags": ["search", "mouse"]
   },
   {
     "name": "search_empty",
@@ -779,10 +625,7 @@
         "click": "#search_trigger"
       }
     ],
-    "tags": [
-      "search",
-      "notify"
-    ]
+    "tags": ["search", "notify"]
   },
   {
     "name": "search_trailing_comma",
@@ -799,9 +642,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "search"
-    ]
+    "tags": ["search"]
   },
   {
     "name": "search_numeric_text",
@@ -818,14 +659,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "visible:#numericbox",
-      "count:#numericbox div.slider_numerics"
-    ],
-    "tags": [
-      "search",
-      "numeric"
-    ],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["search", "numeric"],
     "xfail": "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)",
     "expect_new": {
       "hash": "#inquiry/numeric=band%20gap%2C%3E%2C3",
@@ -851,14 +686,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "visible:#numericbox",
-      "count:#numericbox div.slider_numerics"
-    ],
-    "tags": [
-      "search",
-      "numeric"
-    ],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["search", "numeric"],
     "xfail": "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)",
     "expect_new": {
       "hash": "#inquiry/numeric=band%20gap%2C%3E%2C3%3Bseebeck%20coefficient%2C%3C%2C100",
@@ -883,10 +712,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "search",
-      "numeric"
-    ],
+    "tags": ["search", "numeric"],
     "xfail": "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)",
     "expect_new": {
       "hash": "#inquiry/formulae=Bi2Te3&numeric=seebeck%20coefficient%2C%3E%2C100",
@@ -902,22 +728,14 @@
       "js:wmgui.search_type",
       "count:#numericbox div.slider_numerics"
     ],
-    "tags": [
-      "route",
-      "numeric"
-    ]
+    "tags": ["route", "numeric"]
   },
   {
     "name": "numeric_hint_links",
     "desc": "the 'Show only unaries/...' links of a numeric search reuse the current hash (no serialization involved)",
     "route": "#inquiry/numeric=band%20gap%2C%3C%2C1",
-    "probe": [
-      "attrs:#interpret li[rel]@rel"
-    ],
-    "tags": [
-      "numeric",
-      "refine"
-    ],
+    "probe": ["attrs:#interpret li[rel]@rel"],
+    "tags": ["numeric", "refine"],
     "expect": {
       "attrs:#interpret li[rel]@rel": {
         "contains": "#inquiry/classes=unary&numeric=band%20gap%2C%3C%2C1"
@@ -934,10 +752,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "numeric",
-      "controls"
-    ],
+    "tags": ["numeric", "controls"],
     "xfail": "APPROVED CHANGE: the old GUI passed the numeric arrays of wmutils.guess() to $.param(), giving numeric[0][]=... keys the router cannot read ('Unrecognized input'); the new GUI writes the router's own prop,sign,value;... form (inquiry_param)",
     "expect_new": {
       "hash": "#inquiry_phases/numeric=volume%2C%3E%2C3000=",
@@ -957,10 +772,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "search",
-      "mouse"
-    ]
+    "tags": ["search", "mouse"]
   },
   {
     "name": "logo_click_home",
@@ -972,10 +784,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "mouse",
-      "route"
-    ]
+    "tags": ["mouse", "route"]
   },
   {
     "comment": "section: table sorting (the vanilla tablesort replacing jquery.tablesorter)",
@@ -993,9 +802,7 @@
       "attrs:#databrowser tr.tcell@id",
       "classes:#dataheader_entries th"
     ],
-    "tags": [
-      "sort"
-    ]
+    "tags": ["sort"]
   },
   {
     "name": "sort_year",
@@ -1012,9 +819,7 @@
       "attrs:#databrowser tr.tcell@id",
       "classes:#dataheader_entries th"
     ],
-    "tags": [
-      "sort"
-    ]
+    "tags": ["sort"]
   },
   {
     "name": "sort_ref_numeric",
@@ -1032,9 +837,7 @@
       "attrs:#databrowser tr.tcell@id",
       "classes:#dataheader_entries th"
     ],
-    "tags": [
-      "sort"
-    ]
+    "tags": ["sort"]
   },
   {
     "name": "sort_journal",
@@ -1051,9 +854,7 @@
       "attrs:#databrowser tr.tcell@id",
       "classes:#dataheader_entries th"
     ],
-    "tags": [
-      "sort"
-    ]
+    "tags": ["sort"]
   },
   {
     "name": "sort_two_columns",
@@ -1074,9 +875,7 @@
       "attrs:#databrowser tr.tcell@id",
       "classes:#dataheader_entries th"
     ],
-    "tags": [
-      "sort"
-    ]
+    "tags": ["sort"]
   },
   {
     "name": "sort_dblclick_no_text_selection",
@@ -1090,14 +889,8 @@
         "dblclick": "#dataheader_entries th.c2.header"
       }
     ],
-    "probe": [
-      "selection",
-      "attrs:#databrowser tr.tcell@id"
-    ],
-    "tags": [
-      "sort",
-      "mouse"
-    ]
+    "probe": ["selection", "attrs:#databrowser tr.tcell@id"],
+    "tags": ["sort", "mouse"]
   },
   {
     "name": "sort_unsortable_column",
@@ -1115,9 +908,7 @@
       "attrs:#databrowser tr.tcell@id",
       "classes:#dataheader_entries th"
     ],
-    "tags": [
-      "sort"
-    ]
+    "tags": ["sort"]
   },
   {
     "name": "sort_after_second_search",
@@ -1142,9 +933,7 @@
       "attrs:#databrowser tr.tcell@id",
       "classes:#dataheader_entries th"
     ],
-    "tags": [
-      "sort"
-    ]
+    "tags": ["sort"]
   },
   {
     "name": "sort_ctrl_multi",
@@ -1165,9 +954,7 @@
       "attrs:#databrowser tr.tcell@id",
       "classes:#dataheader_entries th"
     ],
-    "tags": [
-      "sort"
-    ]
+    "tags": ["sort"]
   },
   {
     "name": "sort_phases_table",
@@ -1188,13 +975,8 @@
         "click": "#dataheader_phases th.header"
       }
     ],
-    "probe": [
-      "classes:#dataheader_phases th",
-      "attrs:#databrowser tr@id"
-    ],
-    "tags": [
-      "sort"
-    ],
+    "probe": ["classes:#dataheader_phases th", "attrs:#databrowser tr@id"],
+    "tags": ["sort"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#control_c"
@@ -1215,10 +997,7 @@
       "classes:#ptable_area li[data-pos='47'], #ptable_area li[data-pos='8']",
       "visible:#ptable_results"
     ],
-    "tags": [
-      "ptable",
-      "mouse"
-    ],
+    "tags": ["ptable", "mouse"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#ptable_area > ul > li.cat_0.selected_a.type_6"
@@ -1243,10 +1022,7 @@
       "visible:#ptable_results",
       "visible:#ptable_vis"
     ],
-    "tags": [
-      "ptable",
-      "mouse"
-    ],
+    "tags": ["ptable", "mouse"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#ptable_area > ul > li.active_a.selected_b"
@@ -1266,13 +1042,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "classes:#ptable_area li[data-pos='47']"
-    ],
-    "tags": [
-      "ptable",
-      "mouse"
-    ],
+    "probe": ["classes:#ptable_area li[data-pos='47']"],
+    "tags": ["ptable", "mouse"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#ptable_area > ul > li.cat_0.type_6"
@@ -1292,13 +1063,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "classes:#ptable_area li[data-pos='47']"
-    ],
-    "tags": [
-      "ptable",
-      "multiselect"
-    ]
+    "probe": ["classes:#ptable_area li[data-pos='47']"],
+    "tags": ["ptable", "multiselect"]
   },
   {
     "name": "ptable_dtypes_counts",
@@ -1320,9 +1086,7 @@
       "classes:#ptable_area li[data-pos='8']",
       "visible:#ptable_results"
     ],
-    "tags": [
-      "ptable"
-    ],
+    "tags": ["ptable"],
     "settle": 6000
   },
   {
@@ -1342,9 +1106,7 @@
       "checked:#ptable_dtypes_0",
       "classes:#ptable_area li[data-pos='8']"
     ],
-    "tags": [
-      "ptable"
-    ]
+    "tags": ["ptable"]
   },
   {
     "name": "ptable_scroll_hides_legend",
@@ -1366,14 +1128,8 @@
       "class:#ptable_vis",
       "scroll"
     ],
-    "viewport": [
-      1280,
-      800
-    ],
-    "tags": [
-      "ptable",
-      "scroll"
-    ],
+    "viewport": [1280, 800],
+    "tags": ["ptable", "scroll"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#ptable_area > ul > li.cat_0.selected_a.type_6"
@@ -1392,9 +1148,7 @@
     "probe": [
       "classes:#ptable_area li[data-pos='29'], #ptable_area li[data-pos='30']"
     ],
-    "tags": [
-      "ptable"
-    ]
+    "tags": ["ptable"]
   },
   {
     "comment": "section: advanced search box",
@@ -1410,9 +1164,7 @@
       "classes:#advstab_options li",
       "visible:#advsbox"
     ],
-    "tags": [
-      "advsearch"
-    ],
+    "tags": ["advsearch"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): an opened dialog takes the focus",
     "expect_new": {
       "focus": "#advsbox"
@@ -1432,13 +1184,8 @@
         "click": "#advstab_options li[rev=advstab_bib]"
       }
     ],
-    "probe": [
-      "visibles:div.advstab",
-      "classes:#advstab_options li"
-    ],
-    "tags": [
-      "advsearch"
-    ],
+    "probe": ["visibles:div.advstab", "classes:#advstab_options li"],
+    "tags": ["advsearch"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#advstab_options > li.working"
@@ -1459,12 +1206,8 @@
         "click": ".advs_formulae .advs_legend a"
       }
     ],
-    "probe": [
-      "value:#advs_fct_formulae"
-    ],
-    "tags": [
-      "advsearch"
-    ]
+    "probe": ["value:#advs_fct_formulae"],
+    "tags": ["advsearch"]
   },
   {
     "name": "advs_legend_fills_multiselect",
@@ -1481,13 +1224,8 @@
         "click": ".advs_classes .advs_legend a"
       }
     ],
-    "probe": [
-      "texts:#advstab_main .selectize-input > div[data-term]"
-    ],
-    "tags": [
-      "advsearch",
-      "multiselect"
-    ]
+    "probe": ["texts:#advstab_main .selectize-input > div[data-term]"],
+    "tags": ["advsearch", "multiselect"]
   },
   {
     "name": "advs_submit_formula",
@@ -1508,10 +1246,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "advsearch",
-      "search"
-    ],
+    "tags": ["advsearch", "search"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): closing a dialog returns the focus to the control that opened it",
     "expect_new": {
       "focus": "#advsearch_init_trigger"
@@ -1537,10 +1272,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "advsearch",
-      "keyboard"
-    ],
+    "tags": ["advsearch", "keyboard"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): closing a dialog returns the focus to the control that opened it",
     "expect_new": {
       "focus": "#advsearch_init_trigger"
@@ -1557,10 +1289,7 @@
         "click": "#advsearch_do_trigger"
       }
     ],
-    "tags": [
-      "advsearch",
-      "notify"
-    ],
+    "tags": ["advsearch", "notify"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#advsearch_do_trigger"
@@ -1586,10 +1315,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "advsearch",
-      "search"
-    ],
+    "tags": ["advsearch", "search"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): closing a dialog returns the focus to the control that opened it",
     "expect_new": {
       "focus": "#advsearch_init_trigger"
@@ -1620,9 +1346,7 @@
       "values:input.advs_input",
       "texts:#advsbox .selectize-input > div[data-term]"
     ],
-    "tags": [
-      "advsearch"
-    ],
+    "tags": ["advsearch"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#advsearch_drop_trigger"
@@ -1639,10 +1363,7 @@
         "click": "#advstab_cry div.close_advs_dialogue"
       }
     ],
-    "tags": [
-      "advsearch",
-      "mouse"
-    ],
+    "tags": ["advsearch", "mouse"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): closing a dialog returns the focus to the control that opened it",
     "expect_new": {
       "focus": "#advsearch_init_trigger"
@@ -1659,10 +1380,7 @@
         "key": "Escape"
       }
     ],
-    "tags": [
-      "advsearch",
-      "keyboard"
-    ]
+    "tags": ["advsearch", "keyboard"]
   },
   {
     "name": "advs_classes_suggestions",
@@ -1685,10 +1403,7 @@
       "texts:#advstab_main .selectize-dropdown-content [data-selectable]",
       "visible:#advstab_main .selectize-dropdown"
     ],
-    "tags": [
-      "advsearch",
-      "multiselect"
-    ]
+    "tags": ["advsearch", "multiselect"]
   },
   {
     "name": "advs_classes_pick_with_keys",
@@ -1716,11 +1431,7 @@
       "texts:#advstab_main .selectize-input > div[data-term]",
       "visible:#advstab_main .selectize-dropdown"
     ],
-    "tags": [
-      "advsearch",
-      "multiselect",
-      "keyboard"
-    ],
+    "tags": ["advsearch", "multiselect", "keyboard"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): closing a dialog returns the focus to the control that opened it",
     "expect_new": {
       "focus": "#advsearch_init_trigger"
@@ -1747,10 +1458,7 @@
       "texts:div.autocomplete-suggestions .autocomplete-suggestion",
       "visibles:div.autocomplete-suggestions"
     ],
-    "tags": [
-      "advsearch",
-      "autocomplete"
-    ]
+    "tags": ["advsearch", "autocomplete"]
   },
   {
     "name": "advs_props_autocomplete_pick",
@@ -1778,15 +1486,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "value:#advs_fct_props",
-      "visibles:div.autocomplete-suggestions"
-    ],
-    "tags": [
-      "advsearch",
-      "autocomplete",
-      "keyboard"
-    ],
+    "probe": ["value:#advs_fct_props", "visibles:div.autocomplete-suggestions"],
+    "tags": ["advsearch", "autocomplete", "keyboard"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): closing a dialog returns the focus to the control that opened it",
     "expect_new": {
       "focus": "#advsearch_init_trigger"
@@ -1814,19 +1515,13 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "value:#advs_fct_props",
-      "visibles:div.autocomplete-suggestions"
-    ],
+    "probe": ["value:#advs_fct_props", "visibles:div.autocomplete-suggestions"],
     "expect": {
       "value:#advs_fct_props": {
         "contains": "band"
       }
     },
-    "tags": [
-      "advsearch",
-      "autocomplete"
-    ]
+    "tags": ["advsearch", "autocomplete"]
   },
   {
     "name": "advs_aet_limit",
@@ -1850,10 +1545,7 @@
       "checked:#aet_limit",
       "texts:#advstab_main .selectize-input > div[data-term]"
     ],
-    "tags": [
-      "advsearch",
-      "notify"
-    ]
+    "tags": ["advsearch", "notify"]
   },
   {
     "name": "polyhedra_pick",
@@ -1874,10 +1566,7 @@
       "visible:#aetmap",
       "visible:#advsbox"
     ],
-    "tags": [
-      "advsearch",
-      "polyhedra"
-    ],
+    "tags": ["advsearch", "polyhedra"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): an opened dialog takes the focus",
     "expect_new": {
       "focus": "#advsbox"
@@ -1896,14 +1585,8 @@
         "click": "#interpret li"
       }
     ],
-    "probe": [
-      "visibles:div.advstab",
-      "classes:#advstab_options li"
-    ],
-    "tags": [
-      "advsearch",
-      "results"
-    ],
+    "probe": ["visibles:div.advstab", "classes:#advstab_options li"],
+    "tags": ["advsearch", "results"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): an opened dialog takes the focus",
     "expect_new": {
       "focus": "#advsbox"
@@ -1919,13 +1602,8 @@
         "after": 1000
       }
     ],
-    "probe": [
-      "visible:#loginbox"
-    ],
-    "tags": [
-      "modal",
-      "mouse"
-    ]
+    "probe": ["visible:#loginbox"],
+    "tags": ["modal", "mouse"]
   },
   {
     "name": "userbox_toggle_restores_hash",
@@ -1941,13 +1619,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "visible:#loginbox"
-    ],
-    "tags": [
-      "modal",
-      "mouse"
-    ],
+    "probe": ["visible:#loginbox"],
+    "tags": ["modal", "mouse"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#userbox"
@@ -1962,59 +1635,32 @@
         "after": 1000
       }
     ],
-    "probe": [
-      "visible:#loginbox"
-    ],
-    "tags": [
-      "modal",
-      "keyboard"
-    ]
+    "probe": ["visible:#loginbox"],
+    "tags": ["modal", "keyboard"]
   },
   {
     "name": "modal_restore",
     "route": "#modal/restore",
-    "probe": [
-      "visible:#restorebox",
-      "visible:#loginbox"
-    ],
-    "tags": [
-      "modal",
-      "route"
-    ]
+    "probe": ["visible:#restorebox", "visible:#loginbox"],
+    "tags": ["modal", "route"]
   },
   {
     "name": "modal_factor",
     "route": "#modal/factor",
-    "probe": [
-      "visible:#factorbox",
-      "visibles:#factorbox input"
-    ],
-    "tags": [
-      "modal",
-      "route"
-    ]
+    "probe": ["visible:#factorbox", "visibles:#factorbox input"],
+    "tags": ["modal", "route"]
   },
   {
     "name": "modal_menu_logged_out",
     "desc": "the account menu redirects anonymous users to the login",
     "route": "#modal/menu",
-    "probe": [
-      "visible:#loginbox",
-      "visible:#menubox"
-    ],
-    "tags": [
-      "modal",
-      "route"
-    ]
+    "probe": ["visible:#loginbox", "visible:#menubox"],
+    "tags": ["modal", "route"]
   },
   {
     "name": "modal_unknown",
     "route": "#modal/nonsense",
-    "tags": [
-      "modal",
-      "route",
-      "notify"
-    ]
+    "tags": ["modal", "route", "notify"]
   },
   {
     "name": "login_enter_submits",
@@ -2042,15 +1688,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "text:#login_trigger",
-      "visible:#loginbox"
-    ],
-    "tags": [
-      "modal",
-      "keyboard",
-      "mock"
-    ]
+    "probe": ["text:#login_trigger", "visible:#loginbox"],
+    "tags": ["modal", "keyboard", "mock"]
   },
   {
     "name": "login_click_error",
@@ -2069,10 +1708,7 @@
       "visible:#loginbox",
       "value:#login_password"
     ],
-    "tags": [
-      "modal",
-      "mock"
-    ],
+    "tags": ["modal", "mock"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#login_trigger"
@@ -2102,14 +1738,8 @@
         "abort": true
       }
     ],
-    "probe": [
-      "text:#login_trigger",
-      "visible:#loginbox"
-    ],
-    "tags": [
-      "modal",
-      "mock"
-    ],
+    "probe": ["text:#login_trigger", "visible:#loginbox"],
+    "tags": ["modal", "mock"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#login_trigger"
@@ -2147,14 +1777,8 @@
         "text": "12"
       }
     ],
-    "probe": [
-      "values:#factorbox input.factor_form_resp"
-    ],
-    "tags": [
-      "modal",
-      "keyboard",
-      "mock"
-    ]
+    "probe": ["values:#factorbox input.factor_form_resp"],
+    "tags": ["modal", "keyboard", "mock"]
   },
   {
     "name": "tooltip_shown_on_landing",
@@ -2169,14 +1793,8 @@
         "after": 800
       }
     ],
-    "probe": [
-      "visible:#tooltip",
-      "js:wmgui.tooltip_counter"
-    ],
-    "tags": [
-      "tooltip",
-      "mouse"
-    ]
+    "probe": ["visible:#tooltip", "js:wmgui.tooltip_counter"],
+    "tags": ["tooltip", "mouse"]
   },
   {
     "name": "darkmode_toggle",
@@ -2187,16 +1805,9 @@
         "after": 1000
       }
     ],
-    "probe": [
-      "text:#darkmode_trigger",
-      "class:body",
-      "storage:darkmode"
-    ],
+    "probe": ["text:#darkmode_trigger", "class:body", "storage:darkmode"],
     "pixels": "loose",
-    "tags": [
-      "darkmode",
-      "mouse"
-    ],
+    "tags": ["darkmode", "mouse"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#darkmode_trigger"
@@ -2211,13 +1822,8 @@
         "click": "#hy_options > li[rev=hy_complex]"
       }
     ],
-    "probe": [
-      "visibles:div.hy_tabs",
-      "classes:#hy_options > li"
-    ],
-    "tags": [
-      "hierarchy"
-    ],
+    "probe": ["visibles:div.hy_tabs", "classes:#hy_options > li"],
+    "tags": ["hierarchy"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#hy_options > li.working"
@@ -2232,13 +1838,8 @@
         "click": "#hy_scalars li > span"
       }
     ],
-    "probe": [
-      "texts:#hy_scalars li > span",
-      "nvisible:#hy_scalars ul ul"
-    ],
-    "tags": [
-      "hierarchy"
-    ],
+    "probe": ["texts:#hy_scalars li > span", "nvisible:#hy_scalars ul ul"],
+    "tags": ["hierarchy"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#hy_scalars > ul > li > span.hy1"
@@ -2254,10 +1855,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "hierarchy",
-      "search"
-    ]
+    "tags": ["hierarchy", "search"]
   },
   {
     "name": "hy_numeric_slider",
@@ -2278,11 +1876,7 @@
       "texts:#numericbox div.slider_numerics",
       "html:#numericbox ul"
     ],
-    "tags": [
-      "advsearch",
-      "numeric",
-      "slider"
-    ],
+    "tags": ["advsearch", "numeric", "slider"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#crtab > div > strong.numeric"
@@ -2309,14 +1903,8 @@
         "after": 600
       }
     ],
-    "probe": [
-      "count:#numericbox div.slider_numerics"
-    ],
-    "tags": [
-      "advsearch",
-      "numeric",
-      "notify"
-    ],
+    "probe": ["count:#numericbox div.slider_numerics"],
+    "tags": ["advsearch", "numeric", "notify"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#crtab > div > strong.numeric"
@@ -2339,10 +1927,7 @@
         "after": 2000
       }
     ],
-    "tags": [
-      "numeric",
-      "search"
-    ],
+    "tags": ["numeric", "search"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#numericbox_do_trigger"
@@ -2364,13 +1949,8 @@
         "after": 1000
       }
     ],
-    "probe": [
-      "visible:#numericbox",
-      "count:#numericbox div.slider_numerics"
-    ],
-    "tags": [
-      "numeric"
-    ],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["numeric"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#numericbox_drop_trigger"
@@ -2392,13 +1972,8 @@
         "after": 1000
       }
     ],
-    "probe": [
-      "visible:#numericbox",
-      "count:#numericbox div.slider_numerics"
-    ],
-    "tags": [
-      "numeric"
-    ],
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["numeric"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): closing the sliders returns the focus to the numeric control that opened them",
     "expect_new": {
       "focus": "#crtab > div > strong.numeric"
@@ -2413,11 +1988,7 @@
       "texts:#numericbox .noUi-tooltip",
       "attrs:#numericbox .noUi-handle@aria-valuenow"
     ],
-    "tags": [
-      "numeric",
-      "slider",
-      "route"
-    ]
+    "tags": ["numeric", "slider", "route"]
   },
   {
     "name": "numeric_remove_item_closes_box",
@@ -2429,14 +2000,8 @@
         "after": 1200
       }
     ],
-    "probe": [
-      "visible:#numericbox",
-      "count:#numericbox div.slider_numerics"
-    ],
-    "tags": [
-      "numeric",
-      "multiselect"
-    ]
+    "probe": ["visible:#numericbox", "count:#numericbox div.slider_numerics"],
+    "tags": ["numeric", "multiselect"]
   },
   {
     "comment": "section: results pages",
@@ -2458,14 +2023,8 @@
         "after": 800
       }
     ],
-    "probe": [
-      "nvisible:#refine_col li",
-      "texts:#refine_col li a"
-    ],
-    "tags": [
-      "results",
-      "refine"
-    ]
+    "probe": ["nvisible:#refine_col li", "texts:#refine_col li a"],
+    "tags": ["results", "refine"]
   },
   {
     "name": "refine_link_click",
@@ -2480,10 +2039,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "results",
-      "refine"
-    ]
+    "tags": ["results", "refine"]
   },
   {
     "name": "control_phases",
@@ -2499,13 +2055,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "classes:div.controlswitch > div"
-    ],
-    "tags": [
-      "results",
-      "controls"
-    ],
+    "probe": ["classes:div.controlswitch > div"],
+    "tags": ["results", "controls"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#control_b"
@@ -2524,13 +2075,8 @@
         "after": 1500
       }
     ],
-    "probe": [
-      "classes:div.controlswitch > div"
-    ],
-    "tags": [
-      "results",
-      "controls"
-    ],
+    "probe": ["classes:div.controlswitch > div"],
+    "tags": ["results", "controls"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#control_f"
@@ -2554,10 +2100,7 @@
       "count:#databrowser div.gallery_item",
       "count:#databrowser tr.tcell"
     ],
-    "tags": [
-      "results",
-      "controls"
-    ],
+    "tags": ["results", "controls"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#control_d"
@@ -2581,10 +2124,7 @@
       "count:#databrowser div.gallery_item",
       "count:#databrowser tr.tcell"
     ],
-    "tags": [
-      "results",
-      "controls"
-    ],
+    "tags": ["results", "controls"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#control_c"
@@ -2605,11 +2145,7 @@
       }
     ],
     "pixels": "loose",
-    "tags": [
-      "results",
-      "controls",
-      "plot"
-    ],
+    "tags": ["results", "controls", "plot"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#control_e"
@@ -2629,9 +2165,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "results"
-    ],
+    "tags": ["results"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#dtypes > ul > li.dtypes_props.fct_props"
@@ -2651,9 +2185,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "results"
-    ],
+    "tags": ["results"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#dtypes > ul > li.dtypes_classes.fct_classes"
@@ -2672,10 +2204,7 @@
         "after": 2000
       }
     ],
-    "tags": [
-      "results",
-      "phases"
-    ]
+    "tags": ["results", "phases"]
   },
   {
     "name": "phases_strict_uncheck",
@@ -2695,10 +2224,7 @@
       "checked:#ctx_strict_phases_trigger",
       "js:wmgui.ctx_strict_phases"
     ],
-    "tags": [
-      "results",
-      "phases"
-    ]
+    "tags": ["results", "phases"]
   },
   {
     "name": "ref_mousedown_marks_visited",
@@ -2712,13 +2238,8 @@
         "mousedown": "#databrowser a.resolve_ref"
       }
     ],
-    "probe": [
-      "classes:#databrowser a.resolve_ref",
-      "storage:bid_history"
-    ],
-    "tags": [
-      "results"
-    ]
+    "probe": ["classes:#databrowser a.resolve_ref", "storage:bid_history"],
+    "tags": ["results"]
   },
   {
     "name": "visited_refs_restored",
@@ -2727,13 +2248,8 @@
     "storage": {
       "bid_history": "[84283, 7814]"
     },
-    "probe": [
-      "classes:#databrowser a.resolve_ref"
-    ],
-    "tags": [
-      "results",
-      "storage"
-    ]
+    "probe": ["classes:#databrowser a.resolve_ref"],
+    "tags": ["results", "storage"]
   },
   {
     "name": "entry_show_button",
@@ -2755,10 +2271,7 @@
       "classes:#databrowser tr.tcell"
     ],
     "pixels": "loose",
-    "tags": [
-      "results",
-      "context"
-    ],
+    "tags": ["results", "context"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#e__S311308 > td.cp > span.launch_v"
@@ -2786,10 +2299,7 @@
       "visible:#sim_col",
       "classes:#databrowser tr.tcell"
     ],
-    "tags": [
-      "results",
-      "context"
-    ],
+    "tags": ["results", "context"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#e__S311308"
@@ -2814,14 +2324,8 @@
         "after": 2000
       }
     ],
-    "probe": [
-      "classes:#databrowser tr.tcell",
-      "text:#entryno"
-    ],
-    "tags": [
-      "results",
-      "context"
-    ],
+    "probe": ["classes:#databrowser tr.tcell", "text:#entryno"],
+    "tags": ["results", "context"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#e__S530743"
@@ -2841,14 +2345,8 @@
         "after": 2000
       }
     ],
-    "probe": [
-      "visible:#ctx_col",
-      "classes:#databrowser div.gallery_item"
-    ],
-    "tags": [
-      "results",
-      "context"
-    ],
+    "probe": ["visible:#ctx_col", "classes:#databrowser div.gallery_item"],
+    "tags": ["results", "context"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#e__S1832060"
@@ -2873,15 +2371,9 @@
       "count:#databrowser div.gallery_item",
       "js:wmgui.unfinished_page"
     ],
-    "viewport": [
-      1280,
-      900
-    ],
+    "viewport": [1280, 900],
     "pixels": "off",
-    "tags": [
-      "results",
-      "scroll"
-    ]
+    "tags": ["results", "scroll"]
   },
   {
     "name": "phase_id_rankfilter",
@@ -2900,13 +2392,8 @@
         "after": 2000
       }
     ],
-    "probe": [
-      "classes:#dtypes_phid li"
-    ],
-    "tags": [
-      "results",
-      "phases"
-    ],
+    "probe": ["classes:#dtypes_phid li"],
+    "tags": ["results", "phases"],
     "approved": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the clicked control is focusable now and keeps the focus, like a native button",
     "expect_new": {
       "focus": "#dtypes_phid > ul > li.dtypes_props.fct_props"
@@ -2933,102 +2420,70 @@
         "after": 2000
       }
     ],
-    "probe": [
-      "classes:#sim_col > ul > li"
-    ],
-    "tags": [
-      "results",
-      "interlinkage"
-    ]
+    "probe": ["classes:#sim_col > ul > li"],
+    "tags": ["results", "interlinkage"]
   },
   {
     "comment": "section: routing edge cases",
     "name": "route_unknown",
     "route": "#nonsense/abc",
-    "tags": [
-      "route",
-      "notify"
-    ]
+    "tags": ["route", "notify"]
   },
   {
     "name": "route_search_empty",
     "route": "#search/",
-    "tags": [
-      "route"
-    ]
+    "tags": ["route"]
   },
   {
     "name": "route_search_unicode",
     "desc": "subscripts, en dashes and spaces in a free-text search",
     "route": "#search/TiH%E2%82%82%20phase%20transitions",
-    "tags": [
-      "route"
-    ]
+    "tags": ["route"]
   },
   {
     "name": "route_search_garbage",
     "route": "#search/qqqzzzxxx",
-    "tags": [
-      "route",
-      "notify"
-    ]
+    "tags": ["route", "notify"]
   },
   {
     "name": "route_inquiry_unknown_facet",
     "route": "#inquiry/foo=bar",
-    "tags": [
-      "route"
-    ]
+    "tags": ["route"]
   },
   {
     "name": "route_inquiry_entries",
     "route": "#inquiry_entries/elements=Ag-O&classes=oxide",
-    "tags": [
-      "route"
-    ]
+    "tags": ["route"]
   },
   {
     "name": "route_phase_triplet",
     "route": "#phase/Ag2O/224/cP6",
-    "tags": [
-      "route"
-    ]
+    "tags": ["route"]
   },
   {
     "name": "route_entry_unknown",
     "route": "#entry/S0000000",
-    "tags": [
-      "route",
-      "notify"
-    ]
+    "tags": ["route", "notify"]
   },
   {
     "name": "route_plot_graph",
     "route": "#plot/graph/inquiry/elements=Ag-O",
     "pixels": "loose",
     "settle": 6000,
-    "tags": [
-      "route",
-      "plot"
-    ]
+    "tags": ["route", "plot"]
   },
   {
     "name": "route_plot_matrix",
     "route": "#plot/matrix/inquiry/elements=Ag-O",
     "pixels": "loose",
     "settle": 6000,
-    "tags": [
-      "route",
-      "plot"
-    ]
+    "tags": ["route", "plot"]
   },
   {
     "name": "route_junction_anon",
     "desc": "the junction page redirects anonymous users",
     "route": "#junction",
-    "tags": [
-      "route"
-    ]
+    "tags": ["route"]
   },
   {
     "name": "route_access_mocked",
@@ -3042,10 +2497,7 @@
         }
       }
     ],
-    "tags": [
-      "route",
-      "mock"
-    ]
+    "tags": ["route", "mock"]
   },
   {
     "name": "route_ratify_mocked",
@@ -3058,10 +2510,7 @@
         }
       }
     ],
-    "tags": [
-      "route",
-      "mock"
-    ]
+    "tags": ["route", "mock"]
   },
   {
     "name": "nav_back",
@@ -3080,10 +2529,7 @@
         "after": 2500
       }
     ],
-    "tags": [
-      "route",
-      "history"
-    ]
+    "tags": ["route", "history"]
   },
   {
     "name": "nav_hash_from_landing",
@@ -3094,9 +2540,7 @@
         "after": 2500
       }
     ],
-    "tags": [
-      "route"
-    ]
+    "tags": ["route"]
   },
   {
     "comment": "section: persisted state (localStorage presets)",
@@ -3106,14 +2550,8 @@
     "storage": {
       "wm_search_log_v5": "[{\"elements\":\"Cu-Zn\"},{\"formulae\":\"Ag2O\",\"props\":\"crystal structure\"},{\"classes\":\"oxide\",\"elements\":\"Ti-O\"}]"
     },
-    "probe": [
-      "texts:#history li",
-      "attrs:#history li a@href"
-    ],
-    "tags": [
-      "storage",
-      "history"
-    ]
+    "probe": ["texts:#history li", "attrs:#history li a@href"],
+    "tags": ["storage", "history"]
   },
   {
     "name": "history_dedup_and_cap",
@@ -3122,14 +2560,8 @@
     "storage": {
       "wm_search_log_v5": "[{\"elements\":\"Cu-Zn\"},{\"elements\":\"A-B\"},{\"elements\":\"C-D\"},{\"elements\":\"E-F\"},{\"elements\":\"G-H\"},{\"elements\":\"I-J\"},{\"elements\":\"K-L\"},{\"elements\":\"M-N\"},{\"elements\":\"O-P\"}]"
     },
-    "probe": [
-      "texts:#history li",
-      "storage:wm_search_log_v5"
-    ],
-    "tags": [
-      "storage",
-      "history"
-    ]
+    "probe": ["texts:#history li", "storage:wm_search_log_v5"],
+    "tags": ["storage", "history"]
   },
   {
     "name": "history_suppresses_tooltip",
@@ -3143,14 +2575,8 @@
         "wait": 5000
       }
     ],
-    "probe": [
-      "visible:#tooltip",
-      "js:wmgui.tooltip_counter"
-    ],
-    "tags": [
-      "storage",
-      "tooltip"
-    ]
+    "probe": ["visible:#tooltip", "js:wmgui.tooltip_counter"],
+    "tags": ["storage", "tooltip"]
   },
   {
     "name": "darkmode_restored",
@@ -3158,15 +2584,9 @@
     "storage": {
       "darkmode": "true"
     },
-    "probe": [
-      "text:#darkmode_trigger",
-      "class:body"
-    ],
+    "probe": ["text:#darkmode_trigger", "class:body"],
     "pixels": "loose",
-    "tags": [
-      "storage",
-      "darkmode"
-    ]
+    "tags": ["storage", "darkmode"]
   },
   {
     "comment": "section: API failure paths (mocked)",
@@ -3181,10 +2601,7 @@
         }
       }
     ],
-    "tags": [
-      "mock",
-      "notify"
-    ]
+    "tags": ["mock", "notify"]
   },
   {
     "name": "api_search_unreachable",
@@ -3196,10 +2613,7 @@
         "abort": true
       }
     ],
-    "tags": [
-      "mock",
-      "notify"
-    ]
+    "tags": ["mock", "notify"]
   },
   {
     "name": "api_search_http_500",
@@ -3211,10 +2625,7 @@
         "body": "Internal Server Error"
       }
     ],
-    "tags": [
-      "mock",
-      "notify"
-    ]
+    "tags": ["mock", "notify"]
   },
   {
     "name": "api_search_empty",
@@ -3230,9 +2641,7 @@
         }
       }
     ],
-    "tags": [
-      "mock"
-    ]
+    "tags": ["mock"]
   },
   {
     "name": "api_autocomplete_down",
@@ -3251,19 +2660,14 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "mock",
-      "multiselect"
-    ]
+    "tags": ["mock", "multiselect"]
   },
   {
     "comment": "section: absolute expectations (`expect`: checked on EACH side, not only old vs new)",
     "name": "search_ru_am_has_hits",
     "desc": "Ru and Am together do have hits (8 entries as recorded on 2026-10-23)",
     "route": "#search/Ru-Am",
-    "probe": [
-      "texts:#search_holder .selectize-input > div[data-term]"
-    ],
+    "probe": ["texts:#search_holder .selectize-input > div[data-term]"],
     "expect": {
       "count:#databrowser tr.tcell, #databrowser div.gallery_item": {
         "gt": 0
@@ -3272,10 +2676,7 @@
         "matches": "^\\d+ results?$"
       }
     },
-    "tags": [
-      "search",
-      "expect"
-    ]
+    "tags": ["search", "expect"]
   },
   {
     "comment": "settle: NB the notification hides 4 s after it appears",
@@ -3294,11 +2695,7 @@
       }
     ],
     "settle": 1000,
-    "tags": [
-      "search",
-      "notify",
-      "expect"
-    ],
+    "tags": ["search", "notify", "expect"],
     "expect": {
       "text:#notifybox": {
         "contains": "similar data shown"
@@ -3330,10 +2727,7 @@
       "visible:#own_phase",
       "visible:#ctx_col"
     ],
-    "tags": [
-      "context",
-      "sim"
-    ],
+    "tags": ["context", "sim"],
     "expect": {
       "text:#sim_legend": {
         "contains": "Similar"
@@ -3376,11 +2770,7 @@
       "attrs:#sim_col > ul a@href",
       "visible:#own_phase"
     ],
-    "tags": [
-      "context",
-      "sim",
-      "thumbs"
-    ],
+    "tags": ["context", "sim", "thumbs"],
     "expect": {
       "text:#sim_legend": {
         "contains": "Similar"
@@ -3418,10 +2808,7 @@
       "visible:#sim_col",
       "count:#databrowser .busy_entry"
     ],
-    "tags": [
-      "context",
-      "keyboard"
-    ],
+    "tags": ["context", "keyboard"],
     "expect": {
       "visible:#ctx_col": false,
       "visible:#sim_col": false
@@ -3464,12 +2851,7 @@
       "nvisible:div.cross",
       "hash"
     ],
-    "tags": [
-      "context",
-      "keyboard",
-      "numeric",
-      "advsearch"
-    ],
+    "tags": ["context", "keyboard", "numeric", "advsearch"],
     "expect": {
       "visible:#ctx_col": false,
       "visible:#numericbox": false,
@@ -3485,9 +2867,7 @@
     "desc": "start page: every control keyboard-reachable",
     "route": "#start",
     "tooltips": false,
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__a11y().mouse_only_total": 0
@@ -3504,9 +2884,7 @@
         "wait_for": "#databrowser tr.tcell"
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__a11y().mouse_only_total": 0
@@ -3526,9 +2904,7 @@
         "after": 2500
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__a11y().mouse_only_total": 0,
@@ -3545,9 +2921,7 @@
         "wait_for": "#databrowser div.gallery_item"
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__a11y().mouse_only_total": 0
@@ -3564,9 +2938,7 @@
         "after": 1000
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__a11y().mouse_only_total": 0,
@@ -3579,9 +2951,7 @@
     "desc": "properties hierarchy: focus inside, the page behind inert",
     "route": "#hierarchy",
     "tooltips": false,
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__a11y().mouse_only_total": 0,
@@ -3594,9 +2964,7 @@
     "desc": "login dialog: focus inside, the page behind inert",
     "route": "#modal/login",
     "tooltips": false,
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__a11y().mouse_only_total": 0,
@@ -3614,9 +2982,7 @@
         "wait_for": "#all_polyhedra_content div.gallery_item"
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__a11y().mouse_only_total": 0,
@@ -3628,13 +2994,8 @@
     "desc": "150% zoom: the whole periodic table can be scrolled to",
     "route": "#start",
     "tooltips": false,
-    "viewport": [
-      853,
-      533
-    ],
-    "tags": [
-      "a11y"
-    ],
+    "viewport": [853, 533],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 150% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0,
@@ -3648,18 +3009,13 @@
     "desc": "150% zoom: grid, filters and side columns reachable",
     "route": "#inquiry/formulae=TiO2&props=band%20gap",
     "tooltips": false,
-    "viewport": [
-      853,
-      533
-    ],
+    "viewport": [853, 533],
     "steps": [
       {
         "wait_for": "#databrowser tr.tcell"
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 150% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0
@@ -3670,10 +3026,7 @@
     "desc": "150% zoom: Entry and See also reachable, close crosses visible",
     "route": "#inquiry/formulae=TiO2&props=band%20gap",
     "tooltips": false,
-    "viewport": [
-      853,
-      533
-    ],
+    "viewport": [853, 533],
     "steps": [
       {
         "wait_for": "#databrowser tr.tcell"
@@ -3683,9 +3036,7 @@
         "after": 2500
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 150% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0
@@ -3696,19 +3047,14 @@
     "desc": "150% zoom: the advanced search box fits or scrolls",
     "route": "#start",
     "tooltips": false,
-    "viewport": [
-      853,
-      533
-    ],
+    "viewport": [853, 533],
     "steps": [
       {
         "click": "#advsearch_init_trigger",
         "after": 1000
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 150% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0,
@@ -3719,14 +3065,9 @@
     "name": "a11y_zoom150_hierarchy",
     "desc": "150% zoom: the properties hierarchy dialog stays in the window, its items are not cut",
     "route": "#hierarchy",
-    "viewport": [
-      853,
-      533
-    ],
+    "viewport": [853, 533],
     "tooltips": false,
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 150% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0
@@ -3737,13 +3078,8 @@
     "desc": "200% zoom (WCAG 1.4.4): the whole periodic table can be scrolled to",
     "route": "#start",
     "tooltips": false,
-    "viewport": [
-      640,
-      400
-    ],
-    "tags": [
-      "a11y"
-    ],
+    "viewport": [640, 400],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 200% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0,
@@ -3757,18 +3093,13 @@
     "desc": "200% zoom (WCAG 1.4.4): grid, filters and side columns reachable",
     "route": "#inquiry/formulae=TiO2&props=band%20gap",
     "tooltips": false,
-    "viewport": [
-      640,
-      400
-    ],
+    "viewport": [640, 400],
     "steps": [
       {
         "wait_for": "#databrowser tr.tcell"
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 200% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0
@@ -3779,10 +3110,7 @@
     "desc": "200% zoom (WCAG 1.4.4): Entry and See also reachable, close crosses visible",
     "route": "#inquiry/formulae=TiO2&props=band%20gap",
     "tooltips": false,
-    "viewport": [
-      640,
-      400
-    ],
+    "viewport": [640, 400],
     "steps": [
       {
         "wait_for": "#databrowser tr.tcell"
@@ -3792,9 +3120,7 @@
         "after": 2500
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 200% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0
@@ -3805,19 +3131,14 @@
     "desc": "200% zoom (WCAG 1.4.4): the advanced search box fits or scrolls",
     "route": "#start",
     "tooltips": false,
-    "viewport": [
-      640,
-      400
-    ],
+    "viewport": [640, 400],
     "steps": [
       {
         "click": "#advsearch_init_trigger",
         "after": 1000
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 200% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0,
@@ -3828,14 +3149,9 @@
     "name": "a11y_zoom200_hierarchy",
     "desc": "200% zoom (WCAG 1.4.4): the properties hierarchy dialog stays in the window, its items are not cut",
     "route": "#hierarchy",
-    "viewport": [
-      640,
-      400
-    ],
+    "viewport": [640, 400],
     "tooltips": false,
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 1.4.4 Resize Text): at 200% the deployed layout cuts content off",
     "expect_new": {
       "js:window.__a11y().unreachable_total": 0
@@ -3858,9 +3174,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "hash": {
@@ -3886,9 +3200,7 @@
         "after": 1500
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:document.activeElement && (document.activeElement.id || document.activeElement.getAttribute('aria-label') || document.activeElement.className)": {
@@ -3943,9 +3255,7 @@
         "after": 1000
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__in_dialog": true,
@@ -3974,9 +3284,7 @@
         "after": 800
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:document.querySelector('#advstab_options li[rev=advstab_bib]').getAttribute('aria-selected')": "true",
@@ -4013,9 +3321,7 @@
         "after": 1000
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__ctx_focus": true,
@@ -4038,9 +3344,7 @@
         "after": 800
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:document.activeElement.getAttribute('aria-expanded')": "true",
@@ -4077,9 +3381,7 @@
         "after": 800
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__slider": true,
@@ -4108,9 +3410,7 @@
         "after": 1000
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:window.__login": "login_email",
@@ -4134,9 +3434,7 @@
         "after": 500
       }
     ],
-    "tags": [
-      "a11y"
-    ],
+    "tags": ["a11y"],
     "xfail": "APPROVED CHANGE (VPAT 2.1.1 Keyboard): the deployed GUI has mouse-only controls and dialogs that do not manage focus",
     "expect_new": {
       "js:!!document.activeElement.closest('#databrowser')": true
@@ -4154,11 +3452,7 @@
     "name": "qa_01_formulae_tio2",
     "desc": "formulae=tio2: >= 1717 results (recorded 2026-10-24; the outdated qa.json had 989)",
     "route": "#inquiry/formulae=tio2",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 1717
@@ -4169,11 +3463,7 @@
     "name": "qa_02_formulae_al2o3",
     "desc": "formulae=al2o3: >= 963 results (recorded 2026-10-24; the outdated qa.json had 594)",
     "route": "#inquiry/formulae=al2o3",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 963
@@ -4184,11 +3474,7 @@
     "name": "qa_03_formulae_culamnseo",
     "desc": "formulae=CuLaMnSeO: >= 16 results (recorded 2026-10-24; the outdated qa.json had 16)",
     "route": "#inquiry/formulae=CuLaMnSeO",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 16
@@ -4199,11 +3485,7 @@
     "name": "qa_04_formulae_coseru",
     "desc": "formulae=coseru: >= 1 results (recorded 2026-10-24; the outdated qa.json had 0)",
     "route": "#inquiry/formulae=coseru",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 1
@@ -4217,11 +3499,7 @@
     "name": "qa_05_formulae_nac60",
     "desc": "formulae=nac60: >= 1 results (recorded 2026-10-24; the outdated qa.json had 1)",
     "route": "#inquiry/formulae=nac60",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 1
@@ -4232,11 +3510,7 @@
     "name": "qa_06_formulae_aggatese",
     "desc": "formulae=AgGaTeSe: >= 20 results (recorded 2026-10-24; the outdated qa.json had 10)",
     "route": "#inquiry/formulae=AgGaTeSe",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 20
@@ -4247,11 +3521,7 @@
     "name": "qa_07_formulae_geo",
     "desc": "formulae=geo: >= 6 results (recorded 2026-10-24; the outdated qa.json had 1)",
     "route": "#inquiry/formulae=geo",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 6
@@ -4262,11 +3532,7 @@
     "name": "qa_08_formulae_beo",
     "desc": "formulae=beo: >= 376 results (recorded 2026-10-24; the outdated qa.json had 320)",
     "route": "#inquiry/formulae=beo",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 376
@@ -4277,11 +3543,7 @@
     "name": "qa_09_formulae_ersi",
     "desc": "formulae=ErSi: >= 78 results (recorded 2026-10-24; the outdated qa.json had 33)",
     "route": "#inquiry/formulae=ErSi",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 78
@@ -4292,11 +3554,7 @@
     "name": "qa_10_formulae_ersi",
     "desc": "formulae=ErSI: >= 26 results (recorded 2026-10-24; the outdated qa.json had 2)",
     "route": "#inquiry/formulae=ErSI",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 26
@@ -4307,11 +3565,7 @@
     "name": "qa_11_formulae_ca3_po4_2",
     "desc": "formulae=Ca3(PO4)2: >= 166 results (recorded 2026-10-24; the outdated qa.json had 44)",
     "route": "#inquiry/formulae=Ca3%28PO4%292",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 166
@@ -4322,11 +3576,7 @@
     "name": "qa_12_formulae_ca3_po4_2",
     "desc": "formulae=Ca3[PO4]2: >= 166 results (recorded 2026-10-24; the outdated qa.json had 44)",
     "route": "#inquiry/formulae=Ca3%5BPO4%5D2",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 166
@@ -4337,11 +3587,7 @@
     "name": "qa_13_classes_ternary_oxide",
     "desc": "classes=ternary, oxide: >= 235798 results (recorded 2026-10-24; the outdated qa.json had 78404)",
     "route": "#inquiry/classes=ternary%2C%20oxide",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 235798
@@ -4352,11 +3598,7 @@
     "name": "qa_14_classes_nonmetal",
     "desc": "classes=nonmetal: >= 398412 results (recorded 2026-10-24; the outdated qa.json had 317859)",
     "route": "#inquiry/classes=nonmetal",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 398412
@@ -4367,11 +3609,7 @@
     "name": "qa_15_classes_lanthanoid_unary",
     "desc": "classes=lanthanoid, unary: >= 14307 results (recorded 2026-10-24; the outdated qa.json had 8475)",
     "route": "#inquiry/classes=lanthanoid%2C%20unary",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 14307
@@ -4382,11 +3620,7 @@
     "name": "qa_16_classes_conductor",
     "desc": "classes=conductor: >= 823766 results (recorded 2026-10-24; the outdated qa.json had 412863)",
     "route": "#inquiry/classes=conductor",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 823766
@@ -4397,11 +3631,7 @@
     "name": "qa_17_classes_deuterium",
     "desc": "classes=deuterium: >= 22068 results (recorded 2026-10-24; the outdated qa.json had 5736)",
     "route": "#inquiry/classes=deuterium",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 22068
@@ -4412,11 +3642,7 @@
     "name": "qa_18_classes_tritium",
     "desc": "classes=tritium: >= 60 results (recorded 2026-10-24; the outdated qa.json had 13)",
     "route": "#inquiry/classes=tritium",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 60
@@ -4427,11 +3653,7 @@
     "name": "qa_19_props_phase_diagram",
     "desc": "props=phase diagram: >= 140255 results (recorded 2026-10-24; the outdated qa.json had 227809)",
     "route": "#inquiry/props=phase%20diagram",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 140255
@@ -4442,11 +3664,7 @@
     "name": "qa_20_props_grueneisen_coefficients",
     "desc": "props=Grueneisen coefficients: >= 1984 results (recorded 2026-10-24; the outdated qa.json had 1260)",
     "route": "#inquiry/props=Grueneisen%20coefficients",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 1984
@@ -4457,11 +3675,7 @@
     "name": "qa_21_props_seebeck_coefficient",
     "desc": "props=Seebeck coefficient: >= 127050 results (recorded 2026-10-24; the outdated qa.json had 6837)",
     "route": "#inquiry/props=Seebeck%20coefficient",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 127050
@@ -4472,11 +3686,7 @@
     "name": "qa_22_props_figure_of_merit",
     "desc": "props=figure of merit: >= 2146 results (recorded 2026-10-24; the outdated qa.json had 469)",
     "route": "#inquiry/props=figure%20of%20merit",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 2146
@@ -4487,11 +3697,7 @@
     "name": "qa_23_props_conductivity",
     "desc": "props=conductivity: >= 313256 results (recorded 2026-10-24; the outdated qa.json had 88703)",
     "route": "#inquiry/props=conductivity",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 313256
@@ -4502,11 +3708,7 @@
     "name": "qa_24_props_valence",
     "desc": "props=valence: >= 15802 results (recorded 2026-10-24; the outdated qa.json had 15941)",
     "route": "#inquiry/props=valence",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 15802
@@ -4517,11 +3719,7 @@
     "name": "qa_25_elements_ti_o",
     "desc": "elements=ti-o: >= 125649 results (recorded 2026-10-24; the outdated qa.json had 55956)",
     "route": "#inquiry/elements=ti-o",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 125649
@@ -4532,11 +3730,7 @@
     "name": "qa_26_elements_o",
     "desc": "elements=O: >= 1336183 results (recorded 2026-10-24; the outdated qa.json had 573839)",
     "route": "#inquiry/elements=O",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 1336183
@@ -4547,11 +3741,7 @@
     "name": "qa_27_elements_rg",
     "desc": "elements=Rg: >= 10 results (recorded 2026-10-24; the outdated qa.json had 1)",
     "route": "#inquiry/elements=Rg",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 10
@@ -4565,11 +3755,7 @@
     "name": "qa_28_elements_f",
     "desc": "elements=F: >= 135634 results (recorded 2026-10-24; the outdated qa.json had 44094)",
     "route": "#inquiry/elements=F",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 135634
@@ -4580,11 +3766,7 @@
     "name": "qa_29_elements_cl",
     "desc": "elements=Cl: >= 104057 results (recorded 2026-10-24; the outdated qa.json had 34885)",
     "route": "#inquiry/elements=Cl",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 104057
@@ -4595,11 +3777,7 @@
     "name": "qa_30_elements_br",
     "desc": "elements=Br: >= 47670 results (recorded 2026-10-24; the outdated qa.json had 14611)",
     "route": "#inquiry/elements=Br",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 47670
@@ -4610,11 +3788,7 @@
     "name": "qa_31_elements_i",
     "desc": "elements=I: >= 48146 results (recorded 2026-10-24; the outdated qa.json had 16581)",
     "route": "#inquiry/elements=I",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 48146
@@ -4625,11 +3799,7 @@
     "name": "qa_32_elements_at",
     "desc": "elements=At: >= 88 results (recorded 2026-10-24; the outdated qa.json had 13)",
     "route": "#inquiry/elements=At",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 88
@@ -4640,11 +3810,7 @@
     "name": "qa_33_classes_halogen",
     "desc": "classes=halogen: >= 321042 results (recorded 2026-10-24; the outdated qa.json had 102998)",
     "route": "#inquiry/classes=halogen",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 321042
@@ -4655,11 +3821,7 @@
     "name": "qa_34_lattices_cubic",
     "desc": "lattices=cubic: >= 708486 results (recorded 2026-10-24; the outdated qa.json had 324635)",
     "route": "#inquiry/lattices=cubic",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 708486
@@ -4670,11 +3832,7 @@
     "name": "qa_35_lattices_rhomb",
     "desc": "lattices=rhomb: >= 282602 results (recorded 2026-10-24; the outdated qa.json had 94925)",
     "route": "#inquiry/lattices=rhomb",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 282602
@@ -4685,11 +3843,7 @@
     "name": "qa_36_protos_ca2nb2o7_cf88_227",
     "desc": "protos=Ca2Nb2O7 cF88 227: >= 12199 results (recorded 2026-10-24; the outdated qa.json had 5082)",
     "route": "#inquiry/protos=Ca2Nb2O7%20cF88%20227",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 12199
@@ -4700,11 +3854,7 @@
     "name": "qa_37_protos_h2o",
     "desc": "protos=H2O: no hits (recorded 2026-10-24; the outdated qa.json had 0)",
     "route": "#inquiry/protos=H2O",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": 0,
       "text:#notifybox": {
@@ -4716,11 +3866,7 @@
     "name": "qa_38_sgs_pbnm",
     "desc": "sgs=Pbnm: >= 15701 results (recorded 2026-10-24; the outdated qa.json had 0)",
     "route": "#inquiry/sgs=Pbnm",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 15701
@@ -4731,11 +3877,7 @@
     "name": "qa_39_sgs_pnma",
     "desc": "sgs=Pnma: >= 81268 results (recorded 2026-10-24; the outdated qa.json had 46213)",
     "route": "#inquiry/sgs=Pnma",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 81268
@@ -4746,11 +3888,7 @@
     "name": "qa_40_sgs_i4_mcm",
     "desc": "sgs=i4/mcm: >= 15416 results (recorded 2026-10-24; the outdated qa.json had 9856)",
     "route": "#inquiry/sgs=i4%2Fmcm",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 15416
@@ -4761,11 +3899,7 @@
     "name": "qa_41_sgs_79",
     "desc": "sgs=79: >= 676 results (recorded 2026-10-24; the outdated qa.json had 247)",
     "route": "#inquiry/sgs=79",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 676
@@ -4776,11 +3910,7 @@
     "name": "qa_42_sgs_211",
     "desc": "sgs=211: >= 18 results (recorded 2026-10-24; the outdated qa.json had 1)",
     "route": "#inquiry/sgs=211",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 18
@@ -4791,11 +3921,7 @@
     "name": "qa_43_authors_evarestov",
     "desc": "authors=Evarestov: >= 9 results (recorded 2026-10-24; the outdated qa.json had 53)",
     "route": "#inquiry/authors=Evarestov",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 9
@@ -4806,11 +3932,7 @@
     "name": "qa_44_authors_blokhin",
     "desc": "authors=Blokhin: >= 28 results (recorded 2026-10-24; the outdated qa.json had 46)",
     "route": "#inquiry/authors=Blokhin",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 28
@@ -4821,11 +3943,7 @@
     "name": "qa_45_authors_okamoto",
     "desc": "authors=Okamoto: >= 16731 results (recorded 2026-10-24; the outdated qa.json had 14424)",
     "route": "#inquiry/authors=Okamoto",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 16731
@@ -4836,11 +3954,7 @@
     "name": "qa_46_authors_villars",
     "desc": "authors=Villars: >= 464 results (recorded 2026-10-24; the outdated qa.json had 387)",
     "route": "#inquiry/authors=Villars",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 464
@@ -4851,11 +3965,7 @@
     "name": "qa_47_elements_at_props_cell",
     "desc": "elements=At, props=cell: >= 10 results (recorded 2026-10-24; the outdated qa.json had 1)",
     "route": "#inquiry/elements=At&props=cell",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 10
@@ -4869,11 +3979,7 @@
     "name": "qa_48_formulae_tio2_props_band_gap",
     "desc": "formulae=tio2, props=band gap: >= 93 results (recorded 2026-10-24; the outdated qa.json had 140)",
     "route": "#inquiry/formulae=tio2&props=band%20gap",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 93
@@ -4884,11 +3990,7 @@
     "name": "qa_49_formulae_o3al2_props_elastic_properties",
     "desc": "formulae=O3Al2, props=elastic properties: no hits (recorded 2026-10-24; the outdated qa.json had 37)",
     "route": "#inquiry/formulae=O3Al2&props=elastic%20properties",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": 0,
       "text:#notifybox": {
@@ -4900,11 +4002,7 @@
     "name": "qa_50_props_optical_properties_formulae_likso4",
     "desc": "props=optical properties, formulae=LiKSO4: >= 97 results (recorded 2026-10-24; the outdated qa.json had 66)",
     "route": "#inquiry/props=optical%20properties&formulae=LiKSO4",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 97
@@ -4915,11 +4013,7 @@
     "name": "qa_51_formulae_gdniin_props_conductivity",
     "desc": "formulae=gdniin, props=conductivity: >= 5 results (recorded 2026-10-24; the outdated qa.json had 2)",
     "route": "#inquiry/formulae=gdniin&props=conductivity",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 5
@@ -4930,11 +4024,7 @@
     "name": "qa_52_props_band_gap_classes_chloride",
     "desc": "props=band gap, classes=chloride: >= 4578 results (recorded 2026-10-24; the outdated qa.json had 680)",
     "route": "#inquiry/props=band%20gap&classes=chloride",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 4578
@@ -4945,11 +4035,7 @@
     "name": "qa_53_classes_rare_earth_chalcogen_organic_props_magnetism",
     "desc": "classes=rare earth, chalcogen, organic, props=magnetism: >= 364 results (recorded 2026-10-24; the outdated qa.json had 245)",
     "route": "#inquiry/classes=rare%20earth%2C%20chalcogen%2C%20organic&props=magnetism",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 364
@@ -4960,11 +4046,7 @@
     "name": "qa_54_elements_te_sn_classes_metal_transitional",
     "desc": "elements=Te-Sn, classes=metal, transitional: >= 431 results (recorded 2026-10-24; the outdated qa.json had 81)",
     "route": "#inquiry/elements=Te-Sn&classes=metal%2C%20transitional",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 431
@@ -4975,11 +4057,7 @@
     "name": "qa_55_classes_radioactive_nonmetal_props_conductivity",
     "desc": "classes=radioactive, nonmetal, props=conductivity: >= 626 results (recorded 2026-10-24; the outdated qa.json had 629)",
     "route": "#inquiry/classes=radioactive%2C%20nonmetal&props=conductivity",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 626
@@ -4990,11 +4068,7 @@
     "name": "qa_56_classes_noble_gas_props_superconductivity",
     "desc": "classes=noble gas, props=superconductivity: >= 8 results (recorded 2026-10-24; the outdated qa.json had 16)",
     "route": "#inquiry/classes=noble%20gas&props=superconductivity",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 8
@@ -5005,11 +4079,7 @@
     "name": "qa_57_classes_quaternary_perovskite_props_thermodynamics",
     "desc": "classes=quaternary, perovskite, props=thermodynamics: >= 26463 results (recorded 2026-10-24; the outdated qa.json had 2047)",
     "route": "#inquiry/classes=quaternary%2C%20perovskite&props=thermodynamics",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 26463
@@ -5020,11 +4090,7 @@
     "name": "qa_58_props_crystalline_structure_classes_binary",
     "desc": "props=crystalline structure, classes=binary: >= 66845 results (recorded 2026-10-24; the outdated qa.json had 75532)",
     "route": "#inquiry/props=crystalline%20structure&classes=binary",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 66845
@@ -5035,11 +4101,7 @@
     "name": "qa_59_props_crystal_cell_classes_binary",
     "desc": "props=crystal cell, classes=binary: >= 66845 results (recorded 2026-10-24; the outdated qa.json had 75532)",
     "route": "#inquiry/props=crystal%20cell&classes=binary",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 66845
@@ -5050,11 +4112,7 @@
     "name": "qa_60_props_phases_classes_ferromagnet_ternary",
     "desc": "props=phases, classes=ferromagnet, ternary: >= 6601 results (recorded 2026-10-24; the outdated qa.json had 2639)",
     "route": "#inquiry/props=phases&classes=ferromagnet%2C%20ternary",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 6601
@@ -5065,11 +4123,7 @@
     "name": "qa_61_classes_carbide_semiconductor_props_electronic_propert",
     "desc": "classes=carbide, semiconductor, props=electronic properties: >= 647 results (recorded 2026-10-24; the outdated qa.json had 343)",
     "route": "#inquiry/classes=carbide%2C%20semiconductor&props=electronic%20properties",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 647
@@ -5080,11 +4134,7 @@
     "name": "qa_62_classes_lanthanoid_transitional_props_electronic_prope",
     "desc": "classes=lanthanoid, transitional, props=electronic properties: >= 111239 results (recorded 2026-10-24; the outdated qa.json had 43583)",
     "route": "#inquiry/classes=lanthanoid%2C%20transitional&props=electronic%20properties",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 111239
@@ -5095,11 +4145,7 @@
     "name": "qa_63_elements_in_classes_binary_oxide_metal",
     "desc": "elements=In, classes=binary, oxide, metal: >= 416 results (recorded 2026-10-24; the outdated qa.json had 185)",
     "route": "#inquiry/elements=In&classes=binary%2C%20oxide%2C%20metal",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 416
@@ -5110,11 +4156,7 @@
     "name": "qa_64_classes_organic_elements_pb_i",
     "desc": "classes=organic, elements=pb-i: >= 84 results (recorded 2026-10-24; the outdated qa.json had 53)",
     "route": "#inquiry/classes=organic&elements=pb-i",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 84
@@ -5125,11 +4167,7 @@
     "name": "qa_65_classes_organic_perovskite_elements_pb_i",
     "desc": "classes=organic, perovskite, elements=pb-i: >= 5 results (recorded 2026-10-24; the outdated qa.json had 0)",
     "route": "#inquiry/classes=organic%2C%20perovskite&elements=pb-i",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 5
@@ -5143,11 +4181,7 @@
     "name": "qa_66_elements_mn_be_classes_halogen",
     "desc": "elements=Mn-Be, classes=halogen: >= 143 results (recorded 2026-10-24; the outdated qa.json had 18)",
     "route": "#inquiry/elements=Mn-Be&classes=halogen",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 143
@@ -5158,11 +4192,7 @@
     "name": "qa_67_elements_pd_classes_hydride_props_lattice",
     "desc": "elements=Pd, classes=hydride, props=lattice: >= 146 results (recorded 2026-10-24; the outdated qa.json had 98)",
     "route": "#inquiry/elements=Pd&classes=hydride&props=lattice",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 146
@@ -5173,11 +4203,7 @@
     "name": "qa_68_classes_perovskite_props_phase_diagram",
     "desc": "classes=perovskite, props=phase diagram: >= 1768 results (recorded 2026-10-24; the outdated qa.json had 15000)",
     "route": "#inquiry/classes=perovskite&props=phase%20diagram",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 1768
@@ -5188,11 +4214,7 @@
     "name": "qa_69_props_thermodynamics_classes_superconductor_elements_f",
     "desc": "props=thermodynamics, classes=superconductor, elements=fe: >= 3252 results (recorded 2026-10-24; the outdated qa.json had 525)",
     "route": "#inquiry/props=thermodynamics&classes=superconductor&elements=fe",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 3252
@@ -5203,11 +4225,7 @@
     "name": "qa_70_props_superconductivity_classes_superconductor_element",
     "desc": "props=superconductivity, classes=superconductor, elements=C: >= 2165 results (recorded 2026-10-24; the outdated qa.json had 1307)",
     "route": "#inquiry/props=superconductivity&classes=superconductor&elements=C",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 2165
@@ -5218,11 +4236,7 @@
     "name": "qa_71_elements_y_classes_oxide_ternary_props_lattice",
     "desc": "elements=Y, classes=oxide, ternary, props=lattice: >= 1982 results (recorded 2026-10-24; the outdated qa.json had 1239)",
     "route": "#inquiry/elements=Y&classes=oxide%2C%20ternary&props=lattice",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 1982
@@ -5233,11 +4247,7 @@
     "name": "qa_72_formulae_srtio3_classes_ternary_lattices_tetragonal",
     "desc": "formulae=srtio3, classes=ternary, lattices=tetragonal: >= 404 results (recorded 2026-10-24; the outdated qa.json had 571)",
     "route": "#inquiry/formulae=srtio3&classes=ternary&lattices=tetragonal",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 404
@@ -5248,11 +4258,7 @@
     "name": "qa_73_lattices_tetragonal_formulae_srtio3_props_phonons",
     "desc": "lattices=tetragonal, formulae=SrTiO3, props=phonons: >= 21 results (recorded 2026-10-24; the outdated qa.json had 23)",
     "route": "#inquiry/lattices=tetragonal&formulae=SrTiO3&props=phonons",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 21
@@ -5263,11 +4269,7 @@
     "name": "qa_74_props_band_gap_lattices_hexagonal_formulae_zno",
     "desc": "props=band gap, lattices=hexagonal, formulae=ZnO: >= 139 results (recorded 2026-10-24; the outdated qa.json had 142)",
     "route": "#inquiry/props=band%20gap&lattices=hexagonal&formulae=ZnO",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 139
@@ -5278,11 +4280,7 @@
     "name": "qa_75_elements_cr_fe_lattices_tricl",
     "desc": "elements=cr-fe, lattices=tricl: >= 117 results (recorded 2026-10-24; the outdated qa.json had 14)",
     "route": "#inquiry/elements=cr-fe&lattices=tricl",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 117
@@ -5293,11 +4291,7 @@
     "name": "qa_76_lattices_hexagonal_classes_carbide_semiconductor_props",
     "desc": "lattices=hexagonal, classes=carbide, semiconductor, props=electronic properties: >= 231 results (recorded 2026-10-24; the outdated qa.json had 107)",
     "route": "#inquiry/lattices=hexagonal&classes=carbide%2C%20semiconductor&props=electronic%20properties",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 231
@@ -5308,11 +4302,7 @@
     "name": "qa_77_classes_intermetallic_binary_props_lattice_lattices_cu",
     "desc": "classes=intermetallic, binary, props=lattice, lattices=cubic: >= 10825 results (recorded 2026-10-24; the outdated qa.json had 9624)",
     "route": "#inquiry/classes=intermetallic%2C%20binary&props=lattice&lattices=cubic",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 10825
@@ -5323,11 +4313,7 @@
     "name": "qa_78_props_magnetism_classes_ferromagnet_chalcogen_lattices",
     "desc": "props=magnetism, classes=ferromagnet, chalcogen, lattices=monocl: >= 5593 results (recorded 2026-10-24; the outdated qa.json had 2106)",
     "route": "#inquiry/props=magnetism&classes=ferromagnet%2C%20chalcogen&lattices=monocl",
-    "tags": [
-      "qa",
-      "expect",
-      "count"
-    ],
+    "tags": ["qa", "expect", "count"],
     "expect": {
       "js:(document.title.match(/(\\d+) results?$/) || [0, 0])[1] * 1": {
         "ge": 5593
